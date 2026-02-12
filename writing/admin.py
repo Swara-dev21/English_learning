@@ -1,70 +1,112 @@
 from django.contrib import admin
 from .models import WritingTest, WritingQuestion, WritingResponse, WritingTestResult
 
-class WritingQuestionInline(admin.TabularInline):
-    model = WritingQuestion
-    extra = 0
-    fields = ['order', 'question_type', 'prompt', 'correct_answer']
-    show_change_link = True
-
 @admin.register(WritingTest)
 class WritingTestAdmin(admin.ModelAdmin):
-    inlines = [WritingQuestionInline]
+    list_display = ['title', 'created_at', 'is_active']
+    list_filter = ['is_active', 'created_at']
     search_fields = ['title', 'description']
+    list_editable = ['is_active']
+    fieldsets = (
+        ('Test Information', {
+            'fields': ('title', 'description', 'is_active')
+        }),
+    )
+
+
+class WritingQuestionInline(admin.TabularInline):
+    model = WritingQuestion
+    extra = 1
+    fields = ['order', 'question_type', 'prompt', 'correct_answer', 
+              'picture_filename', 'audio_filename', 'required_keywords',
+              'min_sentences', 'min_words', 'max_words']
+    ordering = ['order']
+
 
 @admin.register(WritingQuestion)
 class WritingQuestionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'order', 'question_type', 'prompt_short', 'test']  # Added 'id' as first
-    list_display_links = ['id']  # Added this line
-    list_editable = ['order']  # Now 'order' is not first, so it's OK
-    list_filter = ['test', 'question_type']
+    list_display = ['test', 'order', 'question_type', 'short_prompt', 'has_picture', 'has_audio']
+    list_filter = ['question_type', 'test']
     search_fields = ['prompt', 'correct_answer']
+    list_editable = ['order']
     
     fieldsets = (
-        ('Basic Information', {
-            'fields': ('test', 'order', 'question_type', 'prompt', 'correct_answer', 'acceptable_answers', 'explanation')
+        ('Question Information', {
+            'fields': ('test', 'order', 'question_type', 'prompt')
+        }),
+        ('Answer Key', {
+            'fields': ('correct_answer', 'acceptable_answers', 'explanation')
         }),
         ('Picture Description Settings', {
-            'fields': ('picture_filename', 'required_keywords', 'min_sentences', 'min_words', 'max_words'),
+            'fields': ('picture_filename', 'required_keywords', 
+                      'min_sentences', 'min_words', 'max_words'),
             'classes': ('collapse',),
+            'description': 'Only applicable for Picture Description questions'
         }),
         ('Dictation Settings', {
             'fields': ('audio_filename',),
             'classes': ('collapse',),
+            'description': 'Only applicable for Dictation questions'
         }),
     )
     
-    def prompt_short(self, obj):
+    def short_prompt(self, obj):
         return obj.prompt[:50] + '...' if len(obj.prompt) > 50 else obj.prompt
-    prompt_short.short_description = 'Prompt'
+    short_prompt.short_description = 'Prompt'
+    
+    def has_picture(self, obj):
+        return bool(obj.picture_filename)
+    has_picture.boolean = True
+    has_picture.short_description = 'Picture'
+    
+    def has_audio(self, obj):
+        return bool(obj.audio_filename)
+    has_audio.boolean = True
+    has_audio.short_description = 'Audio'
+
 
 @admin.register(WritingResponse)
 class WritingResponseAdmin(admin.ModelAdmin):
-    list_display = ['id', 'session_key_short', 'question', 'user_answer_short', 'score', 'needs_manual_review', 'created_at']
-    list_filter = ['question__test', 'needs_manual_review', 'question__question_type']
-    search_fields = ['user_answer', 'session_key']
+    list_display = ['question', 'session_key', 'user', 'score', 'needs_manual_review', 'created_at']
+    list_filter = ['score', 'needs_manual_review', 'created_at', 'question__question_type']
+    search_fields = ['session_key', 'user__username', 'user_answer']
+    readonly_fields = ['created_at']
     
-    def session_key_short(self, obj):
-        return obj.session_key[:10] + '...' if obj.session_key else 'Anonymous'
-    session_key_short.short_description = 'User'
-    
-    def user_answer_short(self, obj):
-        return obj.user_answer[:50] + '...' if len(obj.user_answer) > 50 else obj.user_answer
-    user_answer_short.short_description = 'Answer'
+    fieldsets = (
+        ('Response Information', {
+            'fields': ('user', 'session_key', 'question')
+        }),
+        ('Answer', {
+            'fields': ('user_answer', 'score', 'feedback', 'needs_manual_review')
+        }),
+        ('Metadata', {
+            'fields': ('created_at',),
+            'classes': ('collapse',)
+        }),
+    )
+
 
 @admin.register(WritingTestResult)
 class WritingTestResultAdmin(admin.ModelAdmin):
-    list_display = ['id', 'session_key_short', 'test', 'score_display', 'percentage', 'completed_at']
-    list_filter = ['test', 'completed_at']
+    list_display = ['test', 'session_key', 'user', 'total_score', 'max_score', 'percentage_display', 'completed_at']
+    list_filter = ['total_score', 'completed_at', 'test']
+    search_fields = ['session_key', 'user__username']
+    readonly_fields = ['completed_at']
     
-    def session_key_short(self, obj):
-        return obj.session_key[:10] + '...' if obj.session_key else 'Anonymous'
-    session_key_short.short_description = 'User'
+    fieldsets = (
+        ('Result Information', {
+            'fields': ('test', 'user', 'session_key')
+        }),
+        ('Score', {
+            'fields': ('total_score', 'max_score')
+        }),
+        ('Metadata', {
+            'fields': ('completed_at',),
+            'classes': ('collapse',)
+        }),
+    )
     
-    def score_display(self, obj):
-        return f"{obj.total_score}/5"  # Show as X/5
-    score_display.short_description = 'Score'
-    
-    def percentage(self, obj):
-        return f"{obj.percentage():.1f}%"
-    percentage.short_description = 'Percentage'
+    def percentage_display(self, obj):
+        percentage = obj.percentage()
+        return f"{percentage:.1f}%"
+    percentage_display.short_description = 'Percentage'

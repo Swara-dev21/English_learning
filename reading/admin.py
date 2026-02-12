@@ -9,9 +9,12 @@ class QuestionInline(admin.TabularInline):
 # Admin for Test
 @admin.register(Test)
 class TestAdmin(admin.ModelAdmin):
-    list_display = ('title', 'created_at')
+    list_display = ('title', 'created_at')   # show created_at in list
     search_fields = ('title', 'description')
     inlines = [QuestionInline]
+    
+    # Remove created_at from fields, show only editable fields
+    fields = ('title', 'paragraph', 'description')  
 
 # Admin for Question
 @admin.register(Question)
