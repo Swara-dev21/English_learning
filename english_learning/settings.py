@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'listening',
     'writing',
     'reading',
+    'home_page',
 ]
 
 MIDDLEWARE = [
