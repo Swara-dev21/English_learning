@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from django.contrib.sessions.backends.db import SessionStore
 import re
 import json
 from .models import WritingTest, WritingQuestion, WritingResponse, WritingTestResult
@@ -12,12 +11,26 @@ def get_session_key(request):
         request.session.create()
     return request.session.session_key
 
+def start_writing_test(request, test_id):
+    """Start writing test directly"""
+    writing_test = get_object_or_404(WritingTest, id=test_id, is_active=True)
+    
+    # Get session key
+    session_key = get_session_key(request)
+    
+    # Delete any previous responses for this session
+    WritingResponse.objects.filter(session_key=session_key, question__test=writing_test).delete()
+    
+    # Delete any previous test results for this session
+    WritingTestResult.objects.filter(session_key=session_key, test=writing_test).delete()
+    
+    # Redirect to first question
+    return redirect('writing_test:writing_question', test_id=writing_test.id, question_number=1)
 
 def writing_test_home(request, test_id):
     """Writing test introduction page"""
     test = get_object_or_404(WritingTest, id=test_id, is_active=True)
-    question_number = 1
-    return render(request, 'writing/writing_question.html', {'test': test, 'question_number': question_number})
+    return render(request, 'writing_test/writing_home.html', {'test': test})
 
 def writing_question(request, test_id, question_number):
     """Display a single writing question"""
@@ -27,7 +40,7 @@ def writing_question(request, test_id, question_number):
     try:
         question = WritingQuestion.objects.get(test=test, order=question_number)
     except WritingQuestion.DoesNotExist:
-        return redirect('test_home')
+        return redirect('writing_test:writing_test_home', test_id=test.id)
     
     # Get total questions count
     total_questions = test.questions.count()
@@ -57,7 +70,7 @@ def writing_question(request, test_id, question_number):
         'previous_answer': previous_response.user_answer if previous_response else '',
     }
     
-    return render(request, 'writing/writing_question.html', context)
+    return render(request, 'writing_test/writing_question.html', context)
 
 # ===== GRADING FUNCTIONS =====
 
@@ -271,7 +284,7 @@ def save_answer(request, test_id, question_number):
 def submit_writing_test(request, test_id):
     """Submit the entire writing test and calculate results"""
     if request.method != 'POST':
-        return redirect('writing:writing_question', test_id=test_id, question_number=1)
+        return redirect('writing_test:writing_question', test_id=test_id, question_number=1)
     
     test = get_object_or_404(WritingTest, id=test_id)
     session_key = get_session_key(request)
@@ -287,7 +300,6 @@ def submit_writing_test(request, test_id):
     for response in responses:
         total_one_point_score += convert_to_one_point_score(response.score)
     
-
     # Save test result (out of 5)
     test_result = WritingTestResult.objects.create(
         session_key=session_key,
@@ -296,7 +308,7 @@ def submit_writing_test(request, test_id):
         max_score=5  # Always 5
     )
     
-    return redirect('writing:writing_results', result_id=test_result.id)
+    return redirect('writing_test:writing_results', result_id=test_result.id)
 
 def writing_results(request, result_id):
     """Display writing test results"""
@@ -334,4 +346,4 @@ def writing_results(request, result_id):
         'wrong_answers_count': len(question_data),  # Count of wrong answers
     }
     
-    return render(request, 'writing/writing_results.html', context)
+    return render(request, 'writing_test/writing_results.html', context)

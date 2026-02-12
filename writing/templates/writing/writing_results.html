@@ -1,4 +1,4 @@
-{% extends 'writing/base.html' %}
+{% extends 'writing_test/base.html' %}
 {% load static %}
 
 {% block title %}Writing Test Results{% endblock %}
@@ -217,32 +217,6 @@
                         </div>
                     </div>
                 </div>
-                
-                {% if listening_result %}
-                <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <div class="card bg-light border-0 shadow-sm">
-                            <div class="card-body">
-                                <h5 class="mb-3" style="color: #4a6fa5;">
-                                    <i class="fas fa-trophy me-2"></i>Overall Performance
-                                </h5>
-                                <div class="row text-center">
-                                    <div class="col-6 border-end">
-                                        <div class="h5 fw-bold text-primary">Listening</div>
-                                        <div class="h3 fw-bold">{{ listening_result.score }}/5</div>
-                                        <div class="text-muted">{{ listening_result.percentage|floatformat:1 }}%</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="h5 fw-bold text-primary">Writing</div>
-                                        <div class="h3 fw-bold">{{ result.total_score }}/5</div>
-                                        <div class="text-muted">{{ percentage|floatformat:1 }}%</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
             </div>
             
             <!-- Review Mistakes Section -->
@@ -307,23 +281,21 @@
                     <i class="fas fa-trophy fa-3x text-success"></i>
                 </div>
                 <h3 class="text-success fw-bold mb-2">Perfect Score! 🎉</h3>
-                <p class="lead mb-0">You answered all 5 questions correctly!</p>
+                <p class="lead mb-0">You answered all {{ result.max_score }} questions correctly!</p>
             </div>
             {% endif %}
         </div>
         
-        {% comment %} <!-- Footer Actions -->
+        <!-- Footer Actions -->
         <div class="card-footer bg-white border-0 pt-3">
             <div class="text-center">
-                <a href="{% url 'writing:test_home' %}" class="btn btn-outline-primary px-4 me-3">
-                    <i class="fas fa-home me-2"></i> Back to Home
+                <a href="{% url 'writing_test:writing_test_home' result.test.id %}" class="btn btn-primary px-5">
+                    <i class="fas fa-home me-2"></i> Back to Test Home
                 </a>
-                {% if listening_result %}
-                <a href="{% url 'audio_test:start_test' listening_result.test.id %}" class="btn btn-primary px-4">
-                    <i class="fas fa-redo me-2"></i> Retry Listening Test
+                <a href="{% url 'writing_test:start_writing_test' result.test.id %}" class="btn btn-outline-primary px-5 ms-3">
+                    <i class="fas fa-redo me-2"></i> Retry Test
                 </a>
-                {% endif %}
-            </div> {% endcomment %}
+            </div>
         </div>
     </div>
 </div>
