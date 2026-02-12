@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'writing',
     'reading',
     'home_page',
+    'captcha',
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR,"media")
 VOSK_MODEL_PATH = str( BASE_DIR/"speaking"/"model"/"vosk-model-small-en-us-0.15")
 
 REFERENCE_AUDIO_PATH = BASE_DIR/"speaking"/"reference_audio"/"reference.wav"
+
+CAPTCHA_IGNORE_CASE = True
