@@ -47,13 +47,13 @@ class WritingQuestion(models.Model):
     def picture_url(self):
         """Generate URL to the picture file"""
         if self.picture_filename:
-            return f"/static/writing/images/{self.picture_filename}"
+            return f"/static/writing_test/images/{self.picture_filename}"
         return ""
     
     def audio_url(self):
         """Generate URL to the audio file"""
         if self.audio_filename:
-            return f"/static/writing/audio/{self.audio_filename}"
+            return f"/static/writing_test/audio/{self.audio_filename}"
         return ""
 
 class WritingResponse(models.Model):
@@ -79,7 +79,7 @@ class WritingTestResult(models.Model):
     session_key = models.CharField(max_length=100, blank=True)
     test = models.ForeignKey(WritingTest, on_delete=models.CASCADE)
     total_score = models.IntegerField(default=0)
-    max_score = models.IntegerField(default=5)  # Changed from 500 to 5 ← UPDATE THIS
+    max_score = models.IntegerField(default=5)
     completed_at = models.DateTimeField(auto_now_add=True)
     
     def percentage(self):
