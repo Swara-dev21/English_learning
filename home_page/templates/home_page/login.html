@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>Student Login</title>
+    <link rel="stylesheet" href="{% static 'home_page/css/login.css' %}">
+</head>
+<body>
+<div class="login-container">
+    <h2>Student Login</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+            {% for error in form.email.errors %}
+                <p class="error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            {% for error in form.password.errors %}
+                <p class="error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn">Login</button>
+    </form>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p>Don't have an account? <a href="{% url 'home_page:register' %}">Register here</a></p>
+</div>
+</body>
+</html>

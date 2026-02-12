@@ -1,13 +1,51 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import login as auth_login
+from django.contrib import messages
+from .forms import StudentLoginForm, RegisterForm
+from .models import StudentProfile
+from django.contrib.auth.models import User
+
+def student_login(request):
+    if request.method == 'POST':
+        form = StudentLoginForm(request.POST)
+        if form.is_valid():
+            user = form.cleaned_data['user']
+            auth_login(request, user)  # logs in the user
+            messages.success(request, f"Welcome {user.username}, you are now logged in!")
+            return redirect('home_page:home')
+        else:
+            messages.error(request, "Please fix the errors below")
+    else:
+        form = StudentLoginForm()
+
+    return render(request, 'home_page/login.html', {'form': form})
 
 def home(request):
-    """Render the main homepage"""
     return render(request, 'home_page/home.html')
 
-def login(request):
-    """Login page (placeholder)"""
-    return render(request, 'home_page/login.html')
-
 def register(request):
-    """Register page (placeholder)"""
-    return render(request, 'home_page/register.html')
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            institute = form.cleaned_data['institute']
+            department = form.cleaned_data['department']
+            year = form.cleaned_data['year']
+            password = form.cleaned_data['password']
+
+            if User.objects.filter(username=username).exists():
+                messages.error(request, "Username already exists.")
+                return render(request, 'home_page/register.html', {'form': form})
+
+            user = User.objects.create_user(username=username, email=email, password=password)
+            StudentProfile.objects.create(user=user, institute=institute, department=department, year=year)
+
+            messages.success(request, f"Hello {username}, registration successful!")
+            return redirect('home_page:home')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = RegisterForm()
+
+    return render(request, 'home_page/register.html', {'form': form})
