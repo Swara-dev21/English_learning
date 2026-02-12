@@ -19,6 +19,8 @@ class StudentLoginForm(forms.Form):
         })
     )
 
+    captcha = CaptchaField()
+
     def clean(self):
         cleaned_data = super().clean()
         email = cleaned_data.get('email')
