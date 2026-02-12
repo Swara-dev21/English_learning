@@ -1,0 +1,207 @@
+{% extends 'listening/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}Test Results - Listening Test{% endblock %}
+
+{% block extra_css %}
+<style>
+    .score-circle {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        border: 8px solid;
+        font-weight: bold;
+    }
+    
+    .score-excellent { border-color: #28a745; color: #28a745; }
+    .score-good { border-color: #17a2b8; color: #17a2b8; }
+    .score-average { border-color: #ffc107; color: #ffc107; }
+    .score-poor { border-color: #dc3545; color: #dc3545; }
+    
+    .question-review {
+        border-radius: 10px;
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+    
+    .question-review.correct {
+        background-color: rgba(40, 167, 69, 0.1);
+        border-left: 5px solid #28a745;
+    }
+    
+    .question-review.incorrect {
+        background-color: rgba(220, 53, 69, 0.1);
+        border-left: 5px solid #dc3545;
+    }
+    
+    .transcript-box {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        border-left: 5px solid #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow">
+            <!-- Header -->
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>Test Results
+                </h2>
+            </div>
+            
+            <div class="card-body">
+                <!-- Score Summary -->
+                                <!-- Score Summary -->
+                <div class="text-center mb-5">
+                    {% if percentage >= 80 %}
+                    <div class="score-circle score-excellent mb-3">
+    <div class="display-2 fw-bold text-white">{{ result.score }}</div>
+    <div class="h4 fw-bold text-white">/ {{ result.total_questions }}</div>
+</div>
+                    <h2 class="text-success fw-bold mb-3">Excellent! 🎉</h2>
+                    {% elif percentage >= 60 %}
+                    <div class="score-circle score-good mb-3">
+                        <div class="display-2 fw-bold">{{ result.score }}</div>
+                        <div class="h4 fw-bold">/ {{ result.total_questions }}</div>
+                    </div>
+                    <h2 class="text-info fw-bold mb-3">Good Job! 👍</h2>
+                    {% elif percentage >= 40 %}
+                    <div class="score-circle score-average mb-3">
+                        <div class="display-2 fw-bold">{{ result.score }}</div>
+                        <div class="h4 fw-bold">/ {{ result.total_questions }}</div>
+                    </div>
+                    <h2 class="text-warning fw-bold mb-3">Keep Practicing! 💪</h2>
+                    {% else %}
+                    <div class="score-circle score-poor mb-3">
+                        <div class="display-2 fw-bold">{{ result.score }}</div>
+                        <div class="h4 fw-bold">/ {{ result.total_questions }}</div>
+                    </div>
+                    <h2 class="text-danger fw-bold mb-3">Needs Improvement 📚</h2>
+                    {% endif %}
+                    
+                    <h3 class="mb-4 fw-bold" style="color: var(--primary-color);">
+                        {{ percentage|floatformat:1 }}% Correct
+                    </h3>
+                    
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="card bg-light border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-6 border-end">
+                                            <div class="display-6 fw-bold text-success">{{ result.score }}</div>
+                                            <div class="text-muted">Correct</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="display-6 fw-bold text-danger">{{ result.total_questions|add:"-"|add:result.score }}</div>
+                                            <div class="text-muted">Incorrect</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Detailed Review -->
+                <h4 class="mb-4">
+                    <i class="fas fa-clipboard-check me-2"></i>Detailed Review
+                </h4>
+                
+                {% for question in questions %}
+                {% with response=responses_by_question|get_item:question.order %}
+                <div class="question-review {% if response and response.selected_option.is_correct %}correct{% else %}incorrect{% endif %}">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="mb-0">
+                            Question {{ question.order }}: {{ question.question_text }}
+                        </h5>
+                        <span class="badge {% if response and response.selected_option.is_correct %}bg-success{% else %}bg-danger{% endif %}">
+                            {% if response and response.selected_option.is_correct %}Correct{% else %}Incorrect{% endif %}
+                        </span>
+                    </div>
+                    
+                    <!-- Audio Player -->
+                    <div class="mb-3">
+                        <audio controls class="w-100">
+                            <source src="{% static 'audio_test/audio/' %}{{ question.audio_filename }}" type="audio/mpeg">
+                        </audio>
+                    </div>
+                    
+                    <!-- User's Answer -->
+                    <div class="mb-2">
+                        <strong>Your answer:</strong>
+                        <span class="ms-2">
+                            {% if response %}
+                                {{ response.selected_option.text }}
+                                {% if not response.selected_option.is_correct %}
+                                <span class="text-danger ms-2">
+                                    <i class="fas fa-times"></i>
+                                </span>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-danger">Not answered</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <!-- Correct Answer -->
+                    {% if response and not response.selected_option.is_correct %}
+                    <div class="mb-2">
+                        <strong>Correct answer:</strong>
+                        <span class="ms-2 text-success">
+                            {% for option in question.options.all %}
+                                {% if option.is_correct %}
+                                    {{ option.text }}
+                                    <span class="ms-2">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Explanation -->
+                    {% if question.explanation %}
+                    <div class="alert alert-info mt-2">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Explanation:</strong> {{ question.explanation }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endwith %}
+                {% endfor %}
+                
+                <!-- Transcript Section -->
+            
+            <!-- Footer Actions -->
+                        <!-- Footer Actions -->
+                        <!-- Footer Actions -->
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'listening:test_home' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-home me-1"></i> Back to Home
+                    </a>
+                    {% comment %} <div>
+                        <!-- Add this button -->
+                        <a href="{% url 'writing_test:start_writing_test' result.id %}" 
+                           class="btn btn-primary me-2">
+                            <i class="fas fa-arrow-right me-1"></i> Continue to Writing Test
+                        </a>
+                        <!-- Keep existing buttons if needed -->
+                    </div> {% endcomment %}
+                </div>
+            </div>
+{% endblock %}
+

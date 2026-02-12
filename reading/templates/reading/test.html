@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Test</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'reading/css/style.css' %}?v=4">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Additional styles for better appearance */
+        .test-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .test-header {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .test-header h1 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+
+        .timer-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px 24px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .timer-container i {
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .timer {
+            font-family: 'Courier New', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 3px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #3b82f6, #6366f1);
+            border-radius: 4px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.08);
+            padding: 35px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            animation: fadeIn 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            border-radius: 4px 0 0 4px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Instructions Page Styling */
+        .instructions {
+            text-align: left;
+            padding: 20px 0;
+        }
+
+        .instructions h2 {
+            font-size: 2rem;
+            color: #1e293b;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+
+        .instructions h2 i {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+        }
+
+        .instructions-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+        }
+
+        .instructions-list li {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .instructions-list li:hover {
+            transform: translateX(5px);
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .instructions-list i {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #3b82f6;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .simple-note {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 30px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .simple-note i {
+            font-size: 1.5rem;
+            color: #3b82f6;
+        }
+
+        /* Passage Styling */
+        .passage h2 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            color: #1e293b;
+            margin-bottom: 25px;
+        }
+
+        .passage h2 i {
+            color: #3b82f6;
+        }
+
+        .passage-text {
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 20px;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 30px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Question Styling */
+        .question-container {
+            padding: 30px;
+        }
+
+        .question-header {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0f172a;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0 10px;
+        }
+
+        /* Options Styling */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .option {
+            position: relative;
+        }
+
+        .option input[type="radio"] {
+            display: none;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 18px 25px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-label:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            transform: translateX(5px);
+        }
+
+        .option input[type="radio"]:checked + .option-label {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .option-letter {
+            width: 45px;
+            height: 45px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #475569;
+            transition: all 0.3s ease;
+            border: 2px solid #e2e8f0;
+        }
+
+        .option input[type="radio"]:checked + .option-label .option-letter {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            border-color: transparent;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1.1rem;
+            color: #334155;
+            font-weight: 500;
+        }
+
+        /* Navigation Buttons */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: #1e293b;
+            border: 2px solid #e2e8f0;
+        }
+
+        .nav-btn i {
+            font-size: 0.9rem;
+        }
+
+        .btn-prev {
+            background: white;
+            color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .btn-prev:hover {
+            background: #eff6ff;
+            transform: translateX(-3px);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-next:hover {
+            transform: translateX(3px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Step Indicator */
+        .step-indicator {
+            display: inline-block;
+            padding: 8px 20px;
+            background: #f1f5f9;
+            border-radius: 50px;
+            color: #475569;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .step-indicator i {
+            color: #3b82f6;
+            margin-right: 8px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .test-header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .test-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .section-card {
+                padding: 25px;
+            }
+
+            .option-label {
+                padding: 15px 20px;
+            }
+
+            .option-letter {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .instructions h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        .skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <!-- Test Header -->
+        <div class="test-header">
+            <h1>
+                <i class="fas fa-book-reader"></i>
+                Reading Test
+            </h1>
+            <div class="timer-container">
+                <i class="fas fa-hourglass-half"></i>
+                <span class="timer" id="timer">05:00</span>
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <!-- Test Content -->
+        <div class="container">
+            <div class="test-content">
+                <!-- Step 1: Instructions -->
+                <div class="section-card" id="step1">
+                    <div class="step-indicator">
+                        <i class="fas fa-flag"></i> Step 1 of {{ total_steps|add:"0" }}
+                    </div>
+                    <div class="instructions">
+                        <h2>
+                            <i class="fas fa-info-circle"></i>
+                            Test Instructions
+                        </h2>
+                        <ul class="instructions-list">
+                            <li>
+                                <i class="fas fa-book"></i>
+                                Read the passage carefully
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                Answer 5 multiple choice questions
+                            </li>
+                            <li>
+                                <i class="fas fa-clock"></i>
+                                You have 5 minutes to complete
+                            </li>
+                            <li>
+                                <i class="fas fa-undo-alt"></i>
+                                You can review and change answers
+                            </li>
+                        </ul>
+                        
+                        <div class="simple-note">
+                            <i class="fas fa-lightbulb"></i>
+                            <span><strong>Pro Tip:</strong> Read the passage at least once before answering the questions</span>
+                        </div>
+                        
+                        <!-- Navigation -->
+                        <div class="navigation-buttons">
+                            <div></div> <!-- Empty div for spacing -->
+                            <button class="nav-btn btn-next" onclick="nextStep(1)">
+                                Start Reading <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Passage -->
+                <div class="section-card" id="step2" style="display: none;">
+                    <div class="step-indicator">
+                        <i class="fas fa-book"></i> Step 2 of {{ total_steps|add:"0" }}
+                    </div>
+                    <div class="passage">
+                        <h2>
+                            <i class="fas fa-paragraph"></i>
+                            Reading Passage
+                        </h2>
+                        <div class="passage-text">
+                            {{ passage.content }}
+                        </div>
+                        
+                        <!-- Navigation -->
+                        <div class="navigation-buttons">
+                            <button class="nav-btn btn-prev" onclick="prevStep(2)">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button class="nav-btn btn-next" onclick="nextStep(2)">
+                                Start Questions <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Questions (Steps 3-7) -->
+                <form method="POST" action="{% url 'submit_test' test.id %}" id="testForm">
+                    {% csrf_token %}
+                    
+                    {% for question in questions %}
+                    <div class="section-card question-container" id="step{{ forloop.counter|add:2 }}" style="display: none;">
+                        <div class="step-indicator">
+                            <i class="fas fa-question-circle"></i> 
+                            Question {{ forloop.counter }} of {{ questions|length }}
+                        </div>
+                        
+                        <div class="question-header">
+                            <div class="question-number">
+                                Q{{ forloop.counter }}
+                            </div>
+                            <h3 class="question-text">{{ question.question_text }}</h3>
+                        </div>
+                        
+                        <div class="options-container">
+                            <div class="option">
+                                <input type="radio" id="q{{ question.id }}_1" name="q{{ question.id }}" value="1" onchange="updateProgress()">
+                                <label class="option-label" for="q{{ question.id }}_1">
+                                    <div class="option-letter">A</div>
+                                    <div class="option-text">{{ question.option1 }}</div>
+                                </label>
+                            </div>
+                            
+                            <div class="option">
+                                <input type="radio" id="q{{ question.id }}_2" name="q{{ question.id }}" value="2" onchange="updateProgress()">
+                                <label class="option-label" for="q{{ question.id }}_2">
+                                    <div class="option-letter">B</div>
+                                    <div class="option-text">{{ question.option2 }}</div>
+                                </label>
+                            </div>
+                            
+                            {% if question.option3 %}
+                            <div class="option">
+                                <input type="radio" id="q{{ question.id }}_3" name="q{{ question.id }}" value="3" onchange="updateProgress()">
+                                <label class="option-label" for="q{{ question.id }}_3">
+                                    <div class="option-letter">C</div>
+                                    <div class="option-text">{{ question.option3 }}</div>
+                                </label>
+                            </div>
+                            {% endif %}
+                            
+                            {% if question.option4 %}
+                            <div class="option">
+                                <input type="radio" id="q{{ question.id }}_4" name="q{{ question.id }}" value="4" onchange="updateProgress()">
+                                <label class="option-label" for="q{{ question.id }}_4">
+                                    <div class="option-letter">D</div>
+                                    <div class="option-text">{{ question.option4 }}</div>
+                                </label>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Navigation -->
+                        <div class="navigation-buttons">
+                            <button type="button" class="nav-btn btn-prev" onclick="prevStep({{ forloop.counter|add:2 }})">
+                                <i class="fas fa-arrow-left"></i> Previous
+                            </button>
+                            
+                            {% if forloop.last %}
+                            <button type="submit" class="nav-btn btn-submit">
+                                <i class="fas fa-paper-plane"></i> Submit Test
+                            </button>
+                            {% else %}
+                            <button type="button" class="nav-btn btn-next" onclick="nextStep({{ forloop.counter|add:2 }})">
+                                Next Question <i class="fas fa-arrow-right"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Calculate total steps
+        const totalSteps = {{ questions|length }} + 2;
+        
+        // Current step tracking
+        let currentStep = 1;
+        
+        // Step navigation
+        function showStep(stepNumber) {
+            // Hide all steps
+            for (let i = 1; i <= totalSteps; i++) {
+                const step = document.getElementById(`step${i}`);
+                if (step) {
+                    step.style.display = 'none';
+                }
+            }
+            // Show current step
+            const currentStepElement = document.getElementById(`step${stepNumber}`);
+            if (currentStepElement) {
+                currentStepElement.style.display = 'block';
+            }
+            currentStep = stepNumber;
+            
+            // Update progress bar
+            const progress = ((stepNumber - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+        
+        function nextStep(current) {
+            if (current < totalSteps) {
+                showStep(current + 1);
+            }
+        }
+        
+        function prevStep(current) {
+            if (current > 1) {
+                showStep(current - 1);
+            }
+        }
+        
+        // Timer - 5 minutes
+        let timeLeft = 5 * 60; // 5 minutes in seconds
+        const timerElement = document.getElementById('timer');
+        
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Change color when less than 1 minute
+            if (timeLeft <= 60) {
+                timerElement.style.color = '#fee2e2';
+                timerElement.parentElement.style.background = 'rgba(239, 68, 68, 0.3)';
+                timerElement.parentElement.style.border = '1px solid rgba(239, 68, 68, 0.5)';
+            }
+            
+            if (timeLeft <= 0) {
+                alert('Time is up! Submitting your test...');
+                document.getElementById('testForm').submit();
+            }
+            timeLeft--;
+        }
+        
+        // Start timer
+        const timer = setInterval(updateTimer, 1000);
+        
+        // Stop timer on form submit
+        document.getElementById('testForm').addEventListener('submit', function() {
+            clearInterval(timer);
+        });
+        
+        // Progress tracking for answered questions
+        function updateProgress() {
+            const radios = document.querySelectorAll('input[type="radio"]:checked');
+            const totalQuestions = {{ questions|length }};
+            const answered = radios.length;
+            
+            // Progress is based on answered questions
+            const answerProgress = (answered / totalQuestions) * 100;
+            
+            // Blend with step progress
+            const stepProgress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            const totalProgress = Math.max(stepProgress, answerProgress);
+            
+            document.getElementById('progressBar').style.width = `${totalProgress}%`;
+        }
+        
+        // Initialize
+        showStep(1);
+        
+        // Form validation on submit
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            const totalQuestions = {{ questions|length }};
+            let answered = 0;
+            
+            {% for question in questions %}
+            if (document.querySelector(`input[name="q{{ question.id }}"]:checked`)) {
+                answered++;
+            }
+            {% endfor %}
+            
+            if (answered !== totalQuestions) {
+                e.preventDefault();
+                alert(`⚠️ Please answer all ${totalQuestions} questions before submitting. You've answered ${answered} question(s).`);
+                
+                // Highlight unanswered questions
+                {% for question in questions %}
+                if (!document.querySelector(`input[name="q{{ question.id }}"]:checked`)) {
+                    const questionStep = {{ forloop.counter|add:2 }};
+                    showStep(questionStep);
+                    return false;
+                }
+                {% endfor %}
+                return false;
+            }
+            
+            return true;
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' && !e.target.matches('input, textarea')) {
+                e.preventDefault();
+                const nextBtn = document.querySelector('.btn-next:not([disabled])');
+                if (nextBtn) {
+                    nextBtn.click();
+                }
+            } else if (e.key === 'ArrowLeft' && !e.target.matches('input, textarea')) {
+                e.preventDefault();
+                const prevBtn = document.querySelector('.btn-prev:not([disabled])');
+                if (prevBtn) {
+                    prevBtn.click();
+                }
+            }
+        });
+
+        // Add smooth scroll
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

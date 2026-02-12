@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Speaking Test Results</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'speaking/style.css' %}">
+</head>
+<body>
+
+<div class="result-card">
+
+    <!-- HEADER -->
+    <div class="result-header">
+        🏆 Speaking Test Results
+    </div>
+
+    <!-- FEEDBACK -->
+    <div class="feedback">
+        Keep practicing daily. Focus on basic sounds first.
+        
+        <div class="level">
+            Your English Level:
+            <b>
+                {% if results.0.final_score < 25 %}
+                    Needs Practice
+                {% elif results.0.final_score < 50 %}
+                    Beginner
+                {% elif results.0.final_score < 75 %}
+                    Intermediate
+                {% else %}
+                    Advanced
+                {% endif %}
+            </b>
+        </div>
+    </div>
+
+    <!-- SCORE SUMMARY -->
+    <div class="score-boxes">
+        <div class="score">
+            <span>Overall Score</span>
+            <h2>{{ results.0.final_score }}/100</h2>
+        </div>
+
+        <div class="score">
+            <span>Pronunciation</span>
+            <h2>{{ results.0.pron_score }}/100</h2>
+        </div>
+
+        <div class="score">
+            <span>Accent</span>
+            <!-- FIXED HERE -->
+            <h2>{{ results.0.accent_score }}/100</h2>
+        </div>
+
+        <div class="score">
+            <span>Accuracy</span>
+            <h2>{{ results.0.text_score }}/100</h2>
+        </div>
+    </div>
+
+    <!-- QUESTION DETAILS -->
+    <h3 class="section-title">📋 Question Details</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Question</th>
+                <th>Pronunciation</th>
+                <th>Accent</th>
+                <th>Accuracy</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for res in results %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ res.question }}</td>
+                <td>{{ res.pron_score }}</td>
+
+                <!-- FIXED HERE -->
+                <td>{{ res.accent_score }}</td>
+
+                <td>{{ res.text_score }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- ACTION BUTTONS -->
+    <div class="actions">
+        <a href="/start/">
+            <button class="btn primary">🔁 Retake Test</button>
+        </a>
+        <button class="btn outline">⬇ Download Results</button>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,330 @@
+{% extends 'writing/base.html' %}
+{% load static %}
+
+{% block title %}Writing Test Results{% endblock %}
+
+{% block extra_css %}
+<style>
+    .results-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .score-circle {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        border: 8px solid white;
+        outline: 3px solid;
+    }
+    
+    .score-circle .display-2 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .score-circle .h4 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-top: 5px;
+        color: white;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+    
+    .score-excellent { 
+        background: linear-gradient(135deg, #28a745, #20c997);
+        outline-color: #28a745;
+    }
+    .score-good { 
+        background: linear-gradient(135deg, #17a2b8, #0dcaf0);
+        outline-color: #17a2b8;
+    }
+    .score-average { 
+        background: linear-gradient(135deg, #ffc107, #fd7e14);
+        outline-color: #ffc107;
+    }
+    .score-poor { 
+        background: linear-gradient(135deg, #dc3545, #ff6b6b);
+        outline-color: #dc3545;
+    }
+    
+    .mistake-review {
+        border-radius: 12px;
+        margin-bottom: 20px;
+        padding: 20px;
+        background: white;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        border-left: 5px solid #dc3545;
+    }
+    
+    .user-answer-box {
+        background: rgba(220, 53, 69, 0.05);
+        border: 2px solid rgba(220, 53, 69, 0.2);
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        font-size: 18px;
+        line-height: 1.5;
+    }
+    
+    .correct-answer-box {
+        background: rgba(40, 167, 69, 0.05);
+        border: 2px solid rgba(40, 167, 69, 0.2);
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        font-size: 18px;
+        line-height: 1.5;
+    }
+    
+    .perfect-score {
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1));
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        margin: 20px 0;
+    }
+    
+    /* Font size improvements */
+    body {
+        font-size: 16px;
+    }
+    
+    h2 {
+        font-size: 28px;
+        font-weight: 600;
+    }
+    
+    h3 {
+        font-size: 24px;
+        font-weight: 600;
+    }
+    
+    h4 {
+        font-size: 20px;
+        font-weight: 600;
+    }
+    
+    h5 {
+        font-size: 18px;
+        font-weight: 600;
+    }
+    
+    h6 {
+        font-size: 17px;
+        font-weight: 600;
+    }
+    
+    .card {
+        border-radius: 12px;
+    }
+    
+    .btn {
+        font-size: 16px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    
+    .badge {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+    
+    .text-muted {
+        font-size: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <div class="card shadow-lg border-0">
+        <!-- Header -->
+        <div class="card-header text-white" style="background: linear-gradient(135deg, #4a6fa5, #166088);">
+            <h2 class="mb-0">
+                <i class="fas fa-chart-bar me-2"></i>Writing Test Results
+            </h2>
+        </div>
+        
+        <div class="card-body p-4">
+            <!-- Score Summary -->
+            <div class="text-center mb-4">
+                {% if percentage >= 80 %}
+                <div class="score-circle score-excellent mb-3">
+                    <div class="display-2 fw-bold">{{ result.total_score }}</div>
+                    <div class="h4 fw-bold">/ {{ result.max_score }}</div>
+                </div>
+                <h3 class="text-success fw-bold mb-3">
+                    {% if result.total_score == 5 %}
+                    Perfect Score! 🎉
+                    {% elif result.total_score >= 4 %}
+                    Excellent! 🌟
+                    {% else %}
+                    Good Job! 👍
+                    {% endif %}
+                </h3>
+                {% elif percentage >= 60 %}
+                <div class="score-circle score-good mb-3">
+                    <div class="display-2 fw-bold">{{ result.total_score }}</div>
+                    <div class="h4 fw-bold">/ {{ result.max_score }}</div>
+                </div>
+                <h3 class="text-info fw-bold mb-3">Good Effort! 💪</h3>
+                {% elif percentage >= 40 %}
+                <div class="score-circle score-average mb-3">
+                    <div class="display-2 fw-bold">{{ result.total_score }}</div>
+                    <div class="h4 fw-bold">/ {{ result.max_score }}</div>
+                </div>
+                <h3 class="text-warning fw-bold mb-3">Keep Practicing! 📚</h3>
+                {% else %}
+                <div class="score-circle score-poor mb-3">
+                    <div class="display-2 fw-bold">{{ result.total_score }}</div>
+                    <div class="h4 fw-bold">/ {{ result.max_score }}</div>
+                </div>
+                <h3 class="text-danger fw-bold mb-3">Needs Improvement 🔄</h3>
+                {% endif %}
+                
+                <h3 class="mb-3 fw-bold" style="color: #4a6fa5;">
+                    {{ percentage|floatformat:1 }}% Correct
+                </h3>
+                
+                <div class="row justify-content-center mb-3">
+                    <div class="col-md-6">
+                        <div class="card bg-light border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-6 border-end">
+                                        <div class="h4 fw-bold text-success">{{ result.total_score }}</div>
+                                        <div class="text-muted">Correct</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="h4 fw-bold text-danger">{{ result.max_score|add:"-"|add:result.total_score }}</div>
+                                        <div class="text-muted">Incorrect</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if listening_result %}
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card bg-light border-0 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="mb-3" style="color: #4a6fa5;">
+                                    <i class="fas fa-trophy me-2"></i>Overall Performance
+                                </h5>
+                                <div class="row text-center">
+                                    <div class="col-6 border-end">
+                                        <div class="h5 fw-bold text-primary">Listening</div>
+                                        <div class="h3 fw-bold">{{ listening_result.score }}/5</div>
+                                        <div class="text-muted">{{ listening_result.percentage|floatformat:1 }}%</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="h5 fw-bold text-primary">Writing</div>
+                                        <div class="h3 fw-bold">{{ result.total_score }}/5</div>
+                                        <div class="text-muted">{{ percentage|floatformat:1 }}%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Review Mistakes Section -->
+            {% if wrong_answers_count > 0 %}
+            <div class="mb-4">
+                <h4 class="mb-3" style="color: #166088;">
+                    <i class="fas fa-exclamation-circle me-2"></i>Review Your Mistakes ({{ wrong_answers_count }})
+                </h4>
+                
+                {% for item in question_data %}
+                <div class="mistake-review">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h5 class="fw-bold mb-1" style="color: #343a40;">
+                                Question {{ item.question.order }}: {{ item.question.get_question_type_display }}
+                            </h5>
+                            <p class="mb-0">{{ item.question.prompt|linebreaks }}</p>
+                        </div>
+                        <span class="badge bg-danger px-2 py-1">
+                            {{ item.score_100 }}/100
+                        </span>
+                    </div>
+                    
+                    <!-- Your Incorrect Answer -->
+                    <div class="mb-2">
+                        <h6 class="fw-bold mb-2" style="color: #dc3545;">
+                            <i class="fas fa-times-circle me-2"></i>Your Answer:
+                        </h6>
+                        <div class="user-answer-box">
+                            {{ item.response.user_answer|linebreaks }}
+                        </div>
+                    </div>
+                    
+                    <!-- Correct Answer -->
+                    <div class="mb-2">
+                        <h6 class="fw-bold mb-2" style="color: #28a745;">
+                            <i class="fas fa-check-circle me-2"></i>Correct Answer:
+                        </h6>
+                        <div class="correct-answer-box">
+                            <p class="mb-0 fw-bold">{{ item.question.correct_answer }}</p>
+                            
+                            {% if item.question.acceptable_answers %}
+                            <div class="mt-2">
+                                <p class="mb-1 text-muted small">Also acceptable:</p>
+                                <ul class="mb-0 ps-3">
+                                    {% for alt_answer in item.question.acceptable_answers %}
+                                    <li class="small">{{ alt_answer }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% else %}
+            <!-- Perfect Score Message -->
+            <div class="perfect-score">
+                <div class="mb-3">
+                    <i class="fas fa-trophy fa-3x text-success"></i>
+                </div>
+                <h3 class="text-success fw-bold mb-2">Perfect Score! 🎉</h3>
+                <p class="lead mb-0">You answered all 5 questions correctly!</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% comment %} <!-- Footer Actions -->
+        <div class="card-footer bg-white border-0 pt-3">
+            <div class="text-center">
+                <a href="{% url 'writing:test_home' %}" class="btn btn-outline-primary px-4 me-3">
+                    <i class="fas fa-home me-2"></i> Back to Home
+                </a>
+                {% if listening_result %}
+                <a href="{% url 'audio_test:start_test' listening_result.test.id %}" class="btn btn-primary px-4">
+                    <i class="fas fa-redo me-2"></i> Retry Listening Test
+                </a>
+                {% endif %}
+            </div> {% endcomment %}
+        </div>
+    </div>
+</div>
+{% endblock %}

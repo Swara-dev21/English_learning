@@ -1,0 +1,458 @@
+{% extends 'writing/base.html' %}
+{% load static %}
+
+{% block title %}Question {{ question_number }} - Writing Test{% endblock %}
+
+{% block extra_css %}
+<style>
+    .writing-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .progress-container {
+        background: white;
+        border-radius: 12px;
+        padding: 15px 20px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+    
+    .progress {
+        height: 10px;
+        border-radius: 5px;
+        background-color: #e9ecef;
+        margin-top: 10px;
+    }
+    
+    .progress-bar {
+        background: linear-gradient(90deg, #4a6fa5, #166088);
+        border-radius: 5px;
+    }
+    
+    .question-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    
+    .question-header {
+        background: linear-gradient(135deg, #4a6fa5, #166088);
+        color: white;
+        padding: 20px;
+    }
+    
+    .question-body {
+        padding: 25px;
+    }
+    
+    .answer-box {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        transition: all 0.3s ease;
+        background: white;
+    }
+    
+    .answer-box:focus-within {
+        border-color: #4a6fa5;
+        box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.1);
+    }
+    
+    .answer-textarea {
+        width: 100%;
+        border: none;
+        outline: none;
+        resize: vertical;
+        min-height: 150px;
+        font-size: 18px; /* Increased font size */
+        line-height: 1.6; /* Better line height */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 10px;
+    }
+    
+    .word-counter {
+        text-align: right;
+        color: #6c757d;
+        font-size: 16px; /* Increased font size */
+        margin-top: 10px;
+        font-weight: 500;
+    }
+    
+    .hint-box {
+        background-color: #f0f7ff;
+        border: 1px solid #c3d9ff;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 15px 0;
+        font-size: 16px; /* Increased font size */
+    }
+    
+    .image-container {
+        text-align: center;
+        margin: 15px 0;
+        padding: 15px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+    
+    .writing-image {
+        max-width: 100%;
+        max-height: 250px; /* Reduced image size */
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    .audio-controls {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        margin: 15px 0;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+    
+    audio {
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .save-alert {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+        font-size: 16px; /* Increased font size */
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    /* Question text styling */
+    .question-prompt {
+        font-size: 20px; /* Increased font size */
+        font-weight: 500;
+        line-height: 1.5;
+        color: #343a40;
+        margin-bottom: 20px;
+    }
+    
+    .question-type-badge {
+        font-size: 16px; /* Increased font size */
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 20px;
+    }
+    
+    /* Button styling */
+    .btn {
+        font-size: 16px; /* Increased font size */
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    
+    /* Header text */
+    .question-header h3 {
+        font-size: 24px; /* Increased font size */
+        font-weight: 600;
+    }
+    
+    .badge {
+        font-size: 16px; /* Increased font size */
+        padding: 8px 15px;
+    }
+    
+    /* Progress text */
+    .progress-text {
+        font-size: 16px; /* Increased font size */
+        font-weight: 500;
+    }
+    
+    /* Requirements text */
+    .requirements {
+        font-size: 15px; /* Increased font size */
+        color: #6c757d;
+        margin-top: 10px;
+    }
+    
+    /* Labels */
+    h5, h6 {
+        font-weight: 600;
+    }
+    
+    h5 {
+        font-size: 18px; /* Increased font size */
+    }
+    
+    h6 {
+        font-size: 17px; /* Increased font size */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="writing-container">
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span class="progress-text" style="color: #4a6fa5;">
+                    Question {{ question_number }} of {{ total_questions }}
+                </span>
+                <span class="text-muted ms-3">
+                    <i class="fas fa-pencil-alt me-1"></i>
+                    Writing Test
+                </span>
+            </div>
+            <span class="progress-text" style="color: #166088;">
+                {{ progress_percentage }}% Complete
+            </span>
+        </div>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" 
+                 style="width: {{ progress_percentage }}%" 
+                 aria-valuenow="{{ progress_percentage }}" 
+                 aria-valuemin="0" 
+                 aria-valuemax="100">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Question Card -->
+    <div class="question-card">
+        <!-- Header -->
+        <div class="question-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-edit me-2"></i>Writing Test
+                </h3>
+                <div class="badge bg-light text-dark px-3 py-2 rounded-pill">
+                    Q{{ question_number }}/{{ total_questions }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="question-body">
+            <!-- Question Type Badge -->
+            <div class="mb-3">
+                <span class="question-type-badge badge" 
+                      style="background: linear-gradient(135deg, #ff7e5f, #ff9a8b); color: white;">
+                    <i class="fas fa-tag me-2"></i>
+                    {{ question.get_question_type_display }}
+                </span>
+            </div>
+            
+            <!-- Question Prompt -->
+            <div class="mb-3">
+                <div class="question-prompt">
+                    {{ question.prompt|linebreaks }}
+                </div>
+            </div>
+            
+            <!-- Picture for Picture Description -->
+            {% if question.question_type == 'picture_description' and question.picture_filename %}
+            <div class="image-container">
+                <h5 class="mb-2" style="color: #4a6fa5;">
+                    <i class="fas fa-image me-2"></i>Picture:
+                </h5>
+                <img src="{% static 'writing/images/' %}{{ question.picture_filename }}" 
+                     alt="Description picture" class="writing-image">
+                
+                {% if question.required_keywords %}
+                <div class="hint-box mt-2">
+                    <p class="mb-0">
+                        <i class="fas fa-lightbulb me-2" style="color: #ff7e5f;"></i>
+                        <strong>Hint:</strong> Try to include: 
+                        <strong>{{ question.required_keywords|join:", " }}</strong>
+                    </p>
+                </div>
+                {% endif %}
+                
+                <div class="requirements">
+                    <p class="mb-0">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Write {{ question.min_sentences }} sentences, 
+                        {{ question.min_words }}-{{ question.max_words }} words
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Audio for Dictation -->
+            {% if question.question_type == 'dictation' and question.audio_filename %}
+            <div class="audio-controls">
+                <h5 class="mb-2" style="color: #4a6fa5;">
+                    <i class="fas fa-volume-up me-2"></i>Listen to the audio:
+                </h5>
+                <audio controls class="w-100">
+                    <source src="{% static 'writing/audio/' %}{{ question.audio_filename }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <div class="text-center mt-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="replayAudio()">
+                        <i class="fas fa-redo me-1"></i> Replay Audio
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Answer Box -->
+            <div class="answer-box">
+                <form id="answerForm">
+                    {% csrf_token %}
+                    <textarea id="userAnswer" class="answer-textarea" 
+                              placeholder="Type your answer here..." 
+                              oninput="updateWordCount()">{{ previous_answer }}</textarea>
+                    
+                    <div class="word-counter">
+                        <span id="wordCount">0</span> words
+                    </div>
+                    
+                    <input type="hidden" name="question_id" value="{{ question.id }}">
+                </form>
+            </div>
+            
+            <!-- Save Alert (hidden by default) -->
+            <div id="saveAlert" class="alert alert-success alert-dismissible fade show d-none save-alert" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>Answer saved!</strong> Your response has been recorded.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+        
+        <!-- Footer Navigation -->
+        <div class="card-footer bg-white border-0 pt-3 pb-3">
+            <div class="d-flex justify-content-between">
+                {% if prev_question %}
+                <a href="{% url 'writing:writing_question' test.id prev_question %}" 
+                   class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i> Previous
+                </a>
+                {% else %}
+                <div></div>
+                {% endif %}
+                
+                <div>
+                    <button id="saveBtn" class="btn btn-success me-2">
+                        <i class="fas fa-save me-2"></i> Save Answer
+                    </button>
+                    
+                    {% if next_question %}
+                    <a href="{% url 'writing:writing_question' test.id next_question %}" 
+                       class="btn btn-primary">
+                        Next <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                    {% else %}
+                    <form method="post" action="{% url 'writing:submit_writing_test' test.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-flag-checkered me-2"></i> Finish Test
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+
+    const testId = '{{ test.id}}';
+    // Initialize word count
+    function updateWordCount() {
+        const textarea = document.getElementById('userAnswer');
+        const text = textarea.value.trim();
+        const words = text ? text.split(/\s+/).length : 0;
+        document.getElementById('wordCount').textContent = words;
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateWordCount();
+        
+        // Auto-save when leaving page
+        window.addEventListener('beforeunload', function(e) {
+            const textarea = document.getElementById('userAnswer');
+            if (textarea.value.trim()) {
+                saveAnswer();
+            }
+        });
+    });
+    
+    // Save answer function
+    function saveAnswer() {
+        const userAnswer = document.getElementById('userAnswer').value.trim();
+        if (!userAnswer) {
+            alert('Please write your answer before saving.');
+            return;
+        }
+        
+        const saveBtn = document.getElementById('saveBtn');
+        const originalText = saveBtn.innerHTML;
+        
+        // Disable button and show loading
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Saving...';
+        
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('user_answer', userAnswer);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        
+        // Send AJAX request
+        fetch('/writing/test/${testId}/question/${questionNumber}/save/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success alert
+                const saveAlert = document.getElementById('saveAlert');
+                saveAlert.classList.remove('d-none');
+                
+                // Update button
+                saveBtn.innerHTML = '<i class="fas fa-check me-2"></i> Saved!';
+                saveBtn.classList.remove('btn-success');
+                saveBtn.classList.add('btn-secondary');
+                
+                // Hide alert after 3 seconds
+                setTimeout(() => {
+                    saveAlert.classList.add('d-none');
+                }, 3000);
+            } else {
+                alert('Error saving answer: ' + (data.error || 'Unknown error'));
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = originalText;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving answer. Please try again.');
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText;
+        });
+    }
+    
+    // Attach save function to button
+    document.getElementById('saveBtn').addEventListener('click', saveAnswer);
+    
+    // Replay audio function
+    function replayAudio() {
+        const audioPlayer = document.querySelector('audio');
+        if (audioPlayer) {
+            audioPlayer.currentTime = 0;
+            audioPlayer.play();
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,297 @@
+{% extends 'listening/base.html' %}
+{% load static %}
+
+{% block title %}Question {{ question_number }} - Listening Test{% endblock %}
+
+{% block extra_css %}
+<style>
+    .replay-counter {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--accent-color), #ff9a8b);
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    
+    .audio-info {
+        color: var(--gray-color);
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="test-container">
+    <!-- Progress Bar -->
+    <!-- Progress Bar -->
+<div class="progress-container">
+    <div class="d-flex justify-content-between mb-2">
+        <div>
+            <span class="fw-bold" style="color: var(--primary-color);">
+                Question {{ question_number }} of {{ total_questions }}
+            </span>
+            <span class="audio-info ms-3">
+                <i class="fas fa-music me-1"></i>
+                Audio {{ question_number }}
+            </span>
+        </div>
+        <span class="fw-bold" style="color: var(--secondary-color);">
+            {{ progress_percentage }}% Complete
+        </span>
+    </div>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" 
+             style="width: {{ progress_percentage }}%" 
+             aria-valuenow="{{ progress_percentage }}" 
+             aria-valuemin="0" 
+             aria-valuemax="100">
+        </div>
+    </div>
+</div>
+    
+    <!-- Main Card -->
+    <div class="card border-0 shadow-lg">
+        <!-- Header -->
+        <div class="card-header bg-white border-0 pt-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0" style="color: var(--primary-color);">
+                    <i class="fas fa-headphones me-2"></i>Listening Test
+                </h3>
+                <div class="badge rounded-pill px-3 py-2" 
+                     style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white;">
+                    Q{{ question_number }}/{{ total_questions }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-body p-4">
+            <!-- Audio Player Section -->
+            <div class="audio-player-container">
+                <h5 class="text-center mb-4" style="color: var(--secondary-color);">
+                    <i class="fas fa-volume-up me-2"></i>Listen Carefully
+                </h5>
+                
+                <!-- Audio Wave Visualization -->
+                {% comment %} <div class="audio-wave"></div> {% endcomment %}
+                
+                <!-- Audio Controls -->
+                <div class="audio-controls">
+                    <audio id="audioPlayer" controls class="w-100">
+                        <source src="{% static 'listening/audio/' %}{{ question.audio_filename }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                    
+                    <div class="d-flex justify-content-center align-items-center mt-3">
+                        <button id="replayBtn" class="btn btn-outline-primary btn-sm px-4">
+                            <i class="fas fa-redo me-2"></i> Replay Audio
+                            <span class="replay-counter ms-2">3</span>
+                        </button>
+                        <span class="text-muted small ms-3">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Click replay to hear again
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question Section -->
+            <div class="question-section mb-4">
+                <div class="card bg-light border-0">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3" style="color: var(--secondary-color);">
+                            <i class="fas fa-question-circle me-2"></i>Your Question:
+                        </h5>
+                        <h4 class="fw-bold mb-0" style="color: var(--dark-color);">
+                            {{ question.question_text }}
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Answer Options -->
+            <div class="options-section mb-4">
+                <h5 class="mb-4" style="color: var(--secondary-color);">
+                    <b>Select One Answer:<b>
+                </h5>
+                
+                <form id="answerForm" data-question-id="{{ question.id }}">
+                    {% csrf_token %}
+                    <div class="options-list">
+                        {% for option in question.options.all %}
+                        <div class="option-item {% if selected_option == option.id %}selected{% endif %}"
+                             data-option-id="{{ option.id }}">
+                            <div class="d-flex align-items-center">
+                                <div class="checkmark">
+                                    {% if selected_option == option.id %}
+                                    <i class="fas fa-check fa-sm"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <span class="fw-bold">{{ option.text }}</span>
+                                </div>
+                                {% if selected_option == option.id %}
+                                <i class="fas fa-check-circle text-success fa-lg"></i>
+                                {% endif %}
+                            </div>
+                            <input class="form-check-input visually-hidden" type="radio" 
+                                   name="answerOption" 
+                                   value="{{ option.id }}"
+                                   {% if selected_option == option.id %}checked{% endif %}>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Save Alert -->
+            <div id="saveAlert" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>Answer saved!</strong> Your response has been recorded.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+        
+        <!-- Footer Navigation -->
+        <div class="card-footer bg-white border-0 pt-3">
+            <div class="d-flex justify-content-between">
+                {% if prev_question %}
+                <a href="{% url 'listening:test_question' test.id prev_question %}" 
+                   class="btn btn-outline-primary px-4">
+                    <i class="fas fa-arrow-left me-2"></i> Previous
+                </a>
+                {% else %}
+                <div></div>
+                {% endif %}
+                
+                <div>
+                    <button id="saveBtn" class="btn btn-success px-4 me-3">
+                        <b> Save Answer <b>
+                    </button>
+                    
+                    {% if next_question %}
+                    <a href="{% url 'listening:test_question' test.id next_question %}" 
+                       class="btn btn-primary px-4">
+                        Next Question <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                    {% else %}
+                    <form method="post" action="{% url 'listening:submit_test' test.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning px-4">
+                            <i class="fas fa-flag-checkered me-2"></i> Finish Test
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Calculate percentage for progress bar
+    const percentage = Math.round(({{ question_number }} / {{ total_questions }}) * 100);
+    
+    // Audio player controls
+    const audioPlayer = document.getElementById('audioPlayer');
+    const replayBtn = document.getElementById('replayBtn');
+    const replayCounter = replayBtn.querySelector('.replay-counter');
+    let replayCount = 3;
+    
+    // Handle replay button
+    replayBtn.addEventListener('click', function() {
+        if (replayCount > 0) {
+            audioPlayer.currentTime = 0;
+            audioPlayer.play();
+            replayCount--;
+            replayCounter.textContent = replayCount;
+            
+            if (replayCount === 0) {
+                replayBtn.disabled = true;
+                replayBtn.classList.add('disabled');
+                replayBtn.innerHTML = '<i class="fas fa-redo me-2"></i> No Replays Left';
+            }
+        }
+    });
+    
+    // Handle option selection
+    const optionItems = document.querySelectorAll('.option-item');
+    const saveBtn = document.getElementById('saveBtn');
+    const saveAlert = document.getElementById('saveAlert');
+    
+    optionItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Remove selected class from all options
+            optionItems.forEach(i => i.classList.remove('selected'));
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            
+            // Check the radio button
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            // Update checkmark
+            optionItems.forEach(i => {
+                const checkmark = i.querySelector('.checkmark');
+                checkmark.innerHTML = '';
+            });
+            this.querySelector('.checkmark').innerHTML = '<i class="fas fa-check fa-sm"></i>';
+            
+            // Enable save button
+            saveBtn.disabled = false;
+        });
+    });
+    
+    // Handle save button
+    saveBtn.addEventListener('click', function() {
+        const selectedRadio = document.querySelector('input[name="answerOption"]:checked');
+        
+        if (!selectedRadio) {
+            alert('Please select an answer first!');
+            return;
+        }
+        
+        // Change button state
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Saving...';
+        
+        // Send AJAX request
+        const formData = new FormData();
+        formData.append('option_id', selectedRadio.value);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        
+        fetch(window.location.href + 'submit/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                saveBtn.innerHTML = '<i class="fas fa-check me-2"></i> Saved!';
+                saveBtn.classList.remove('btn-success');
+                saveBtn.classList.add('btn-secondary');
+                
+                // Show success alert
+                saveAlert.classList.remove('d-none');
+                
+                // Hide alert after 3 seconds
+                setTimeout(() => {
+                    saveAlert.classList.add('d-none');
+                }, 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save me-2"></i> Save Answer';
+            alert('Error saving answer. Please try again.');
+        });
+    });
+</script>
+{% endblock %}
