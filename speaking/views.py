@@ -116,11 +116,10 @@ def word_accuracy(ref, hyp):
 def pronunciation_score(student_wav, ref_wav):
 
     snd_student = parselmouth.Sound(student_wav)
-    snd_ref = parselmouth.Sound(ref_wav)
 
     duration = snd_student.get_total_duration()
-
     intensity = snd_student.to_intensity()
+
     mean_intensity = parselmouth.praat.call(
         intensity,
         "Get mean",
@@ -128,8 +127,11 @@ def pronunciation_score(student_wav, ref_wav):
         0
     )
 
+    # Silence check
     if duration < 0.5 or mean_intensity < 40:
         return 0.0
+
+    snd_ref = parselmouth.Sound(ref_wav)
 
     pitch_student = snd_student.to_pitch()
     pitch_ref = snd_ref.to_pitch()
@@ -154,16 +156,34 @@ def pronunciation_score(student_wav, ref_wav):
 
     score = max(0, 100 - diff)
 
+    # Clamp to 100 max
+    score = min(score, 100)
+
     return round(score, 2)
 
 
 # -------------------------------------------------
-# ACCENT SCORE
+# ACCENT SCORE (FIXED SILENCE)
 # -------------------------------------------------
 
 def accent_score(student_wav, ref_wav):
 
     snd_student = parselmouth.Sound(student_wav)
+
+    duration = snd_student.get_total_duration()
+    intensity = snd_student.to_intensity()
+
+    mean_intensity = parselmouth.praat.call(
+        intensity,
+        "Get mean",
+        0,
+        0
+    )
+
+    # Silence check
+    if duration < 0.5 or mean_intensity < 40:
+        return 0.0
+
     snd_ref = parselmouth.Sound(ref_wav)
 
     pitch_student = snd_student.to_pitch()
@@ -200,6 +220,8 @@ def accent_score(student_wav, ref_wav):
 
     accent_final = (pitch_score * 0.6) + (rhythm_score * 0.4)
 
+    accent_final = min(accent_final, 100)
+
     return round(accent_final, 2)
 
 
@@ -216,11 +238,19 @@ def adjusted_pronunciation_score(ref_text, recognized_text, praat_score):
     spoken_words_count = len(spoken_words)
 
     if total_words == 0:
-        return 0
+        return 0.0
 
     completeness = spoken_words_count / total_words
 
-    return round(praat_score * completeness, 2)
+    # ✅ DO NOT allow completeness above 1
+    completeness = min(completeness, 1)
+
+    adjusted_score = praat_score * completeness
+
+    # ✅ Clamp final pronunciation to max 100
+    adjusted_score = min(adjusted_score, 100)
+
+    return round(adjusted_score, 2)
 
 
 # -------------------------------------------------
@@ -256,10 +286,7 @@ def record_question(request, q_index=0):
         audio_file = request.FILES.get("audio")
 
         if not audio_file:
-            return JsonResponse(
-                {"error": "No audio received"},
-                status=400
-            )
+            return JsonResponse({"error": "No audio received"}, status=400)
 
         ext = audio_file.name.split(".")[-1]
         filename = f"rec_{uuid.uuid4().hex}.{ext}"
@@ -291,16 +318,21 @@ def record_question(request, q_index=0):
                 "next_url": "/speaking/result/"
             })
 
-    return JsonResponse(
-        {"error": "Invalid request"},
-        status=400
-    )
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
+
+# -------------------------------------------------
+# RESULT VIEW
+# -------------------------------------------------
 
 def result_final(request):
 
     recordings = request.session.get('recordings', [])
     results = []
+
+    total_pron = 0
+    total_accent = 0
+    total_accuracy = 0
 
     for rec in recordings:
 
@@ -312,24 +344,32 @@ def result_final(request):
 
         recognized_text = transcribe_audio(wav)
 
-        text_score = word_accuracy(ref_text, recognized_text)
+        # If nothing spoken → force 0
+        if recognized_text.strip() == "":
+            text_score = 0.0
+            pron_score = 0.0
+            acc_score = 0.0
+        else:
+            text_score = word_accuracy(ref_text, recognized_text)
 
-        praat_score = pronunciation_score(wav, ref_wav)
+            praat_score = pronunciation_score(wav, ref_wav)
 
-        pron_score = adjusted_pronunciation_score(
-            ref_text,
-            recognized_text,
-            praat_score
-        )
+            pron_score = adjusted_pronunciation_score(
+                ref_text,
+                recognized_text,
+                praat_score
+            )
 
-        acc_score = accent_score(wav, ref_wav)
+            acc_score = accent_score(wav, ref_wav)
 
         final_score = round(
-            (text_score * 0.4) +
-            (pron_score * 0.4) +
-            (acc_score * 0.2),
+            (text_score + pron_score + acc_score) / 3,
             2
         )
+
+        total_pron += pron_score
+        total_accent += acc_score
+        total_accuracy += text_score
 
         results.append({
             "question": ref_text,
@@ -340,8 +380,28 @@ def result_final(request):
             "final_score": final_score
         })
 
+    count = len(results)
+
+    if count > 0:
+        avg_pronunciation = round(total_pron / count, 2)
+        avg_accent = round(total_accent / count, 2)
+        avg_accuracy = round(total_accuracy / count, 2)
+
+        overall_score = round(
+            (avg_pronunciation + avg_accent + avg_accuracy) / 3,
+            2
+        )
+    else:
+        avg_pronunciation = avg_accent = avg_accuracy = overall_score = 0
+
     return render(
         request,
         "speaking/result.html",
-        {"results": results}
+        {
+            "results": results,
+            "avg_pronunciation": avg_pronunciation,
+            "avg_accent": avg_accent,
+            "avg_accuracy": avg_accuracy,
+            "overall_score": overall_score
+        }
     )
