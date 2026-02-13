@@ -6,19 +6,23 @@ from .models import StudentProfile
 from django.contrib.auth.models import User
 
 def student_login(request):
+    """Student login view with next redirect support"""
+    next_url = request.GET.get('next')  # Get the next URL if present
+
     if request.method == 'POST':
         form = StudentLoginForm(request.POST)
         if form.is_valid():
             user = form.cleaned_data['user']
-            auth_login(request, user)  # logs in the user
+            auth_login(request, user)  # Log in the user
             messages.success(request, f"Welcome {user.username}, you are now logged in!")
-            return redirect('home_page:home')
+            # Redirect to next URL if present, otherwise to home
+            return redirect(next_url or 'home_page:home')
         else:
             messages.error(request, "Please fix the errors below")
     else:
         form = StudentLoginForm()
 
-    return render(request, 'home_page/login.html', {'form': form})
+    return render(request, 'home_page/login.html', {'form': form, 'next': next_url})
 
 def home(request):
     return render(request, 'home_page/home.html')
