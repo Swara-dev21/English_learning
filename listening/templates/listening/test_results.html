@@ -1,112 +1,355 @@
 {% extends 'listening/base.html' %}
 {% load static %}
-{% load custom_filters %}
 
 {% block title %}Test Results - Listening Test{% endblock %}
 
 {% block extra_css %}
 <style>
+    .results-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
     .score-circle {
-        width: 150px;
-        height: 150px;
+        width: 180px;
+        height: 180px;
         border-radius: 50%;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         margin: 0 auto;
-        border: 8px solid;
+        color: white;
         font-weight: bold;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        border: 8px solid white;
+        outline: 3px solid;
     }
     
-    .score-excellent { border-color: #28a745; color: #28a745; }
-    .score-good { border-color: #17a2b8; color: #17a2b8; }
-    .score-average { border-color: #ffc107; color: #ffc107; }
-    .score-poor { border-color: #dc3545; color: #dc3545; }
+    .score-circle .display-2 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
     
-    .question-review {
+    .score-circle .h4 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-top: 5px;
+        color: white;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+    
+    .score-excellent { 
+        background: linear-gradient(135deg, #28a745, #20c997);
+        outline-color: #28a745;
+    }
+    .score-good { 
+        background: linear-gradient(135deg, #17a2b8, #0dcaf0);
+        outline-color: #17a2b8;
+    }
+    .score-average { 
+        background: linear-gradient(135deg, #ffc107, #fd7e14);
+        outline-color: #ffc107;
+    }
+    .score-poor { 
+        background: linear-gradient(135deg, #dc3545, #ff6b6b);
+        outline-color: #dc3545;
+    }
+    
+    /* Questions Summary Section */
+    .questions-summary {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+    
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .summary-item {
+        text-align: center;
+        padding: 15px;
         border-radius: 10px;
+        background: #f8f9fa;
+    }
+    
+    .summary-item.correct {
+        background: rgba(40, 167, 69, 0.1);
+        border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+    
+    .summary-item.incorrect {
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+    
+    .summary-q {
+        font-weight: 700;
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+    
+    .summary-status {
+        font-size: 14px;
+        font-weight: 600;
+    }
+    
+    .summary-status.correct {
+        color: #28a745;
+    }
+    
+    .summary-status.incorrect {
+        color: #dc3545;
+    }
+    
+    /* Detailed Review Section */
+    .detailed-review {
+        margin-top: 30px;
+    }
+    
+    .review-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
         margin-bottom: 20px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        border-left: 5px solid;
+        transition: transform 0.2s ease;
+    }
+    
+    .review-card:hover {
+        transform: translateX(5px);
+    }
+    
+    .review-card.correct {
+        border-left-color: #28a745;
+        background: white;
+    }
+    
+    .review-card.incorrect {
+        border-left-color: #dc3545;
+        background: white;
+    }
+    
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .review-question {
+        font-size: 18px;
+        font-weight: 700;
+        color: #343a40;
+        margin-bottom: 5px;
+    }
+    
+    .review-passage {
+        color: #6c757d;
+        font-size: 15px;
+        font-style: italic;
+        margin-bottom: 15px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .answer-comparison {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 10px;
+    }
+    
+    .your-answer {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        padding: 12px;
+        background: rgba(220, 53, 69, 0.05);
+        border-radius: 8px;
+    }
+    
+    .correct-answer {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        padding: 12px;
+        background: rgba(40, 167, 69, 0.05);
+        border-radius: 8px;
+    }
+    
+    .answer-label {
+        font-weight: 600;
+        min-width: 100px;
+    }
+    
+    .answer-text {
+        font-weight: 500;
+    }
+    
+    .badge-correct {
+        background-color: #28a745;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    
+    .badge-incorrect {
+        background-color: #dc3545;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    
+    .audio-mini {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .audio-mini audio {
+        height: 40px;
+        width: 250px;
+    }
+    
+    .level-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
         padding: 20px;
+        border-radius: 12px;
+        margin-top: 20px;
     }
     
-    .question-review.correct {
-        background-color: rgba(40, 167, 69, 0.1);
-        border-left: 5px solid #28a745;
+    /* Font size improvements */
+    body {
+        font-size: 16px;
     }
     
-    .question-review.incorrect {
-        background-color: rgba(220, 53, 69, 0.1);
-        border-left: 5px solid #dc3545;
+    h2 {
+        font-size: 28px;
+        font-weight: 600;
     }
     
-    .transcript-box {
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        padding: 20px;
-        border-left: 5px solid #6c757d;
+    h3 {
+        font-size: 24px;
+        font-weight: 600;
+    }
+    
+    h4 {
+        font-size: 20px;
+        font-weight: 600;
+    }
+    
+    .btn {
+        font-size: 16px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+        .summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .review-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .audio-mini audio {
+            width: 100%;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-10 col-lg-8">
-        <div class="card shadow">
-            <!-- Header -->
-            <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">
-                    <i class="fas fa-chart-bar me-2"></i>Test Results
-                </h2>
-            </div>
-            
-            <div class="card-body">
-                <!-- Score Summary -->
-                                <!-- Score Summary -->
-                <div class="text-center mb-5">
-                    {% if percentage >= 80 %}
-                    <div class="score-circle score-excellent mb-3">
-    <div class="display-2 fw-bold text-white">{{ result.score }}</div>
-    <div class="h4 fw-bold text-white">/ {{ result.total_questions }}</div>
-</div>
-                    <h2 class="text-success fw-bold mb-3">Excellent! 🎉</h2>
-                    {% elif percentage >= 60 %}
-                    <div class="score-circle score-good mb-3">
-                        <div class="display-2 fw-bold">{{ result.score }}</div>
-                        <div class="h4 fw-bold">/ {{ result.total_questions }}</div>
-                    </div>
-                    <h2 class="text-info fw-bold mb-3">Good Job! 👍</h2>
-                    {% elif percentage >= 40 %}
-                    <div class="score-circle score-average mb-3">
-                        <div class="display-2 fw-bold">{{ result.score }}</div>
-                        <div class="h4 fw-bold">/ {{ result.total_questions }}</div>
-                    </div>
-                    <h2 class="text-warning fw-bold mb-3">Keep Practicing! 💪</h2>
+<div class="results-container">
+    <div class="card shadow-lg border-0">
+        <!-- Header -->
+        <div class="card-header text-white" style="background: linear-gradient(135deg, #4a6fa5, #166088);">
+            <h2 class="mb-0">
+                <i class="fas fa-chart-bar me-2"></i>Listening Test Results
+            </h2>
+        </div>
+        
+        <div class="card-body p-4">
+            <!-- Score Summary -->
+            <div class="text-center mb-5">
+                {% if percentage >= 80 %}
+                <div class="score-circle score-excellent mb-3">
+                    <div class="display-2 fw-bold">{{ result.score }}</div>
+                    <div class="h4 fw-bold">/ {{ result.total_questions }}</div>
+                </div>
+                <h3 class="text-success fw-bold mb-3">
+                    {% if result.score == result.total_questions %}
+                    Perfect Score! 🎉
+                    {% elif result.score >= 4 %}
+                    Excellent! 🌟
                     {% else %}
-                    <div class="score-circle score-poor mb-3">
-                        <div class="display-2 fw-bold">{{ result.score }}</div>
-                        <div class="h4 fw-bold">/ {{ result.total_questions }}</div>
-                    </div>
-                    <h2 class="text-danger fw-bold mb-3">Needs Improvement 📚</h2>
+                    Good Job! 👍
                     {% endif %}
-                    
-                    <h3 class="mb-4 fw-bold" style="color: var(--primary-color);">
-                        {{ percentage|floatformat:1 }}% Correct
-                    </h3>
-                    
-                    <div class="row justify-content-center">
-                        <div class="col-md-6">
-                            <div class="card bg-light border-0 shadow-sm">
-                                <div class="card-body">
-                                    <div class="row text-center">
-                                        <div class="col-6 border-end">
-                                            <div class="display-6 fw-bold text-success">{{ result.score }}</div>
-                                            <div class="text-muted">Correct</div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="display-6 fw-bold text-danger">{{ result.total_questions|add:"-"|add:result.score }}</div>
-                                            <div class="text-muted">Incorrect</div>
-                                        </div>
+                </h3>
+                {% elif percentage >= 60 %}
+                <div class="score-circle score-good mb-3">
+                    <div class="display-2 fw-bold">{{ result.score }}</div>
+                    <div class="h4 fw-bold">/ {{ result.total_questions }}</div>
+                </div>
+                <h3 class="text-info fw-bold mb-3">Good Effort! 💪</h3>
+                {% elif percentage >= 40 %}
+                <div class="score-circle score-average mb-3">
+                    <div class="display-2 fw-bold">{{ result.score }}</div>
+                    <div class="h4 fw-bold">/ {{ result.total_questions }}</div>
+                </div>
+                <h3 class="text-warning fw-bold mb-3">Keep Practicing! 📚</h3>
+                {% else %}
+                <div class="score-circle score-poor mb-3">
+                    <div class="display-2 fw-bold">{{ result.score }}</div>
+                    <div class="h4 fw-bold">/ {{ result.total_questions }}</div>
+                </div>
+                <h3 class="text-danger fw-bold mb-3">
+                    {% if result.score <= 2 %}
+                    Focus on reading comprehension practice
+                    {% else %}
+                    Needs Improvement 🔄
+                    {% endif %}
+                </h3>
+                {% endif %}
+                
+                <h3 class="mb-4 fw-bold" style="color: #4a6fa5;">
+                    {{ percentage|floatformat:1 }}% Correct
+                </h3>
+                
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-6">
+                        <div class="card bg-light border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-6 border-end">
+                                        <div class="h4 fw-bold text-success">{{ result.score }}</div>
+                                        <div class="text-muted">Correct</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="h4 fw-bold text-danger">{{ result.total_questions|add:"-"|add:result.score }}</div>
+                                        <div class="text-muted">Incorrect</div>
                                     </div>
                                 </div>
                             </div>
@@ -114,94 +357,147 @@
                     </div>
                 </div>
                 
-                <!-- Detailed Review -->
-                <h4 class="mb-4">
-                    <i class="fas fa-clipboard-check me-2"></i>Detailed Review
+                {% if result.level %}
+                <div class="level-card">
+                    <h4 class="text-white mb-2">Level: {{ result.level }}</h4>
+                    <p class="text-white-50 mb-0">{{ result.feedback }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- QUESTIONS SUMMARY SECTION - Like Reading Test -->
+            <div class="questions-summary">
+                <h4 class="mb-3" style="color: #166088;">
+                    <i class="fas fa-list-check me-2"></i>Questions Summary
                 </h4>
                 
-                {% for question in questions %}
-                {% with response=responses_by_question|get_item:question.order %}
-                <div class="question-review {% if response and response.selected_option.is_correct %}correct{% else %}incorrect{% endif %}">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="mb-0">
-                            Question {{ question.order }}: {{ question.question_text }}
-                        </h5>
-                        <span class="badge {% if response and response.selected_option.is_correct %}bg-success{% else %}bg-danger{% endif %}">
-                            {% if response and response.selected_option.is_correct %}Correct{% else %}Incorrect{% endif %}
-                        </span>
+                <div class="summary-grid">
+                    {% for item in question_data %}
+                    <div class="summary-item {% if item.is_correct %}correct{% else %}incorrect{% endif %}">
+                        <div class="summary-q">Q{{ item.question.order }}</div>
+                        <div class="summary-status {% if item.is_correct %}correct{% else %}incorrect{% endif %}">
+                            {% if item.is_correct %}✓ Correct{% else %}✗ Incorrect{% endif %}
+                        </div>
                     </div>
-                    
-                    <!-- Audio Player -->
-                    <div class="mb-3">
-                        <audio controls class="w-100">
-                            <source src="{% static 'audio_test/audio/' %}{{ question.audio_filename }}" type="audio/mpeg">
-                        </audio>
-                    </div>
-                    
-                    <!-- User's Answer -->
-                    <div class="mb-2">
-                        <strong>Your answer:</strong>
-                        <span class="ms-2">
-                            {% if response %}
-                                {{ response.selected_option.text }}
-                                {% if not response.selected_option.is_correct %}
-                                <span class="text-danger ms-2">
-                                    <i class="fas fa-times"></i>
-                                </span>
-                                {% endif %}
-                            {% else %}
-                                <span class="text-danger">Not answered</span>
-                            {% endif %}
-                        </span>
-                    </div>
-                    
-                    <!-- Correct Answer -->
-                    {% if response and not response.selected_option.is_correct %}
-                    <div class="mb-2">
-                        <strong>Correct answer:</strong>
-                        <span class="ms-2 text-success">
-                            {% for option in question.options.all %}
-                                {% if option.is_correct %}
-                                    {{ option.text }}
-                                    <span class="ms-2">
-                                        <i class="fas fa-check"></i>
-                                    </span>
-                                {% endif %}
-                            {% endfor %}
-                        </span>
-                    </div>
-                    {% endif %}
-                    
-                    <!-- Explanation -->
-                    {% if question.explanation %}
-                    <div class="alert alert-info mt-2">
-                        <i class="fas fa-lightbulb me-2"></i>
-                        <strong>Explanation:</strong> {{ question.explanation }}
-                    </div>
-                    {% endif %}
-                </div>
-                {% endwith %}
-                {% endfor %}
-                
-                <!-- Transcript Section -->
-            
-            <!-- Footer Actions -->
-                        <!-- Footer Actions -->
-                        <!-- Footer Actions -->
-            <div class="card-footer">
-                <div class="d-flex justify-content-between">
-                    <a href="{% url 'listening:test_home' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-home me-1"></i> Back to Home
-                    </a>
-                     <div>
-                        <!-- Add this button -->
-                        <a href="{% url 'start_speaking_test' %}" 
-                           class="btn btn-primary me-2">
-                            <i class="fas fa-arrow-right me-1"></i> Continue to Speaking Test
-                        </a>
-                        <!-- Keep existing buttons if needed -->
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
+            
+            <!-- DETAILED REVIEW SECTION - Only show wrong answers with corrections -->
+            <div class="detailed-review">
+                <h4 class="mb-4" style="color: #166088;">
+                    <i class="fas fa-clipboard-list me-2"></i>Detailed Review
+                </h4>
+                
+                {% for item in question_data %}
+                    {% if not item.is_correct %}
+                    <!-- Only show INCORRECT answers -->
+                    <div class="review-card incorrect">
+                        <div class="review-header">
+                            <div>
+                                <h5 class="review-question">
+                                    Question {{ item.question.order }}: {{ item.question.question_text }}
+                                </h5>
+                                <span class="badge-incorrect">Incorrect</span>
+                            </div>
+                            
+                            <!-- Mini audio player -->
+                            <div class="audio-mini">
+                                <audio controls>
+                                    <source src="{% static 'listening/audio/' %}{{ item.question.audio_filename }}" type="audio/mpeg">
+                                </audio>
+                            </div>
+                        </div>
+                        
+                        <!-- Transcript of what was said -->
+                        <div class="review-passage">
+                            <i class="fas fa-quote-left me-1 text-muted"></i>
+                            {{ item.question.transcript }}
+                            <i class="fas fa-quote-right ms-1 text-muted"></i>
+                        </div>
+                        
+                        <!-- Answer Comparison - Your Answer vs Correct Answer -->
+                        <div class="answer-comparison">
+                            <div class="your-answer">
+                                <span class="answer-label text-danger">
+                                    <i class="fas fa-times-circle me-1"></i>Your answer:
+                                </span>
+                                <span class="answer-text">
+                                    {% if item.response %}
+                                        {{ item.response.selected_option.text }}
+                                    {% else %}
+                                        Not answered
+                                    {% endif %}
+                                </span>
+                            </div>
+                            
+                            <div class="correct-answer">
+                                <span class="answer-label text-success">
+                                    <i class="fas fa-check-circle me-1"></i>Correct answer:
+                                </span>
+                                <span class="answer-text fw-bold">
+                                    {% for option in item.question.options.all %}
+                                        {% if option.is_correct %}
+                                            {{ option.text }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% empty %}
+                    <!-- If no incorrect answers -->
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <i class="fas fa-trophy fa-4x text-success"></i>
+                        </div>
+                        <h4 class="text-success fw-bold mb-3">Perfect Score! 🎉</h4>
+                        <p class="text-muted">Congratulations! You answered all questions correctly.</p>
+                    </div>
+                {% endfor %}
+                
+                <!-- Show CORRECT answers summary (optional, without audio) -->
+                {% with correct_count=0 %}
+                    {% for item in question_data %}
+                        {% if item.is_correct %}
+                            {% with correct_count=correct_count|add:1 %}{% endwith %}
+                        {% endif %}
+                    {% endfor %}
+                {% endwith %}
+                
+                {% if correct_count > 0 and incorrect_count > 0 %}
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h5 class="mb-3" style="color: #28a745;">
+                        <i class="fas fa-check-circle me-2"></i>Correct Answers
+                    </h5>
+                    <div class="row">
+                        {% for item in question_data %}
+                            {% if item.is_correct %}
+                            <div class="col-md-6 mb-2">
+                                <span class="fw-bold">Q{{ item.question.order }}:</span>
+                                <span class="text-success">{{ item.response.selected_option.text }}</span>
+                                <i class="fas fa-check text-success ms-2"></i>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Footer Actions -->
+        <div class="card-footer bg-white border-0 pt-4">
+            <div class="text-center">
+                <a href="{% url 'listening:test_home' %}" class="btn btn-outline-primary px-4 me-3">
+                    <i class="fas fa-home me-2"></i> Back to Home
+                </a>
+                <a href="{% url 'start_speaking_test' %}" class="btn btn-primary px-4">
+                    <i class="fas fa-arrow-right me-2"></i> Continue to Speaking Test
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
-
