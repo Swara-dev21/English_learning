@@ -5,11 +5,8 @@ from . import views
 app_name = 'writing'
 
 urlpatterns = [
-    # Redirect root to first test or admin will create tests
-    path('', lambda request: redirect('admin:index'), name='home'),
-    
     # Start writing test directly
-    path('start/<int:test_id>/', views.start_writing_test, name='start_writing_test'),
+    path('/start/<int:test_id>/', views.start_writing_test, name='start_writing_test'),
     
     # Writing Test Pages
     path('test/<int:test_id>/', views.writing_test_home, name='writing_test_home'),
