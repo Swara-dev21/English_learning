@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Test, Question
+from .models import Test, Question,ReadingUserResponse
 
 # Inline for showing Questions within Test in admin
 class QuestionInline(admin.TabularInline):
@@ -22,3 +22,9 @@ class QuestionAdmin(admin.ModelAdmin):
     list_display = ('question_text', 'test', 'correct_option')
     list_filter = ('test', 'correct_option')
     search_fields = ('question_text',)
+
+
+@admin.register(ReadingUserResponse)
+class ReadingUserResponseAdmin(admin.ModelAdmin):
+    list_display = ['session_key', 'question', 'selected_option', 'created_at']
+    list_filter = ['question__test']
