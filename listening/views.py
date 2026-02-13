@@ -134,7 +134,7 @@ def submit_test(request, test_id):
     return redirect('listening:test_results', result_id=test_result.id)
 
 def test_results(request, result_id):
-    """Display test results"""
+    """Display listening test results"""
     result = get_object_or_404(TestResult, id=result_id)
     
     # Get all responses for this test
@@ -143,19 +143,57 @@ def test_results(request, result_id):
         question__test=result.test
     ).select_related('question', 'selected_option')
     
-    # Create a dictionary of responses by question ORDER (not ID)
-    responses_by_question = {}
-    for r in responses:
-        responses_by_question[r.question.order] = r
+    # Create a dictionary of responses by question order
+    responses_by_question = {r.question.order: r for r in responses}
     
-    # Get all questions with their correct answers
+    # Get all questions
     questions = AudioQuestion.objects.filter(test=result.test).order_by('order')
+    
+    # Prepare question data for template
+    question_data = []
+    correct_count = 0
+    incorrect_count = 0
+    
+    for question in questions:
+        response = responses_by_question.get(question.order)
+        is_correct = False
+        
+        if response and response.selected_option.is_correct:
+            is_correct = True
+            correct_count += 1
+        else:
+            incorrect_count += 1
+        
+        question_data.append({
+            'question': question,
+            'response': response,
+            'has_response': response is not None,
+            'is_correct': is_correct,
+        })
+    
+    # Calculate percentage
+    percentage = (result.score / result.total_questions * 100) if result.total_questions > 0 else 0
+    
+    # Determine level and feedback based on score
+    if result.score <= 2:
+        level = "Beginner"
+        feedback = "Focus on listening comprehension practice"
+    elif result.score <= 4:
+        level = "Intermediate"
+        feedback = "Good understanding, keep practicing"
+    else:
+        level = "Advanced"
+        feedback = "Excellent listening skills!"
     
     context = {
         'result': result,
         'questions': questions,
-        'responses_by_question': responses_by_question,
-        'percentage': result.percentage(),
+        'question_data': question_data,
+        'percentage': percentage,
+        'correct_count': correct_count,
+        'incorrect_count': incorrect_count,
+        'level': level,
+        'feedback': feedback,
     }
     
     return render(request, 'listening/test_results.html', context)

@@ -182,7 +182,7 @@
                     <form method="post" action="{% url 'listening:submit_test' test.id %}" class="d-inline">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-warning px-4">
-                            <i class="fas fa-flag-checkered me-2"></i> Finish Test
+                            <i class="fas fa-flag-checkered me-2"></i> Submit test
                         </button>
                     </form>
                     {% endif %}
@@ -195,103 +195,199 @@
 
 {% block extra_js %}
 <script>
-    // Calculate percentage for progress bar
-    const percentage = Math.round(({{ question_number }} / {{ total_questions }}) * 100);
+    // ============================================
+    // LISTENING TEST - AUTO SAVE (No Auto Advance)
+    // ============================================
     
-    // Audio player controls
-    const audioPlayer = document.getElementById('audioPlayer');
-    const replayBtn = document.getElementById('replayBtn');
-    const replayCounter = replayBtn.querySelector('.replay-counter');
-    let replayCount = 3;
-    
-    // Handle replay button
-    replayBtn.addEventListener('click', function() {
-        if (replayCount > 0) {
-            audioPlayer.currentTime = 0;
-            audioPlayer.play();
-            replayCount--;
-            replayCounter.textContent = replayCount;
+    (function() {
+        "use strict";
+        
+        // ----- PROGRESS BAR -----
+        const percentage = Math.round(({{ question_number }} / {{ total_questions }}) * 100);
+        
+        // ----- AUDIO PLAYER -----
+        const audioPlayer = document.getElementById('audioPlayer');
+        const replayBtn = document.getElementById('replayBtn');
+        let replayCount = 3;
+        
+        if (replayBtn) {
+            const replayCounter = replayBtn.querySelector('.replay-counter');
             
-            if (replayCount === 0) {
-                replayBtn.disabled = true;
-                replayBtn.classList.add('disabled');
-                replayBtn.innerHTML = '<i class="fas fa-redo me-2"></i> No Replays Left';
-            }
-        }
-    });
-    
-    // Handle option selection
-    const optionItems = document.querySelectorAll('.option-item');
-    const saveBtn = document.getElementById('saveBtn');
-    const saveAlert = document.getElementById('saveAlert');
-    
-    optionItems.forEach(item => {
-        item.addEventListener('click', function() {
-            // Remove selected class from all options
-            optionItems.forEach(i => i.classList.remove('selected'));
-            // Add selected class to clicked option
-            this.classList.add('selected');
-            
-            // Check the radio button
-            const radio = this.querySelector('input[type="radio"]');
-            radio.checked = true;
-            
-            // Update checkmark
-            optionItems.forEach(i => {
-                const checkmark = i.querySelector('.checkmark');
-                checkmark.innerHTML = '';
+            replayBtn.addEventListener('click', function() {
+                if (replayCount > 0) {
+                    audioPlayer.currentTime = 0;
+                    audioPlayer.play();
+                    replayCount--;
+                    if (replayCounter) replayCounter.textContent = replayCount;
+                    
+                    if (replayCount === 0) {
+                        replayBtn.disabled = true;
+                        replayBtn.classList.add('disabled');
+                        replayBtn.innerHTML = '<i class="fas fa-redo me-2"></i> No Replays Left';
+                    }
+                }
             });
-            this.querySelector('.checkmark').innerHTML = '<i class="fas fa-check fa-sm"></i>';
-            
-            // Enable save button
-            saveBtn.disabled = false;
-        });
-    });
-    
-    // Handle save button
-    saveBtn.addEventListener('click', function() {
-        const selectedRadio = document.querySelector('input[name="answerOption"]:checked');
-        
-        if (!selectedRadio) {
-            alert('Please select an answer first!');
-            return;
         }
         
-        // Change button state
-        saveBtn.disabled = true;
-        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Saving...';
+        // ----- AUTO-SAVE FUNCTION -----
+        function saveAnswer(optionId, callback) {
+            const formData = new FormData();
+            formData.append('option_id', optionId);
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            fetch(window.location.href + 'submit/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('✅ Answer saved successfully');
+                    
+                    // Show success alert briefly
+                    const saveAlert = document.getElementById('saveAlert');
+                    if (saveAlert) {
+                        saveAlert.classList.remove('d-none');
+                        saveAlert.innerHTML = '<i class="fas fa-check-circle me-2"></i> Answer saved! <button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+                        
+                        setTimeout(() => {
+                            saveAlert.classList.add('d-none');
+                        }, 2000);
+                    }
+                    
+                    if (callback) callback(true);
+                } else {
+                    console.error('❌ Error saving answer');
+                    if (callback) callback(false);
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error:', error);
+                if (callback) callback(false);
+            });
+        }
         
-        // Send AJAX request
-        const formData = new FormData();
-        formData.append('option_id', selectedRadio.value);
-        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
-        
-        fetch(window.location.href + 'submit/', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                saveBtn.innerHTML = '<i class="fas fa-check me-2"></i> Saved!';
-                saveBtn.classList.remove('btn-success');
-                saveBtn.classList.add('btn-secondary');
-                
-                // Show success alert
-                saveAlert.classList.remove('d-none');
-                
-                // Hide alert after 3 seconds
-                setTimeout(() => {
-                    saveAlert.classList.add('d-none');
-                }, 3000);
+        // ----- ENABLE/DISABLE NEXT BUTTON -----
+        function updateNextButtonState() {
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const selectedRadio = document.querySelector('input[name="answerOption"]:checked');
+            
+            if (nextBtn) {
+                if (selectedRadio) {
+                    nextBtn.classList.remove('disabled');
+                    nextBtn.style.opacity = '1';
+                    nextBtn.style.pointerEvents = 'auto';
+                } else {
+                    nextBtn.classList.add('disabled');
+                    nextBtn.style.opacity = '0.6';
+                    nextBtn.style.pointerEvents = 'none';
+                }
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            saveBtn.disabled = false;
-            saveBtn.innerHTML = '<i class="fas fa-save me-2"></i> Save Answer';
-            alert('Error saving answer. Please try again.');
+            
+            if (submitBtn) {
+                if (selectedRadio) {
+                    submitBtn.classList.remove('disabled');
+                    submitBtn.disabled = false;
+                } else {
+                    submitBtn.classList.add('disabled');
+                    submitBtn.disabled = true;
+                }
+            }
+        }
+        
+        // ----- HANDLE OPTION SELECTION -----
+        const optionItems = document.querySelectorAll('.option-item');
+        
+        optionItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Remove selected class from all options
+                optionItems.forEach(i => i.classList.remove('selected'));
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                
+                // Check the radio button
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                // Update checkmark
+                optionItems.forEach(i => {
+                    const checkmark = i.querySelector('.checkmark');
+                    if (checkmark) checkmark.innerHTML = '';
+                });
+                
+                const selectedCheckmark = this.querySelector('.checkmark');
+                if (selectedCheckmark) {
+                    selectedCheckmark.innerHTML = '<i class="fas fa-check fa-sm"></i>';
+                }
+                
+                // Update Next button state (ENABLE IT)
+                updateNextButtonState();
+                
+                // Get selected option value
+                const selectedOption = radio.value;
+                
+                // AUTO-SAVE the answer (NO AUTO-ADVANCE)
+                saveAnswer(selectedOption, function(success) {
+                    if (success) {
+                        console.log('Answer auto-saved successfully');
+                    }
+                });
+            });
         });
-    });
+        
+        // ----- HANDLE NEXT BUTTON CLICK -----
+        const nextBtn = document.getElementById('nextBtn');
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const selectedRadio = document.querySelector('input[name="answerOption"]:checked');
+                
+                if (!selectedRadio) {
+                    alert('Please select an answer first!');
+                    return;
+                }
+                
+                // Navigate to next question (MANUAL ADVANCE)
+                window.location.href = this.href;
+            });
+        }
+        
+        // ----- HANDLE SUBMIT BUTTON (LAST QUESTION) -----
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function(e) {
+                const selectedRadio = document.querySelector('input[name="answerOption"]:checked');
+                
+                if (!selectedRadio) {
+                    e.preventDefault();
+                    alert('Please select an answer before submitting!');
+                    return;
+                }
+            });
+        }
+        
+        // ----- INITIAL SETUP -----
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-play audio
+            if (audioPlayer) {
+                audioPlayer.play().catch(e => {
+                    console.log("Autoplay prevented. User needs to interact first.");
+                });
+            }
+            
+            // Update Next button state
+            updateNextButtonState();
+            
+            // Hide save button completely
+            const saveBtn = document.getElementById('saveBtn');
+            if (saveBtn) {
+                saveBtn.style.display = 'none';
+            }
+        });
+        
+    })();
 </script>
 {% endblock %}
