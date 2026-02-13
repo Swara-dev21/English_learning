@@ -144,6 +144,7 @@
         .instructions h2 i {
             background: linear-gradient(135deg, #3b82f6, #6366f1);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             font-size: 2rem;
         }
@@ -515,7 +516,7 @@
                 <!-- Step 1: Instructions -->
                 <div class="section-card" id="step1">
                     <div class="step-indicator">
-                        <i class="fas fa-flag"></i> Step 1 of {{ total_steps|add:"0" }}
+                        <i class="fas fa-flag"></i> Step 1 of <span id="totalStepsDisplay"></span>
                     </div>
                     <div class="instructions">
                         <h2>
@@ -549,7 +550,7 @@
                         <!-- Navigation -->
                         <div class="navigation-buttons">
                             <div></div> <!-- Empty div for spacing -->
-                            <button class="nav-btn btn-next" onclick="nextStep(1)">
+                            <button class="nav-btn btn-next" id="startReadingBtn">
                                 Start Reading <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
@@ -559,7 +560,7 @@
                 <!-- Step 2: Passage -->
                 <div class="section-card" id="step2" style="display: none;">
                     <div class="step-indicator">
-                        <i class="fas fa-book"></i> Step 2 of {{ total_steps|add:"0" }}
+                        <i class="fas fa-book"></i> Step 2 of <span id="totalStepsDisplay2"></span>
                     </div>
                     <div class="passage">
                         <h2>
@@ -572,10 +573,10 @@
                         
                         <!-- Navigation -->
                         <div class="navigation-buttons">
-                            <button class="nav-btn btn-prev" onclick="prevStep(2)">
+                            <button class="nav-btn btn-prev" id="backToInstructionsBtn">
                                 <i class="fas fa-arrow-left"></i> Back
                             </button>
-                            <button class="nav-btn btn-next" onclick="nextStep(2)">
+                            <button class="nav-btn btn-next" id="startQuestionsBtn">
                                 Start Questions <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
@@ -602,7 +603,7 @@
                         
                         <div class="options-container">
                             <div class="option">
-                                <input type="radio" id="q{{ question.id }}_1" name="q{{ question.id }}" value="1" onchange="updateProgress()">
+                                <input type="radio" id="q{{ question.id }}_1" name="q{{ question.id }}" value="1">
                                 <label class="option-label" for="q{{ question.id }}_1">
                                     <div class="option-letter">A</div>
                                     <div class="option-text">{{ question.option1 }}</div>
@@ -610,7 +611,7 @@
                             </div>
                             
                             <div class="option">
-                                <input type="radio" id="q{{ question.id }}_2" name="q{{ question.id }}" value="2" onchange="updateProgress()">
+                                <input type="radio" id="q{{ question.id }}_2" name="q{{ question.id }}" value="2">
                                 <label class="option-label" for="q{{ question.id }}_2">
                                     <div class="option-letter">B</div>
                                     <div class="option-text">{{ question.option2 }}</div>
@@ -619,7 +620,7 @@
                             
                             {% if question.option3 %}
                             <div class="option">
-                                <input type="radio" id="q{{ question.id }}_3" name="q{{ question.id }}" value="3" onchange="updateProgress()">
+                                <input type="radio" id="q{{ question.id }}_3" name="q{{ question.id }}" value="3">
                                 <label class="option-label" for="q{{ question.id }}_3">
                                     <div class="option-letter">C</div>
                                     <div class="option-text">{{ question.option3 }}</div>
@@ -629,7 +630,7 @@
                             
                             {% if question.option4 %}
                             <div class="option">
-                                <input type="radio" id="q{{ question.id }}_4" name="q{{ question.id }}" value="4" onchange="updateProgress()">
+                                <input type="radio" id="q{{ question.id }}_4" name="q{{ question.id }}" value="4">
                                 <label class="option-label" for="q{{ question.id }}_4">
                                     <div class="option-letter">D</div>
                                     <div class="option-text">{{ question.option4 }}</div>
@@ -640,16 +641,16 @@
                         
                         <!-- Navigation -->
                         <div class="navigation-buttons">
-                            <button type="button" class="nav-btn btn-prev" onclick="prevStep({{ forloop.counter|add:2 }})">
+                            <button type="button" class="nav-btn btn-prev" id="prevBtn{{ forloop.counter|add:2 }}">
                                 <i class="fas fa-arrow-left"></i> Previous
                             </button>
                             
                             {% if forloop.last %}
-                            <button type="submit" class="nav-btn btn-submit">
+                            <button type="submit" class="nav-btn btn-submit" id="submitTestBtn">
                                 <i class="fas fa-paper-plane"></i> Submit Test
                             </button>
                             {% else %}
-                            <button type="button" class="nav-btn btn-next" onclick="nextStep({{ forloop.counter|add:2 }})">
+                            <button type="button" class="nav-btn btn-next" id="nextBtn{{ forloop.counter|add:2 }}">
                                 Next Question <i class="fas fa-arrow-right"></i>
                             </button>
                             {% endif %}
@@ -662,13 +663,26 @@
     </div>
 
     <script>
-        // Calculate total steps
-        const totalSteps = {{ questions|length }} + 2;
+        // === ALL DJANGO VARIABLES AT TOP ===
+        const totalQuestions = parseInt('{{ questions|length }}');
+        const totalSteps = totalQuestions + 2;
+        const testId = '{{ test.id }}';
         
-        // Current step tracking
+        // === JAVASCRIPT VARIABLES ===
         let currentStep = 1;
+        let timeLeft = 5 * 60; // 5 minutes in seconds
+        const timerElement = document.getElementById('timer');
+        let timer;
         
-        // Step navigation
+        // === UPDATE STEP INDICATORS ===
+        function updateStepIndicators() {
+            const totalStepsElements = document.querySelectorAll('#totalStepsDisplay, #totalStepsDisplay2');
+            totalStepsElements.forEach(el => {
+                if (el) el.textContent = totalSteps;
+            });
+        }
+        
+        // === STEP NAVIGATION ===
         function showStep(stepNumber) {
             // Hide all steps
             for (let i = 1; i <= totalSteps; i++) {
@@ -685,27 +699,29 @@
             currentStep = stepNumber;
             
             // Update progress bar
-            const progress = ((stepNumber - 1) / (totalSteps - 1)) * 100;
-            document.getElementById('progressBar').style.width = `${progress}%`;
-        }
-        
-        function nextStep(current) {
-            if (current < totalSteps) {
-                showStep(current + 1);
+            const progress = totalSteps > 1 ? ((stepNumber - 1) / (totalSteps - 1)) * 100 : 0;
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
             }
         }
         
-        function prevStep(current) {
-            if (current > 1) {
-                showStep(current - 1);
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                showStep(currentStep + 1);
             }
         }
         
-        // Timer - 5 minutes
-        let timeLeft = 5 * 60; // 5 minutes in seconds
-        const timerElement = document.getElementById('timer');
+        function prevStep() {
+            if (currentStep > 1) {
+                showStep(currentStep - 1);
+            }
+        }
         
+        // === TIMER FUNCTIONS ===
         function updateTimer() {
+            if (!timerElement) return;
+            
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
             timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
@@ -713,49 +729,43 @@
             // Change color when less than 1 minute
             if (timeLeft <= 60) {
                 timerElement.style.color = '#fee2e2';
-                timerElement.parentElement.style.background = 'rgba(239, 68, 68, 0.3)';
-                timerElement.parentElement.style.border = '1px solid rgba(239, 68, 68, 0.5)';
+                if (timerElement.parentElement) {
+                    timerElement.parentElement.style.background = 'rgba(239, 68, 68, 0.3)';
+                    timerElement.parentElement.style.border = '1px solid rgba(239, 68, 68, 0.5)';
+                }
             }
             
             if (timeLeft <= 0) {
                 alert('Time is up! Submitting your test...');
-                document.getElementById('testForm').submit();
+                const testForm = document.getElementById('testForm');
+                if (testForm) testForm.submit();
             }
             timeLeft--;
         }
         
-        // Start timer
-        const timer = setInterval(updateTimer, 1000);
-        
-        // Stop timer on form submit
-        document.getElementById('testForm').addEventListener('submit', function() {
-            clearInterval(timer);
-        });
-        
-        // Progress tracking for answered questions
+        // === PROGRESS TRACKING ===
         function updateProgress() {
             const radios = document.querySelectorAll('input[type="radio"]:checked');
-            const totalQuestions = {{ questions|length }};
             const answered = radios.length;
             
             // Progress is based on answered questions
-            const answerProgress = (answered / totalQuestions) * 100;
+            const answerProgress = totalQuestions ? (answered / totalQuestions) * 100 : 0;
             
             // Blend with step progress
-            const stepProgress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            const stepProgress = totalSteps > 1 ? ((currentStep - 1) / (totalSteps - 1)) * 100 : 0;
             const totalProgress = Math.max(stepProgress, answerProgress);
             
-            document.getElementById('progressBar').style.width = `${totalProgress}%`;
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                progressBar.style.width = `${totalProgress}%`;
+            }
         }
         
-        // Initialize
-        showStep(1);
-        
-        // Form validation on submit
-        document.getElementById('testForm').addEventListener('submit', function(e) {
-            const totalQuestions = {{ questions|length }};
+        // === FORM VALIDATION ===
+        function validateForm(e) {
             let answered = 0;
             
+            // Count answered questions using Django variables
             {% for question in questions %}
             if (document.querySelector(`input[name="q{{ question.id }}"]:checked`)) {
                 answered++;
@@ -766,7 +776,7 @@
                 e.preventDefault();
                 alert(`⚠️ Please answer all ${totalQuestions} questions before submitting. You've answered ${answered} question(s).`);
                 
-                // Highlight unanswered questions
+                // Find first unanswered question and show that step
                 {% for question in questions %}
                 if (!document.querySelector(`input[name="q{{ question.id }}"]:checked`)) {
                     const questionStep = {{ forloop.counter|add:2 }};
@@ -778,33 +788,86 @@
             }
             
             return true;
-        });
+        }
         
-        // Keyboard navigation
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowRight' && !e.target.matches('input, textarea')) {
-                e.preventDefault();
-                const nextBtn = document.querySelector('.btn-next:not([disabled])');
-                if (nextBtn) {
-                    nextBtn.click();
-                }
-            } else if (e.key === 'ArrowLeft' && !e.target.matches('input, textarea')) {
-                e.preventDefault();
-                const prevBtn = document.querySelector('.btn-prev:not([disabled])');
-                if (prevBtn) {
-                    prevBtn.click();
-                }
+        // === SETUP EVENT LISTENERS ===
+        function setupEventListeners() {
+            // Navigation buttons
+            document.getElementById('startReadingBtn')?.addEventListener('click', nextStep);
+            document.getElementById('backToInstructionsBtn')?.addEventListener('click', prevStep);
+            document.getElementById('startQuestionsBtn')?.addEventListener('click', nextStep);
+            
+            // Previous buttons for each question
+            {% for question in questions %}
+            const prevBtn{{ forloop.counter|add:2 }} = document.getElementById('prevBtn{{ forloop.counter|add:2 }}');
+            if (prevBtn{{ forloop.counter|add:2 }}) {
+                prevBtn{{ forloop.counter|add:2 }}.addEventListener('click', prevStep);
             }
-        });
-
-        // Add smooth scroll
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
+            
+            const nextBtn{{ forloop.counter|add:2 }} = document.getElementById('nextBtn{{ forloop.counter|add:2 }}');
+            if (nextBtn{{ forloop.counter|add:2 }}) {
+                nextBtn{{ forloop.counter|add:2 }}.addEventListener('click', nextStep);
+            }
+            {% endfor %}
+            
+            // Radio buttons - update progress on change
+            const radioButtons = document.querySelectorAll('input[type="radio"]');
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', updateProgress);
+            });
+            
+            // Form submit handler
+            const testForm = document.getElementById('testForm');
+            if (testForm) {
+                testForm.addEventListener('submit', validateForm);
+                
+                // Stop timer on form submit
+                testForm.addEventListener('submit', function() {
+                    clearInterval(timer);
+                });
+            }
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight' && !e.target.matches('input, textarea')) {
+                    e.preventDefault();
+                    const nextBtn = document.querySelector('.btn-next:not([disabled])');
+                    if (nextBtn) {
+                        nextBtn.click();
+                    }
+                } else if (e.key === 'ArrowLeft' && !e.target.matches('input, textarea')) {
+                    e.preventDefault();
+                    const prevBtn = document.querySelector('.btn-prev:not([disabled])');
+                    if (prevBtn) {
+                        prevBtn.click();
+                    }
+                }
+            });
+            
+            // Add smooth scroll
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
                 });
             });
+        }
+        
+        // === INITIALIZATION ===
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update step indicators
+            updateStepIndicators();
+            
+            // Show first step
+            showStep(1);
+            
+            // Start timer
+            timer = setInterval(updateTimer, 1000);
+            
+            // Setup all event listeners
+            setupEventListeners();
         });
     </script>
 </body>
