@@ -25,10 +25,8 @@ urlpatterns = [
     path('listening/', include('listening.urls')),
     path('writing/', include('writing.urls')),
     path('reading/', include('reading.urls')),
-    path('home_page/',include("home_page.urls")),
-    path('captcha/', include('captcha.urls')),
-
     path('',include("home_page.urls")),
+    path('captcha/', include('captcha.urls')),
 
 ]
 
