@@ -7,35 +7,21 @@
 
 {% block content %}
 
+{{ form.media }}
+
 <div class="registration-container">
     <h2>Create Account</h2>
 
-    <!-- Global Messages -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
+       <!-- Single general form error: place it here, above the form -->
+    {% if form.errors %}
+        <div class="form-error">
+            Please correct the errors below.
+        </div>
     {% endif %}
 
-    <form method="POST" novalidate>
+    <form method="POST" novalidate autocomplete="off">
         {% csrf_token %}
 
-        <!-- Show general form errors -->
-        {% if form.errors %}
-            <div class="form-error">
-                Please correct the errors below.
-            </div>
-        {% endif %}
-
-
-        {%if form.errors %}
-        <div class="form-error-box">
-            Please Correct The Errors Below
-        <div>
-        {% endif %}
-        
         {{ form.non_field_errors }} 
 
         <!-- Username -->
@@ -104,7 +90,10 @@
         <!-- CAPTCHA -->
         <div class="form-group">
             {{ form.captcha.label_tag }}
-            {{ form.captcha }}
+            <div class="captcha-container">
+                {{ form.captcha }} 
+                <span id="custom-refresh" title="Refresh Captcha">🔄</span>
+            </div>
             <div class="error-text">
                 {{ form.captcha.errors }}
             </div>
@@ -119,5 +108,28 @@
 
     </form>
 </div>
+
+<script>
+const captchaRefreshURL = "/captcha/refresh/";  
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("#custom-refresh").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const container = btn.closest(".captcha-container");
+            const img = container.querySelector("img");
+            const input = container.querySelector("input[name$='0']");
+
+            fetch(captchaRefreshURL)
+                .then(res => res.json())
+                .then(data => {
+                    img.src = data.image_url + '?t=' + new Date().getTime();
+                    input.value = data.key;
+                })
+                .catch(err => console.error('Captcha refresh failed:', err));
+        });
+    });
+});
+</script>
+
+
 
 {% endblock %}

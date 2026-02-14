@@ -28,8 +28,8 @@ def home(request):
     return render(request, 'home_page/home.html')
 
 def register(request):
+    form = RegisterForm(request.POST or None)
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
@@ -39,17 +39,15 @@ def register(request):
             password = form.cleaned_data['password']
 
             if User.objects.filter(username=username).exists():
-                messages.error(request, "Username already exists.")
-                return render(request, 'home_page/register.html', {'form': form})
-
-            user = User.objects.create_user(username=username, email=email, password=password)
-            StudentProfile.objects.create(user=user, institute=institute, department=department, year=year)
-
-            messages.success(request, f"Hello {username}, registration successful!")
-            return redirect('home_page:home')
+                form.add_error('username', 'Username already exists.')
+            else:
+                user = User.objects.create_user(username=username, email=email, password=password)
+                StudentProfile.objects.create(user=user, institute=institute, department=department, year=year)
+                messages.success(request, f"Hello {username}, registration successful!")
+                return redirect('home_page:home')
         else:
+            # Only add one general error at top
             messages.error(request, "Please correct the errors below.")
-    else:
-        form = RegisterForm()
 
     return render(request, 'home_page/register.html', {'form': form})
+

@@ -9,13 +9,13 @@ class StudentLoginForm(forms.Form):
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={
             'class': 'form-control', 
-            'placeholder': 'Enter your email'
+            'placeholder': 'Enter your email','autocomplete':'off','autofill':'off'
         })
     )
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={
             'class': 'form-control', 
-            'placeholder': 'Enter your Roll Number'
+            'placeholder': 'Enter your Roll Number','autocomplete':'new-password','autofill':'off'
         })
     )
 
@@ -43,11 +43,11 @@ class RegisterForm(forms.Form):
     # User fields
     username = forms.CharField(
         max_length=150,
-        widget=forms.TextInput(attrs={'placeholder': 'Enter your username'})
+        widget=forms.TextInput(attrs={'placeholder': 'Enter your username','autocomplete':'off'})
     )
 
     email = forms.EmailField(
-        widget=forms.EmailInput(attrs={'placeholder': 'Enter your email'})
+        widget=forms.EmailInput(attrs={'placeholder': 'Enter your email','autocomplete':'off'})
     )
 
     institute = forms.ChoiceField(
@@ -107,11 +107,11 @@ class RegisterForm(forms.Form):
 
     # Password fields
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder': 'Create a password'})
+        widget=forms.PasswordInput(attrs={'placeholder': 'Enter your roll number','autocomplete':'new-password'})
     )
 
     confirm_password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder': 'Confirm your password'})
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirm your roll number','autocomplete':'new-password'})
     )
 
     # Captcha

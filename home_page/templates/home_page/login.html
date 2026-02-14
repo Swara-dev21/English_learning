@@ -10,48 +10,83 @@
 <div class="login-container">
     <h2>Student Login</h2>
 
-    <form method="POST">
+    <!-- REMOVED: The "Please correct the errors below" message -->
+
+    <form method="POST" novalidate autocomplete="off">
         {% csrf_token %}
         {% if next %}
             <input type="hidden" name="next" value="{{ next }}">
         {% endif %}
 
+        <!-- Email Field -->
         <div class="form-group">
             {{ form.email.label_tag }}
             {{ form.email }}
-            {% for error in form.email.errors %}
-                <p class="error">{{ error }}</p>
-            {% endfor %}
+            {% if form.email.errors %}
+                <div class="error-text">
+                    {% for error in form.email.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
+        <!-- Password Field -->
         <div class="form-group">
             {{ form.password.label_tag }}
             {{ form.password }}
-            {% for error in form.password.errors %}
-                <p class="error">{{ error }}</p>
-            {% endfor %}
+            {% if form.password.errors %}
+                <div class="error-text">
+                    {% for error in form.password.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
+        <!-- Captcha Field -->
         <div class="form-group">
             {{ form.captcha.label_tag }}
-            {{ form.captcha }}
-            {% for error in form.captcha.errors %}
-                <p class="error">{{ error }}</p>
-            {% endfor %}
+            <div class="captcha-container">
+                {{ form.captcha }} 
+                <span id="custom-refresh" title="Refresh Captcha">🔄</span>
+            </div>
+            {% if form.captcha.errors %}
+                <div class="error-text">
+                    {% for error in form.captcha.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
-        <button type="submit" class="btn">Login</button>
+        <button type="submit" class="login-btn">Login</button>
     </form>
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <p>Don't have an account? <a href="{% url 'home_page:register' %}">Register here</a></p>
+    <div class="register-link">
+        Don't have an account? <a href="{% url 'home_page:register' %}">Register here</a>
+    </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("#custom-refresh").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const container = btn.closest(".captcha-container");
+            const img = container.querySelector("img");
+            const input = container.querySelector("input[name$='0']");
+
+            fetch('/captcha/refresh/')
+                .then(r => r.json())
+                .then(data => {
+                    img.src = data.image_url + '?t=' + new Date().getTime();
+                    input.value = data.key;
+                })
+                .catch(console.error);
+        });
+    });
+});
+</script>
+
 </body>
 </html>
