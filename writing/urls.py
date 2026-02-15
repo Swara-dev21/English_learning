@@ -3,7 +3,6 @@ from django.shortcuts import redirect
 from . import views
 
 app_name = 'writing'
-
 urlpatterns = [
     # Redirect root to first test or admin will create tests
     path('', lambda request: redirect('admin:index'), name='home'),

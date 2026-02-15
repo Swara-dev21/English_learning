@@ -2,6 +2,7 @@ from django import forms
 from captcha.fields import CaptchaField
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import get_user_model
+from django.core.validators import EmailValidator
 
 User = get_user_model()  # <- important parentheses
 
@@ -127,3 +128,56 @@ class RegisterForm(forms.Form):
             raise forms.ValidationError("Passwords do not match")
 
         return cleaned_data
+    
+class PasswordResetRequestForm(forms.Form):
+    email = forms.EmailField(
+        label='Email',
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your registered email',
+            'autocomplete': 'off'
+        }),
+        validators=[EmailValidator()]
+    )
+    captcha = CaptchaField()
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not User.objects.filter(email=email).exists():
+            raise forms.ValidationError("No account found with this email address.")
+        return email
+
+class PasswordResetConfirmForm(forms.Form):
+    new_password = forms.CharField(
+        label='New Password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your roll number',
+            'autocomplete': 'new-password'
+        })
+    )
+    confirm_password = forms.CharField(
+        label='Confirm Password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Confirm your roll number',
+            'autocomplete': 'new-password'
+        })
+    )
+    captcha = CaptchaField()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get('new_password')
+        confirm_password = cleaned_data.get('confirm_password')
+
+        if new_password and confirm_password and new_password != confirm_password:
+            raise forms.ValidationError("Passwords do not match")
+        
+        # Add any password strength validation here if needed
+        if new_password and len(new_password) < 4:
+            raise forms.ValidationError("Password must be at least 4 characters long")
+        
+        return cleaned_data
+
+
