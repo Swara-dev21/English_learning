@@ -21,13 +21,13 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('speaking/', include('speaking.urls')),
+    path('', include('home_page.urls')),
     path('listening/', include('listening.urls')),
-    path('writing/', include('writing.urls')),
     path('reading/', include('reading.urls')),
-    path('',include("home_page.urls")),
-    path('captcha/', include('captcha.urls')),
-
+    path('speaking/', include('speaking.urls')),
+    path('writing/', include('writing.urls')),
+    path('captcha/', include('captcha.urls')), 
+      # If you're using captcha
 ]
 
 if settings.DEBUG:

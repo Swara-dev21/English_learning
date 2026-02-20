@@ -1,17 +1,378 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Speaking Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Speaking Test</title>
     <link rel="stylesheet" href="{% static 'speaking/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Clean, minimal design with improved typography */
+        :root {
+            --primary: #5e548e;        /* Slate purple */
+            --primary-light: #f0edf7;  /* Light lavender */
+            --primary-dark: #453c6b;   /* Dark slate */
+            --accent: #9f8bc9;          /* Soft coral for accents */
+            --text-dark: #1e293b;
+            --text-light: #475569;
+            --text-muted: #64748b;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 20px 40px -15px rgba(10, 92, 92, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            max-width: 750px;
+            width: 100%;
+            background: var(--white);
+            border-radius: 32px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: var(--primary);
+            padding: 50px 30px;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .header i {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            opacity: 0.95;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            max-width: 500px;
+            margin: 0 auto;
+            font-weight: 400;
+            line-height: 1.6;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 45px;
+        }
+
+        .intro-text {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .intro-text h2 {
+            color: var(--text-dark);
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .intro-text p {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            line-height: 1.7;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .info-box {
+            background: var(--primary-light);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 35px;
+            border: 1px solid rgba(10, 92, 92, 0.15);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(10, 92, 92, 0.15);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item i {
+            width: 32px;
+            color: var(--primary);
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .info-item span {
+            color: var(--text-dark);
+            font-size: 1.15rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .stat {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .btn-start {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            background: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1.4rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(10, 92, 92, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-start:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(10, 92, 92, 0.4);
+        }
+
+        .btn-start i {
+            margin-right: 12px;
+            font-size: 1.3rem;
+        }
+
+        .microphone-note {
+            text-align: center;
+            margin-top: 25px;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 12px 20px;
+            border-radius: 50px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .microphone-note i {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 40px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .intro-text h2 {
+                font-size: 1.8rem;
+            }
+            
+            .intro-text p {
+                font-size: 1rem;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 25px;
+                padding: 20px;
+            }
+            
+            .stat-number {
+                font-size: 2.2rem;
+            }
+            
+            .info-item {
+                gap: 15px;
+            }
+            
+            .info-item i {
+                font-size: 1.3rem;
+                width: 28px;
+            }
+            
+            .info-item span {
+                font-size: 1rem;
+            }
+            
+            .btn-start {
+                font-size: 1.2rem;
+                padding: 16px;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <h1>Speaking Test</h1>
-    <p>Click below to start your pronunciation test.</p>
-    <a href="{% url 'question' q_index=0 %}">
-        <button>Start Test</button>
-    </a>
-</div>
+    <div class="card">
+        <!-- Header - More Attractive -->
+        <div class="header">
+            <i class="fas fa-microphone-alt"></i>
+            <h1>Speaking Test</h1>
+            <div class="subtitle">Practice and improve your English pronunciation</div>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Ready to begin section -->
+            <div class="intro-text">
+                <h2>Ready to begin?</h2>
+                <p>Test your pronunciation skills with 5 speaking exercises</p>
+            </div>
+            
+            <!-- Instructions - More Visible -->
+            <div class="info-box">
+                <div class="info-item">
+                    <i class="fas fa-microphone"></i>
+                    <span><strong>5 speaking questions</strong> to complete</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <span><strong>Takes about 5-7 minutes</strong> to complete all questions</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span><strong>Get scores</strong> for pronunciation, accent & accuracy</span>
+                </div>
+            </div>
+            
+            <!-- Stats - Clearer Numbers -->
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">QUESTIONS</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">SCORE TYPES</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">100</div>
+                    <div class="stat-label">MAX SCORE</div>
+                </div>
+            </div>
+            
+            <!-- Start button - Bigger & Bolder -->
+           <a href="{% url 'speaking:question' q_index=0 %}" class="btn-start">
+                <i class="fas fa-play"></i>
+                Start Test
+            </a>
+            
+            <!-- Microphone reminder - More Prominent -->
+            <div class="microphone-note">
+                <i class="fas fa-info-circle"></i>
+                Please ensure your microphone is connected and permissions are granted
+            </div>
+        </div>
+    </div>
 </body>
 </html>

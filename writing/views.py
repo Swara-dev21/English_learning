@@ -1,6 +1,13 @@
+# writing/views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.utils import timezone
+from home_page.models import StudentProfile
+from home_page.decorators import pretest_access_required, ajax_pretest_check
+from textblob import TextBlob
 import re
 import json
 from .models import WritingTest, WritingQuestion, WritingResponse, WritingTestResult
@@ -11,6 +18,8 @@ def get_session_key(request):
         request.session.create()
     return request.session.session_key
 
+@login_required
+@pretest_access_required('writing')
 def start_writing_test(request, test_id):
     """Start writing test directly"""
     writing_test = get_object_or_404(WritingTest, id=test_id, is_active=True)
@@ -27,11 +36,15 @@ def start_writing_test(request, test_id):
     # Redirect to first question
     return redirect('writing:writing_question', test_id=writing_test.id, question_number=1)
 
+@login_required
+@pretest_access_required('writing')
 def writing_test_home(request, test_id):
     """Writing test introduction page"""
     test = get_object_or_404(WritingTest, id=test_id, is_active=True)
     return render(request, 'writing/writing_home.html', {'test': test})
 
+@login_required
+@pretest_access_required('writing')
 def writing_question(request, test_id, question_number):
     """Display a single writing question"""
     test = get_object_or_404(WritingTest, id=test_id, is_active=True)
@@ -117,60 +130,90 @@ def check_spelling(text):
     return errors[:5]
 
 def grade_picture_description(user_answer, question):
-    """Grade picture description question"""
-    score = 0
+    """
+    Grade picture description for 1 mark.
+    Returns: 1 (pass) or 0 (fail) with detailed grammar feedback
+    """
+    
     feedback = []
+    grammar_mistakes = []
+    user_answer_lower = user_answer.lower().strip()
     
-    # Check sentence count
-    sentence_count = count_sentences(user_answer)
-    if sentence_count >= question.min_sentences:
-        score += 20
-        feedback.append("✓ Minimum sentences met")
-    else:
-        feedback.append(f"✗ Need at least {question.min_sentences} sentences, you have {sentence_count}")
-    
-    # Check word count
+    # ===== WORD COUNT CHECK =====
     word_count = count_words(user_answer)
-    if question.min_words <= word_count <= question.max_words:
-        score += 20
-        feedback.append("✓ Word count appropriate")
-    else:
-        feedback.append(f"✗ Word count should be {question.min_words}-{question.max_words}, you have {word_count}")
+    if word_count < question.min_words:
+        grammar_mistakes.append(f"❌ Too short: Write at least {question.min_words} words (you wrote {word_count})")
     
-    # Check keywords
+    # ===== SENTENCE COUNT CHECK =====
+    sentence_count = count_sentences(user_answer)
+    if sentence_count < question.min_sentences:
+        grammar_mistakes.append(f"❌ Need {question.min_sentences} complete sentences (you wrote {sentence_count})")
+    
+    # ===== KEYWORD CHECK =====
+    required_keywords = question.required_keywords  # ['boy', 'football', 'park', 'playing', 'game']
     missing_keywords = []
-    user_answer_lower = user_answer.lower()
-    for keyword in question.required_keywords:
+    
+    for keyword in required_keywords:
         if keyword.lower() not in user_answer_lower:
             missing_keywords.append(keyword)
     
-    if len(missing_keywords) == 0:
-        score += 20
-        feedback.append("✓ All keywords included")
+    if missing_keywords:
+        grammar_mistakes.append(f"❌ Missing keywords: {', '.join(missing_keywords)}")
+    
+    # ===== GRAMMAR CHECKS USING TEXTBLOB =====
+    blob = TextBlob(user_answer)
+    
+    # Check for missing auxiliary verb (is/are)
+    words = [word.lower() for word in blob.words]
+    if 'playing' in words and 'is' not in words and 'are' not in words:
+        grammar_mistakes.append("❌ Grammar: Use 'is playing' not just 'playing' (e.g., 'The boy is playing')")
+    
+    if 'enjoying' in words and 'is' not in words and 'are' not in words:
+        grammar_mistakes.append("❌ Grammar: Use 'is enjoying' not just 'enjoying'")
+    
+    # Check parts of speech
+    has_noun = any(tag.startswith('NN') for word, tag in blob.tags)  # Noun
+    has_verb = any(tag.startswith('VB') for word, tag in blob.tags)  # Verb
+    
+    if not has_noun:
+        grammar_mistakes.append("❌ Grammar: Missing a subject (who is doing the action?)")
+    if not has_verb:
+        grammar_mistakes.append("❌ Grammar: Missing a verb (what action is happening?)")
+    
+    # Check for article usage
+    if 'boy' in words and 'the' not in words and 'a' not in words:
+        grammar_mistakes.append("❌ Grammar: Use article with 'boy' (e.g., 'The boy' or 'A boy')")
+    
+    # Check capitalization
+    if user_answer and user_answer[0].isupper() == False:
+        grammar_mistakes.append("❌ Capitalization: Start sentence with capital letter")
+    
+    # Check punctuation
+    if user_answer and user_answer[-1] not in ['.', '!', '?']:
+        grammar_mistakes.append("❌ Punctuation: End sentence with . or !")
+    
+    # ===== DECISION =====
+    if len(grammar_mistakes) == 0:
+        # Perfect answer - 1 mark
+        return {
+            'score': 100,  # 100 for display (will be converted to 1 later)
+            'feedback': ["✅ Perfect! Your description is grammatically correct!"],
+            'needs_manual_review': False
+        }
     else:
-        feedback.append(f"✗ Missing keywords: {', '.join(missing_keywords[:3])}")
-        if len(missing_keywords) > 3:
-            feedback.append(f"  ... and {len(missing_keywords)-3} more")
+        # Failed - 0 marks with detailed feedback
+        return {
+            'score': 0,
+            'feedback': [
+                "❌ Your answer has grammar mistakes:",
+                *grammar_mistakes[:5],  # Show top 5 mistakes
+                "",
+                "💡 Example of correct answer:",
+                "The boy is playing football in the park. He is enjoying the game."
+            ],
+            'needs_manual_review': False
+        }
     
-    # Check spelling
-    spelling_errors = check_spelling(user_answer)
-    if len(spelling_errors) == 0:
-        score += 20
-        feedback.append("✓ No spelling errors")
-    else:
-        feedback.append(f"✗ Potential spelling errors: {', '.join(spelling_errors[:3])}")
-    
-    # Manual review needed
-    needs_manual_review = True
-    score += 20  # Reserve 20 points for manual review
-    feedback.append("✓ Submitted for review")
-    
-    return {
-        'score': min(score, 100),
-        'feedback': feedback,
-        'needs_manual_review': needs_manual_review,
-        'auto_score': score - 20,
-    }
 
 def grade_auto_check_question(user_answer, question):
     """Grade questions with exact/multiple answer checking"""
@@ -240,6 +283,8 @@ def convert_to_one_point_score(score_100):
     else:
         return 0
 
+@login_required
+@ajax_pretest_check('writing')
 @require_POST
 def save_answer(request, test_id, question_number):
     """Save user's answer with auto-grading"""
@@ -251,7 +296,7 @@ def save_answer(request, test_id, question_number):
     if not user_answer:
         return JsonResponse({'error': 'No answer provided'}, status=400)
     
-    # Grade the answer (returns 0-100 score)
+    # Grade the answer
     grading_result = grade_writing_response(user_answer, question)
     
     # Convert 100-point score to 1-point score
@@ -263,26 +308,28 @@ def save_answer(request, test_id, question_number):
     # Delete any previous response for this question
     WritingResponse.objects.filter(session_key=session_key, question=question).delete()
     
-    # Create new response
-    WritingResponse.objects.create(
+    # Create new response - STORE FEEDBACK IN DATABASE
+    response = WritingResponse.objects.create(
         session_key=session_key,
         question=question,
         user_answer=user_answer,
-        score=grading_result['score'],  # Keep 100-point score for feedback
-        feedback=grading_result['feedback'],
+        score=grading_result['score'],
+        feedback=grading_result['feedback'],  # Save feedback in database
         needs_manual_review=grading_result.get('needs_manual_review', False)
     )
     
+    # Return ONLY success confirmation - NO FEEDBACK during test
     return JsonResponse({
         'success': True,
-        'score': grading_result['score'],  # Return 100-point score for display
-        'one_point_score': one_point_score,  # Add 1-point score
-        'feedback': grading_result['feedback'],
-        'needs_manual_review': grading_result.get('needs_manual_review', False)
+        'score': grading_result['score'],
+        'one_point_score': one_point_score,
+        # NO feedback field here!
     })
 
+@login_required
+@pretest_access_required('writing')
 def submit_writing_test(request, test_id):
-    """Submit the entire writing test and calculate results"""
+    """Submit the entire writing test and calculate results - FINAL SWITCH"""
     if request.method != 'POST':
         return redirect('writing:writing_question', test_id=test_id, question_number=1)
     
@@ -299,19 +346,48 @@ def submit_writing_test(request, test_id):
     total_one_point_score = 0
     for response in responses:
         total_one_point_score += convert_to_one_point_score(response.score)
+
+    percentage = (total_one_point_score / 5) * 100
+    
+    # ✅ APPLY YOUR 3-LEVEL LOGIC HERE (0-40% Basic, 40-80% Intermediate, 80-100% Advanced)
+    if percentage < 40:
+        level = "Basic"
+    elif percentage < 80:
+        level = "Intermediate"
+    else:
+        level = "Advanced"
     
     # Save test result (out of 5)
     test_result = WritingTestResult.objects.create(
         session_key=session_key,
         test=test,
         total_score=total_one_point_score,
-        max_score=5  # Always 5
+        max_score=5,
+        user=request.user,
+        level = level
     )
+    
+    # ===== FINAL SWITCH - MARK WRITING AS COMPLETED =====
+    profile = StudentProfile.objects.get(user=request.user)
+    profile.writing_completed = True
+    
+    # Check if this was the last test
+    if all([profile.listening_completed, profile.reading_completed, 
+            profile.speaking_completed, profile.writing_completed]):
+        profile.pretest_completed = True
+        profile.pretest_completed_at = timezone.now()
+        profile.save()
+        messages.success(request, "🎉 Congratulations! You have completed all pretest sections!")
+    else:
+        profile.update_pretest_status()
+        messages.success(request, "Writing test completed successfully!")
+    # ==================================================
     
     return redirect('writing:writing_results', result_id=test_result.id)
 
+@login_required
 def writing_results(request, result_id):
-    """Display writing test results"""
+    """Display writing test results with feedback"""
     result = get_object_or_404(WritingTestResult, id=result_id)
     
     # Get all responses for this test
@@ -326,24 +402,28 @@ def writing_results(request, result_id):
     # Get all questions
     questions = WritingQuestion.objects.filter(test=result.test).order_by('order')
     
-    # Prepare question data for template (only wrong answers)
+    # Prepare question data with feedback
     question_data = []
     for question in questions:
         response = responses_by_question.get(question.order)
-        # Only include questions that were answered incorrectly (score < 100)
-        if response and response.score < 100:
+        if response:
             question_data.append({
                 'question': question,
                 'response': response,
-                'has_response': True,
-                'score_100': response.score,  # Keep the 100-point score
+                'user_answer': response.user_answer,
+                'score_100': response.score,
+                'feedback': response.feedback,  # Get feedback from database
+                'is_correct': response.score == 100
             })
     
     context = {
         'result': result,
         'question_data': question_data,
-        'percentage': result.percentage(),
-        'wrong_answers_count': len(question_data),  # Count of wrong answers
+        'percentage': result.percentage, 
+        'total_score': result.total_score,
+        'max_score': result.max_score,
+        'wrong_answers_count': len([q for q in question_data if not q['is_correct']]),
+        'level' : result.level, 
     }
     
     return render(request, 'writing/writing_results.html', context)

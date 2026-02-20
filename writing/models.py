@@ -1,3 +1,4 @@
+# writing/models.py
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -78,16 +79,23 @@ class WritingTestResult(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     session_key = models.CharField(max_length=100, blank=True)
     test = models.ForeignKey(WritingTest, on_delete=models.CASCADE)
-    total_score = models.IntegerField(default=0)
+    total_score = models.FloatField(default=0)
     max_score = models.IntegerField(default=5)
-    completed_at = models.DateTimeField(auto_now_add=True)
+    percentage = models.FloatField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    level = models.CharField(max_length=20, blank=True, null=True)
     
-    def percentage(self):
-        return (self.total_score / self.max_score) * 100 if self.max_score > 0 else 0
+    def save(self, *args, **kwargs):
+        # Calculate percentage first
+        if self.max_score > 0:
+            self.percentage = (self.total_score / self.max_score) * 100
+        
+            
+        super().save(*args, **kwargs)
     
     def score_out_of_5(self):
         """Return score formatted as X/5"""
         return f"{self.total_score}/{self.max_score}"
     
     def __str__(self):
-        return f"Writing Result: {self.total_score}/{self.max_score} ({self.percentage():.1f}%)"
+        return f"Writing Result: {self.total_score}/{self.max_score} ({self.percentage:.1f}%) - {self.level}"

@@ -1,0 +1,1010 @@
+<!-- home_page/templates/home_page/pretest_results.html -->
+{% extends 'home_page/base.html' %}
+
+{% block content %}
+<div class="results-container">
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                <!-- Header Section with Trophy -->
+                <div class="results-header text-center mb-5">
+                    <div class="trophy-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h1 class="display-4 fw-bold">Your Pretest Results</h1>
+                    <p class="lead text-white-80">Congratulations on completing all four sections!</p>
+                    {% if profile.pretest_completed_at %}
+                        <div class="completion-badge">
+                            {% if completion_date %}
+                                <p class="completion-date">
+                                    <i class="far fa-calendar-alt me-2"></i>
+                                    Completed on {{ completion_date|date:"F j, Y" }} at {{ completion_date|date:"g:i A" }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Overall Performance Card -->
+                <div class="overall-performance-card mb-5">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-md-5 text-center">
+                            <div class="overall-score-display">
+                                <div class="score-circle-large">
+                                    <span class="score-value">{{ overall_percentage|default:"0"|floatformat:1 }}%</span>
+                                    <span class="score-label">Overall</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="performance-message">
+                                <h2 class="greeting">Great Job, {{ user.username }}! 👋</h2>
+                                <p class="message-text">You've completed all four sections. Here's your quick summary:</p>
+                                
+                                <!-- SIMPLE SKILLS SUMMARY -->
+                                <div class="skills-summary">
+                                    {% with listening=listening_result.percentage|default:0 %}
+                                    {% with reading=reading_result.percentage|default:0 %}
+                                    {% with speaking=speaking_result.overall_score|default:0 %}
+                                    {% with writing=writing_result.percentage|default:0 %}
+
+                                    <!-- Strengths Badge -->
+                                    <div class="strength-badge">
+                                        <i class="fas fa-star" style="color: #f1c40f;"></i> 
+                                        <strong>Your Strengths:</strong> 
+                                        {% if reading >= 60 %}Reading {{ reading|floatformat:0 }}% · {% endif %}
+                                        {% if listening >= 60 %}Listening {{ listening|floatformat:0 }}% · {% endif %}
+                                        {% if speaking >= 60 %}Speaking {{ speaking|floatformat:0 }}% · {% endif %}
+                                        {% if writing >= 60 %}Writing {{ writing|floatformat:0 }}%{% endif %}
+                                        
+                                        {% if reading < 60 and listening < 60 and speaking < 60 and writing < 60 %}
+                                            Keep practicing all skills!
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Focus Areas Badge -->
+                                    <div class="focus-badge">
+                                        <i class="fas fa-bolt" style="color: #e67e22;"></i> 
+                                        <strong>Focus On:</strong> 
+                                        {% if reading < 40 %}Reading {{ reading|floatformat:0 }}% · {% endif %}
+                                        {% if listening < 40 %}Listening {{ listening|floatformat:0 }}% · {% endif %}
+                                        {% if speaking < 40 %}Speaking {{ speaking|floatformat:0 }}% · {% endif %}
+                                        {% if writing < 40 %}Writing {{ writing|floatformat:0 }}%{% endif %}
+                                        
+                                        {% if reading >= 40 and listening >= 40 and speaking >= 40 and writing >= 40 %}
+                                            Great job! All skills are improving!
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Simple Recommendation -->
+                                    <div class="simple-recommendation">
+                                        <i class="fas fa-lightbulb" style="color: #f1c40f;"></i>
+                                        <span>
+                                            {% if reading < 40 and listening < 40 and speaking < 40 and writing < 40 %}
+                                                Start with Reading and Listening basics. Practice 10 mins daily!
+                                            {% elif reading >= 60 and listening >= 60 and speaking >= 60 and writing >= 60 %}
+                                                You're crushing it! Try our advanced challenges.
+                                            {% elif reading < 40 or listening < 40 or speaking < 40 or writing < 40 %}
+                                                Focus on your lowest skill first. Small steps = big progress!
+                                            {% else %}
+                                                You're making good progress. Keep practicing daily!
+                                            {% endif %}
+                                        </span>
+                                    </div>
+
+                                    <!-- Motivation -->
+                                    <div class="motivation">
+                                        <i class="fas fa-heart" style="color: #ff6b6b;"></i>
+                                        <span>Every master was once a beginner. You're on the right track!</span>
+                                    </div>
+
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Results Grid -->
+                <div class="section-title">
+                    <h3>Detailed Performance Analysis</h3>
+                    <p>Click on any test to see detailed answers and feedback</p>
+                </div>
+
+                <div class="results-grid">
+                    <!-- Listening Card -->
+                    <div class="result-card listening-card">
+                        <div class="card-header-gradient">
+                            <div class="header-icon">
+                                <i class="fas fa-headphones"></i>
+                            </div>
+                            <h4>Listening Test</h4>
+                            {% if listening_result %}
+                                <div class="score-pill">{{ listening_result.percentage|floatformat:1 }}%</div>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            {% if listening_result %}
+                                <div class="score-display">
+                                    <div class="score-circle 
+                                        {% if listening_result.percentage >= 80 %}high
+                                        {% elif listening_result.percentage >= 40 %}medium
+                                        {% else %}low{% endif %}">
+                                        {{ listening_result.percentage|floatformat:1 }}%
+                                    </div>
+                                </div>
+                                <div class="details-list">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Score</span>
+                                        <span class="detail-value">{{ listening_result.score }}/{{ listening_result.total_questions }}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Level</span>
+                                        <span class="level-badge 
+                                            {% if listening_result.percentage >= 80 %}advanced
+                                            {% elif listening_result.percentage >= 40 %}intermediate
+                                            {% else %}basic{% endif %}">
+                                            {% if listening_result.percentage >= 80 %}Advanced
+                                            {% elif listening_result.percentage >= 40 %}Intermediate
+                                            {% else %}Basic{% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Date</span>
+                                        <span class="detail-value">{{ listening_result.created_at|date:"M d, Y" }}</span>
+                                    </div>
+                                </div>
+                                <a href="{% url 'listening:result' listening_result.id %}" class="card-btn">
+                                        View Details <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            {% else %}
+                                <p class="no-data">No listening test data available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Speaking Card -->
+                    <div class="result-card speaking-card">
+                        <div class="card-header-gradient">
+                            <div class="header-icon">
+                                <i class="fas fa-microphone"></i>
+                            </div>
+                            <h4>Speaking Test</h4>
+                            {% if speaking_result %}
+                                <div class="score-pill">{{ speaking_result.overall_score|floatformat:1 }}%</div>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            {% if speaking_result %}
+                                <div class="score-display">
+                                    <div class="score-circle 
+                                        {% if speaking_result.overall_score >= 80 %}high
+                                        {% elif speaking_result.overall_score >= 40 %}medium
+                                        {% else %}low{% endif %}">
+                                        {{ speaking_result.overall_score|floatformat:1 }}%
+                                    </div>
+                                </div>
+                                <div class="details-list">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Pronunciation</span>
+                                        <span class="detail-value">{{ speaking_result.avg_pronunciation|floatformat:1 }}%</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Accent</span>
+                                        <span class="detail-value">{{ speaking_result.avg_accent|floatformat:1 }}%</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Accuracy</span>
+                                        <span class="detail-value">{{ speaking_result.avg_accuracy|floatformat:1 }}%</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Level</span>
+                                        <span class="level-badge 
+                                            {% if speaking_result.overall_score >= 80 %}advanced
+                                            {% elif speaking_result.overall_score >= 40 %}intermediate
+                                            {% else %}basic{% endif %}">
+                                            {% if speaking_result.overall_score >= 80 %}Advanced
+                                            {% elif speaking_result.overall_score >= 40 %}Intermediate
+                                            {% else %}Basic{% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Date</span>
+                                        <span class="detail-value">{{ speaking_result.created_at|date:"M d, Y" }}</span>
+                                    </div>
+                                </div>
+                                <a href="{% url 'speaking:result' %}" class="card-btn">
+                                    View Details <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            {% else %}
+                                <p class="no-data">No speaking test data available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Reading Card -->
+                    <div class="result-card reading-card">
+                        <div class="card-header-gradient">
+                            <div class="header-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <h4>Reading Test</h4>
+                            {% if reading_result %}
+                                <div class="score-pill">{{ reading_result.percentage|floatformat:1 }}%</div>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            {% if reading_result %}
+                                <div class="score-display">
+                                    <div class="score-circle 
+                                        {% if reading_result.percentage >= 80 %}high
+                                        {% elif reading_result.percentage >= 40 %}medium
+                                        {% else %}low{% endif %}">
+                                        {{ reading_result.percentage|floatformat:1 }}%
+                                    </div>
+                                </div>
+                                <div class="details-list">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Score</span>
+                                        <span class="detail-value">{{ reading_result.score }}/{{ reading_result.total }}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Level</span>
+                                        <span class="level-badge 
+                                            {% if reading_result.percentage >= 80 %}advanced
+                                            {% elif reading_result.percentage >= 40 %}intermediate
+                                            {% else %}basic{% endif %}">
+                                            {% if reading_result.percentage >= 80 %}Advanced
+                                            {% elif reading_result.percentage >= 40 %}Intermediate
+                                            {% else %}Basic{% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Date</span>
+                                        <span class="detail-value">{{ reading_result.created_at|date:"M d, Y" }}</span>
+                                    </div>
+                                </div>
+                                <a href="{% url 'reading:results' reading_result.id %}" class="card-btn">
+                                    View Details <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            {% else %}
+                                <p class="no-data">No reading test data available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Writing Card -->
+                    <div class="result-card writing-card">
+                        <div class="card-header-gradient">
+                            <div class="header-icon">
+                                <i class="fas fa-pen"></i>
+                            </div>
+                            <h4>Writing Test</h4>
+                            {% if writing_result %}
+                                <div class="score-pill">{{ writing_result.percentage|floatformat:1 }}%</div>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            {% if writing_result %}
+                                <div class="score-display">
+                                    <div class="score-circle 
+                                        {% if writing_result.percentage >= 80 %}high
+                                        {% elif writing_result.percentage >= 40 %}medium
+                                        {% else %}low{% endif %}">
+                                        {{ writing_result.percentage|floatformat:1 }}%
+                                    </div>
+                                </div>
+                                <div class="details-list">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Score</span>
+                                        <span class="detail-value">{{ writing_result.total_score }}/5</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Level</span>
+                                        <span class="level-badge 
+                                            {% if writing_result.percentage >= 80 %}advanced
+                                            {% elif writing_result.percentage >= 40 %}intermediate
+                                            {% else %}basic{% endif %}">
+                                            {% if writing_result.percentage >= 80 %}Advanced
+                                            {% elif writing_result.percentage >= 40 %}Intermediate
+                                            {% else %}Basic{% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Date</span>
+                                        <span class="detail-value">{{ writing_result.created_at|date:"M d, Y" }}</span>
+                                    </div>
+                                </div>
+                                <a href="{% url 'writing:writing_results' writing_result.id %}" class="card-btn">
+                                    View Details <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            {% else %}
+                                <p class="no-data">No writing test data available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <a href="{% url 'home_page:home' %}" class="btn btn-outline">
+                        <i class="fas fa-home me-2"></i>Back to Home
+                    </a>
+                    <a href="{% url 'home_page:profile' %}" class="btn btn-outline">
+                        <i class="fas fa-user me-2"></i>View Profile
+                    </a>
+                    <button onclick="window.print()" class="btn btn-primary">
+                        <i class="fas fa-print me-2"></i>Print Results
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ===== FRESH GREEN THEME ===== */
+:root {
+    --fresh-green: #2ecc71;
+    --fresh-green-dark: #27ae60;
+    --fresh-green-light: #a3e4d7;
+    --fresh-green-soft: #d5f5e3;
+    --text-dark: #2c3e50;
+    --text-light: #7f8c8d;
+    --white: #ffffff;
+    --off-white: #f8f9fa;
+    --shadow-sm: 0 5px 15px rgba(46, 204, 113, 0.1);
+    --shadow-md: 0 8px 25px rgba(46, 204, 113, 0.15);
+    --shadow-lg: 0 15px 40px rgba(46, 204, 113, 0.2);
+}
+
+.results-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0fff4 0%, #e6f7ed 100%);
+    padding: 40px 0;
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+/* ===== HEADER SECTION ===== */
+.results-header {
+    background: linear-gradient(135deg, var(--fresh-green), var(--fresh-green-dark));
+    border-radius: 30px;
+    padding: 50px 40px;
+    color: var(--white);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.results-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.trophy-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+    animation: bounce 2s ease infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.results-header h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+.text-white-80 {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.2rem;
+}
+
+.completion-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 10px 25px;
+    border-radius: 50px;
+    margin-top: 20px;
+    font-size: 1rem;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* ===== OVERALL PERFORMANCE CARD ===== */
+.overall-performance-card {
+    background: var(--white);
+    border-radius: 30px;
+    padding: 35px;
+    box-shadow: 0 20px 40px rgba(46, 204, 113, 0.08);
+    border: 1px solid rgba(46, 204, 113, 0.15);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.overall-performance-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.03), rgba(46, 204, 113, 0.08));
+    border-radius: 50%;
+    transform: translate(50px, -50px);
+}
+
+.overall-performance-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Score Circle */
+.score-circle-large {
+    width: 170px;
+    height: 170px;
+    margin: 0 auto;
+    background: linear-gradient(145deg, var(--fresh-green), var(--fresh-green-dark));
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 15px 30px rgba(46, 204, 113, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.score-circle-large:hover {
+    transform: scale(1.02);
+}
+
+.score-value {
+    font-size: 3.2rem;
+    font-weight: 800;
+    line-height: 1;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.score-label {
+    font-size: 1rem;
+    opacity: 0.9;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+/* Greeting Section */
+.greeting {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.message-text {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    border-bottom: 2px dashed #e0e0e0;
+    padding-bottom: 15px;
+}
+
+/* Skills Summary Container */
+.skills-summary {
+    background: linear-gradient(145deg, #f8faff, #f0f5ff);
+    border-radius: 25px;
+    padding: 25px;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.02), 0 10px 20px rgba(0,0,0,0.02);
+}
+
+/* Strength Badge */
+.strength-badge {
+    background: white;
+    padding: 16px 20px;
+    border-radius: 18px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    box-shadow: 0 8px 20px rgba(46, 204, 113, 0.1);
+    border-left: 5px solid var(--fresh-green);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.strength-badge::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(46, 204, 113, 0.02));
+}
+
+.strength-badge:hover {
+    transform: translateX(5px);
+    box-shadow: 0 12px 25px rgba(46, 204, 113, 0.15);
+}
+
+.strength-badge i {
+    font-size: 1.4rem;
+    color: #f1c40f;
+    filter: drop-shadow(0 2px 5px rgba(241, 196, 15, 0.3));
+}
+
+.strength-badge strong {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+}
+
+/* Focus Badge */
+.focus-badge {
+    background: white;
+    padding: 16px 20px;
+    border-radius: 18px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    box-shadow: 0 8px 20px rgba(230, 126, 34, 0.1);
+    border-left: 5px solid #e67e22;
+    transition: all 0.3s ease;
+}
+
+.focus-badge:hover {
+    transform: translateX(5px);
+    box-shadow: 0 12px 25px rgba(230, 126, 34, 0.15);
+}
+
+.focus-badge i {
+    font-size: 1.4rem;
+    color: #e67e22;
+    filter: drop-shadow(0 2px 5px rgba(230, 126, 34, 0.3));
+}
+
+.focus-badge strong {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+}
+
+/* Recommendation Box */
+.simple-recommendation {
+    background: linear-gradient(145deg, #fff9e6, #fff5d9);
+    padding: 18px 20px;
+    border-radius: 18px;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-left: 5px solid #f1c40f;
+    box-shadow: 0 10px 25px rgba(241, 196, 15, 0.1);
+    transition: all 0.3s ease;
+}
+
+.simple-recommendation:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(241, 196, 15, 0.15);
+}
+
+.simple-recommendation i {
+    font-size: 1.8rem;
+    color: #f1c40f;
+    filter: drop-shadow(0 3px 8px rgba(241, 196, 15, 0.3));
+}
+
+.simple-recommendation span {
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* Motivation Box */
+.motivation {
+    background: linear-gradient(145deg, #e8f4fd, #d9edfa);
+    padding: 15px 20px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--text-dark);
+    font-style: italic;
+    font-size: 1.05rem;
+    border-left: 5px solid #3498db;
+    box-shadow: 0 8px 20px rgba(52, 152, 219, 0.08);
+    transition: all 0.3s ease;
+}
+
+.motivation:hover {
+    background: linear-gradient(145deg, #d9edfa, #c5e4f7);
+}
+
+.motivation i {
+    font-size: 1.6rem;
+    color: #ff6b6b;
+    filter: drop-shadow(0 3px 8px rgba(255, 107, 107, 0.3));
+}
+
+/* ===== SECTION TITLE ===== */
+.section-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.section-title p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+/* ===== RESULTS GRID ===== */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.result-card {
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(46, 204, 113, 0.1);
+}
+
+.result-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header-gradient {
+    background: linear-gradient(135deg, var(--fresh-green), var(--fresh-green-dark));
+    padding: 25px 20px;
+    color: var(--white);
+    position: relative;
+    text-align: center;
+}
+
+.card-header-gradient .header-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+}
+
+.card-header-gradient h4 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.score-pill {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(5px);
+    padding: 5px 12px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.card-body {
+    padding: 25px;
+}
+
+.score-display {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.score-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--white);
+    box-shadow: var(--shadow-sm);
+}
+
+.score-circle.high { background: linear-gradient(135deg, var(--fresh-green), #2ecc71); }
+.score-circle.medium { background: linear-gradient(135deg, #f39c12, #e67e22); }
+.score-circle.low { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+
+.details-list {
+    margin: 20px 0;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(46, 204, 113, 0.2);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    color: var(--text-light);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.detail-value {
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+.level-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.level-badge.basic { background: #ffc107; color: #333; }
+.level-badge.intermediate { background: var(--fresh-green-light); color: var(--text-dark); }
+.level-badge.advanced { background: var(--fresh-green); color: var(--white); }
+
+.card-btn {
+    display: inline-block;
+    width: 100%;
+    padding: 12px;
+    background: var(--off-white);
+    color: var(--text-dark);
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+.card-btn:hover {
+    background: linear-gradient(135deg, var(--fresh-green), var(--fresh-green-dark));
+    color: var(--white);
+    border-color: transparent;
+    transform: translateX(5px);
+}
+
+.card-btn i {
+    transition: transform 0.3s ease;
+}
+
+.card-btn:hover i {
+    transform: translateX(5px);
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 50px;
+}
+
+.btn {
+    padding: 14px 35px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--fresh-green), var(--fresh-green-dark));
+    color: var(--white);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-dark);
+    border: 2px solid var(--fresh-green);
+}
+
+.btn-outline:hover {
+    background: var(--fresh-green);
+    color: var(--white);
+    transform: translateY(-3px);
+}
+
+/* ===== NO DATA ===== */
+.no-data {
+    text-align: center;
+    color: var(--text-light);
+    font-style: italic;
+    padding: 30px;
+    background: var(--off-white);
+    border-radius: 12px;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 992px) {
+    .results-header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .score-circle-large {
+        width: 160px;
+        height: 160px;
+    }
+    
+    .score-value {
+        font-size: 2.8rem;
+    }
+    
+    .overall-performance-card {
+        padding: 25px;
+    }
+    
+    .greeting {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .results-container {
+        padding: 20px 0;
+    }
+    
+    .results-header {
+        padding: 40px 20px;
+    }
+    
+    .results-header h1 {
+        font-size: 2rem;
+    }
+    
+    .overall-performance-card {
+        padding: 20px;
+    }
+    
+    .score-circle-large {
+        width: 140px;
+        height: 140px;
+        margin-bottom: 20px;
+    }
+    
+    .score-value {
+        font-size: 2.5rem;
+    }
+    
+    .greeting {
+        font-size: 1.6rem;
+        text-align: center;
+    }
+    
+    .message-text {
+        text-align: center;
+    }
+    
+    .strength-badge, .focus-badge {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+    
+    .simple-recommendation {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .motivation {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .results-header h1 {
+        font-size: 1.6rem;
+    }
+    
+    .trophy-icon {
+        font-size: 3rem;
+    }
+    
+    .overall-performance-card {
+        padding: 15px;
+    }
+    
+    .score-circle-large {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .score-value {
+        font-size: 2.2rem;
+    }
+    
+    .greeting {
+        font-size: 1.4rem;
+    }
+    
+    .strength-badge, .focus-badge {
+        padding: 12px 15px;
+    }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    .results-container {
+        background: white;
+        padding: 0;
+    }
+    
+    .btn, .card-btn {
+        display: none;
+    }
+}
+</style>
+{% endblock %}

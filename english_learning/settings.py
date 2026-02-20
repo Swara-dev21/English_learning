@@ -68,6 +68,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'home_page.context_processors.user_profile_context',
             ],
         },
     },
@@ -111,17 +112,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
+USE_L10N = True
 
 STATIC_URL = '/static/'
+LOGIN_URL = '/login/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,"static"),]
 
 MEDIA_URL = '/media/'
@@ -131,19 +129,24 @@ VOSK_MODEL_PATH = str( BASE_DIR/"speaking"/"model"/"vosk-model-small-en-us-0.15"
 
 REFERENCE_AUDIO_PATH = BASE_DIR/"speaking"/"reference_audio"/"reference.wav"
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 CAPTCHA_IGNORE_CASE = True
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 SESSION_COOKIE_AGE = 3600
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+CAPTCHA_LENGTH = 5
+CAPTCHA_FONT_SIZE = 28
+CAPTCHA_IMAGE_SIZE = (130, 40)
+CAPTCHA_FOREGROUND_COLOR = '#000000'
+CAPTCHA_BACKGROUND_COLOR = '#ffffff'
+CAPTCHA_FILTER_FUNCTIONS = ()
+CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_arcs', 'captcha.helpers.noise_dots',)
 
-# For production, use SMTP settings like:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your-email@gmail.com'
-# EMAIL_HOST_PASSWORD = 'your-app-password'
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
 

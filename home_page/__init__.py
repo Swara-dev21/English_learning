@@ -1,0 +1,1 @@
+default_app_config = 'home_page.apps.HomePageConfig'

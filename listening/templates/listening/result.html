@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listening Test Results</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'listening/css/style.css' %}?v=6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .results-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .results-card {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .results-header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        
+        .results-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            border: 6px solid #e0e7ff;
+        }
+        
+        .score-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+        
+        .score-total {
+            font-size: 1.2rem;
+            color: white;
+            opacity: 0.9;
+        }
+        
+        .level-badge {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            border-radius: 2rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+        
+        .level-beginner {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .level-intermediate {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .level-advanced {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem;
+            padding: 0 2rem 2rem;
+        }
+        
+        .summary-item {
+            text-align: center;
+            padding: 1rem 0.5rem;
+            border-radius: 0.75rem;
+            background: #f3f4f6;
+        }
+        
+        .summary-item.correct {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .summary-item.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .summary-q {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .actions {
+            padding: 0 2rem 2rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
+        
+        @media (max-width: 640px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="results-page">
+        <div class="results-card">
+            <!-- Header -->
+            <div class="results-header">
+                <h1><i class="fas fa-trophy"></i> Test Results</h1>
+                <p>Your listening level assessment</p>
+            </div>
+            
+            <!-- Score Display -->
+            <div class="text-center" style="padding: 2rem;">
+                <div class="score-circle">
+                    <div class="score-value">{{ score }}</div>
+                    <div class="score-total">/ {{ total }}</div>
+                </div>
+                
+                <div class="level-badge level-{{ level|lower }}">{{ level }}</div>
+                <p style="font-size: 1.2rem; color: #6b7280; margin: 1rem 0;">{{ percentage }}% Correct</p>
+                
+                <p style="color: #4b5563; margin-bottom: 2rem;">{{ feedback }}</p>
+            </div>
+            
+            <!-- Questions Summary - FIXED: using detailed_results -->
+            <div class="summary-grid">
+                {% for item in detailed_results %}
+                <div class="summary-item {% if item.is_correct %}correct{% else %}incorrect{% endif %}">
+                    <div class="summary-q">Q{{ forloop.counter }}</div>
+                    <div>
+                        {% if item.is_correct %}
+                        <i class="fas fa-check"></i> Correct
+                        {% else %}
+                        <i class="fas fa-times"></i> Incorrect
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Actions - Continue to Speaking Test Button -->
+            <div class="actions">
+                <a href="{% url 'speaking:start' %}" class="btn btn-primary">
+                    <i class="fas fa-microphone-alt"></i> Continue to Speaking Test
+                </a>
+            </div>
+            
+            <!-- Note: Speaking test coming soon -->
+            <p style="text-align: center; padding-bottom: 2rem; color: #9ca3af; font-size: 0.9rem;">
+                <i class="fas fa-info-circle"></i> Speaking test will be available soon!
+            </p>
+        </div>
+    </div>
+</body>
+</html>

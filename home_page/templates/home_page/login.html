@@ -99,7 +99,7 @@
             {{ form.captcha.label_tag }}
             <div class="captcha-container">
                 {{ form.captcha }} 
-                <span id="custom-refresh" title="Refresh Captcha">🔄</span>
+            
             </div>
             {% if form.captcha.errors %}
                 <div class="error-text">
@@ -119,23 +119,7 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Captcha refresh functionality
-    document.querySelectorAll("#custom-refresh").forEach(btn => {
-        btn.addEventListener("click", function() {
-            const container = btn.closest(".captcha-container");
-            const img = container.querySelector("img");
-            const input = container.querySelector("input[name$='0']");
 
-            fetch('/captcha/refresh/')
-                .then(r => r.json())
-                .then(data => {
-                    img.src = data.image_url + '?t=' + new Date().getTime();
-                    input.value = data.key;
-                })
-                .catch(console.error);
-        });
-    });
 
     // Function to show popup message
     function showPopupMessage(message, isError = false) {
@@ -157,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function() {
             setTimeout(() => {
                 popup.remove();
             }, 300);
-        }, 3000);
+        }, 10000);
     }
 
     // Check URL parameters for messages
@@ -189,8 +173,6 @@ document.addEventListener("DOMContentLoaded", function() {
             {% endif %}
         {% endfor %}
     {% endif %}
-});
 </script>
-
 </body>
 </html>

@@ -1,3 +1,4 @@
+# listening/models.py
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -10,26 +11,36 @@ class ListeningTest(models.Model):
     
     def __str__(self):
         return self.title
+    
+    @property
+    def total_questions(self):
+        """Get total number of questions in this test"""
+        return self.questions.count()
+
 
 class AudioQuestion(models.Model):
     """Each audio file and its associated question"""
     test = models.ForeignKey(ListeningTest, on_delete=models.CASCADE, related_name='questions')
     order = models.IntegerField(default=1)  # Order in test (1-5)
     
-    # Audio file - store path to your static files
+    # Audio file - store path to static files
     audio_filename = models.CharField(max_length=200, help_text="Name of audio file in static folder")
-    transcript = models.TextField(help_text="Full text of what's spoken in audio")
+    transcript = models.TextField(blank=True, help_text="Full text of what's spoken in audio")
     
     # Question details
     question_text = models.TextField()
     explanation = models.TextField(blank=True, help_text="Explanation shown after test")
+    
+    class Meta:
+        ordering = ['order']
     
     def audio_url(self):
         """Generate URL to the audio file"""
         return f"/static/audio_test/audio/{self.audio_filename}"
     
     def __str__(self):
-        return f"Question {self.order}: {self.question_text[:50]}..."
+        return f"Q{self.order}: {self.question_text[:50]}..."
+
 
 class AnswerOption(models.Model):
     """Answer choices for each question"""
@@ -40,6 +51,7 @@ class AnswerOption(models.Model):
     def __str__(self):
         return f"{self.text[:50]}... ({'Correct' if self.is_correct else 'Incorrect'})"
 
+
 class UserResponse(models.Model):
     """Store user's answers"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -49,10 +61,11 @@ class UserResponse(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        unique_together = [['session_key', 'question']]
+        unique_together = [['session_key', 'question']]  # Prevent duplicate responses
     
     def __str__(self):
         return f"Response to Q{self.question.order}: {self.selected_option.text[:20]}..."
+
 
 class TestResult(models.Model):
     """Store complete test results"""
@@ -60,11 +73,19 @@ class TestResult(models.Model):
     session_key = models.CharField(max_length=100, blank=True)
     test = models.ForeignKey(ListeningTest, on_delete=models.CASCADE)
     score = models.IntegerField(default=0)
-    total_questions = models.IntegerField(default=5)
+    total_questions = models.IntegerField(default=0)
+    percentage = models.FloatField(default=0)
     completed_at = models.DateTimeField(auto_now_add=True)
     
-    def percentage(self):
-        return (self.score / self.total_questions) * 100 if self.total_questions > 0 else 0
+    def save(self, *args, **kwargs):
+        # Auto-calculate total questions if not set
+        if self.total_questions == 0:
+            self.total_questions = self.test.questions.count()
+        
+        # Calculate percentage
+        if self.total_questions > 0:
+            self.percentage = (self.score / self.total_questions) * 100
+        super().save(*args, **kwargs)
     
     def __str__(self):
-        return f"Result: {self.score}/{self.total_questions} ({self.percentage():.1f}%)"
+        return f"Result: {self.score}/{self.total_questions} ({self.percentage:.1f}%)"

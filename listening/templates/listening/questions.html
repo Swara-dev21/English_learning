@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listening Test Questions</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'listening/css/style.css' %}?v=8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Your existing CSS here */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .test-header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: #1e293b;
+        }
+        
+        .timer-container {
+            background: #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+        }
+        
+        .progress-section {
+            margin-bottom: 2rem;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-container-modern {
+            height: 0.5rem;
+            background: #e2e8f0;
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+        
+        .progress-bar-modern {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            transition: width 0.3s ease;
+        }
+        
+        .audio-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .audio-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .audio-header i {
+            font-size: 2rem;
+            color: #4f46e5;
+        }
+        
+        .audio-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+        
+        audio {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        
+        .replay-info {
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            display: inline-block;
+        }
+        
+        .question-container {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .question-number {
+            background: #4f46e5;
+            color: white;
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        
+        .option {
+            position: relative;
+        }
+        
+        .option input[type="radio"] {
+            display: none;
+        }
+        
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+        
+        .option-label:hover {
+            border-color: #4f46e5;
+            background: #eef2ff;
+        }
+        
+        .option input[type="radio"]:checked + .option-label {
+            border-color: #4f46e5;
+            background: #eef2ff;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .option-letter {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #4f46e5;
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+        
+        .option input[type="radio"]:checked + .option-label .option-letter {
+            background: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+        
+        .option-text {
+            flex: 1;
+            font-size: 1rem;
+            color: #334155;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .nav-btn {
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+        
+        .btn-prev {
+            background: white;
+            border: 2px solid #4f46e5;
+            color: #4f46e5;
+        }
+        
+        .btn-prev:hover {
+            background: #eef2ff;
+        }
+        
+        .btn-next {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .btn-next:hover {
+            background: #4338ca;
+        }
+        
+        .btn-submit {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-submit:hover {
+            background: #059669;
+        }
+        
+        .question-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .question-dot {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .question-dot.active {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .question-dot.answered {
+            background: #10b981;
+            color: white;
+        }
+        
+        .question-dot:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <!-- Test Header -->
+        <div class="test-header">
+            <h1>
+                <i class="fas fa-headphones"></i>
+                Listening Test
+            </h1>
+            <div class="timer-container">
+                <i class="fas fa-hourglass-half"></i>
+                <span class="timer" id="timer">05:00</span>
+            </div>
+        </div>
+        
+        <!-- Progress Section -->
+        <div class="progress-section">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>Question <span id="currentQuestionDisplay">{{ question_number }}</span> of {{ total_questions }}</span>
+                </div>
+                <span class="progress-percentage" id="progressPercentage">{{ progress_percentage }}% Complete</span>
+            </div>
+            <div class="progress-container-modern">
+                <div class="progress-bar-modern" id="progressBar" style="width: {{ progress_percentage }}%"></div>
+            </div>
+        </div>
+        
+        <!-- Audio Player Section -->
+        <div class="audio-section">
+            <div class="audio-header">
+                <i class="fas fa-circle-play"></i>
+                <h2>Listen to the Audio</h2>
+            </div>
+            
+            <audio id="mainAudio" controls>
+                <source src="{% static 'listening/audio/' %}{{ question.audio_filename }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <div class="replay-info">
+                <i class="fas fa-redo-alt"></i>
+                <span>Replays remaining: <span class="replay-count" id="replayCount">{{ replay_count }}</span></span>
+            </div>
+        </div>
+        
+        <!-- Questions Form -->
+        <form method="POST" action="{% url 'listening:submit_test' test.id %}" id="testForm">
+            {% csrf_token %}
+            
+            {% for q in all_questions %}
+            <div class="question-container" id="question{{ forloop.counter0 }}" style="{% if forloop.counter != question_number %}display: none;{% endif %}">
+                <div class="question-number">
+                    Question {{ forloop.counter }}
+                </div>
+                
+                <h3 class="question-text">{{ q.question_text }}</h3>
+                
+                <!-- FIXED: Options from related AnswerOption model -->
+                <div class="options-container">
+                    {% for option in q.options.all %}
+                    <div class="option">
+                        <input type="radio" name="q{{ q.id }}" id="q{{ q.id }}_{{ forloop.counter }}" value="{{ option.id }}" class="question-radio" data-question="{{ forloop.parentloop.counter0 }}" {% if selected_option == option.id %}checked{% endif %}>
+                        <label class="option-label" for="q{{ q.id }}_{{ forloop.counter }}">
+                            <span class="option-letter">
+                                {% if forloop.counter == 1 %}A{% elif forloop.counter == 2 %}B{% elif forloop.counter == 3 %}C{% elif forloop.counter == 4 %}D{% endif %}
+                            </span>
+                            <span class="option-text">{{ option.text }}</span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="navigation-buttons">
+                    {% if forloop.counter > 1 %}
+                    <button type="button" class="nav-btn btn-prev" onclick="goToQuestion({{ forloop.counter|add:'-1' }})">
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    {% else %}
+                    <div></div>
+                    {% endif %}
+                    
+                    {% if forloop.last %}
+                    <button type="submit" class="nav-btn btn-submit" id="submitTestBtn">
+                        <i class="fas fa-paper-plane"></i> Submit Test
+                    </button>
+                    {% else %}
+                    <button type="button" class="nav-btn btn-next" onclick="goToQuestion({{ forloop.counter|add:'1' }})">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </form>
+        
+        <!-- Question Dots -->
+        <div class="question-dots">
+            {% for q in all_questions %}
+            <div class="question-dot {% if forloop.counter == question_number %}active{% endif %}" onclick="goToQuestion({{ forloop.counter }})">
+                {{ forloop.counter }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        // Variables
+        let currentQuestion = {{ question_number }};
+        let totalQuestions = {{ total_questions }};
+        let replayCount = {{ replay_count }};
+        let timeLeft = 5 * 60; // 5 minutes
+        
+        // Timer
+        const timerElement = document.getElementById('timer');
+        setInterval(() => {
+            timeLeft--;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timerElement.textContent = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+            
+            if (timeLeft <= 0) {
+                alert('Time is up! Submitting test...');
+                document.getElementById('testForm').submit();
+            }
+        }, 1000);
+        
+        // Navigate to question
+        function goToQuestion(qNum) {
+            fetch('{% url "listening:navigate_question" test.id %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ question_number: qNum })
+            }).then(() => {
+                window.location.href = '{% url "listening:questions" test.id %}';
+            });
+        }
+        
+        // Auto-save on radio change
+        document.querySelectorAll('.question-radio').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const questionId = this.name.replace('q', '');
+                const optionId = this.value;
+                
+                fetch('{% url "listening:submit_answer" test.id %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        question_id: questionId,
+                        option_id: optionId
+                    })
+                });
+                
+                // Update progress
+                updateProgress();
+            });
+        });
+        
+        // Update progress
+        function updateProgress() {
+            const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+            const progress = (answered / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressPercentage').textContent = Math.round(progress) + '% Complete';
+            
+            // Update dots
+            document.querySelectorAll('.question-dot').forEach((dot, idx) => {
+                const qRadios = document.querySelectorAll(`input[data-question="${idx}"]:checked`);
+                if (qRadios.length > 0) {
+                    dot.classList.add('answered');
+                } else {
+                    dot.classList.remove('answered');
+                }
+            });
+        }
+        
+        // Initial progress update
+        updateProgress();
+    </script>
+</body>
+</html>

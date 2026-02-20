@@ -1,15 +1,24 @@
+# speaking/views.py
 from vosk import Model, KaldiRecognizer
 import os
 import uuid
 import json
 import subprocess
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.http import JsonResponse
+from home_page.models import StudentProfile
+from home_page.decorators import pretest_access_required, ajax_pretest_check
 import wave
 import parselmouth
 from difflib import SequenceMatcher
-from django.http import JsonResponse
+from .models import Recording, SpeakingResult
+
+# Import advanced pronunciation engine (from friend's version)
+from .pronunciation_engine import extract_mfcc, compare_mfcc, distance_to_score
 
 
 # -------------------------------------------------
@@ -37,11 +46,11 @@ def get_model():
 # CONFIG
 # -------------------------------------------------
 REFERENCE_TEXTS = [
-    "I am learning English pronunciation to improve my speaking skills.",
-    "This is my second sentence for practice.",
-    "English pronunciation improves with daily practice.",
-    "Clear speech helps people understand you better.",
-    "Confidence grows when you speak without fear."
+    " to improve skills speaking my pronunciation English learning am I",
+    "sentence second my is this for practice",
+    "with practice daily improves pronunciation English",
+    "better you understand peoples helps speech clear",
+    "without you speak fear when grows confidence"
 ]
 
 REFERENCE_AUDIOS = [
@@ -61,6 +70,7 @@ os.makedirs(MEDIA_DIR, exist_ok=True)
 # -------------------------------------------------
 
 def convert_to_wav(input_path):
+    """Convert audio file to WAV format for processing"""
     output_path = input_path.rsplit(".", 1)[0] + ".wav"
 
     cmd = [
@@ -82,6 +92,7 @@ def convert_to_wav(input_path):
 
 
 def transcribe_audio(wav_path):
+    """Transcribe audio using Vosk model"""
     wf = wave.open(wav_path, "rb")
     model_instance = get_model()
     rec = KaldiRecognizer(model_instance, wf.getframerate())
@@ -103,6 +114,7 @@ def transcribe_audio(wav_path):
 
 
 def word_accuracy(ref, hyp):
+    """Calculate word accuracy using sequence matching"""
     return round(
         SequenceMatcher(None, ref.lower(), hyp.lower()).ratio() * 100,
         2
@@ -110,11 +122,11 @@ def word_accuracy(ref, hyp):
 
 
 # -------------------------------------------------
-# PRONUNCIATION SCORE
+# PRONUNCIATION SCORE (Praat-based)
 # -------------------------------------------------
 
-def pronunciation_score(student_wav, ref_wav):
-
+def pronunciation_score_praat(student_wav, ref_wav):
+    """Calculate pronunciation score using Praat pitch analysis"""
     snd_student = parselmouth.Sound(student_wav)
 
     duration = snd_student.get_total_duration()
@@ -154,75 +166,57 @@ def pronunciation_score(student_wav, ref_wav):
 
     diff = abs(mean_student - mean_ref)
 
-    score = max(0, 100 - diff)
-
-    # Clamp to 100 max
-    score = min(score, 100)
+    # Smoother scoring (from friend's version)
+    score = 100 * (1 / (1 + (diff / 50)))
+    score = min(max(score, 0), 100)
 
     return round(score, 2)
 
 
 # -------------------------------------------------
-# ACCENT SCORE (FIXED SILENCE)
+# ACCENT SCORE
 # -------------------------------------------------
 
-def accent_score(student_wav, ref_wav):
-
+def accent_score(student_wav, ref_wav, text_score):
+    """Calculate accent score based on pitch variation and rhythm"""
     snd_student = parselmouth.Sound(student_wav)
-
-    duration = snd_student.get_total_duration()
-    intensity = snd_student.to_intensity()
-
-    mean_intensity = parselmouth.praat.call(
-        intensity,
-        "Get mean",
-        0,
-        0
-    )
-
-    # Silence check
-    if duration < 0.5 or mean_intensity < 40:
-        return 0.0
-
     snd_ref = parselmouth.Sound(ref_wav)
 
+    # ---- Silence Detection ----
+    duration = snd_student.get_total_duration()
+    intensity = snd_student.to_intensity()
+    mean_intensity = parselmouth.praat.call(intensity, "Get mean", 0, 0)
+
+    # 🚨 If silence or wrong sentence → return 0
+    if duration < 0.5 or mean_intensity < 40 or text_score < 50:
+        return 0.0
+
+    # ---- Duration Rhythm ----
+    dur_student = duration
+    dur_ref = snd_ref.get_total_duration()
+
+    rhythm_score = (
+        min(dur_student, dur_ref) / max(dur_student, dur_ref)
+    ) * 100
+
+    # ---- Pitch Variation ----
     pitch_student = snd_student.to_pitch()
     pitch_ref = snd_ref.to_pitch()
 
     pitch_std_student = parselmouth.praat.call(
-        pitch_student,
-        "Get standard deviation",
-        0,
-        0,
-        "Hertz"
+        pitch_student, "Get standard deviation", 0, 0, "Hertz"
     )
 
     pitch_std_ref = parselmouth.praat.call(
-        pitch_ref,
-        "Get standard deviation",
-        0,
-        0,
-        "Hertz"
+        pitch_ref, "Get standard deviation", 0, 0, "Hertz"
     )
 
-    dur_student = snd_student.get_total_duration()
-    dur_ref = snd_ref.get_total_duration()
-
-    if dur_student == 0 or dur_ref == 0:
-        return 0.0
-
-    rate_ratio = min(dur_student, dur_ref) / max(dur_student, dur_ref)
-
     pitch_diff = abs(pitch_std_student - pitch_std_ref)
-
     pitch_score = max(0, 100 - pitch_diff)
-    rhythm_score = rate_ratio * 100
 
     accent_final = (pitch_score * 0.6) + (rhythm_score * 0.4)
 
-    accent_final = min(accent_final, 100)
-
-    return round(accent_final, 2)
+    return round(min(accent_final, 100), 2)
 
 
 # -------------------------------------------------
@@ -230,7 +224,7 @@ def accent_score(student_wav, ref_wav):
 # -------------------------------------------------
 
 def adjusted_pronunciation_score(ref_text, recognized_text, praat_score):
-
+    """Adjust pronunciation score based on word completeness"""
     ref_words = ref_text.lower().split()
     spoken_words = recognized_text.lower().split()
 
@@ -257,37 +251,60 @@ def adjusted_pronunciation_score(ref_text, recognized_text, praat_score):
 # VIEWS
 # -------------------------------------------------
 
+@login_required
+@pretest_access_required('speaking')
 def start(request):
+    """Start speaking test - clear session recordings"""
     request.session['recordings'] = []
     request.session.modified = True
     return render(request, "speaking/start.html")
 
 
+@login_required
+@pretest_access_required('speaking')
 def question(request, q_index=0):
-
+    """Display speaking question"""
     if q_index >= len(REFERENCE_TEXTS):
-        return render(request, "speaking/start.html")
+        return redirect('speaking:start')
 
     return render(
         request,
         "speaking/question.html",
         {
             "reference_text": REFERENCE_TEXTS[q_index],
-            "question_index": q_index
+            "question_index": q_index,
+            "total_questions": len(REFERENCE_TEXTS)
         }
     )
 
 
 @csrf_exempt
+@login_required
+@ajax_pretest_check('speaking')
 def record_question(request, q_index=0):
-
+    """Record and save speaking response with enhanced scoring"""
     if request.method == "POST":
+        
+        # 🔒 PREVENT DUPLICATE SUBMISSION FOR SAME QUESTION (from friend's version)
+        recordings = request.session.get('recordings', [])
+        
+        if any(r.get("question") == REFERENCE_TEXTS[q_index] for r in recordings):
+            next_index = q_index + 1
+            if next_index < len(REFERENCE_TEXTS):
+                return JsonResponse({
+                    "next_url": f"/speaking/question/{next_index}/"
+                })
+            else:
+                return JsonResponse({
+                    "next_url": "/speaking/result/"
+                })
 
         audio_file = request.FILES.get("audio")
 
         if not audio_file:
             return JsonResponse({"error": "No audio received"}, status=400)
 
+        # Save uploaded audio
         ext = audio_file.name.split(".")[-1]
         filename = f"rec_{uuid.uuid4().hex}.{ext}"
         filepath = os.path.join(MEDIA_DIR, filename)
@@ -298,15 +315,81 @@ def record_question(request, q_index=0):
 
         wav_path = convert_to_wav(filepath)
 
+        # -------------------------------
+        # PROCESS AUDIO WITH ENHANCED SCORING
+        # -------------------------------
+
+        ref_text = REFERENCE_TEXTS[q_index]
+        ref_wav = REFERENCE_AUDIOS[q_index]
+
+        recognized_text = transcribe_audio(wav_path)
+
+        # Initialize scores
+        text_score = 0.0
+        pron_score = 0.0
+        acc_score = 0.0
+        mfcc_score = 0.0
+        g2p_score = 0.0
+        dtw_distance = 0.0
+        dtw_score = 0.0
+
+        if recognized_text.strip() != "":
+            # Text accuracy score
+            text_score = word_accuracy(ref_text, recognized_text)
+
+            # Praat-based pronunciation score
+            praat_score = pronunciation_score_praat(wav_path, ref_wav)
+
+            # MFCC-based pronunciation score (from friend's version)
+            mfcc_distance = compare_mfcc(ref_wav, wav_path)
+            mfcc_score = distance_to_score(mfcc_distance)
+
+            # DTW metrics (from friend's version)
+            dtw_distance = round(mfcc_distance, 2)
+            dtw_score = 100 / (1 + (dtw_distance / 40))
+            dtw_score = round(max(0, min(100, dtw_score)), 2)
+
+            # G2P score approximation (from friend's version)
+            g2p_score = round(text_score * 0.9, 2)
+
+            # Combine Praat and MFCC for better pronunciation scoring
+            combined_pron_score = (praat_score * 0.6) + (mfcc_score * 0.4)
+
+            # Adjust for completeness
+            pron_score = adjusted_pronunciation_score(
+                ref_text,
+                recognized_text,
+                combined_pron_score
+            )
+
+            # Accent score
+            acc_score = accent_score(wav_path, ref_wav, text_score)
+
+        # Final overall score (weighted average)
+        final_score = round((text_score + pron_score + acc_score) / 3, 2)
+
+        # -------------------------------
+        # STORE RESULT
+        # -------------------------------
+
         recordings = request.session.get('recordings', [])
         recordings.append({
-            "wav": wav_path,
-            "q_index": q_index
+            "question": ref_text,
+            "recognized": recognized_text,
+            "text_score": text_score,
+            "pron_score": pron_score,
+            "accent_score": acc_score,
+            "final_score": final_score,
+            "mfcc_score": round(mfcc_score, 2),
+            "g2p_score": round(g2p_score, 2),
+            "dtw_distance": dtw_distance,
+            "dtw_score": dtw_score
         })
 
         request.session['recordings'] = recordings
         request.session.modified = True
 
+        # Determine next step
         next_index = q_index + 1
 
         if next_index < len(REFERENCE_TEXTS):
@@ -325,60 +408,26 @@ def record_question(request, q_index=0):
 # RESULT VIEW
 # -------------------------------------------------
 
+@login_required
 def result_final(request):
+    """Display speaking test results and mark as completed"""
+    results = request.session.get('recordings', [])
 
-    recordings = request.session.get('recordings', [])
-    results = []
-
+    # Calculate averages for all score types
     total_pron = 0
     total_accent = 0
     total_accuracy = 0
+    total_mfcc = 0
+    total_g2p = 0
+    total_dtw_score = 0
 
-    for rec in recordings:
-
-        q_idx = rec["q_index"]
-        wav = rec["wav"]
-
-        ref_text = REFERENCE_TEXTS[q_idx]
-        ref_wav = REFERENCE_AUDIOS[q_idx]
-
-        recognized_text = transcribe_audio(wav)
-
-        # If nothing spoken → force 0
-        if recognized_text.strip() == "":
-            text_score = 0.0
-            pron_score = 0.0
-            acc_score = 0.0
-        else:
-            text_score = word_accuracy(ref_text, recognized_text)
-
-            praat_score = pronunciation_score(wav, ref_wav)
-
-            pron_score = adjusted_pronunciation_score(
-                ref_text,
-                recognized_text,
-                praat_score
-            )
-
-            acc_score = accent_score(wav, ref_wav)
-
-        final_score = round(
-            (text_score + pron_score + acc_score) / 3,
-            2
-        )
-
-        total_pron += pron_score
-        total_accent += acc_score
-        total_accuracy += text_score
-
-        results.append({
-            "question": ref_text,
-            "recognized": recognized_text,
-            "text_score": text_score,
-            "pron_score": pron_score,
-            "accent_score": acc_score,
-            "final_score": final_score
-        })
+    for res in results:
+        total_pron += res["pron_score"]
+        total_accent += res["accent_score"]
+        total_accuracy += res["text_score"]
+        total_mfcc += res["mfcc_score"]
+        total_g2p += res["g2p_score"]
+        total_dtw_score += res["dtw_score"]
 
     count = len(results)
 
@@ -386,15 +435,49 @@ def result_final(request):
         avg_pronunciation = round(total_pron / count, 2)
         avg_accent = round(total_accent / count, 2)
         avg_accuracy = round(total_accuracy / count, 2)
+        avg_mfcc = round(total_mfcc / count, 2)
+        avg_g2p = round(total_g2p / count, 2)
+        avg_dtw_score = round(total_dtw_score / count, 2)
 
+        # Enhanced overall score using all metrics (from friend's version)
         overall_score = round(
-            (avg_pronunciation + avg_accent + avg_accuracy) / 3,
+            (avg_pronunciation + avg_accent + avg_accuracy +
+             avg_mfcc + avg_g2p + avg_dtw_score) / 6,
             2
         )
     else:
-        avg_pronunciation = avg_accent = avg_accuracy = overall_score = 0
+        avg_pronunciation = avg_accent = avg_accuracy = 0.0
+        avg_mfcc = avg_g2p = avg_dtw_score = overall_score = 0.0
 
-    return render(
+    # Determine level based on overall score
+    if overall_score < 40:
+        level = "Basic"
+    elif overall_score < 70:
+        level = "Intermediate"
+    else:
+        level = "Advanced"
+
+    # ✅ SAVE SPEAKING RESULT TO DATABASE (from your version)
+    speaking_result = SpeakingResult.objects.create(
+        user=request.user,
+        session_key=request.session.session_key,
+        overall_score=overall_score,
+        avg_pronunciation=avg_pronunciation,
+        avg_accent=avg_accent,
+        avg_accuracy=avg_accuracy,
+        level=level
+    )
+
+    # Mark speaking as completed in profile
+    try:
+        profile = StudentProfile.objects.get(user=request.user)
+        profile.speaking_completed = True
+        profile.update_pretest_status()
+        messages.success(request, "Speaking test completed successfully!")
+    except StudentProfile.DoesNotExist:
+        messages.warning(request, "Speaking test completed, but profile not found.")
+
+    response = render(
         request,
         "speaking/result.html",
         {
@@ -402,6 +485,45 @@ def result_final(request):
             "avg_pronunciation": avg_pronunciation,
             "avg_accent": avg_accent,
             "avg_accuracy": avg_accuracy,
-            "overall_score": overall_score
+            "avg_mfcc": avg_mfcc,
+            "avg_g2p": avg_g2p,
+            "avg_dtw_score": avg_dtw_score,
+            "overall_score": overall_score,
+            "result_id": speaking_result.id,
+            "level": level
         }
     )
+
+    # Clear session after displaying results
+    request.session['recordings'] = []
+    request.session.modified = True
+
+    return response
+
+
+@login_required
+def latest_result(request):
+    """Redirect to most recent speaking result"""
+    result = SpeakingResult.objects.filter(user=request.user).last()
+    if result:
+        return redirect('speaking:result_detail', result_id=result.id)
+    else:
+        messages.warning(request, "No speaking test results found.")
+        return redirect('speaking:start')
+
+
+@login_required
+def result_detail(request, result_id):
+    """View details of a specific speaking result"""
+    result = get_object_or_404(SpeakingResult, id=result_id, user=request.user)
+    
+    # Get session data if available
+    results = []
+    if result.session_key:
+        # Try to get detailed results from session (if still available)
+        pass
+    
+    return render(request, 'speaking/result_detail.html', {
+        'result': result,
+        'results': results
+    })

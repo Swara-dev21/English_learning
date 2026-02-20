@@ -92,7 +92,7 @@
             {{ form.captcha.label_tag }}
             <div class="captcha-container">
                 {{ form.captcha }} 
-                <span id="custom-refresh" title="Refresh Captcha">🔄</span>
+ 
             </div>
             <div class="error-text">
                 {{ form.captcha.errors }}
@@ -108,28 +108,6 @@
 
     </form>
 </div>
-
-<script>
-const captchaRefreshURL = "/captcha/refresh/";  
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll("#custom-refresh").forEach(btn => {
-        btn.addEventListener("click", function() {
-            const container = btn.closest(".captcha-container");
-            const img = container.querySelector("img");
-            const input = container.querySelector("input[name$='0']");
-
-            fetch(captchaRefreshURL)
-                .then(res => res.json())
-                .then(data => {
-                    img.src = data.image_url + '?t=' + new Date().getTime();
-                    input.value = data.key;
-                })
-                .catch(err => console.error('Captcha refresh failed:', err));
-        });
-    });
-});
-</script>
-
 
 
 {% endblock %}
