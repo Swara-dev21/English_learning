@@ -2,318 +2,297 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Results</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'reading/css/style.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'reading/css/style.css' %}?v=6">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .results-page {
             min-height: 100vh;
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
             display: flex;
-            align-items: center;
             justify-content: center;
-            padding: var(--space-lg);
+            align-items: center;
+            padding: 40px;
         }
-        
+
         .results-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
+            background: white;
             width: 100%;
-            max-width: 600px;
-            overflow: hidden;
-            border: 1px solid var(--primary-light);
-        }
-        
-        .results-header {
-            background: var(--primary-gradient);
-            color: var(--white);
-            padding: var(--space-xl);
-            text-align: center;
-            position: relative;
+            max-width: 700px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
-        .results-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-            background-size: 30px 30px;
-            opacity: 0.1;
-        }
-        
-        .results-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: var(--space-sm);
-            position: relative;
-        }
-        
-        .results-header p {
-            opacity: 0.9;
-            position: relative;
-        }
-        
-        .score-display {
+        .results-header {
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: white;
             text-align: center;
-            padding: var(--space-xl);
+            padding: 30px;
         }
-        
+
+        /* Score Circle */
+        .score-circle-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0 10px;
+        }
+
         .score-circle {
             width: 150px;
             height: 150px;
+            background: white;
             border-radius: 50%;
-            background: var(--primary-gradient);
-            color: var(--white);
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            margin: 0 auto var(--space-lg);
-            border: 8px solid var(--primary-light);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
+            border: 4px solid #2563eb;
         }
-        
-        .score-value {
+
+        .score-number {
             font-size: 3rem;
             font-weight: 700;
-            line-height: 1;
+            color: #2563eb;
+            line-height: 1.2;
         }
-        
+
         .score-total {
             font-size: 1.2rem;
-            opacity: 0.9;
+            color: #6b7280;
+            font-weight: 500;
         }
-        
-        .level-display {
+
+        .percentage-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2563eb;
+            margin: 5px 0;
             text-align: center;
-            margin-bottom: var(--space-lg);
         }
-        
+
+        .level-badge-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         .level-badge {
             display: inline-block;
-            padding: 10px 30px;
+            padding: 10px 35px;
             border-radius: 50px;
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: var(--space-sm);
-        }
-        
-        .level-beginner {
-            background: linear-gradient(135deg, #60a5fa, #3b82f6);
-            color: white;
-        }
-        
-        .level-intermediate {
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            color: white;
-        }
-        
-        .level-advanced {
-            background: linear-gradient(135deg, #34d399, #10b981);
-            color: white;
-        }
-        
-        .feedback {
-            text-align: center;
-            color: var(--text-gray);
-            margin-bottom: var(--space-xl);
-            font-size: 1.1rem;
-        }
-        
-        .results-summary {
-            padding: 0 var(--space-xl) var(--space-xl);
-        }
-        
-        .results-summary h3 {
-            margin-bottom: var(--space-lg);
-            text-align: center;
-            color: var(--text-dark);
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-        }
-        
-        .results-summary h3 i {
-            color: var(--primary);
-        }
-        
-        .result-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            padding: var(--space-md);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-sm);
-            background: var(--light-bg);
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
-        
-        .result-item:hover {
-            border-color: var(--primary-light);
-            transform: translateX(5px);
-        }
-        
-        .result-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-weight: 700;
             font-size: 1.2rem;
-            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .level-basic { 
+            background: #60a5fa; 
+            color: white; 
         }
         
-        .correct-icon {
-            background: #d1fae5;
-            color: #10b981;
+        .level-intermediate { 
+            background: #f59e0b; 
+            color: white; 
         }
         
-        .incorrect-icon {
-            background: #fee2e2;
-            color: #ef4444;
+        .level-advanced { 
+            background: #10b981; 
+            color: white; 
         }
-        
-        .result-text {
-            flex: 1;
+
+        .feedback-text {
+            text-align: center;
+            color: #4b5563;
             font-size: 1.1rem;
-            color: var(--text-dark);
+            margin: 20px 0 30px;
+            padding: 0 30px;
+            font-style: italic;
         }
-        
-        .result-text strong {
-            color: var(--text-dark);
+
+        /* Questions Summary Section */
+        .summary-section {
+            padding: 30px;
+            border-top: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f9fafb;
         }
-        
+
+        .summary-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1e293b;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+        }
+
+        .summary-title i {
+            color: #2563eb;
+        }
+
+        /* Questions Grid - 5 Boxes ONLY (no details list) */
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .q-item {
+            text-align: center;
+            padding: 20px 10px;
+            border-radius: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .q-correct {
+            background: #dcfce7;
+            color: #166534;
+            border: 2px solid #86efac;
+        }
+
+        .q-incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #fecaca;
+        }
+
+        .q-number {
+            font-size: 1rem;
+            color: #4b5563;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .q-icon {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
         .actions {
             display: flex;
-            gap: var(--space-md);
-            padding: var(--space-xl);
-            border-top: 1px solid var(--border);
-            background: var(--light-bg);
+            gap: 20px;
+            padding: 30px;
         }
-        
+
         .action-btn {
             flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-            padding: var(--space-md);
-            border-radius: var(--radius-md);
+            text-align: center;
+            padding: 14px;
+            border-radius: 12px;
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s ease;
-            border: 2px solid transparent;
+            font-size: 1rem;
         }
-        
+
         .home-btn {
-            background: transparent;
-            color: var(--primary);
-            border-color: var(--primary);
+            border: 2px solid #2563eb;
+            color: #2563eb;
+            background: white;
         }
-        
+
         .home-btn:hover {
-            background: var(--primary-light);
-            transform: translateY(-2px);
+            background: #eff6ff;
         }
-        
+
         .retry-btn {
-            background: var(--primary-gradient);
-            color: var(--white);
-        }
-        
-        .retry-btn:hover {
             background: linear-gradient(135deg, #2563eb, #4f46e5);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+            color: white;
         }
-        
+
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
         @media (max-width: 768px) {
+            .questions-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
             .actions {
                 flex-direction: column;
-            }
-            
-            .score-circle {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .score-value {
-                font-size: 2.5rem;
-            }
-            
-            .results-header h1 {
-                font-size: 2rem;
             }
         }
     </style>
 </head>
+
 <body>
-    <div class="results-page">
-        <div class="results-card">
-            <!-- Header -->
-            <div class="results-header">
-                <h1><i class="fas fa-trophy"></i> Test Results</h1>
-                <p>Your reading level assessment</p>
-            </div>
-            
-            <!-- Score Display -->
-            <div class="score-display">
-                <div class="score-circle">
-                    <div class="score-value">{{ score }}</div>
-                    <div class="score-total">/ {{ total }}</div>
-                </div>
-                
-                <div class="level-display">
-                    <div class="level-badge level-{{ level|lower }}">{{ level }}</div>
-                    <p style="color: var(--text-gray); font-size: 1.2rem;">{{ percentage }}%</p>
-                </div>
-                
-                <p class="feedback">{{ feedback }}</p>
-            </div>
-            
-            <!-- Results Summary -->
-            <div class="results-summary">
-                <h3>
-                    <i class="fas fa-clipboard-list"></i> Questions Summary
-                </h3>
-                
-                {% for result in results %}
-                <div class="result-item">
-                    <div class="result-icon {% if result.is_correct %}correct-icon{% else %}incorrect-icon{% endif %}">
-                        {% if result.is_correct %}
-                        <i class="fas fa-check"></i>
-                        {% else %}
-                        <i class="fas fa-times"></i>
-                        {% endif %}
-                    </div>
-                    <div class="result-text">
-                        <strong>Q{{ forloop.counter }}:</strong> 
-                        {% if result.is_correct %}Correct{% else %}Incorrect{% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            
-            <!-- Actions -->
-            <div class="actions">
-                <a href="{% url 'reading:index' %}" class="action-btn home-btn">
-                    <i class="fas fa-home"></i> Back to Home
-                </a>
-                <a href="{% url 'writing:writing_test_home' 2 %}" class="action-btn retry-btn">
-                <i class="fas fa-redo"></i> Go to Writing Test
-             </a>
-            </div>
+<div class="results-page">
+<div class="results-card">
+
+    <!-- Header -->
+    <div class="results-header">
+        <h1><i class="fas fa-chart-line"></i> Test Results</h1>
+        <p>Your reading level assessment</p>
+    </div>
+
+    <!-- Score Circle - Shows 40/100 style -->
+    <div class="score-circle-container">
+        <div class="score-circle">
+            <div class="score-number">{{ score }}</div>
+            <div class="score-total">/ {{ total }}</div>
         </div>
     </div>
+    
+    <div class="percentage-text">
+        {{ percentage|floatformat:1 }}%
+    </div>
+
+    <!-- Level Badge -->
+    <div class="level-badge-container">
+        <div class="level-badge level-{{ level|lower }}">
+            {{ level }}
+        </div>
+    </div>
+
+    <!-- Feedback Text -->
+    <div class="feedback-text">
+        {% if level == 'Advanced' %}
+            Excellent reading comprehension skills!
+        {% elif level == 'Intermediate' %}
+            Good progress. Focus on weaker reading skills.
+        {% else %}
+            Start with foundational reading exercises.
+        {% endif %}
+    </div>
+
+    <!-- Questions Summary Section - ONLY 5 BOXES, no details list -->
+    <div class="summary-section">
+        <h3 class="summary-title">
+            <i class="fas fa-list-check"></i>
+            Questions Summary
+        </h3>
+
+        <!-- 5 Boxes Grid - NO detailed list below -->
+        <div class="questions-grid">
+            {% for result in results %}
+            <div class="q-item {% if result.is_correct %}q-correct{% else %}q-incorrect{% endif %}">
+                <div class="q-number">Q{{ forloop.counter }}</div>
+                <div class="q-icon">
+                    {% if result.is_correct %}✓{% else %}✗{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+        <a href="{% url 'reading:index' %}" class="action-btn home-btn">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+        <a href="{% url 'writing:writing_test_home' 2 %}" class="action-btn retry-btn">
+            <i class="fas fa-pen"></i> Go to Writing Test
+        </a>
+    </div>
+
+</div>
+</div>
 </body>
 </html>
