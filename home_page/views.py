@@ -305,28 +305,6 @@ def pretest_results(request):
     return render(request, 'home_page/pretest_results.html', context)
 
 
-@login_required
-def pretest_status(request):
-    """Show current pretest progress"""
-    profile = get_object_or_404(StudentProfile, user=request.user)
-    
-    # Calculate completed tests count
-    completed_tests = sum([
-        profile.listening_completed,
-        profile.reading_completed,
-        profile.speaking_completed,
-        profile.writing_completed
-    ])
-    
-    context = {
-        'profile': profile,
-        'completed_count': completed_tests,
-        'total_tests': 4,
-    }
-    
-    return render(request, 'home_page/pretest_status.html', context)
-
-
 def password_reset_request(request):
     """View for requesting password reset"""
     
