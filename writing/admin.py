@@ -10,6 +10,7 @@ class WritingTestAdmin(admin.ModelAdmin):
     list_filter = ['is_active', 'created_at']
     search_fields = ['title', 'description']
     list_editable = ['is_active']
+    readonly_fields = ['created_at']  # Mark created_at as readonly
     
     fieldsets = (
         ('Test Information', {
@@ -35,45 +36,30 @@ class WritingQuestionInline(admin.TabularInline):
 
 @admin.register(WritingQuestion)
 class WritingQuestionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'test', 'order', 'question_type', 'short_prompt', 'has_picture', 'has_audio']
+    list_display = ['id', 'test', 'order', 'question_type', 'short_prompt']
     list_display_links = ['id', 'short_prompt']
     list_filter = ['question_type', 'test']
     search_fields = ['prompt', 'correct_answer']
     list_editable = ['order']
     
     fieldsets = (
-        ('Question Information', {
+        ('📌 Question Information', {
             'fields': ('test', 'order', 'question_type', 'prompt', 'explanation')
         }),
-        ('Answer Key', {
-            'fields': ('correct_answer', 'acceptable_answers')
+        ('✅ Answer Key', {
+            'fields': ('correct_answer', 'acceptable_answers'),
+            'description': 'For Fill in Blanks: comma-separated answers (e.g., "goes, are, a")<br>For Sentence Order: letters with commas (e.g., "C, B, A")<br>For Spelling MCQ: letters (e.g., "b, b, b")'
         }),
-        ('Picture Description Settings', {
-            'fields': ('picture_filename', 'required_keywords', 
-                      'min_sentences', 'min_words', 'max_words'),
+        ('🖼️ Legacy Fields (Not used in new questions)', {
+            'fields': ('picture_filename', 'required_keywords', 'min_sentences', 'min_words', 'max_words', 'audio_filename'),
             'classes': ('collapse',),
-            'description': 'Only applicable for Picture Description questions'
-        }),
-        ('Dictation Settings', {
-            'fields': ('audio_filename',),
-            'classes': ('collapse',),
-            'description': 'Only applicable for Dictation questions'
+            'description': 'These fields are kept for backward compatibility only'
         }),
     )
     
     def short_prompt(self, obj):
         return obj.prompt[:50] + '...' if len(obj.prompt) > 50 else obj.prompt
     short_prompt.short_description = 'Prompt'
-    
-    def has_picture(self, obj):
-        return bool(obj.picture_filename)
-    has_picture.boolean = True
-    has_picture.short_description = 'Picture'
-    
-    def has_audio(self, obj):
-        return bool(obj.audio_filename)
-    has_audio.boolean = True
-    has_audio.short_description = 'Audio'
 
 
 @admin.register(WritingResponse)
@@ -100,18 +86,18 @@ class WritingResponseAdmin(admin.ModelAdmin):
 
 @admin.register(WritingTestResult)
 class WritingTestResultAdmin(admin.ModelAdmin):
-    list_display = ['id', 'test', 'user', 'session_key', 'total_score', 'max_score', 'percentage_display', 'created_at']
+    list_display = ['id', 'test', 'user', 'session_key', 'total_score', 'max_score', 'percentage_display', 'level', 'created_at']
     list_display_links = ['id', 'test']
-    list_filter = ['total_score', 'created_at', 'test']
+    list_filter = ['level', 'created_at', 'test']
     search_fields = ['user__username', 'session_key']
-    readonly_fields = ['created_at']
+    readonly_fields = ['created_at', 'percentage']
     
     fieldsets = (
         ('Result Information', {
             'fields': ('test', 'user', 'session_key')
         }),
         ('Score', {
-            'fields': ('total_score', 'max_score')
+            'fields': ('total_score', 'max_score', 'percentage', 'level')
         }),
         ('Metadata', {
             'fields': ('created_at',),
@@ -120,6 +106,5 @@ class WritingTestResultAdmin(admin.ModelAdmin):
     )
     
     def percentage_display(self, obj):
-        # FIXED: Remove parentheses - percentage is a field, not a method
         return f"{obj.percentage:.1f}%"
     percentage_display.short_description = 'Percentage'

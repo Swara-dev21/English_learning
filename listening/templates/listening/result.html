@@ -1,3 +1,4 @@
+<!-- listening/templates/listening/result.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listening Test Results</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'listening/css/style.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'listening/css/style.css' %}?v=8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -15,11 +16,11 @@
             align-items: center;
             justify-content: center;
             padding: 2rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #5e548e 0%, #453c6b 100%);
         }
         
         .results-card {
-            max-width: 600px;
+            max-width: 800px;
             width: 100%;
             background: white;
             border-radius: 1.5rem;
@@ -28,7 +29,7 @@
         }
         
         .results-header {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background: linear-gradient(135deg, #5e548e, #453c6b);
             color: white;
             padding: 2.5rem;
             text-align: center;
@@ -43,7 +44,7 @@
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background: linear-gradient(135deg, #5e548e, #453c6b);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -89,6 +90,48 @@
             color: #065f46;
         }
         
+        .score-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .breakdown-item {
+            text-align: center;
+        }
+        
+        .breakdown-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .breakdown-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .breakdown-value.mcq {
+            color: #5e548e;
+        }
+        
+        .breakdown-value.typing {
+            color: #9f8bc9;
+        }
+        
+        .pending-badge {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            display: inline-block;
+            margin: 1rem 0;
+        }
+        
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -113,45 +156,208 @@
             color: #991b1b;
         }
         
+        .summary-item.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
         .summary-q {
             font-weight: 700;
             font-size: 1.1rem;
             margin-bottom: 0.25rem;
         }
         
-        .actions {
+        .question-type-icon {
+            font-size: 0.8rem;
+            margin-left: 0.25rem;
+        }
+        
+        .detailed-review {
             padding: 0 2rem 2rem;
         }
         
-        .btn {
+        .review-item {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+        }
+        
+        .review-item.correct {
+            border-left-color: #10b981;
+        }
+        
+        .review-item.incorrect {
+            border-left-color: #ef4444;
+        }
+        
+        .review-item.pending {
+            border-left-color: #f59e0b;
+        }
+        
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .review-transcript {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+            font-style: italic;
+            color: #4b5563;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .review-answer {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .your-answer, .correct-answer {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+        
+        .your-answer {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+        }
+        
+        .correct-answer {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .answer-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .answer-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        
+        .keyword-hint {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        .keyword-hint i {
+            color: #9f8bc9;
+            margin-right: 0.25rem;
+        }
+        
+        .explanation-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f1f5f9;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            border-left: 3px solid #5e548e;
+        }
+        
+        .explanation-box strong {
+            color: #5e548e;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        /* Updated Action Buttons Section */
+        .actions {
+            padding: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            border-top: 2px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        
+        .action-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
-            width: 100%;
-            padding: 1.25rem;
-            border-radius: 0.75rem;
+            padding: 1rem 2rem;
+            border-radius: 3rem;
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1rem;
+            min-width: 180px;
         }
         
-        .btn-primary {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
+        .home-btn {
+            background: white;
+            border: 2px solid #5e548e;
+            color: #5e548e;
         }
         
-        .btn-primary:hover {
+        .home-btn:hover {
+            background: #f0edf7;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 5px 15px rgba(94, 84, 142, 0.2);
+        }
+        
+        .retry-btn {
+            background: linear-gradient(135deg, #5e548e, #453c6b);
+            color: white;
+            border: 2px solid transparent;
+        }
+        
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(94, 84, 142, 0.3);
+        }
+        
+        .writing-btn {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: white;
+            border: 2px solid transparent;
+        }
+        
+        .writing-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
         }
         
         @media (max-width: 640px) {
             .summary-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .score-breakdown {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .review-answer {
+                flex-direction: column;
+            }
+            
+            .actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .action-btn {
+                width: 100%;
             }
         }
     </style>
@@ -173,39 +379,89 @@
                 </div>
                 
                 <div class="level-badge level-{{ level|lower }}">{{ level }}</div>
-                <p style="font-size: 1.2rem; color: #6b7280; margin: 1rem 0;">{{ percentage }}% Correct</p>
+                <p style="font-size: 1.2rem; color: #6b7280; margin: 1rem 0;">{{ percentage|floatformat:1 }}% Correct</p>
                 
                 <p style="color: #4b5563; margin-bottom: 2rem;">{{ feedback }}</p>
+                
+                {% if needs_manual_grading %}
+                <div class="pending-badge">
+                    <i class="fas fa-clock"></i> Some typing answers pending manual grading
+                </div>
+                {% endif %}
+                
+                <!-- Score Breakdown by Question Type -->
+                <div class="score-breakdown">
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">Multiple Choice</div>
+                        <div class="breakdown-value mcq">{{ mcq_correct }}/{{ mcq_total }}</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">Typing Questions</div>
+                        <div class="breakdown-value typing">{{ typing_correct }}/{{ typing_total }}</div>
+                    </div>
+                </div>
             </div>
             
-            <!-- Questions Summary - FIXED: using detailed_results -->
+            <!-- Questions Summary -->
             <div class="summary-grid">
-                {% for item in detailed_results %}
-                <div class="summary-item {% if item.is_correct %}correct{% else %}incorrect{% endif %}">
-                    <div class="summary-q">Q{{ forloop.counter }}</div>
-                    <div>
-                        {% if item.is_correct %}
-                        <i class="fas fa-check"></i> Correct
+                {% for item in question_data %}
+                <div class="summary-item 
+                    {% if item.needs_grading %}pending
+                    {% elif item.is_correct %}correct
+                    {% else %}incorrect{% endif %}">
+                    <div class="summary-q">
+                        Q{{ forloop.counter }}
+                        {% if item.question.is_mcq %}
+                            <i class="fas fa-list-ul question-type-icon" title="Multiple Choice"></i>
                         {% else %}
-                        <i class="fas fa-times"></i> Incorrect
+                            <i class="fas fa-keyboard question-type-icon" title="Typing Answer"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if item.needs_grading %}
+                            <i class="fas fa-clock"></i> Pending
+                        {% elif item.is_correct %}
+                            <i class="fas fa-check"></i> Correct
+                        {% else %}
+                            <i class="fas fa-times"></i> Incorrect
                         {% endif %}
                     </div>
                 </div>
                 {% endfor %}
             </div>
             
-            <!-- Actions - Continue to Speaking Test Button -->
+            <!-- Detailed Review Section (if you want to show it) -->
+            {% if question_data and False %}  <!-- Set to True if you want to show detailed review -->
+            <div class="detailed-review">
+                <h4 style="margin-bottom: 1rem; color: #1e293b; padding: 0 1rem;">Detailed Review</h4>
+                {% for item in question_data %}
+                    {% if not item.is_correct %}
+                    <div class="review-item {% if item.needs_grading %}pending{% else %}incorrect{% endif %}">
+                        <div class="review-question">Question {{ forloop.counter }}</div>
+                        <div class="review-transcript">{{ item.question.transcript }}</div>
+                        <div class="review-answer">
+                            <div class="your-answer">
+                                <div class="answer-label">Your Answer:</div>
+                                <div class="answer-text">{{ item.user_answer|default:"Not answered" }}</div>
+                            </div>
+                            <div class="correct-answer">
+                                <div class="answer-label">Correct Answer:</div>
+                                <div class="answer-text">{{ item.correct_answer }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Action Buttons - Properly Arranged -->
             <div class="actions">
-                <a href="{% url 'speaking:start' %}" class="btn btn-primary">
-                    <i class="fas fa-microphone-alt"></i> Continue to Speaking Test
+                <a href="{% url 'speaking:start' %}" class="action-btn writing-btn">
+                    <i class="fas fa-microphone"></i> Go to Speaking Test
                 </a>
             </div>
-            
-            <!-- Note: Speaking test coming soon -->
-            <p style="text-align: center; padding-bottom: 2rem; color: #9ca3af; font-size: 0.9rem;">
-                <i class="fas fa-info-circle"></i> Speaking test will be available soon!
-            </p>
-        </div>
+        </div>    
     </div>
 </body>
 </html>

@@ -11,15 +11,18 @@ class WritingTest(models.Model):
     
     def __str__(self):
         return self.title
+    
+    def question_count(self):
+        return self.questions.count()
 
 class WritingQuestion(models.Model):
     """Each writing question with its type and requirements"""
     QUESTION_TYPES = [
-        ('picture_description', 'Picture Description'),
-        ('tense_change', 'Tense Change'),
-        ('article_complete', 'Article Completion'),
-        ('dictation', 'Dictation'),
-        ('grammar_correction', 'Grammar Correction'),
+        ('fill_blanks', 'Fill in the Blanks'),
+        ('sentence_order', 'Sentence Arrangement'),
+        ('sentence_rewrite', 'Sentence Rewriting'),
+        ('spelling_mcq', 'Spelling Multiple Choice'),
+        ('paragraph_writing', 'Paragraph Writing'),
     ]
     
     test = models.ForeignKey(WritingTest, on_delete=models.CASCADE, related_name='questions')
@@ -32,30 +35,35 @@ class WritingQuestion(models.Model):
     acceptable_answers = models.JSONField(default=list, blank=True, help_text="List of other acceptable answers in JSON format")
     explanation = models.TextField(blank=True)
     
-    # For picture description only
+    # For picture description (keeping for backward compatibility)
     picture_filename = models.CharField(max_length=200, blank=True, help_text="Name of image file in static folder")
     required_keywords = models.JSONField(default=list, blank=True, help_text="Keywords that should be present")
     min_sentences = models.IntegerField(default=2)
     min_words = models.IntegerField(default=15)
     max_words = models.IntegerField(default=50)
     
-    # For dictation only
+    # For dictation (keeping for backward compatibility)
     audio_filename = models.CharField(max_length=200, blank=True, help_text="Name of audio file for dictation")
     
+    class Meta:
+        ordering = ['order']
+        unique_together = ['test', 'order']
+    
     def __str__(self):
-        return f"Q{self.order}: {self.question_type} - {self.prompt[:50]}..."
+        return f"Q{self.order}: {self.get_question_type_display()}"
     
     def picture_url(self):
         """Generate URL to the picture file"""
         if self.picture_filename:
-            return f"/static/writing_test/images/{self.picture_filename}"
+            return f"/static/writing/images/{self.picture_filename}"
         return ""
     
     def audio_url(self):
         """Generate URL to the audio file"""
         if self.audio_filename:
-            return f"/static/writing_test/audio/{self.audio_filename}"
+            return f"/static/writing/audio/{self.audio_filename}"
         return ""
+
 
 class WritingResponse(models.Model):
     """Store user's written answers"""
@@ -74,23 +82,34 @@ class WritingResponse(models.Model):
     def __str__(self):
         return f"Response to Q{self.question.order}: {self.user_answer[:50]}..."
 
+
 class WritingTestResult(models.Model):
     """Store complete writing test results"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     session_key = models.CharField(max_length=100, blank=True)
     test = models.ForeignKey(WritingTest, on_delete=models.CASCADE)
-    total_score = models.FloatField(default=0)
-    max_score = models.IntegerField(default=5)
+    total_score = models.FloatField(default=0)  # Sum of all question scores (out of 500)
+    max_score = models.IntegerField(default=5)   # Number of questions
     percentage = models.FloatField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
     level = models.CharField(max_length=20, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
     def save(self, *args, **kwargs):
-        # Calculate percentage first
+        # Calculate percentage correctly
         if self.max_score > 0:
-            self.percentage = (self.total_score / self.max_score) * 100
+            # Each question is out of 100, so total possible = max_score × 100
+            self.percentage = (self.total_score / (self.max_score * 100)) * 100
         
-            
+        # Determine level based on percentage
+        if self.percentage >= 80:
+            self.level = "Advanced"
+        elif self.percentage >= 60:
+            self.level = "Intermediate"
+        elif self.percentage >= 40:
+            self.level = "Basic"
+        else:
+            self.level = "Beginner"
+        
         super().save(*args, **kwargs)
     
     def score_out_of_5(self):
@@ -98,4 +117,4 @@ class WritingTestResult(models.Model):
         return f"{self.total_score}/{self.max_score}"
     
     def __str__(self):
-        return f"Writing Result: {self.total_score}/{self.max_score} ({self.percentage:.1f}%) - {self.level}"
+        return f"Writing Result: {self.total_score}/{self.max_score*100} ({self.percentage:.1f}%) - {self.level}"

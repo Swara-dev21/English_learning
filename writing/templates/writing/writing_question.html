@@ -5,51 +5,114 @@
 
 {% block extra_css %}
 <style>
+    :root {
+        --primary: #4f46e5;
+        --primary-dark: #7c3aed;
+        --primary-gradient: linear-gradient(135deg, #4f46e5, #7c3aed);
+        --primary-light: #eef2ff;
+        --accent: #a78bfa;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+    }
+
     .writing-container {
         max-width: 800px;
         margin: 0 auto;
+        padding: 20px 15px;
     }
     
     .progress-container {
         background: white;
-        border-radius: 12px;
-        padding: 15px 20px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-        margin-bottom: 20px;
+        border-radius: 16px;
+        padding: 20px 25px;
+        box-shadow: 0 10px 25px -10px rgba(79, 70, 229, 0.15);
+        margin-bottom: 25px;
+        border: 1px solid rgba(79, 70, 229, 0.1);
     }
     
     .progress {
         height: 10px;
-        border-radius: 5px;
+        border-radius: 8px;
         background-color: #e9ecef;
-        margin-top: 10px;
+        margin-top: 12px;
+        overflow: hidden;
     }
     
     .progress-bar {
-        background: linear-gradient(90deg, #4a6fa5, #166088);
-        border-radius: 5px;
+        background: var(--primary-gradient);
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .progress-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
     }
     
     .question-card {
         border: none;
-        border-radius: 12px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        border-radius: 24px;
+        box-shadow: 0 20px 40px -15px rgba(79, 70, 229, 0.25);
         overflow: hidden;
+        border: 1px solid rgba(79, 70, 229, 0.1);
+        animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     
     .question-header {
-        background: linear-gradient(135deg, #4a6fa5, #166088);
+        background: var(--primary-gradient);
         color: white;
-        padding: 20px;
+        padding: 25px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .question-header::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+        animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
     }
     
     .question-body {
-        padding: 25px;
+        padding: 30px;
     }
     
     .answer-box {
         border: 2px solid #e9ecef;
-        border-radius: 10px;
+        border-radius: 16px;
         padding: 20px;
         margin: 20px 0;
         transition: all 0.3s ease;
@@ -57,8 +120,8 @@
     }
     
     .answer-box:focus-within {
-        border-color: #4a6fa5;
-        box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.1);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
     }
     
     .answer-textarea {
@@ -71,6 +134,7 @@
         line-height: 1.6;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         padding: 10px;
+        color: #1e293b;
     }
     
     .word-counter {
@@ -79,44 +143,165 @@
         font-size: 16px;
         margin-top: 10px;
         font-weight: 500;
+        padding-top: 10px;
+        border-top: 1px dashed #e9ecef;
     }
     
     .hint-box {
-        background-color: #f0f7ff;
-        border: 1px solid #c3d9ff;
-        border-radius: 8px;
-        padding: 15px;
+        background-color: var(--primary-light);
+        border: 1px solid rgba(79, 70, 229, 0.3);
+        border-radius: 12px;
+        padding: 15px 20px;
         margin: 15px 0;
         font-size: 16px;
+        border-left: 4px solid var(--primary);
     }
     
-    .image-container {
-        text-align: center;
-        margin: 15px 0;
-        padding: 15px;
+    /* ===== IMPROVED QUESTION DISPLAY STYLES ===== */
+    .question-display {
+        background: linear-gradient(135deg, #f8fafc, #ffffff);
+        border-radius: 20px;
+        padding: 30px;
+        margin: 20px 0;
+        border: 2px solid var(--primary);
+        box-shadow: 0 10px 30px rgba(79, 70, 229, 0.15);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .question-display::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 8px;
+        height: 100%;
+        background: var(--primary-gradient);
+    }
+
+    .question-display h5 {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 3px solid var(--primary-light);
+        padding-bottom: 12px;
+    }
+
+    .question-display h5 i {
+        color: var(--primary);
+        margin-right: 10px;
+        font-size: 24px;
+    }
+
+    .question-text {
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.7;
+        color: #1e293b;
         background: white;
-        border-radius: 10px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        padding: 20px;
+        border-radius: 16px;
+        border: 1px solid rgba(79, 70, 229, 0.2);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
-    
-    .writing-image {
-        max-width: 100%;
-        max-height: 250px;
-        border-radius: 8px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+
+    .question-text .sentence-item {
+        font-size: 20px;
+        font-weight: 500;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border-left: 4px solid var(--primary);
     }
-    
-    .audio-controls {
+
+    .question-text .sentence-item strong {
+        color: var(--primary-dark);
+        font-weight: 700;
+        margin-right: 10px;
+    }
+
+    .question-text .blank-item {
+        font-size: 20px;
+        font-weight: 600;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        background: #fff3e0;
+        border-radius: 12px;
+        border-left: 4px solid var(--warning);
+    }
+
+    .question-text .blank-item span {
+        color: var(--primary-dark);
+        font-weight: 700;
+    }
+
+    .clue-words-badge {
+        display: inline-block;
+        background: var(--primary-gradient);
+        color: white;
+        font-weight: 600;
+        font-size: 18px;
+        padding: 10px 20px;
+        border-radius: 50px;
+        margin: 5px;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .format-box {
+        background: #eef2ff;
+        border-radius: 14px;
+        padding: 15px 20px;
+        margin-top: 20px;
+        border: 1px dashed var(--primary);
+    }
+
+    .format-box strong {
+        color: var(--primary-dark);
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .format-box .format-example {
         background: white;
-        border-radius: 10px;
-        padding: 15px;
-        margin: 15px 0;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        padding: 8px 15px;
+        border-radius: 30px;
+        display: inline-block;
+        margin-left: 10px;
+        color: var(--primary);
+        font-weight: 600;
+        border: 1px solid var(--primary);
     }
-    
-    audio {
+
+    .mcq-table {
         width: 100%;
-        margin: 10px 0;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 18px;
+    }
+    
+    .mcq-table th {
+        background: var(--primary-gradient);
+        color: white;
+        font-weight: 700;
+        padding: 15px;
+        font-size: 20px;
+    }
+    
+    .mcq-table td {
+        padding: 15px;
+        border: 2px solid #e9ecef;
+        font-weight: 500;
+    }
+    
+    .mcq-table .correct-option {
+        background-color: rgba(16, 185, 129, 0.15);
+        border-left: 5px solid var(--success);
+        font-weight: 700;
+        color: #065f46;
     }
     
     /* Auto-save indicator */
@@ -124,169 +309,251 @@
         position: fixed;
         bottom: 20px;
         right: 20px;
-        background: rgba(0,0,0,0.7);
+        background: rgba(0,0,0,0.8);
         color: white;
-        padding: 8px 16px;
-        border-radius: 30px;
+        padding: 12px 24px;
+        border-radius: 50px;
         font-size: 14px;
         display: none;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         z-index: 1000;
         animation: fadeInOut 2s ease;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        border: 1px solid rgba(255,255,255,0.1);
     }
     
     @keyframes fadeInOut {
-        0% { opacity: 0; transform: translateY(10px); }
+        0% { opacity: 0; transform: translateY(20px); }
         10% { opacity: 1; transform: translateY(0); }
         90% { opacity: 1; transform: translateY(0); }
         100% { opacity: 0; transform: translateY(-10px); }
     }
     
-    /* Question text styling */
-    .question-prompt {
-        font-size: 20px;
-        font-weight: 500;
-        line-height: 1.5;
-        color: #343a40;
-        margin-bottom: 20px;
-    }
-    
+    /* Question type badge */
     .question-type-badge {
-        font-size: 16px;
-        font-weight: 500;
-        padding: 8px 16px;
-        border-radius: 20px;
+        font-size: 18px;
+        font-weight: 700;
+        padding: 10px 25px;
+        border-radius: 50px;
+        background: var(--primary-gradient) !important;
+        color: white;
+        box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
+        display: inline-flex;
+        align-items: center;
+        letter-spacing: 0.5px;
     }
     
     /* Button styling */
     .btn {
         font-size: 16px;
-        padding: 10px 25px;
-        border-radius: 8px;
-        font-weight: 500;
+        padding: 12px 30px;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-primary {
+        background: var(--primary-gradient);
+        border: none;
+        color: white;
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(79, 70, 229, 0.4);
+        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    }
+
+    .btn-outline-primary {
+        background: white;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-outline-primary:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+        border-color: var(--primary-dark);
+    }
+
+    .btn-warning {
+        background: var(--warning);
+        border: none;
+        color: white;
+        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-warning:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(245, 158, 11, 0.4);
     }
     
     /* Header text */
     .question-header h3 {
-        font-size: 24px;
-        font-weight: 600;
+        font-size: 26px;
+        font-weight: 700;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
     
     .badge {
-        font-size: 16px;
-        padding: 8px 15px;
+        font-size: 18px;
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-weight: 700;
+        background: rgba(255,255,255,0.2) !important;
+        color: white;
+        border: 2px solid rgba(255,255,255,0.3);
+        position: relative;
+        z-index: 1;
     }
     
     /* Progress text */
     .progress-text {
         font-size: 16px;
-        font-weight: 500;
+        font-weight: 600;
+    }
+
+    .progress-text:first-child {
+        color: var(--primary);
+    }
+
+    .progress-text:last-child {
+        color: var(--primary-dark);
     }
     
     /* Requirements text */
     .requirements {
-        font-size: 15px;
-        color: #6c757d;
-        margin-top: 10px;
+        font-size: 16px;
+        color: #1e293b;
+        margin-top: 20px;
+        padding: 15px 20px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 2px solid var(--primary-light);
+        font-weight: 500;
+    }
+
+    .requirements i {
+        color: var(--primary);
     }
     
-    /* Labels */
-    h5, h6 {
-        font-weight: 600;
+    .requirements ul li {
+        font-weight: 500;
+        margin-bottom: 8px;
     }
     
-    h5 {
-        font-size: 18px;
-    }
-    
-    h6 {
-        font-size: 17px;
-    }
-
-    /* Feedback box styling */
-    .feedback-box {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 20px;
-        margin: 20px 0;
-        border-left: 5px solid;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
+    /* Card Footer */
+    .card-footer {
+        padding: 20px 30px;
+        background: #f8fafc;
+        border-top: 1px solid rgba(79, 70, 229, 0.1);
     }
 
-    .feedback-box.success {
-        border-left-color: #28a745;
-        background: #f0fff4;
+    /* Responsive */
+    @media (max-width: 768px) {
+        .writing-container {
+            padding: 15px;
+        }
+
+        .progress-container {
+            padding: 15px 20px;
+        }
+
+        .question-header {
+            padding: 20px;
+        }
+
+        .question-header h3 {
+            font-size: 22px;
+        }
+
+        .question-body {
+            padding: 20px;
+        }
+
+        .badge {
+            font-size: 16px;
+            padding: 6px 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 15px;
+        }
+
+        .card-footer {
+            padding: 15px 20px;
+        }
+        
+        .question-display {
+            padding: 20px;
+        }
+        
+        .question-text {
+            font-size: 18px;
+        }
+        
+        .question-text .sentence-item {
+            font-size: 18px;
+        }
+        
+        .mcq-table {
+            font-size: 16px;
+        }
+        
+        .mcq-table th {
+            font-size: 18px;
+        }
     }
 
-    .feedback-box.error {
-        border-left-color: #dc3545;
-        background: #fff5f5;
-    }
+    @media (max-width: 480px) {
+        .progress-container .d-flex {
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start !important;
+        }
 
-    .feedback-title {
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+        .question-header .d-flex {
+            flex-direction: column;
+            gap: 15px;
+            align-items: flex-start !important;
+        }
 
-    .feedback-title i {
-        font-size: 20px;
-    }
-
-    .feedback-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .feedback-item {
-        padding: 8px 12px;
-        margin-bottom: 5px;
-        background: white;
-        border-radius: 6px;
-        font-size: 15px;
-        line-height: 1.5;
-        border: 1px solid #e9ecef;
-    }
-
-    .feedback-item.correct {
-        color: #28a745;
-    }
-
-    .feedback-item.error {
-        color: #dc3545;
-    }
-
-    .feedback-item i {
-        margin-right: 8px;
-        width: 18px;
-    }
-
-    .example-box {
-        background: #e7f3ff;
-        border-radius: 8px;
-        padding: 15px;
-        margin-top: 15px;
-        border: 1px solid #b8daff;
-    }
-
-    .example-box p {
-        margin-bottom: 5px;
-        font-weight: 600;
-        color: #004085;
-    }
-
-    .example-box .example-text {
-        background: white;
-        padding: 10px;
-        border-radius: 6px;
-        font-style: italic;
-        color: #495057;
+        .answer-textarea {
+            font-size: 16px;
+            min-height: 120px;
+        }
+        
+        .question-text {
+            font-size: 16px;
+        }
     }
 </style>
 {% endblock %}
@@ -297,15 +564,17 @@
     <div class="progress-container">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <span class="progress-text" style="color: #4a6fa5;">
+                <span class="progress-text">
+                    <i class="fas fa-question-circle me-1" style="color: var(--primary);"></i>
                     Question {{ question_number }} of {{ total_questions }}
                 </span>
                 <span class="text-muted ms-3">
-                    <i class="fas fa-pencil-alt me-1"></i>
+                    <i class="fas fa-pencil-alt me-1" style="color: var(--primary);"></i>
                     Writing Test
                 </span>
             </div>
-            <span class="progress-text" style="color: #166088;">
+            <span class="progress-text">
+                <i class="fas fa-chart-pie me-1" style="color: var(--primary);"></i>
                 {{ progress_percentage }}% Complete
             </span>
         </div>
@@ -327,7 +596,7 @@
                 <h3 class="mb-0">
                     <i class="fas fa-edit me-2"></i>Writing Test
                 </h3>
-                <div class="badge bg-light text-dark px-3 py-2 rounded-pill">
+                <div class="badge">
                     Q{{ question_number }}/{{ total_questions }}
                 </div>
             </div>
@@ -335,64 +604,164 @@
         
         <div class="question-body">
             <!-- Question Type Badge -->
-            <div class="mb-3">
-                <span class="question-type-badge badge" 
-                      style="background: linear-gradient(135deg, #ff7e5f, #ff9a8b); color: white;">
+            <div class="mb-4">
+                <span class="question-type-badge">
                     <i class="fas fa-tag me-2"></i>
                     {{ question.get_question_type_display }}
                 </span>
             </div>
-            
-            <!-- Question Prompt -->
-            <div class="mb-3">
-                <div class="question-prompt">
-                    {{ question.prompt|linebreaks }}
-                </div>
-            </div>
-            
-            <!-- Picture for Picture Description -->
-            {% if question.question_type == 'picture_description' and question.picture_filename %}
-            <div class="image-container">
-                <h5 class="mb-2" style="color: #4a6fa5;">
-                    <i class="fas fa-image me-2"></i>Picture:
+
+            <!-- ===== HARDCODED QUESTIONS BY TYPE - ENHANCED VISIBILITY ===== -->
+
+            <!-- Q1: Fill in the Blanks -->
+            {% if question.question_type == 'fill_blanks' and question_number == 1 %}
+            <div class="question-display">
+                <h5>
+                    <i class="fas fa-puzzle-piece"></i>
+                    Complete these sentences:
                 </h5>
-                <img src="{% static 'writing/images/' %}{{ question.picture_filename }}" 
-                     alt="Description picture" class="writing-image">
                 
-                {% if question.required_keywords %}
-                <div class="hint-box mt-2">
-                    <p class="mb-0">
-                        <i class="fas fa-lightbulb me-2" style="color: #ff7e5f;"></i>
-                        <strong>Hint:</strong> Try to include: 
-                        <strong>{{ question.required_keywords|join:", " }}</strong>
-                    </p>
+                <div class="question-text">
+                    <div class="blank-item">
+                        <span>1.</span> She <strong class="text-primary">___ (go/goes)</strong> to college every day.
+                    </div>
+                    <div class="blank-item">
+                        <span>2.</span> The students <strong class="text-primary">___ (is/are)</strong> in the classroom.
+                    </div>
+                    <div class="blank-item">
+                        <span>3.</span> This is <strong class="text-primary">___ (a / an)</strong> useful book.
+                    </div>
                 </div>
-                {% endif %}
                 
-                <div class="requirements">
-                    <p class="mb-0">
-                        <i class="fas fa-info-circle me-1"></i>
-                        Write {{ question.min_sentences }} sentences, 
-                        {{ question.min_words }}-{{ question.max_words }} words
-                    </p>
+                <div class="format-box">
+                    <strong><i class="fas fa-info-circle me-2"></i>FORMAT:</strong>
+                    <span class="format-example">Write answers separated by commas (e.g., goes, is, an)</span>
                 </div>
             </div>
             {% endif %}
-            
-            <!-- Audio for Dictation -->
-            {% if question.question_type == 'dictation' and question.audio_filename %}
-            <div class="audio-controls">
-                <h5 class="mb-2" style="color: #4a6fa5;">
-                    <i class="fas fa-volume-up me-2"></i>Listen to the audio:
+
+            <!-- Q2: Sentence Order -->
+            {% if question.question_type == 'sentence_order' and question_number == 2 %}
+            <div class="question-display">
+                <h5>
+                    <i class="fas fa-sort-amount-down"></i>
+                    Arrange these sentences in logical order:
                 </h5>
-                <audio controls class="w-100">
-                    <source src="{% static 'writing/audio/' %}{{ question.audio_filename }}" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-                <div class="text-center mt-2">
-                    <button class="btn btn-outline-primary btn-sm" onclick="replayAudio()">
-                        <i class="fas fa-redo me-1"></i> Replay Audio
-                    </button>
+                
+                <div class="question-text">
+                    <div class="sentence-item">
+                        <strong>A.</strong> We submitted the assignment.
+                    </div>
+                    <div class="sentence-item">
+                        <strong>B.</strong> The teacher explained the topic.
+                    </div>
+                    <div class="sentence-item">
+                        <strong>C.</strong> The class started at ten.
+                    </div>
+                </div>
+                
+                <div class="hint-box">
+                    <i class="fas fa-lightbulb me-2" style="color: var(--primary); font-size: 20px;"></i>
+                    <strong>Hint:</strong> Think about what happens first, second, and last.
+                </div>
+                
+                <div class="format-box">
+                    <strong><i class="fas fa-info-circle me-2"></i>FORMAT:</strong>
+                    <span class="format-example">Write letters in order (e.g., A, B, C)</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Q3: Sentence Rewrite -->
+            {% if question.question_type == 'sentence_rewrite' and question_number == 3 %}
+            <div class="question-display">
+                <h5>
+                    <i class="fas fa-spell-check"></i>
+                    Rewrite the sentence correctly:
+                </h5>
+                
+                <div class="question-text" style="background: #fff3e0;">
+                    <div style="font-size: 22px; font-weight: 700; color: #b45309; margin-bottom: 15px;">
+                        <i class="fas fa-quote-left me-2"></i>Original Sentence:
+                    </div>
+                    <div style="font-size: 20px; font-weight: 600; font-style: italic; color: #1e293b; background: white; padding: 20px; border-radius: 12px; border: 2px dashed #f59e0b;">
+                        "comunication skills are important however students often ignore punctution grammer and clarity"
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning mt-4" style="font-size: 18px; font-weight: 500;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Check for:</strong> Spelling, punctuation, capitalization, and grammar
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Q4: Spelling MCQ -->
+            <!-- Q4: Spelling MCQ - FIXED VERSION with no background colors -->
+{% if question.question_type == 'spelling_mcq' and question_number == 4 %}
+<div class="question-display">
+    <h5>
+        <i class="fas fa-check-double"></i>
+        Choose the correctly spelled word:
+    </h5>
+    
+    <table class="mcq-table">
+        <tr>
+            <th>Q1</th>
+            <td>a) recieve</td>
+            <td>b) receive</td>
+            <td>c) recite</td>
+            <td>d) receieve</td>
+        </tr>
+        <tr>
+            <th>Q2</th>
+            <td>a) definately</td>
+            <td>b) definitely</td>
+            <td>c) diffidently</td>
+            <td>d) defenetly</td>
+        </tr>
+        <tr>
+            <th>Q3</th>
+            <td>a) seperate</td>
+            <td>b) separate</td>
+            <td>c) sepereta</td>
+            <td>d) seprate</td>
+        </tr>
+    </table>
+    
+    <div class="format-box">
+        <strong><i class="fas fa-info-circle me-2"></i>FORMAT:</strong>
+        <span class="format-example">Write letters separated by commas (e.g., b, c, a)</span>
+    </div>
+</div>
+{% endif %}
+
+            <!-- Q5: Paragraph Writing -->
+            {% if question.question_type == 'paragraph_writing' and question_number == 5 %}
+            <div class="question-display">
+                <h5>
+                    Write a paragraph using these clue words:
+                </h5>
+                
+                <div style="margin: 25px 0; text-align: center;">
+                    <span class="clue-words-badge">time management</span>
+                    <span class="clue-words-badge">planning</span>
+                    <span class="clue-words-badge">daily routine</span>
+                    <span class="clue-words-badge">stress</span>
+                    <span class="clue-words-badge">success</span>
+                </div>
+                
+                <div class="requirements">
+                    <p class="mb-3" style="font-size: 18px; font-weight: 700; color: var(--primary-dark);">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Write 5-6 sentences. Evaluation criteria:
+                    </p>
+                    <ul style="font-size: 17px; list-style-type: none; padding-left: 0;">
+                        <li class="mb-2"><span style="display: inline-block; width: 30px; height: 30px; background: var(--primary-gradient); color: white; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 10px;">1</span> Grammatical Accuracy (25%)</li>
+                        <li class="mb-2"><span style="display: inline-block; width: 30px; height: 30px; background: var(--primary-gradient); color: white; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 10px;">2</span> Vocabulary Use (25%) - Include all clue words</li>
+                        <li class="mb-2"><span style="display: inline-block; width: 30px; height: 30px; background: var(--primary-gradient); color: white; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 10px;">3</span> Organization & Coherence (25%) - Use transition words</li>
+                        <li class="mb-2"><span style="display: inline-block; width: 30px; height: 30px; background: var(--primary-gradient); color: white; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 10px;">4</span> Spelling & Punctuation (25%)</li>
+                    </ul>
                 </div>
             </div>
             {% endif %}
@@ -411,6 +780,7 @@
                               autocomplete="off">{{ previous_answer }}</textarea>
                     
                     <div class="word-counter">
+                        <i class="fas fa-pencil-alt me-1" style="color: var(--primary);"></i>
                         <span id="wordCount">0</span> words
                     </div>
                     
@@ -423,15 +793,15 @@
             
             <!-- Auto-save indicator (hidden by default) -->
             <div id="autoSaveIndicator" class="auto-save-indicator">
-                <i class="fas fa-spinner fa-spin"></i> Saving...
+                <i class="fas fa-spinner fa-spin" style="color: var(--primary);"></i> Saving...
             </div>
-            <div id="autoSavedIndicator" class="auto-save-indicator" style="background: rgba(40, 167, 69, 0.9);">
+            <div id="autoSavedIndicator" class="auto-save-indicator" style="background: rgba(16, 185, 129, 0.9);">
                 <i class="fas fa-check-circle"></i> Saved
             </div>
         </div>
         
-        <!-- Footer Navigation - NO SAVE BUTTON -->
-        <div class="card-footer bg-white border-0 pt-3 pb-3">
+        <!-- Footer Navigation -->
+        <div class="card-footer">
             <div class="d-flex justify-content-between">
                 {% if prev_question %}
                 <a href="{% url 'writing:writing_question' test.id prev_question %}" 
@@ -597,15 +967,6 @@
                 document.body.appendChild(form);
                 form.submit();
             });
-    }
-    
-    // Replay audio function
-    function replayAudio() {
-        const audioPlayer = document.querySelector('audio');
-        if (audioPlayer) {
-            audioPlayer.currentTime = 0;
-            audioPlayer.play();
-        }
     }
 </script>
 {% endblock %}

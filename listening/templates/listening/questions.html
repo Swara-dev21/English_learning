@@ -1,3 +1,4 @@
+<!-- listening/templates/listening/questions.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listening Test Questions</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'listening/css/style.css' %}?v=8">
+    {% load custom_filters %} 
+    <link rel="stylesheet" href="{% static 'listening/css/style.css' %}?v=10">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Your existing CSS here */
@@ -39,13 +41,6 @@
             color: #1e293b;
         }
         
-        .timer-container {
-            background: #e2e8f0;
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            font-weight: 600;
-        }
-        
         .progress-section {
             margin-bottom: 2rem;
         }
@@ -65,7 +60,7 @@
         
         .progress-bar-modern {
             height: 100%;
-            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            background: linear-gradient(90deg, #5e548e, #453c6b);
             transition: width 0.3s ease;
         }
         
@@ -86,7 +81,7 @@
         
         .audio-header i {
             font-size: 2rem;
-            color: #4f46e5;
+            color: #5e548e;
         }
         
         .audio-header h2 {
@@ -104,6 +99,13 @@
             padding: 0.5rem 1rem;
             border-radius: 2rem;
             display: inline-block;
+            font-size: 0.95rem;
+        }
+        
+        .replay-count {
+            font-weight: 700;
+            color: #5e548e;
+            font-size: 1.1rem;
         }
         
         .question-container {
@@ -115,7 +117,7 @@
         }
         
         .question-number {
-            background: #4f46e5;
+            background: #5e548e;
             color: white;
             display: inline-block;
             padding: 0.25rem 1rem;
@@ -132,6 +134,7 @@
             margin-bottom: 1.5rem;
         }
         
+        /* MCQ Options */
         .options-container {
             display: flex;
             flex-direction: column;
@@ -160,14 +163,14 @@
         }
         
         .option-label:hover {
-            border-color: #4f46e5;
-            background: #eef2ff;
+            border-color: #5e548e;
+            background: #f0edf7;
         }
         
         .option input[type="radio"]:checked + .option-label {
-            border-color: #4f46e5;
-            background: #eef2ff;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            border-color: #5e548e;
+            background: #f0edf7;
+            box-shadow: 0 0 0 3px rgba(94, 84, 142, 0.1);
         }
         
         .option-letter {
@@ -179,15 +182,15 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            color: #4f46e5;
+            color: #5e548e;
             border: 2px solid #e2e8f0;
             transition: all 0.2s ease;
         }
         
         .option input[type="radio"]:checked + .option-label .option-letter {
-            background: #4f46e5;
+            background: #5e548e;
             color: white;
-            border-color: #4f46e5;
+            border-color: #5e548e;
         }
         
         .option-text {
@@ -196,9 +199,40 @@
             color: #334155;
         }
         
+        /* Typing Answer Area */
+        .typing-container {
+            margin-bottom: 2rem;
+        }
+        
+        .typing-label {
+            display: block;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.75rem;
+        }
+        
+        .typing-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.2s ease;
+        }
+        
+        .typing-textarea:focus {
+            outline: none;
+            border-color: #5e548e;
+            box-shadow: 0 0 0 3px rgba(94, 84, 142, 0.1);
+        }
+        
         .navigation-buttons {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             margin-top: 2rem;
             padding-top: 1rem;
             border-top: 2px solid #e2e8f0;
@@ -214,23 +248,18 @@
             font-size: 1rem;
         }
         
-        .btn-prev {
-            background: white;
-            border: 2px solid #4f46e5;
-            color: #4f46e5;
-        }
-        
-        .btn-prev:hover {
-            background: #eef2ff;
-        }
-        
         .btn-next {
-            background: #4f46e5;
+            background: #5e548e;
             color: white;
         }
         
-        .btn-next:hover {
-            background: #4338ca;
+        .btn-next:hover:not(:disabled) {
+            background: #453c6b;
+        }
+        
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         .btn-submit {
@@ -238,8 +267,13 @@
             color: white;
         }
         
-        .btn-submit:hover {
+        .btn-submit:hover:not(:disabled) {
             background: #059669;
+        }
+        
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         .question-dots {
@@ -247,6 +281,7 @@
             justify-content: center;
             gap: 0.5rem;
             margin-top: 2rem;
+            flex-wrap: wrap;
         }
         
         .question-dot {
@@ -257,23 +292,73 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
             font-weight: 600;
             transition: all 0.2s ease;
+            cursor: default;
+            opacity: 0.8;
         }
         
         .question-dot.active {
-            background: #4f46e5;
+            background: #5e548e;
             color: white;
+            opacity: 1;
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(94, 84, 142, 0.3);
         }
         
         .question-dot.answered {
             background: #10b981;
             color: white;
+            opacity: 1;
         }
         
-        .question-dot:hover {
-            transform: scale(1.1);
+        .question-dot.answered.active {
+            background: #5e548e;
+        }
+        
+        .question-type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 1rem;
+            background: #e2e8f0;
+            color: #475569;
+        }
+        
+        .question-type-badge.mcq {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .question-type-badge.typing {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .warning-message {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .warning-message.show {
+            display: flex;
+        }
+        
+        .warning-message i {
+            font-size: 1.1rem;
+        }
+        
+        .save-indicator, .save-feedback {
+            display: none !important;
         }
     </style>
 </head>
@@ -285,10 +370,6 @@
                 <i class="fas fa-headphones"></i>
                 Listening Test
             </h1>
-            <div class="timer-container">
-                <i class="fas fa-hourglass-half"></i>
-                <span class="timer" id="timer">05:00</span>
-            </div>
         </div>
         
         <!-- Progress Section -->
@@ -297,28 +378,33 @@
                 <div class="progress-title">
                     <span>Question <span id="currentQuestionDisplay">{{ question_number }}</span> of {{ total_questions }}</span>
                 </div>
-                <span class="progress-percentage" id="progressPercentage">{{ progress_percentage }}% Complete</span>
             </div>
             <div class="progress-container-modern">
                 <div class="progress-bar-modern" id="progressBar" style="width: {{ progress_percentage }}%"></div>
             </div>
         </div>
         
+        <!-- Warning Message -->
+        <div class="warning-message" id="warningMessage">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="warningText">Please answer this question before proceeding.</span>
+        </div>
+        
         <!-- Audio Player Section -->
         <div class="audio-section">
             <div class="audio-header">
                 <i class="fas fa-circle-play"></i>
-                <h2>Listen to the Audio</h2>
+                <h2>Listen to the Audio - Question {{ question_number }}</h2>
             </div>
             
-            <audio id="mainAudio" controls>
-                <source src="{% static 'listening/audio/' %}{{ question.audio_filename }}" type="audio/mpeg">
+            <audio id="mainAudio" controls autoplay>
+                <source src="{% static 'listening/audio/' %}{{ current_question.audio_filename }}" type="audio/mpeg">
                 Your browser does not support the audio element.
             </audio>
             
             <div class="replay-info">
                 <i class="fas fa-redo-alt"></i>
-                <span>Replays remaining: <span class="replay-count" id="replayCount">{{ replay_count }}</span></span>
+                <span>Replays remaining for this question: <span class="replay-count" id="replayCount">{{ replay_count }}</span></span>
             </div>
         </div>
         
@@ -330,137 +416,417 @@
             <div class="question-container" id="question{{ forloop.counter0 }}" style="{% if forloop.counter != question_number %}display: none;{% endif %}">
                 <div class="question-number">
                     Question {{ forloop.counter }}
+                    <span class="question-type-badge {% if q.is_mcq %}mcq{% else %}typing{% endif %}">
+                        {% if q.is_mcq %}Multiple Choice{% else %}Typing Answer{% endif %}
+                    </span>
                 </div>
                 
                 <h3 class="question-text">{{ q.question_text }}</h3>
                 
-                <!-- FIXED: Options from related AnswerOption model -->
-                <div class="options-container">
-                    {% for option in q.options.all %}
-                    <div class="option">
-                        <input type="radio" name="q{{ q.id }}" id="q{{ q.id }}_{{ forloop.counter }}" value="{{ option.id }}" class="question-radio" data-question="{{ forloop.parentloop.counter0 }}" {% if selected_option == option.id %}checked{% endif %}>
-                        <label class="option-label" for="q{{ q.id }}_{{ forloop.counter }}">
-                            <span class="option-letter">
-                                {% if forloop.counter == 1 %}A{% elif forloop.counter == 2 %}B{% elif forloop.counter == 3 %}C{% elif forloop.counter == 4 %}D{% endif %}
-                            </span>
-                            <span class="option-text">{{ option.text }}</span>
-                        </label>
+                {% if q.is_mcq %}
+                    <!-- MCQ Options -->
+                    <div class="options-container">
+                        {% for option in q.options.all %}
+                        <div class="option">
+                            <input type="radio" name="q{{ q.id }}" id="q{{ q.id }}_{{ forloop.counter }}" value="{{ option.id }}" class="question-radio" data-question="{{ forloop.parentloop.counter0 }}" data-question-id="{{ q.id }}" {% if selected_options|get_item:q.id == option.id %}checked{% endif %}>
+                            <label class="option-label" for="q{{ q.id }}_{{ forloop.counter }}">
+                                <span class="option-letter">
+                                    {% if forloop.counter == 1 %}A{% elif forloop.counter == 2 %}B{% elif forloop.counter == 3 %}C{% elif forloop.counter == 4 %}D{% endif %}
+                                </span>
+                                <span class="option-text">{{ option.text }}</span>
+                            </label>
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
-                
-                <!-- Navigation Buttons -->
-                <div class="navigation-buttons">
-                    {% if forloop.counter > 1 %}
-                    <button type="button" class="nav-btn btn-prev" onclick="goToQuestion({{ forloop.counter|add:'-1' }})">
-                        <i class="fas fa-arrow-left"></i> Previous
-                    </button>
-                    {% else %}
-                    <div></div>
-                    {% endif %}
-                    
-                    {% if forloop.last %}
-                    <button type="submit" class="nav-btn btn-submit" id="submitTestBtn">
-                        <i class="fas fa-paper-plane"></i> Submit Test
-                    </button>
-                    {% else %}
-                    <button type="button" class="nav-btn btn-next" onclick="goToQuestion({{ forloop.counter|add:'1' }})">
-                        Next <i class="fas fa-arrow-right"></i>
-                    </button>
-                    {% endif %}
-                </div>
+                {% else %}
+                    <!-- Typing Answer Area -->
+                    <div class="typing-container">
+                        <label class="typing-label" for="typed_{{ q.id }}">
+                            <i class="fas fa-pencil-alt me-2"></i>Type your answer:
+                        </label>
+                        <textarea 
+                            id="typed_{{ q.id }}" 
+                            class="typing-textarea" 
+                            placeholder="Type your answer here..." 
+                            data-question="{{ forloop.counter0 }}" 
+                            data-question-id="{{ q.id }}"
+                        >{% if typed_answers|get_item:q.id %}{{ typed_answers|get_item:q.id }}{% endif %}</textarea>
+                    </div>
+                {% endif %}
             </div>
             {% endfor %}
+            
+            <!-- Hidden navigation inputs -->
+            <input type="hidden" name="current_question" id="currentQuestionInput" value="{{ question_number }}">
         </form>
         
-        <!-- Question Dots -->
+        <!-- Navigation Buttons -->
+        <div class="navigation-buttons">
+            {% if question_number < total_questions %}
+            <button type="button" class="nav-btn btn-next" id="nextBtn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+            {% else %}
+            <button type="button" class="nav-btn btn-submit" id="submitTestBtn">
+                <i class="fas fa-paper-plane"></i> Submit Test
+            </button>
+            {% endif %}
+        </div>
+        
+        <!-- Question Dots (Not Clickable - Status Only) -->
         <div class="question-dots">
             {% for q in all_questions %}
-            <div class="question-dot {% if forloop.counter == question_number %}active{% endif %}" onclick="goToQuestion({{ forloop.counter }})">
+            <div class="question-dot 
+                {% if forloop.counter == question_number %}active{% endif %}
+                {% if q.is_mcq %}
+                    {% if selected_options|get_item:q.id %}answered{% endif %}
+                {% else %}
+                    {% if typed_answers|get_item:q.id %}answered{% endif %}
+                {% endif %}
+                " title="Question {{ forloop.counter }} {% if forloop.counter == question_number %}(Current){% elif q.is_mcq and selected_options|get_item:q.id or typed_answers|get_item:q.id %}(Answered){% endif %}">
                 {{ forloop.counter }}
             </div>
             {% endfor %}
         </div>
     </div>
 
-    <script>
-        // Variables
-        let currentQuestion = {{ question_number }};
-        let totalQuestions = {{ total_questions }};
-        let replayCount = {{ replay_count }};
-        let timeLeft = 5 * 60; // 5 minutes
+<!-- Add this temporarily right after the form to debug -->
+<div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace;">
+    <strong>Debug Info:</strong>
+    <div id="debugInfo"></div>
+</div>
+
+<script>
+    // Variables
+    let currentQuestion = {{ question_number }};
+    let totalQuestions = {{ total_questions }};
+    let currentQuestionId = {{ current_question.id }};
+    let replayCount = {{ replay_count }};
+    let testId = {{ test.id }};
+    let autoSaveTimer = null;
+    let hasShownReplayWarning = false;
+    
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM fully loaded');
+        console.log('Current question:', currentQuestion);
         
-        // Timer
-        const timerElement = document.getElementById('timer');
-        setInterval(() => {
-            timeLeft--;
-            const mins = Math.floor(timeLeft / 60);
-            const secs = timeLeft % 60;
-            timerElement.textContent = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-            
-            if (timeLeft <= 0) {
-                alert('Time is up! Submitting test...');
-                document.getElementById('testForm').submit();
+        // Initialize everything after DOM is ready
+        initializeEventListeners();
+        setupReplayCounter();
+        updateProgress();
+        
+        // Auto-start audio
+        setTimeout(() => {
+            const audio = document.getElementById('mainAudio');
+            if (audio) {
+                console.log('Attempting to auto-play audio');
+                audio.play().catch(e => {
+                    console.log('Auto-play prevented:', e);
+                });
             }
-        }, 1000);
+        }, 500);
+    });
+    
+    // Initialize all event listeners
+    function initializeEventListeners() {
+        // Next button
+        const nextBtn = document.getElementById('nextBtn');
+        if (nextBtn) {
+            console.log('Next button found, attaching click handler');
+            // Remove any existing listeners and add new one
+            nextBtn.replaceWith(nextBtn.cloneNode(true));
+            const newNextBtn = document.getElementById('nextBtn');
+            newNextBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Next button clicked');
+                handleNextClick();
+            });
+        } else {
+            console.log('No next button (might be on last question)');
+        }
         
-        // Navigate to question
-        function goToQuestion(qNum) {
+        // Submit button
+        const submitBtn = document.getElementById('submitTestBtn');
+        if (submitBtn) {
+            console.log('Submit button found, attaching click handler');
+            submitBtn.replaceWith(submitBtn.cloneNode(true));
+            const newSubmitBtn = document.getElementById('submitTestBtn');
+            newSubmitBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Submit button clicked');
+                handleSubmitClick(e);
+            });
+        }
+        
+        // Radio buttons
+        document.querySelectorAll('.question-radio').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const questionId = this.dataset.questionId;
+                const optionId = this.value;
+                const questionIndex = parseInt(this.dataset.question);
+                console.log('Radio changed for question', questionIndex);
+                saveMcqAnswer(questionId, optionId, questionIndex);
+            });
+        });
+        
+        // Textareas
+        document.querySelectorAll('.typing-textarea').forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                const questionId = this.dataset.questionId;
+                const answer = this.value;
+                const questionIndex = parseInt(this.dataset.question);
+                
+                if (autoSaveTimer) {
+                    clearTimeout(autoSaveTimer);
+                }
+                
+                autoSaveTimer = setTimeout(() => {
+                    if (answer.trim()) {
+                        console.log('Saving typing answer for question', questionIndex);
+                        saveTypingAnswer(questionId, answer, questionIndex);
+                    }
+                }, 1000);
+            });
+        });
+    }
+    
+    // Check if current question is answered
+    function isCurrentQuestionAnswered() {
+        // Find the visible question container
+        const questionContainers = document.querySelectorAll('.question-container');
+        let currentContainer = null;
+        
+        for (let container of questionContainers) {
+            if (container.style.display !== 'none') {
+                currentContainer = container;
+                break;
+            }
+        }
+        
+        if (!currentContainer) {
+            console.log('No visible question container found');
+            return false;
+        }
+        
+        // Check for MCQ
+        const mcqSelected = currentContainer.querySelector('input[type="radio"]:checked');
+        if (mcqSelected) {
+            console.log('MCQ answer selected');
+            return true;
+        }
+        
+        // Check for Typing
+        const textarea = currentContainer.querySelector('.typing-textarea');
+        if (textarea) {
+            const typedValue = textarea.value.trim();
+            console.log('Typing answer length:', typedValue.length);
+            return typedValue.length > 0;
+        }
+        
+        console.log('No answer found');
+        return false;
+    }
+    
+    // Handle next button click
+    function handleNextClick() {
+        console.log('Handling next click');
+        
+        if (!isCurrentQuestionAnswered()) {
+            console.log('Question not answered, showing warning');
+            showWarning('Please answer this question before proceeding.');
+            return;
+        }
+        
+        if (currentQuestion < totalQuestions) {
+            const nextQ = currentQuestion + 1;
+            console.log('Moving to question', nextQ);
+            
+            // Navigate to next question
             fetch('{% url "listening:navigate_question" test.id %}', {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ question_number: qNum })
-            }).then(() => {
+                body: JSON.stringify({ question_number: nextQ })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Navigation successful, redirecting...');
+                    window.location.href = '{% url "listening:questions" test.id %}';
+                }
+            })
+            .catch(error => {
+                console.error('Navigation error:', error);
                 window.location.href = '{% url "listening:questions" test.id %}';
             });
         }
+    }
+    
+    // Handle submit button click
+    function handleSubmitClick(e) {
+        if (!isCurrentQuestionAnswered()) {
+            showWarning('Please answer this question before submitting.');
+            return;
+        }
         
-        // Auto-save on radio change
-        document.querySelectorAll('.question-radio').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const questionId = this.name.replace('q', '');
-                const optionId = this.value;
-                
-                fetch('{% url "listening:submit_answer" test.id %}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        question_id: questionId,
-                        option_id: optionId
-                    })
-                });
-                
-                // Update progress
+        const answered = document.querySelectorAll('.question-dot.answered').length;
+        if (answered < totalQuestions) {
+            if (!confirm(`You have answered ${answered} out of ${totalQuestions} questions. Are you sure you want to submit?`)) {
+                return;
+            }
+        }
+        
+        document.getElementById('testForm').submit();
+    }
+    
+    // Show warning message
+    function showWarning(message) {
+        const warning = document.getElementById('warningMessage');
+        const warningText = document.getElementById('warningText');
+        warningText.textContent = message || 'Please answer this question before proceeding.';
+        warning.classList.add('show');
+        
+        setTimeout(() => {
+            warning.classList.remove('show');
+        }, 3000);
+    }
+    
+    // Save MCQ answer
+    function saveMcqAnswer(questionId, optionId, questionIndex) {
+        fetch('{% url "listening:submit_answer" test.id %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                question_id: questionId,
+                option_id: optionId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update dot
+                const dots = document.querySelectorAll('.question-dot');
+                if (dots && dots[questionIndex]) {
+                    dots[questionIndex].classList.add('answered');
+                }
                 updateProgress();
-            });
-        });
+                console.log('MCQ answer saved');
+            }
+        })
+        .catch(error => console.error('Error saving answer:', error));
+    }
+    
+    // Save typing answer
+    function saveTypingAnswer(questionId, answer, questionIndex) {
+        fetch('{% url "listening:submit_answer" test.id %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                question_id: questionId,
+                typed_answer: answer
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update dot
+                const dots = document.querySelectorAll('.question-dot');
+                if (dots && dots[questionIndex]) {
+                    dots[questionIndex].classList.add('answered');
+                }
+                updateProgress();
+                console.log('Typing answer saved');
+            }
+        })
+        .catch(error => console.error('Error saving answer:', error));
+    }
+    
+    // Update progress bar
+    function updateProgress() {
+        const answered = document.querySelectorAll('.question-dot.answered').length;
+        const progress = (answered / totalQuestions) * 100;
+        const progressBar = document.getElementById('progressBar');
         
-        // Update progress
-        function updateProgress() {
-            const answered = document.querySelectorAll('input[type="radio"]:checked').length;
-            const progress = (answered / totalQuestions) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
-            document.getElementById('progressPercentage').textContent = Math.round(progress) + '% Complete';
+        if (progressBar) {
+            progressBar.style.width = progress + '%';
+        }
+    }
+    
+    // Setup replay counter
+    function setupReplayCounter() {
+        const audio = document.getElementById('mainAudio');
+        const replayCountSpan = document.getElementById('replayCount');
+        
+        if (audio && replayCountSpan) {
+            // Reset warning flag for new question
+            hasShownReplayWarning = false;
             
-            // Update dots
-            document.querySelectorAll('.question-dot').forEach((dot, idx) => {
-                const qRadios = document.querySelectorAll(`input[data-question="${idx}"]:checked`);
-                if (qRadios.length > 0) {
-                    dot.classList.add('answered');
+            audio.addEventListener('play', function() {
+                console.log('Audio played, remaining replays:', replayCount);
+                
+                if (replayCount > 0) {
+                    replayCount--;
+                    
+                    fetch('{% url "listening:update_replay" %}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            replay_count: replayCount,
+                            test_id: {{ test.id }},
+                            question_id: currentQuestionId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            replayCountSpan.textContent = replayCount;
+                        }
+                    })
+                    .catch(error => console.error('Error updating replay count:', error));
+                    
+                    if (replayCount === 0 && !hasShownReplayWarning) {
+                        hasShownReplayWarning = true;
+                        setTimeout(() => {
+                            alert('No more replays for this question!');
+                        }, 100);
+                    }
                 } else {
-                    dot.classList.remove('answered');
+                    audio.pause();
+                    if (!hasShownReplayWarning) {
+                        hasShownReplayWarning = true;
+                        alert('No more replays for this question!');
+                    }
+                    this.currentTime = 0;
                 }
             });
         }
-        
-        // Initial progress update
-        updateProgress();
-    </script>
+    }
+    
+    // Debug function to check button state
+    function checkButtonState() {
+        const nextBtn = document.getElementById('nextBtn');
+        if (nextBtn) {
+            console.log('Next button exists, disabled:', nextBtn.disabled);
+            console.log('Next button HTML:', nextBtn.outerHTML);
+        } else {
+            console.log('Next button not found in DOM');
+        }
+    }
+    
+    // Check button state after a short delay
+    setTimeout(checkButtonState, 1000);
+</script>
 </body>
 </html>

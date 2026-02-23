@@ -1,32 +1,73 @@
-<!-- templates/header.html -->
-
+{% comment %} <!-- templates/home_page/includes/header.html -->
 {% load static %}
 <header>
   <div class="logo">
-    <img src="{% static 'home_page/images/logo.jpeg' %}" alt="Let's Learn English Logo">
+    <a href="{% url 'home_page:home' %}">
+      <img src="{% static 'home_page/images/logo.jpeg' %}" alt="TheFluentEngineer Logo">
+    </a>
   </div>
 
   <nav class="main-nav">
+    <!-- Home Link -->
     <div class="nav-item">
       <a href="{% url 'home_page:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
-    </div>  
-    <div class="nav-item">
-      <a href="#skills" class="nav-link">Skills</a>
-    </div>
-    <div class="nav-item">
-      <a href="#grammar" class="nav-link">Grammar</a>
-    </div>
-    <div class="nav-item">
-      <a href="#vocabulary" class="nav-link">Vocabulary</a>
     </div>
     
-    <!-- Dynamic Test Button Based on Authentication and Pretest Status -->
+    <!-- Skills Dropdown -->
+    <div class="nav-item">
+      <a href="#" class="nav-link">Skills</a>
+      <div class="dropdown-content">
+        <a href="{% url 'listening:index' %}">
+          <i class="fas fa-headphones"></i> Listening
+        </a>
+        <a href="#">
+          <i class="fas fa-microphone"></i> Speaking
+        </a>
+        <a href="#">
+          <i class="fas fa-book-open"></i> Reading
+        </a>
+        <a href="#">
+          <i class="fas fa-pen"></i> Writing
+        </a>
+      </div>
+    </div>
+    
+    <!-- Learn Dropdown -->
+    <div class="nav-item">
+      <a href="#" class="nav-link">Learn</a>
+      <div class="dropdown-content">
+        <a href="#">
+          <i class="fas fa-book"></i> Vocabulary Builder
+        </a>
+        <a href="#">
+          <i class="fas fa-spell-check"></i> Grammar for Communication
+        </a>
+        <a href="#">
+          <i class="fas fa-comments"></i> Functional English
+        </a>
+      </div>
+    </div>
+    
+    <!-- Practice Dropdown -->
+    <div class="nav-item">
+      <a href="#" class="nav-link">Practice</a>
+      <div class="dropdown-content">
+        <a href="#"><i class="fas fa-check-double"></i> Sentence Correction</a>
+        <a href="#"><i class="fas fa-underline"></i> Fill in the Blanks</a>
+        <a href="#"><i class="fas fa-arrows-alt"></i> Rearrange Sentences</a>
+        <a href="#"><i class="fas fa-comment-dots"></i> Dialogue Completion</a>
+        <a href="#"><i class="fas fa-paragraph"></i> Short Paragraph Writing</a>
+        <a href="#"><i class="fas fa-microphone-alt"></i> Audio-based Speaking</a>
+      </div>
+    </div>
+    
+    <!-- Dynamic Test Button -->
     <div class="nav-item">
       {% if user.is_authenticated %}
         {% if user.profile.pretest_completed %}
-          <a href="{% url 'home_page:pretest_results' %}" class="nav-link view-result-btn">View Pretest Result</a>
+          <a href="{% url 'home_page:pretest_results' %}" class="nav-link view-result-btn">View Result</a>
         {% else %}
-          <a href="{% url 'home_page:start_pretest' %}" class="nav-link take-test-btn">Take Pretest</a>
+          <a href="{% url 'home_page:start_pretest' %}" class="nav-link take-test-btn">Take Test</a>
         {% endif %}
       {% else %}
         <a href="{% url 'home_page:login' %}?next={% url 'home_page:start_pretest' %}" class="nav-link take-test-btn">Take Test</a>
@@ -34,15 +75,122 @@
     </div>
   </nav>
 
-  <!-- Dynamic Authentication Links -->
+  <!-- Authentication Links -->
   <div class="top-links">
     {% if user.is_authenticated %}
       <span class="welcome-text">Welcome, {{ user.username }}</span>
-      <a href="{% url 'home_page:profile' %}" class="profile-btn">Profile</a>
-      <a href="{% url 'home_page:logout' %}" class="logout-btn">Logout</a>
+      <a href="{% url 'home_page:profile' %}" class="profile-btn">
+        <i class="fas fa-user-circle"></i> Profile
+      </a>
+      <a href="{% url 'home_page:logout' %}" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
     {% else %}
       <a href="{% url 'home_page:login' %}" class="login-btn">Login</a>
       <a href="{% url 'home_page:register' %}" class="register-btn">Register</a>
     {% endif %}
   </div>
 </header>
+
+<!-- Add Font Awesome if not already in base -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Dropdown CSS -->
+<style>
+  .nav-item {
+    position: relative;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--white);
+    min-width: 260px;
+    box-shadow: var(--shadow-hover);
+    border-radius: 12px;
+    padding: 10px 0;
+    z-index: 1000;
+    border: 1px solid var(--border-gray);
+    margin-top: 5px;
+  }
+  
+  .dropdown-content a {
+    color: var(--dark-gray);
+    padding: 12px 20px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+  }
+  
+  .dropdown-content a i {
+    width: 20px;
+    color: var(--primary-green);
+    font-size: 16px;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: var(--light-green);
+    color: var(--primary-green);
+    padding-left: 25px;
+  }
+  
+  .nav-item:hover .dropdown-content {
+    display: block;
+  }
+  
+  .nav-item:hover .nav-link::after {
+    transform: rotate(180deg);
+  }
+  
+  .welcome-text {
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-right: 10px;
+  }
+  
+  .profile-btn, .logout-btn {
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .profile-btn {
+    background-color: var(--light-green);
+    color: var(--primary-green);
+  }
+  
+  .logout-btn {
+    background-color: #ffebee;
+    color: #f44336;
+  }
+  
+  .profile-btn:hover, .logout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+  
+  .view-result-btn {
+    background: linear-gradient(135deg, var(--primary-green), var(--duolingo-blue)) !important;
+    color: white !important;
+    padding: 8px 20px !important;
+    border-radius: 25px !important;
+  }
+  
+  .take-test-btn {
+    background: linear-gradient(135deg, var(--duolingo-blue), #0da5e0) !important;
+    color: white !important;
+    padding: 8px 20px !important;
+    border-radius: 25px !important;
+  }
+  
+  .view-result-btn::after, .take-test-btn::after {
+    display: none !important;
+  }
+</style> {% endcomment %}

@@ -5,4 +5,6 @@ register = template.Library()
 @register.filter
 def get_item(dictionary, key):
     """Get dictionary item by key in template"""
-    return dictionary.get(key)
+    if dictionary and key:
+        return dictionary.get(key)
+    return None
