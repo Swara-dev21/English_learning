@@ -195,7 +195,7 @@ def submit_test(request, test_id):
             return redirect('home_page:pretest_results')
         if profile.listening_completed:
             messages.warning(request, "You have already completed the listening test.")
-            return redirect('home_page:pretest_status')
+            return redirect('listening:latest_result')
     except StudentProfile.DoesNotExist:
         profile = StudentProfile.objects.create(user=request.user)
     

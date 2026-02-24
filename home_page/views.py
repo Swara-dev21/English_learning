@@ -155,6 +155,20 @@ def profile_view(request):
         'profile': profile,
     })
 
+    
+@login_required
+def test_introduction(request):
+    """Show test introduction page before starting the pretest"""
+    profile = get_object_or_404(StudentProfile, user=request.user)
+    
+    # If user already completed the test, redirect to results
+    if profile.pretest_completed:
+        messages.info(request, "You've already completed the pretest. View your results below.")
+        return redirect('home_page:pretest_results')
+    
+    return render(request, 'home_page/test_introduction.html')
+
+
 @login_required
 def start_pretest(request):
     """Redirect to the first incomplete test"""
