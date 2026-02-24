@@ -227,7 +227,7 @@ def submit_test(request, test_id):
         level = "Advanced"
         feedback = "Excellent listening comprehension skills!"
     
-    # Create test result
+    # Create test result with user
     test_result = TestResult.objects.create(
         session_key=session_key,
         test=test,
@@ -237,11 +237,19 @@ def submit_test(request, test_id):
         level=level,
         feedback=feedback,
         pending_manual_grading=needs_manual_grading,
-        user=request.user 
+        user=request.user  # ✅ User is already assigned here
     )
     
     # Update existing responses to link to user
-    UserResponse.objects.filter(session_key=session_key, question__test=test).update(user=request.user)
+    # This ensures all responses (including older ones) are linked
+    updated_count = UserResponse.objects.filter(
+        session_key=session_key, 
+        question__test=test,
+        user__isnull=True  # Only update those without a user
+    ).update(user=request.user)
+    
+    # Log for debugging (optional)
+    print(f"Updated {updated_count} responses for user {request.user.username}")
     
     # Clear session data
     if f'replay_counts_{test_id}' in request.session:

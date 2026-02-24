@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from home_page.models import StudentProfile
 from .models import Test, Question, ReadingUserResponse, ReadingResult
-
+from writing.models import WritingTest
 
 @login_required
 def index(request):
@@ -160,6 +160,8 @@ def submit_test(request, test_id):
 def reading_results(request, result_id):
     result = get_object_or_404(ReadingResult, id=result_id)
 
+    writing_test = WritingTest.objects.filter(is_active=True).first()
+
     if result.user and result.user != request.user:
         messages.error(request, "You don't have permission to view these results.")
         return redirect('home_page:home')
@@ -189,6 +191,7 @@ def reading_results(request, result_id):
 
     context = {
         'result': result,
+        'test': result.test,
         'percentage': result.percentage,
         'score': result.score,
         'total': result.total,
@@ -199,6 +202,7 @@ def reading_results(request, result_id):
         'specific_percent': specific_percent,
         'organisation_percent': organisation_percent,
         'results': results_list,
+        'writing_test': writing_test,
     }
 
     return render(request, 'reading/result.html', context)

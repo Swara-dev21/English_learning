@@ -276,7 +276,7 @@ def pretest_results(request):
     
     # Writing: Convert 0/5 to 0%
     if writing_result:
-        writing_result.percentage = (writing_result.total_score / 5) * 100
+        writing_result.percentage = (writing_result.total_score / 500) * 100
     else:
         writing_result = None
     
