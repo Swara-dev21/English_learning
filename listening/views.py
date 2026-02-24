@@ -190,9 +190,12 @@ def submit_test(request, test_id):
     # Get or create profile (silently check pretest status but don't act on it)
     try:
         profile = StudentProfile.objects.get(user=request.user)
-        # Check pretest status silently - no messages, no redirects
-        pretest_completed = profile.pretest_completed
-        # You can use this variable if needed later, but no actions taken
+        if profile.pretest_completed:
+            messages.info(request, "You have already completed the pretest.")
+            return redirect('home_page:pretest_results')
+        if profile.listening_completed:
+            messages.warning(request, "You have already completed the listening test.")
+            return redirect('listening:latest_result')
     except StudentProfile.DoesNotExist:
         profile = StudentProfile.objects.create(user=request.user)
         pretest_completed = False
@@ -225,7 +228,7 @@ def submit_test(request, test_id):
         feedback = "Good progress, keep practicing regularly"
     else:
         level = "Advanced"
-        feedback = "Excellent listening comprehension skills!"
+        feedback = "Excellent ,Regular practice will keep you sharp."
     
     # Create test result with user
     test_result = TestResult.objects.create(

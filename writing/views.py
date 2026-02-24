@@ -89,6 +89,10 @@ def writing_test_home(request, test_id):
 @login_required
 @pretest_access_required('writing')
 def writing_question(request, test_id, question_number):
+    if not request.session.session_key:
+        request.session.create()
+    session_key = request.session.session_key
+    
     """Display a single writing question"""
     test = get_object_or_404(WritingTest, id=test_id, is_active=True)
     
@@ -96,13 +100,12 @@ def writing_question(request, test_id, question_number):
     try:
         question = WritingQuestion.objects.get(test=test, order=question_number)
     except WritingQuestion.DoesNotExist:
-         return redirect('writing:writing_test_home', test_id=test.id)
+        return redirect('writing:writing_test_home', test_id=test.id)
     
     # Get total questions count
     total_questions = test.questions.count()
     
     # Check if we have a previous answer for this question
-    session_key = get_session_key(request)
     previous_response = WritingResponse.objects.filter(
         session_key=session_key, 
         question=question
@@ -115,6 +118,19 @@ def writing_question(request, test_id, question_number):
     # Calculate progress
     progress_percentage = int((question_number / total_questions) * 100)
     
+    # Get ALL answered questions for this user/session
+    # Get all responses for this test
+    user_responses = WritingResponse.objects.filter(
+        session_key=session_key,
+        question__test=test
+    ).values_list('question__order', flat=True)
+    
+    # Convert to list of integers
+    answered_questions = list(user_responses)
+    
+    # Filter to ensure valid question numbers
+    answered_questions = [q_num for q_num in answered_questions if 1 <= q_num <= total_questions]
+
     context = {
         'test': test,
         'question': question,
@@ -124,8 +140,9 @@ def writing_question(request, test_id, question_number):
         'next_question': next_question,
         'prev_question': prev_question,
         'previous_answer': previous_response.user_answer if previous_response else '',
+        'answered_questions': answered_questions,
     }
-    
+
     return render(request, 'writing/writing_question.html', context)
 
 

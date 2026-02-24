@@ -10,174 +10,260 @@
     <link rel="stylesheet" href="{% static 'listening/css/style.css' %}?v=10">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Your existing CSS here */
+        /* ===== BASE STYLES ===== */
         body {
             font-family: 'Inter', sans-serif;
-            background: #f8fafc;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
             margin: 0;
             padding: 0;
-        }
-        
-        .test-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-        
-        .test-header {
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            justify-content: center;
+        }
+        
+        .test-wrapper {
+            max-width: 800px;
+            width: 90%;
+            margin: 2rem auto;
+        }
+        
+        /* ===== UNIFIED MAIN CARD ===== */
+        .test-card {
             background: white;
-            padding: 1rem 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(94, 84, 142, 0.25);
+            overflow: hidden;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
+        /* ===== HEADER SECTION ===== */
+        .test-header {
+            background: linear-gradient(135deg, #5e548e, #453c6b);
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            text-align: center; 
+            display: flex;              
+            justify-content: center;    
+            align-items: center;        
+            text-align: center;
+        }
+
+        .test-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         .test-header h1 {
-            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;  /* Increased gap */
+            font-size: 2.2rem;
+            justify-content: center;
+            font-weight: 700;
             margin: 0;
-            color: #1e293b;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+
+        .test-header h1 i {
+            color: #9f8bc9;
+             font-size: 2.5rem;
         }
         
-        .progress-section {
+        /* ===== CONTENT SECTION ===== */
+        .test-content {
+            padding: 2rem;
+        }
+        
+        /* ===== PROGRESS SECTION ===== */
+        .progress-wrapper {
             margin-bottom: 2rem;
         }
-        
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
+
+        .question-indicator {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
             margin-bottom: 0.5rem;
+            text-align: left;
         }
-        
-        .progress-container-modern {
-            height: 0.5rem;
+
+        .progress-bar-container {
             background: #e2e8f0;
-            border-radius: 0.25rem;
+            height: 0.5rem;
+            border-radius: 1rem;
             overflow: hidden;
+            margin-bottom: 1.5rem;
         }
-        
-        .progress-bar-modern {
+
+        .progress-bar-fill {
             height: 100%;
             background: linear-gradient(90deg, #5e548e, #453c6b);
+            border-radius: 1rem;
             transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
         
-        .audio-section {
-            background: white;
-            border-radius: 1rem;
+        /* ===== AUDIO PLAYER SECTION ===== */
+        .audio-player-section {
+            background: #f8fafc;
+            border-radius: 1.5rem;
             padding: 1.5rem;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
         }
-        
+
         .audio-header {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
             margin-bottom: 1rem;
+            color: #1e293b;
+            font-weight: 600;
         }
-        
+
         .audio-header i {
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: #5e548e;
         }
-        
-        .audio-header h2 {
-            margin: 0;
-            font-size: 1.25rem;
-        }
-        
+
         audio {
             width: 100%;
             margin-bottom: 1rem;
+            border-radius: 2rem;
         }
-        
-        .replay-info {
-            background: #f1f5f9;
+
+        .replay-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f0edf7;
             padding: 0.5rem 1rem;
             border-radius: 2rem;
-            display: inline-block;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            color: #5e548e;
+            font-weight: 500;
         }
-        
+
         .replay-count {
             font-weight: 700;
             color: #5e548e;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
         
-        .question-container {
-            background: white;
-            border-radius: 1rem;
-            padding: 2rem;
+        /* ===== QUESTION SECTION ===== */
+        .question-section {
             margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-        
-        .question-number {
+
+        .question-number-badge {
+            display: inline-block;
             background: #5e548e;
             color: white;
-            display: inline-block;
-            padding: 0.25rem 1rem;
-            border-radius: 2rem;
-            font-size: 0.875rem;
-            font-weight: 600;
+            padding: 0.5rem 1.5rem;
+            border-radius: 2.5rem;
             margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(94, 84, 142, 0.2);
         }
-        
+
         .question-text {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 600;
             color: #1e293b;
+            line-height: 1.6;
             margin-bottom: 1.5rem;
         }
         
-        /* MCQ Options */
-        .options-container {
+        /* ===== MCQ OPTIONS ===== */
+        .options-grid {
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
-        
+
         .option {
             position: relative;
         }
-        
+
         .option input[type="radio"] {
             display: none;
         }
-        
+
         .option-label {
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 1rem;
+            padding: 1rem 1.5rem;
+            background: white;
             border: 2px solid #e2e8f0;
-            border-radius: 0.75rem;
+            border-radius: 1rem;
             cursor: pointer;
             transition: all 0.2s ease;
-            background: white;
         }
-        
+
         .option-label:hover {
             border-color: #5e548e;
             background: #f0edf7;
+            transform: translateX(5px);
         }
-        
+
         .option input[type="radio"]:checked + .option-label {
             border-color: #5e548e;
             background: #f0edf7;
-            box-shadow: 0 0 0 3px rgba(94, 84, 142, 0.1);
+            box-shadow: 0 0 0 4px rgba(94, 84, 142, 0.1);
         }
-        
+
         .option-letter {
             width: 2.5rem;
             height: 2.5rem;
             background: #f1f5f9;
-            border-radius: 50%;
+            border-radius: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -186,36 +272,38 @@
             border: 2px solid #e2e8f0;
             transition: all 0.2s ease;
         }
-        
+
         .option input[type="radio"]:checked + .option-label .option-letter {
             background: #5e548e;
             color: white;
             border-color: #5e548e;
+            transform: scale(1.05);
         }
-        
+
         .option-text {
             flex: 1;
             font-size: 1rem;
             color: #334155;
+            font-weight: 500;
         }
         
-        /* Typing Answer Area */
+        /* ===== TYPING ANSWER ===== */
         .typing-container {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
-        
+
         .typing-label {
             display: block;
             font-weight: 600;
             color: #1e293b;
             margin-bottom: 0.75rem;
         }
-        
+
         .typing-textarea {
             width: 100%;
             padding: 1rem;
             border: 2px solid #e2e8f0;
-            border-radius: 0.75rem;
+            border-radius: 1rem;
             font-family: 'Inter', sans-serif;
             font-size: 1rem;
             line-height: 1.5;
@@ -223,68 +311,162 @@
             min-height: 120px;
             transition: all 0.2s ease;
         }
-        
+
         .typing-textarea:focus {
             outline: none;
             border-color: #5e548e;
-            box-shadow: 0 0 0 3px rgba(94, 84, 142, 0.1);
+            box-shadow: 0 0 0 4px rgba(94, 84, 142, 0.1);
         }
         
-        .navigation-buttons {
+        /* ===== MESSAGE CONTAINER ===== */
+        .message-container {
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
             display: flex;
-            justify-content: flex-end;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 2px solid #e2e8f0;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .message-container.hidden {
+            display: none;
+        }
+
+        .message-container.success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .message-container.warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .message-container i {
+            font-size: 1.2rem;
         }
         
-        .nav-btn {
-            padding: 0.75rem 2rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s ease;
-            font-size: 1rem;
+        .navigation-section {
+    display: flex;                    /* Fixed: changed from flex-end to flex */
+    justify-content: flex-end;        /* This pushes next button to right */
+    align-items: center;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+/* For submit button - override to center */
+.navigation-section:has(.btn-submit) {
+    justify-content: center;          /* Center the submit button */
+}
+
+/* Fallback for browsers that don't support :has */
+.btn-submit {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.nav-btn {
+    padding: 0.75rem 2rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-next {
+    background: #5e548e;
+    color: white;
+    box-shadow: 0 4px 10px rgba(94, 84, 142, 0.2);
+}
+
+.btn-next:hover:not(:disabled) {
+    background: #453c6b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(94, 84, 142, 0.3);
+}
+
+.btn-next:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 16px 60px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.btn-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+       
+        /* ===== CIRCULAR PROGRESS BUTTON (for last question) ===== */
+        .circular-progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .circular-progress {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background: conic-gradient(#5e548e 0deg, #e2e8f0 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .circular-progress-inner {
+            width: 2.8rem;
+            height: 2.8rem;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #5e548e;
         }
         
-        .btn-next {
-            background: #5e548e;
-            color: white;
-        }
-        
-        .btn-next:hover:not(:disabled) {
-            background: #453c6b;
-        }
-        
-        .btn-next:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .btn-submit {
-            background: #10b981;
-            color: white;
-        }
-        
-        .btn-submit:hover:not(:disabled) {
-            background: #059669;
-        }
-        
-        .btn-submit:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .question-dots {
+        /* ===== QUESTION DOTS (Status Indicators) ===== */
+        .question-status {
             display: flex;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
             margin-top: 2rem;
             flex-wrap: wrap;
         }
-        
-        .question-dot {
+
+        .status-dot {
             width: 2.5rem;
             height: 2.5rem;
             border-radius: 50%;
@@ -293,208 +475,198 @@
             align-items: center;
             justify-content: center;
             font-weight: 600;
+            font-size: 0.9rem;
+            color: #64748b;
             transition: all 0.2s ease;
             cursor: default;
-            opacity: 0.8;
         }
-        
-        .question-dot.active {
+
+        .status-dot.active {
             background: #5e548e;
             color: white;
-            opacity: 1;
             transform: scale(1.1);
-            box-shadow: 0 2px 8px rgba(94, 84, 142, 0.3);
+            box-shadow: 0 4px 10px rgba(94, 84, 142, 0.3);
         }
-        
-        .question-dot.answered {
+
+        .status-dot.answered {
             background: #10b981;
             color: white;
-            opacity: 1;
         }
-        
-        .question-dot.answered.active {
+
+        .status-dot.answered.active {
             background: #5e548e;
         }
-        
-        .question-type-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 1rem;
-            background: #e2e8f0;
-            color: #475569;
+
+        .status-dot.pulse-red {
+            animation: pulse-red 0.5s ease;
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(1); background: #e2e8f0; }
+            50% { transform: scale(1.2); background: #ef4444; color: white; }
+            100% { transform: scale(1); background: #e2e8f0; }
         }
         
-        .question-type-badge.mcq {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-        
-        .question-type-badge.typing {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        
-        .warning-message {
-            background: #fef3c7;
-            color: #92400e;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            display: none;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-        }
-        
-        .warning-message.show {
-            display: flex;
-        }
-        
-        .warning-message i {
-            font-size: 1.1rem;
-        }
-        
-        .save-indicator, .save-feedback {
-            display: none !important;
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 640px) {
+            .test-wrapper {
+                width: 95%;
+                margin: 1rem auto;
+            }
+            
+            .test-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .navigation-section {
+                justify-content: center;
+            }
+            
+            .question-text {
+                font-size: 1.1rem;
+            }
+            
+            .option-label {
+                padding: 0.75rem 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="test-container">
-        <!-- Test Header -->
-        <div class="test-header">
-            <h1>
-                <i class="fas fa-headphones"></i>
-                Listening Test
-            </h1>
-        </div>
-        
-        <!-- Progress Section -->
-        <div class="progress-section">
-            <div class="progress-header">
-                <div class="progress-title">
-                    <span>Question <span id="currentQuestionDisplay">{{ question_number }}</span> of {{ total_questions }}</span>
-                </div>
-            </div>
-            <div class="progress-container-modern">
-                <div class="progress-bar-modern" id="progressBar" style="width: {{ progress_percentage }}%"></div>
-            </div>
-        </div>
-        
-        <!-- Warning Message -->
-        <div class="warning-message" id="warningMessage">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span id="warningText">Please answer this question before proceeding.</span>
-        </div>
-        
-        <!-- Audio Player Section -->
-        <div class="audio-section">
-            <div class="audio-header">
-                <i class="fas fa-circle-play"></i>
-                <h2>Listen to the Audio - Question {{ question_number }}</h2>
+    <div class="test-wrapper">
+        <!-- UNIFIED MAIN CARD -->
+        <div class="test-card">
+            
+            <!-- Header Section - Centered -->
+            <div class="test-header">
+                <h1>
+                    <i class="fas fa-headphones-alt"></i>
+                    Listening Test
+                </h1>
             </div>
             
-            <audio id="mainAudio" controls autoplay>
-                <source src="{% static 'listening/audio/' %}{{ current_question.audio_filename }}" type="audio/mpeg">
-                Your browser does not support the audio element.
-            </audio>
-            
-            <div class="replay-info">
-                <i class="fas fa-redo-alt"></i>
-                <span>Replays remaining for this question: <span class="replay-count" id="replayCount">{{ replay_count }}</span></span>
-            </div>
-        </div>
-        
-        <!-- Questions Form -->
-        <form method="POST" action="{% url 'listening:submit_test' test.id %}" id="testForm">
-            {% csrf_token %}
-            
-            {% for q in all_questions %}
-            <div class="question-container" id="question{{ forloop.counter0 }}" style="{% if forloop.counter != question_number %}display: none;{% endif %}">
-                <div class="question-number">
-                    Question {{ forloop.counter }}
-                    <span class="question-type-badge {% if q.is_mcq %}mcq{% else %}typing{% endif %}">
-                        {% if q.is_mcq %}Multiple Choice{% else %}Typing Answer{% endif %}
-                    </span>
+            <!-- Content Section -->
+            <div class="test-content">
+                
+                <!-- Question Indicator Above Progress Bar (Left Aligned) -->
+                <div class="question-indicator">
+                    Question {{ question_number }} of {{ total_questions }}
                 </div>
                 
-                <h3 class="question-text">{{ q.question_text }}</h3>
+                <!-- Progress Bar (No answered count) -->
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressBar" style="width: {{ progress_percentage }}%"></div>
+                </div>
                 
-                {% if q.is_mcq %}
-                    <!-- MCQ Options -->
-                    <div class="options-container">
-                        {% for option in q.options.all %}
-                        <div class="option">
-                            <input type="radio" name="q{{ q.id }}" id="q{{ q.id }}_{{ forloop.counter }}" value="{{ option.id }}" class="question-radio" data-question="{{ forloop.parentloop.counter0 }}" data-question-id="{{ q.id }}" {% if selected_options|get_item:q.id == option.id %}checked{% endif %}>
-                            <label class="option-label" for="q{{ q.id }}_{{ forloop.counter }}">
-                                <span class="option-letter">
-                                    {% if forloop.counter == 1 %}A{% elif forloop.counter == 2 %}B{% elif forloop.counter == 3 %}C{% elif forloop.counter == 4 %}D{% endif %}
-                                </span>
-                                <span class="option-text">{{ option.text }}</span>
-                            </label>
+                <!-- Audio Player Section -->
+                <div class="audio-player-section">
+                    <div class="audio-header">
+                        <i class="fas fa-circle-play"></i>
+                        <span>Listen carefully - Question {{ question_number }}</span>
+                    </div>
+                    
+                    <audio id="mainAudio" controls autoplay>
+                        <source src="{% static 'listening/audio/' %}{{ current_question.audio_filename }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                    
+                    <div class="replay-indicator">
+                        <i class="fas fa-redo-alt"></i>
+                        <span>Replays remaining: <span class="replay-count" id="replayCount">{{ replay_count }}</span></span>
+                    </div>
+                </div>
+                
+                <!-- Questions Form -->
+                <form method="POST" action="{% url 'listening:submit_test' test.id %}" id="testForm">
+                    {% csrf_token %}
+                    
+                    {% for q in all_questions %}
+                    <div class="question-section" id="question{{ forloop.counter0 }}" data-question-num="{{ forloop.counter }}" style="{% if forloop.counter != question_number %}display: none;{% endif %}">
+                        
+                        <!-- Question Number Badge - Only Q1 with increased size -->
+                        <div class="question-number-badge">
+                            Q{{ forloop.counter }}
                         </div>
-                        {% endfor %}
+                        
+                        <!-- Question Text -->
+                        <h3 class="question-text">{{ q.question_text }}</h3>
+                        
+                        {% if q.is_mcq %}
+                            <!-- MCQ Options -->
+                            <div class="options-grid">
+                                {% for option in q.options.all %}
+                                <div class="option">
+                                    <input type="radio" name="q{{ q.id }}" id="q{{ q.id }}_{{ forloop.counter }}" value="{{ option.id }}" class="question-radio" data-question="{{ forloop.parentloop.counter0 }}" data-question-id="{{ q.id }}" {% if selected_options|get_item:q.id == option.id %}checked{% endif %}>
+                                    <label class="option-label" for="q{{ q.id }}_{{ forloop.counter }}">
+                                        <span class="option-letter">
+                                            {% if forloop.counter == 1 %}A{% elif forloop.counter == 2 %}B{% elif forloop.counter == 3 %}C{% elif forloop.counter == 4 %}D{% endif %}
+                                        </span>
+                                        <span class="option-text">{{ option.text }}</span>
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <!-- Typing Answer Area -->
+                            <div class="typing-container">
+                                <label class="typing-label" for="typed_{{ q.id }}">
+                                    <i class="fas fa-pencil-alt"></i> Type your answer:
+                                </label>
+                                <textarea 
+                                    id="typed_{{ q.id }}" 
+                                    class="typing-textarea" 
+                                    placeholder="Type your answer here..." 
+                                    data-question="{{ forloop.counter0 }}" 
+                                    data-question-id="{{ q.id }}"
+                                >{% if typed_answers|get_item:q.id %}{{ typed_answers|get_item:q.id }}{% endif %}</textarea>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Message Container for each question -->
+                        <div class="message-container hidden" id="message-{{ forloop.counter }}">
+                            <i class="fas"></i>
+                            <span></span>
+                        </div>
                     </div>
-                {% else %}
-                    <!-- Typing Answer Area -->
-                    <div class="typing-container">
-                        <label class="typing-label" for="typed_{{ q.id }}">
-                            <i class="fas fa-pencil-alt me-2"></i>Type your answer:
-                        </label>
-                        <textarea 
-                            id="typed_{{ q.id }}" 
-                            class="typing-textarea" 
-                            placeholder="Type your answer here..." 
-                            data-question="{{ forloop.counter0 }}" 
-                            data-question-id="{{ q.id }}"
-                        >{% if typed_answers|get_item:q.id %}{{ typed_answers|get_item:q.id }}{% endif %}</textarea>
+                    {% endfor %}
+                    
+                    <!-- Hidden navigation inputs -->
+                    <input type="hidden" name="current_question" id="currentQuestionInput" value="{{ question_number }}">
+                </form>
+                
+                <!-- Navigation Section -->
+                <div class="navigation-section">
+                        {% if question_number < total_questions %}
+                        <!-- Next button on right side -->
+                        <button type="button" class="nav-btn btn-next" id="nextBtn">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                        {% else %}
+                        <!-- Submit button centered -->
+                        <button type="button" class="nav-btn btn-submit" id="submitTestBtn">
+                            <i class="fas fa-paper-plane"></i> Submit Test
+                        </button>
+                        {% endif %}
                     </div>
-                {% endif %}
-            </div>
-            {% endfor %}
-            
-            <!-- Hidden navigation inputs -->
-            <input type="hidden" name="current_question" id="currentQuestionInput" value="{{ question_number }}">
-        </form>
-        
-        <!-- Navigation Buttons -->
-        <div class="navigation-buttons">
-            {% if question_number < total_questions %}
-            <button type="button" class="nav-btn btn-next" id="nextBtn">
-                Next <i class="fas fa-arrow-right"></i>
-            </button>
-            {% else %}
-            <button type="button" class="nav-btn btn-submit" id="submitTestBtn">
-                <i class="fas fa-paper-plane"></i> Submit Test
-            </button>
-            {% endif %}
-        </div>
-        
-        <!-- Question Dots (Not Clickable - Status Only) -->
-        <div class="question-dots">
-            {% for q in all_questions %}
-            <div class="question-dot 
-                {% if forloop.counter == question_number %}active{% endif %}
-                {% if q.is_mcq %}
-                    {% if selected_options|get_item:q.id %}answered{% endif %}
-                {% else %}
-                    {% if typed_answers|get_item:q.id %}answered{% endif %}
-                {% endif %}
-                " title="Question {{ forloop.counter }} {% if forloop.counter == question_number %}(Current){% elif q.is_mcq and selected_options|get_item:q.id or typed_answers|get_item:q.id %}(Answered){% endif %}">
-                {{ forloop.counter }}
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-<!-- Add this temporarily right after the form to debug -->
-<div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace;">
-    <strong>Debug Info:</strong>
-    <div id="debugInfo"></div>
-</div>
+                                    <!-- Question Status Dots -->
+                <div class="question-status">
+                    {% for q in all_questions %}
+                    <div class="status-dot 
+                        {% if forloop.counter == question_number %}active{% endif %}
+                        {% if q.is_mcq %}
+                            {% if selected_options|get_item:q.id %}answered{% endif %}
+                        {% else %}
+                            {% if typed_answers|get_item:q.id %}answered{% endif %}
+                        {% endif %}
+                        " data-dot="{{ forloop.counter }}" title="Question {{ forloop.counter }}">
+                        {{ forloop.counter }}
+                    </div>
+                    {% endfor %}
+                </div>
+                
+            </div> <!-- End test-content -->
+        </div> <!-- End test-card -->
+    </div> <!-- End test-wrapper -->
 
 <script>
     // Variables
@@ -506,26 +678,28 @@
     let autoSaveTimer = null;
     let hasShownReplayWarning = false;
     
-    // Wait for DOM to be fully loaded
+    // Track answered questions
+    let answered = {};
+    
+    // Initialize answered object from server data
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM fully loaded');
-        console.log('Current question:', currentQuestion);
+        // Initialize answered from existing selections
+        {% for q in all_questions %}
+            {% if q.is_mcq %}
+                {% if selected_options|get_item:q.id %}
+                    answered[{{ forloop.counter }}] = true;
+                {% endif %}
+            {% else %}
+                {% if typed_answers|get_item:q.id %}
+                    answered[{{ forloop.counter }}] = true;
+                {% endif %}
+            {% endif %}
+        {% endfor %}
         
-        // Initialize everything after DOM is ready
         initializeEventListeners();
         setupReplayCounter();
-        updateProgress();
-        
-        // Auto-start audio
-        setTimeout(() => {
-            const audio = document.getElementById('mainAudio');
-            if (audio) {
-                console.log('Attempting to auto-play audio');
-                audio.play().catch(e => {
-                    console.log('Auto-play prevented:', e);
-                });
-            }
-        }, 500);
+        updateCircularProgress();
+        updateDots();
     });
     
     // Initialize all event listeners
@@ -533,29 +707,18 @@
         // Next button
         const nextBtn = document.getElementById('nextBtn');
         if (nextBtn) {
-            console.log('Next button found, attaching click handler');
-            // Remove any existing listeners and add new one
-            nextBtn.replaceWith(nextBtn.cloneNode(true));
-            const newNextBtn = document.getElementById('nextBtn');
-            newNextBtn.addEventListener('click', function(e) {
+            nextBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                console.log('Next button clicked');
-                handleNextClick();
+                goToNextQuestion(currentQuestion);
             });
-        } else {
-            console.log('No next button (might be on last question)');
         }
         
         // Submit button
         const submitBtn = document.getElementById('submitTestBtn');
         if (submitBtn) {
-            console.log('Submit button found, attaching click handler');
-            submitBtn.replaceWith(submitBtn.cloneNode(true));
-            const newSubmitBtn = document.getElementById('submitTestBtn');
-            newSubmitBtn.addEventListener('click', function(e) {
+            submitBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                console.log('Submit button clicked');
-                handleSubmitClick(e);
+                handleSubmitClick();
             });
         }
         
@@ -564,8 +727,8 @@
             radio.addEventListener('change', function() {
                 const questionId = this.dataset.questionId;
                 const optionId = this.value;
-                const questionIndex = parseInt(this.dataset.question);
-                console.log('Radio changed for question', questionIndex);
+                const questionIndex = parseInt(this.dataset.question) + 1; // +1 because data-question is 0-based
+                
                 saveMcqAnswer(questionId, optionId, questionIndex);
             });
         });
@@ -575,74 +738,99 @@
             textarea.addEventListener('input', function() {
                 const questionId = this.dataset.questionId;
                 const answer = this.value;
-                const questionIndex = parseInt(this.dataset.question);
+                const questionIndex = parseInt(this.dataset.question) + 1; // +1 because data-question is 0-based
                 
-                if (autoSaveTimer) {
-                    clearTimeout(autoSaveTimer);
-                }
+                if (autoSaveTimer) clearTimeout(autoSaveTimer);
                 
                 autoSaveTimer = setTimeout(() => {
                     if (answer.trim()) {
-                        console.log('Saving typing answer for question', questionIndex);
                         saveTypingAnswer(questionId, answer, questionIndex);
+                    } else {
+                        // If empty, mark as unanswered
+                        answered[questionIndex] = false;
+                        updateDots();
                     }
                 }, 1000);
             });
         });
     }
     
-    // Check if current question is answered
-    function isCurrentQuestionAnswered() {
-        // Find the visible question container
-        const questionContainers = document.querySelectorAll('.question-container');
-        let currentContainer = null;
+    // Show message function
+    function showMessage(type, text, questionNum = null) {
+        const qNum = questionNum || currentQuestion;
+        const messageDiv = document.getElementById(`message-${qNum}`);
+        if (!messageDiv) return;
         
-        for (let container of questionContainers) {
-            if (container.style.display !== 'none') {
-                currentContainer = container;
-                break;
-            }
+        // Remove hidden class and any existing classes
+        messageDiv.classList.remove('hidden', 'success', 'warning');
+        
+        // Set icon and class based on type
+        const icon = messageDiv.querySelector('i');
+        const span = messageDiv.querySelector('span');
+        
+        if (type === 'success') {
+            messageDiv.classList.add('success');
+            icon.className = 'fas fa-check-circle';
+            span.textContent = text || ' Answer saved!';
+        } else if (type === 'warning') {
+            messageDiv.classList.add('warning');
+            icon.className = 'fas fa-exclamation-triangle';
+            span.textContent = text || ' Please answer this question first';
         }
         
-        if (!currentContainer) {
-            console.log('No visible question container found');
-            return false;
-        }
-        
-        // Check for MCQ
-        const mcqSelected = currentContainer.querySelector('input[type="radio"]:checked');
-        if (mcqSelected) {
-            console.log('MCQ answer selected');
-            return true;
-        }
-        
-        // Check for Typing
-        const textarea = currentContainer.querySelector('.typing-textarea');
-        if (textarea) {
-            const typedValue = textarea.value.trim();
-            console.log('Typing answer length:', typedValue.length);
-            return typedValue.length > 0;
-        }
-        
-        console.log('No answer found');
-        return false;
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            messageDiv.classList.add('hidden');
+        }, 5000);
     }
     
-    // Handle next button click
-    function handleNextClick() {
-        console.log('Handling next click');
-        
-        if (!isCurrentQuestionAnswered()) {
-            console.log('Question not answered, showing warning');
-            showWarning('Please answer this question before proceeding.');
+    // Pulse red function for dots
+    function pulseRed(questionNum) {
+        const dot = document.querySelector(`.status-dot[data-dot="${questionNum}"]`);
+        if (dot) {
+            dot.classList.add('pulse-red');
+            setTimeout(() => {
+                dot.classList.remove('pulse-red');
+            }, 500);
+        }
+    }
+    
+    // Update dots function
+    function updateDots() {
+        for (let i = 1; i <= totalQuestions; i++) {
+            const dot = document.querySelector(`.status-dot[data-dot="${i}"]`);
+            if (!dot) continue;
+            
+            // Remove all classes
+            dot.classList.remove('active', 'answered');
+            
+            if (i === currentQuestion) {
+                dot.classList.add('active');  // Purple for current
+            } else if (answered[i]) {
+                dot.classList.add('answered');  // Green for answered
+            }
+            // Else keep default gray (no class needed)
+        }
+    }
+    
+    // Go to next question with validation
+    function goToNextQuestion(num) {
+        // Check if current question is answered
+        if (!answered[currentQuestion]) {
+            // Show warning message for current question
+            showMessage('warning', ' Please answer this question first', currentQuestion);
+            
+            // Pulse the dot red
+            pulseRed(currentQuestion);
+            
+            // Don't proceed to next question
             return;
         }
         
+        // If answered, proceed to next question
         if (currentQuestion < totalQuestions) {
             const nextQ = currentQuestion + 1;
-            console.log('Moving to question', nextQ);
             
-            // Navigate to next question
             fetch('{% url "listening:navigate_question" test.id %}', {
                 method: 'POST',
                 headers: {
@@ -654,7 +842,6 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    console.log('Navigation successful, redirecting...');
                     window.location.href = '{% url "listening:questions" test.id %}';
                 }
             })
@@ -666,32 +853,21 @@
     }
     
     // Handle submit button click
-    function handleSubmitClick(e) {
-        if (!isCurrentQuestionAnswered()) {
-            showWarning('Please answer this question before submitting.');
+    function handleSubmitClick() {
+        if (!answered[currentQuestion]) {
+            showMessage('warning', ' Please answer this question before submitting', currentQuestion);
+            pulseRed(currentQuestion);
             return;
         }
         
-        const answered = document.querySelectorAll('.question-dot.answered').length;
-        if (answered < totalQuestions) {
-            if (!confirm(`You have answered ${answered} out of ${totalQuestions} questions. Are you sure you want to submit?`)) {
+        const answeredCount = Object.values(answered).filter(v => v).length;
+        if (answeredCount < totalQuestions) {
+            if (!confirm(`You have answered ${answeredCount} out of ${totalQuestions} questions. Submit anyway?`)) {
                 return;
             }
         }
         
         document.getElementById('testForm').submit();
-    }
-    
-    // Show warning message
-    function showWarning(message) {
-        const warning = document.getElementById('warningMessage');
-        const warningText = document.getElementById('warningText');
-        warningText.textContent = message || 'Please answer this question before proceeding.';
-        warning.classList.add('show');
-        
-        setTimeout(() => {
-            warning.classList.remove('show');
-        }, 3000);
     }
     
     // Save MCQ answer
@@ -710,13 +886,17 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Update dot
-                const dots = document.querySelectorAll('.question-dot');
-                if (dots && dots[questionIndex]) {
-                    dots[questionIndex].classList.add('answered');
-                }
-                updateProgress();
-                console.log('MCQ answer saved');
+                // Mark as answered
+                answered[questionIndex] = true;
+                
+                // Update dots
+                updateDots();
+                
+                // Update circular progress
+                updateCircularProgress();
+                
+                // Show success message
+                showMessage('success', ' Answer saved!', questionIndex);
             }
         })
         .catch(error => console.error('Error saving answer:', error));
@@ -738,26 +918,34 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Update dot
-                const dots = document.querySelectorAll('.question-dot');
-                if (dots && dots[questionIndex]) {
-                    dots[questionIndex].classList.add('answered');
-                }
-                updateProgress();
-                console.log('Typing answer saved');
+                // Mark as answered
+                answered[questionIndex] = true;
+                
+                // Update dots
+                updateDots();
+                
+                // Update circular progress
+                updateCircularProgress();
+                
+                // Show success message
+                showMessage('success', ' Answer saved!', questionIndex);
             }
         })
         .catch(error => console.error('Error saving answer:', error));
     }
     
-    // Update progress bar
-    function updateProgress() {
-        const answered = document.querySelectorAll('.question-dot.answered').length;
-        const progress = (answered / totalQuestions) * 100;
-        const progressBar = document.getElementById('progressBar');
+    // Update circular progress (for last question)
+    function updateCircularProgress() {
+        const answeredCount = Object.values(answered).filter(v => v).length;
+        const percentage = (answeredCount / totalQuestions) * 100;
+        const degrees = (percentage / 100) * 360;
         
-        if (progressBar) {
-            progressBar.style.width = progress + '%';
+        const circularProgress = document.getElementById('circularProgress');
+        const percentageSpan = document.getElementById('answeredPercentage');
+        
+        if (circularProgress && percentageSpan) {
+            circularProgress.style.background = `conic-gradient(#5e548e ${degrees}deg, #e2e8f0 ${degrees}deg)`;
+            percentageSpan.textContent = Math.round(percentage) + '%';
         }
     }
     
@@ -767,12 +955,9 @@
         const replayCountSpan = document.getElementById('replayCount');
         
         if (audio && replayCountSpan) {
-            // Reset warning flag for new question
             hasShownReplayWarning = false;
             
             audio.addEventListener('play', function() {
-                console.log('Audio played, remaining replays:', replayCount);
-                
                 if (replayCount > 0) {
                     replayCount--;
                     
@@ -784,7 +969,7 @@
                         },
                         body: JSON.stringify({ 
                             replay_count: replayCount,
-                            test_id: {{ test.id }},
+                            test_id: testId,
                             question_id: currentQuestionId
                         })
                     })
@@ -793,14 +978,11 @@
                         if (data.success) {
                             replayCountSpan.textContent = replayCount;
                         }
-                    })
-                    .catch(error => console.error('Error updating replay count:', error));
+                    });
                     
                     if (replayCount === 0 && !hasShownReplayWarning) {
                         hasShownReplayWarning = true;
-                        setTimeout(() => {
-                            alert('No more replays for this question!');
-                        }, 100);
+                        setTimeout(() => alert('No more replays for this question!'), 100);
                     }
                 } else {
                     audio.pause();
@@ -813,20 +995,6 @@
             });
         }
     }
-    
-    // Debug function to check button state
-    function checkButtonState() {
-        const nextBtn = document.getElementById('nextBtn');
-        if (nextBtn) {
-            console.log('Next button exists, disabled:', nextBtn.disabled);
-            console.log('Next button HTML:', nextBtn.outerHTML);
-        } else {
-            console.log('Next button not found in DOM');
-        }
-    }
-    
-    // Check button state after a short delay
-    setTimeout(checkButtonState, 1000);
 </script>
 </body>
 </html>

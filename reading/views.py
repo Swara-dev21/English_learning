@@ -109,10 +109,11 @@ def submit_test(request, test_id):
             feedback = "Start with foundational reading exercises."
         elif percentage < 80:
             level = "Intermediate"
-            feedback = "Good progress. Focus on weaker reading skills."
+            feedback = "Good progress! Focus on weaker reading skills."
         else:
             level = "Advanced"
-            feedback = "Excellent reading comprehension skills!"
+            feedback = "Excellent! Stay consistent to retain your skills."
+
 
         # Prepare parameter breakdown text (for storing in feedback)
         breakdown_text = "\nSkill Breakdown:\n"
@@ -171,7 +172,7 @@ def reading_results(request, result_id):
     specific_percent = 100 if result.specific_score == 1 else 0
     organisation_percent = (result.organisation_score / 2) * 100
 
-    #Get individual question results for summary grid
+    # Get individual question results for summary grid
     questions = Question.objects.filter(test=result.test).order_by('order')
     responses = ReadingUserResponse.objects.filter(
         session_key=result.session_key,
@@ -189,12 +190,16 @@ def reading_results(request, result_id):
             'is_correct': is_correct
         })
 
+    # CALCULATE CORRECT COUNT (number of questions answered correctly)
+    correct_count = result.main_idea_score + result.lexical_score + result.specific_score + result.organisation_score
+    total_questions = 5  # Fixed total number of questions
+
     context = {
         'result': result,
         'test': result.test,
         'percentage': result.percentage,
-        'score': result.score,
-        'total': result.total,
+        'score': correct_count,              # ← Changed from result.score to show count (e.g., 2)
+        'total': total_questions,             # ← Changed from result.total to show 5
         'level': result.level,
         'feedback': result.feedback,
         'main_idea_percent': main_idea_percent,

@@ -2,284 +2,338 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Test Results</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Test Results</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'reading/css/style.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'reading/css/style.css' %}?v=12">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         .results-page {
             min-height: 100vh;
-            background: linear-gradient(135deg, #eff6ff, #dbeafe);
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 40px;
+            justify-content: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #e3f2f9 0%, #d3eaf3 100%);
+            font-family: 'Inter', sans-serif;
         }
-
+        
         .results-card {
-            background: white;
+            max-width: 800px;
             width: 100%;
-            max-width: 700px;
-            border-radius: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0, 153, 214, 0.2);
             overflow: hidden;
         }
-
+        
         .results-header {
-            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            background: linear-gradient(135deg, #0099d6, #0077b3);
             color: white;
+            padding: 2.5rem;
             text-align: center;
-            padding: 30px;
         }
-
-        /* Score Circle */
-        .score-circle-container {
+        
+        .results-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
             display: flex;
+            align-items: center;
             justify-content: center;
-            margin: 30px 0 10px;
+            gap: 0.75rem;
         }
-
+        
+        .results-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        /* Center alignment for content */
+        .results-content {
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        /* Score Circle - Larger like listening */
         .score-circle {
-            width: 150px;
-            height: 150px;
-            background: white;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
+            background: linear-gradient(135deg, #0099d6, #0077b3);
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
-            border: 4px solid #2563eb;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            border: 8px solid #e0f2fe;
         }
-
-        .score-number {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #2563eb;
-            line-height: 1.2;
+        
+        .score-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
         }
-
+        
         .score-total {
-            font-size: 1.2rem;
-            color: #6b7280;
-            font-weight: 500;
-        }
-
-        .percentage-text {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
+            color: white;
+            opacity: 0.9;
             font-weight: 600;
-            color: #2563eb;
-            margin: 5px 0;
-            text-align: center;
+            margin-top: 0.25rem;
         }
-
-        .level-badge-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
+        
+        /* Level Badge - Matching listening style with reading colors */
         .level-badge {
             display: inline-block;
-            padding: 10px 35px;
-            border-radius: 50px;
+            padding: 0.75rem 2rem;
+            border-radius: 2rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .level-basic { 
-            background: #60a5fa; 
-            color: white; 
+            margin: 1rem 0 0.5rem;
         }
         
-        .level-intermediate { 
-            background: #f59e0b; 
-            color: white; 
+        .level-basic {
+            background: #ffe4e4;
+            color: #b91c1c;
+            border: 2px solid #fecaca;
         }
         
-        .level-advanced { 
-            background: #10b981; 
-            color: white; 
+        .level-intermediate {
+            background: #fef9c3;
+            color: #854d0e;
+            border: 2px solid #fde68a;
         }
-
+        
+        .level-advanced {
+            background: #dcfce7;
+            color: #166534;
+            border: 2px solid #bbf7d0;
+        }
+        
+        /* Percentage Text */
+        .percentage-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 1.5rem 0 0.5rem;
+        }
+        
+        /* Feedback Text - Matching listening style with reading colors */
         .feedback-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0099d6;
+            padding: 1rem 2rem;
+            margin: 1.5rem auto;
+            max-width: 80%;
+            line-height: 1.6;
             text-align: center;
-            color: #4b5563;
-            font-size: 1.1rem;
-            margin: 20px 0 30px;
-            padding: 0 30px;
-            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
         }
-
-        /* Questions Summary Section */
-        .summary-section {
-            padding: 30px;
-            border-top: 1px solid #e5e7eb;
-            border-bottom: 1px solid #e5e7eb;
-            background: #f9fafb;
-        }
-
+        
+        /* Summary Title */
         .summary-title {
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            gap: 0.75rem;
             color: #1e293b;
-            margin-bottom: 25px;
+            margin-bottom: 1.5rem;
             font-size: 1.3rem;
+            font-weight: 700;
         }
-
+        
         .summary-title i {
-            color: #2563eb;
+            color: #0099d6;
+            font-size: 1.5rem;
         }
-
-        /* Questions Grid - 5 Boxes ONLY (no details list) */
+        
+        /* Questions Grid - 5 Boxes */
         .questions-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            margin-bottom: 10px;
+            gap: 0.75rem;
+            padding: 0 2rem 2rem;
         }
-
+        
         .q-item {
             text-align: center;
-            padding: 20px 10px;
-            border-radius: 16px;
+            padding: 1.25rem 0.5rem;
+            border-radius: 0.75rem;
             font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
-
+        
         .q-correct {
-            background: #dcfce7;
-            color: #166534;
+            background: #d1fae5;
+            color: #065f46;
             border: 2px solid #86efac;
         }
-
+        
         .q-incorrect {
             background: #fee2e2;
             color: #991b1b;
             border: 2px solid #fecaca;
         }
-
+        
         .q-number {
-            font-size: 1rem;
-            color: #4b5563;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .q-icon {
-            font-size: 2rem;
             font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
         }
-
+        
+        .q-icon {
+            font-size: 1.5rem;
+        }
+        
+        /* Action Buttons Section - Single centered button */
         .actions {
+            padding: 2rem;
             display: flex;
-            gap: 20px;
-            padding: 30px;
+            justify-content: center;
+            align-items: center;
+            border-top: 2px solid #e2e8f0;
+            background: #f8fafc;
         }
-
+        
         .action-btn {
-            flex: 1;
-            text-align: center;
-            padding: 14px;
-            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.7rem 1.3rem;      /* Reduced padding */
+            border-radius: 2rem;
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s ease;
-            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;           /* Smaller font */
+            min-width: 120px;              /* Smaller min-width */
+            width: auto;
+            white-space: nowrap;
+            text-align: center;
+            flex: none;                    /* Remove flex:1 if not needed */
         }
 
-        .home-btn {
-            border: 2px solid #2563eb;
-            color: #2563eb;
-            background: white;
-        }
-
-        .home-btn:hover {
-            background: #eff6ff;
-        }
-
-        .retry-btn {
-            background: linear-gradient(135deg, #2563eb, #4f46e5);
+        .writing-btn {
+            background: linear-gradient(135deg, #0099d6, #0077b3);
             color: white;
+            border: 2px solid transparent;
         }
 
-        .retry-btn:hover {
+        .writing-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 153, 214, 0.3);
         }
-
-        @media (max-width: 768px) {
+                /* Responsive */
+        @media (max-width: 640px) {
             .questions-grid {
                 grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+                padding: 0 1rem 1.5rem;
             }
             
             .actions {
-                flex-direction: column;
+                padding: 1.5rem;
+            }
+            
+            .action-btn {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .feedback-text {
+                max-width: 100%;
+            }
+            
+            .results-header h1 {
+                font-size: 1.5rem;
             }
         }
     </style>
 </head>
-
 <body>
-<div class="results-page">
-<div class="results-card">
-
-    <!-- Header -->
-    <div class="results-header">
-        <h1><i class="fas fa-chart-line"></i> Test Results</h1>
-        <p>Your reading level assessment</p>
-    </div>
-
-    <!-- Score Circle - Shows 40/100 style -->
-    <div class="score-circle-container">
-        <div class="score-circle">
-            <div class="score-number">{{ score }}</div>
-            <div class="score-total">/ {{ total }}</div>
-        </div>
-    </div>
-    
-    <div class="percentage-text">
-        {{ percentage|floatformat:1 }}%
-    </div>
-
-    <!-- Level Badge -->
-    <div class="level-badge-container">
-        <div class="level-badge level-{{ level|lower }}">
-            {{ level }}
-        </div>
-    </div>
-
-    <!-- Feedback Text -->
-    <div class="feedback-text">
-        {% if level == 'Advanced' %}
-            Excellent reading comprehension skills!
-        {% elif level == 'Intermediate' %}
-            Good progress. Focus on weaker reading skills.
-        {% else %}
-            Start with foundational reading exercises.
-        {% endif %}
-    </div>
-
-    <!-- Questions Summary Section - ONLY 5 BOXES, no details list -->
-    <div class="summary-section">
-        <h3 class="summary-title">
-            <i class="fas fa-list-check"></i>
-            Questions Summary
-        </h3>
-
-        <!-- 5 Boxes Grid - NO detailed list below -->
-        <div class="questions-grid">
-            {% for result in results %}
-            <div class="q-item {% if result.is_correct %}q-correct{% else %}q-incorrect{% endif %}">
-                <div class="q-number">Q{{ forloop.counter }}</div>
-                <div class="q-icon">
-                    {% if result.is_correct %}✓{% else %}✗{% endif %}
+    <div class="results-page">
+        <div class="results-card">
+            <!-- Header -->
+            <div class="results-header">
+                <h1>
+                    <i class="fas fa-book-reader"></i> 
+                    Test Results
+                </h1>
+                <p>Your reading level assessment</p>
+            </div>
+            
+            <!-- Score Display - All content centered -->
+            <div class="results-content">
+                <div class="score-circle">
+                    <div class="score-value">{{ score }}</div>
+                    <div class="score-total">/ {{ total }}</div>
+                </div>
+                
+                <!-- Level badge - Using listening style with reading colors -->
+                <div class="level-badge 
+                    {% if level|lower == 'basic' %}level-basic
+                    {% elif level|lower == 'intermediate' %}level-intermediate
+                    {% elif level|lower == 'advanced' %}level-advanced
+                    {% endif %}">
+                    {{ level }}
+                </div>
+                
+                <!-- Percentage text -->
+                <div class="percentage-text">{{ percentage|floatformat:1 }}%</div>
+                
+                <!-- Feedback text with emoji - Matching listening structure -->
+                <div class="feedback-text">
+                    {% if level == 'Advanced' %}
+                        Excellent reading comprehension skills!
+                        <span style="font-size: 1.6rem; margin-left: 0.5rem;">✨</span>
+                    {% elif level == 'Intermediate' %}
+                        Good progress. Focus on weaker reading skills.
+                        <span style="font-size: 1.6rem; margin-left: 0.5rem;">📈</span>
+                    {% else %}
+                        Start with foundational reading exercises.
+                        <span style="font-size: 1.6rem; margin-left: 0.5rem;">🎯</span>
+                    {% endif %}
                 </div>
             </div>
-            {% endfor %}
-        </div>
+            
+            {% comment %} <!-- Questions Summary Title -->
+            <h3 class="summary-title">
+                <i class="fas fa-list-check"></i>
+                Questions Summary
+            </h3>
+            
+            <!-- Questions Grid - 5 Boxes -->
+            <div class="questions-grid">
+                {% for result in results %}
+                <div class="q-item {% if result.is_correct %}q-correct{% else %}q-incorrect{% endif %}">
+                    <div class="q-number">Q{{ forloop.counter }}</div>
+                    <div class="q-icon">
+                        {% if result.is_correct %}
+                            <i class="fas fa-check"></i>
+                        {% else %}
+                            <i class="fas fa-times"></i>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div> {% endcomment %}
+            
+            <!-- Action Buttons - Only Writing Test Button (Centered) -->
+            <div class="actions">
+                <a href="{% url 'writing:writing_test_home' test.id %}" class="action-btn retry-btn">
+                    <i class="fas fa-pen"></i> Go to Writing Test
+                </a>
+            </div>
+        </div>    
     </div>
 
     <!-- Actions -->
