@@ -187,17 +187,15 @@ def submit_test(request, test_id):
     if request.method != 'POST':
         return redirect('listening:questions', test_id=test_id)
     
-    # Check pretest completion
+    # Get or create profile (silently check pretest status but don't act on it)
     try:
         profile = StudentProfile.objects.get(user=request.user)
-        if profile.pretest_completed:
-            messages.info(request, "You have already completed the pretest.")
-            return redirect('home_page:pretest_results')
-        if profile.listening_completed:
-            messages.warning(request, "You have already completed the listening test.")
-            return redirect('listening:latest_result')
+        # Check pretest status silently - no messages, no redirects
+        pretest_completed = profile.pretest_completed
+        # You can use this variable if needed later, but no actions taken
     except StudentProfile.DoesNotExist:
         profile = StudentProfile.objects.create(user=request.user)
+        pretest_completed = False
     
     test = get_object_or_404(ListeningTest, id=test_id)
     session_key = get_session_key(request)
@@ -219,17 +217,17 @@ def submit_test(request, test_id):
     percentage = (correct_count / total_questions * 100) if total_questions > 0 else 0
     
     # Determine level based on percentage
-    if percentage < 40:  # 0-39% (0-1 correct)
+    if percentage < 40:
         level = "Basic"
         feedback = "Start with foundational listening exercises"
-    elif percentage < 80:  # 40-79% (2-3 correct)
+    elif percentage < 80:
         level = "Intermediate"
         feedback = "Good progress, keep practicing regularly"
-    else:  # 80-100% (4-5 correct)
+    else:
         level = "Advanced"
         feedback = "Excellent listening comprehension skills!"
     
-    # Create test result - WITHOUT 'user' field first to test
+    # Create test result
     test_result = TestResult.objects.create(
         session_key=session_key,
         test=test,
@@ -257,6 +255,7 @@ def submit_test(request, test_id):
     profile.listening_completed = True
     profile.update_pretest_status()
     
+    # Only show test completion messages, no pretest messages
     if needs_manual_grading:
         messages.info(request, "Your typing answers will be graded by an instructor.")
     else:

@@ -439,7 +439,7 @@ def result_final(request):
         avg_g2p = round(total_g2p / count, 2)
         avg_dtw_score = round(total_dtw_score / count, 2)
 
-        # Enhanced overall score using all metrics (from friend's version)
+        # Enhanced overall score using all metrics
         overall_score = round(
             (avg_pronunciation + avg_accent + avg_accuracy +
              avg_mfcc + avg_g2p + avg_dtw_score) / 6,
@@ -457,7 +457,7 @@ def result_final(request):
     else:
         level = "Advanced"
 
-    # ✅ SAVE SPEAKING RESULT TO DATABASE (from your version)
+    # ✅ SAVE SPEAKING RESULT TO DATABASE
     speaking_result = SpeakingResult.objects.create(
         user=request.user,
         session_key=request.session.session_key,
@@ -468,14 +468,15 @@ def result_final(request):
         level=level
     )
 
-    # Mark speaking as completed in profile
+    # Mark speaking as completed in profile (silently - no messages or redirects)
     try:
         profile = StudentProfile.objects.get(user=request.user)
         profile.speaking_completed = True
         profile.update_pretest_status()
-        messages.success(request, "Speaking test completed successfully!")
+        # REMOVED: messages.success(request, "Speaking test completed successfully!")
     except StudentProfile.DoesNotExist:
-        messages.warning(request, "Speaking test completed, but profile not found.")
+        # Silently handle profile not found - no warning message
+        pass
 
     response = render(
         request,

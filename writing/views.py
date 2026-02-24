@@ -693,7 +693,7 @@ def save_answer(request, test_id, question_number):
 
 
 @login_required
-@pretest_access_required('writing')
+#@pretest_access_required('writing')  # Commented out to prevent redirects
 def submit_writing_test(request, test_id):
     """Submit the entire writing test and calculate results"""
     if request.method != 'POST':
@@ -711,6 +711,7 @@ def submit_writing_test(request, test_id):
     # Check if all questions are answered
     total_questions = test.questions.count()
     if responses.count() < total_questions:
+        # Keep this warning as it's about test completion, not pretest status
         messages.warning(request, f"Please answer all {total_questions} questions before submitting.")
         return redirect('writing:writing_question', test_id=test_id, question_number=1)
     
@@ -726,23 +727,29 @@ def submit_writing_test(request, test_id):
         user=request.user,
     )
     
-    # Mark writing as completed
-    profile = StudentProfile.objects.get(user=request.user)
-    profile.writing_completed = True
+    # Mark writing as completed (silently)
+    try:
+        profile = StudentProfile.objects.get(user=request.user)
+        profile.writing_completed = True
+        
+        # Check if this was the last test (silently update)
+        if all([profile.listening_completed, profile.reading_completed, 
+                profile.speaking_completed, profile.writing_completed]):
+            profile.pretest_completed = True
+            profile.pretest_completed_at = timezone.now()
+            profile.save()
+            # REMOVED: messages.success(request, "🎉 Congratulations! You have completed all pretest sections!")
+        else:
+            profile.update_pretest_status()
+            # REMOVED: messages.success(request, "Writing test completed successfully!")
+    except StudentProfile.DoesNotExist:
+        # Silently handle profile not found
+        pass
     
-    # Check if this was the last test
-    if all([profile.listening_completed, profile.reading_completed, 
-            profile.speaking_completed, profile.writing_completed]):
-        profile.pretest_completed = True
-        profile.pretest_completed_at = timezone.now()
-        profile.save()
-        messages.success(request, "🎉 Congratulations! You have completed all pretest sections!")
-    else:
-        profile.update_pretest_status()
-        messages.success(request, "Writing test completed successfully!")
+    # REMOVED: All success messages
+    # messages.success(request, "Writing test completed successfully!")
     
     return redirect('writing:writing_results', result_id=test_result.id)
-
 
 @login_required
 def writing_results(request, result_id):
