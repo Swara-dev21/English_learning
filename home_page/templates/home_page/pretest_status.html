@@ -1,0 +1,152 @@
+<!-- home_page/templates/home_page/pretest_status.html -->
+{% extends 'home_page/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h3>Your Pretest Progress</h3>
+                </div>
+                <div class="card-body">
+                    <h4>Welcome, {{ user.username }}!</h4>
+                    
+                    <!-- Progress Overview -->
+                    <div class="progress-overview mb-4">
+                        <h5>Overall Progress</h5>
+                        <div class="progress" style="height: 30px;">
+                            <div class="progress-bar bg-success" 
+                                 role="progressbar" 
+                                 style="width: {% widthratio completed_count total_tests 100 %}%"
+                                 aria-valuenow="{{ completed_count }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="{{ total_tests }}">
+                                {{ completed_count }}/{{ total_tests }} Tests Completed
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Test Status Cards -->
+                    <div class="row">
+                        <!-- Listening -->
+                        <div class="col-md-6 mb-3">
+                            <div class="card {% if profile.listening_completed %}border-success{% else %}border-warning{% endif %}">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-headphones"></i> Listening Test
+                                    </h5>
+                                    {% if profile.listening_completed %}
+                                    <span class="badge bg-success">Completed</span>
+                                    <a href="{% url 'listening:latest_result' %}" class="btn btn-sm btn-outline-success mt-2">
+                                        View Results
+                                    </a>                                   
+                                    {% else %}
+                                        <span class="badge bg-warning">Pending</span>
+                                        <a href="{% url 'listening:test_home' %}" class="btn btn-sm btn-primary mt-2">Start Test</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Reading -->
+                        <div class="col-md-6 mb-3">
+                            <div class="card {% if profile.reading_completed %}border-success{% else %}border-warning{% endif %}">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-book"></i> Reading Test
+                                    </h5>
+                                    {% if profile.reading_completed %}
+                                        <span class="badge bg-success">Completed</span>
+                                        <a href="{% url 'reading:index' %}" class="btn btn-sm btn-outline-success mt-2">View Results</a>
+                                    {% else %}
+                                        <span class="badge bg-warning">Pending</span>
+                                        {% if profile.listening_completed %}
+                                            <a href="{% url 'reading:index' %}" class="btn btn-sm btn-primary mt-2">Start Test</a>
+                                        {% else %}
+                                            <span class="text-muted d-block mt-2">Complete Listening first</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Speaking -->
+                        <div class="col-md-6 mb-3">
+                            <div class="card {% if profile.speaking_completed %}border-success{% else %}border-warning{% endif %}">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-microphone"></i> Speaking Test
+                                    </h5>
+                                    {% if profile.speaking_completed %}
+                                        <span class="badge bg-success">Completed</span>
+                                        <a href="{% url 'speaking:result' %}" class="btn btn-sm btn-outline-success mt-2">View Results</a>
+                                    {% else %}
+                                        <span class="badge bg-warning">Pending</span>
+                                        {% if profile.reading_completed %}
+                                            <a href="{% url 'speaking:start' %}" class="btn btn-sm btn-primary mt-2">Start Test</a>
+                                        {% else %}
+                                            <span class="text-muted d-block mt-2">Complete Reading first</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Writing -->
+                        <div class="col-md-6 mb-3">
+                            <div class="card {% if profile.writing_completed %}border-success{% else %}border-warning{% endif %}">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-pen"></i> Writing Test
+                                    </h5>
+                                    {% if profile.writing_completed %}
+                                        <span class="badge bg-success">Completed</span>
+                                        <a href="{% url 'writing:writing_results' %}" class="btn btn-sm btn-outline-success mt-2">View Results</a>
+                                    {% else %}
+                                        <span class="badge bg-warning">Pending</span>
+                                        {% if profile.speaking_completed %}
+                                            <a href="{% url 'writing:writing_test_home' test_id=1 %}" class="btn btn-sm btn-primary mt-2">Start Test</a>
+                                        {% else %}
+                                            <span class="text-muted d-block mt-2">Complete Speaking first</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Next Steps -->
+                    {% if not profile.pretest_completed %}
+                        <div class="alert alert-info mt-3">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Next step:</strong>
+                            {% if not profile.listening_completed %}
+                                Start with the Listening test.
+                            {% elif not profile.reading_completed %}
+                                Move on to the Reading test.
+                            {% elif not profile.speaking_completed %}
+                                Practice your Speaking skills.
+                            {% elif not profile.writing_completed %}
+                                Complete the Writing test to finish.
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success mt-3">
+                            <i class="fas fa-trophy"></i>
+                            <strong>Congratulations!</strong> You've completed all tests!
+                            <a href="{% url 'home_page:pretest_results' %}" class="alert-link">View your results</a>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'home_page:home' %}" class="btn btn-secondary">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

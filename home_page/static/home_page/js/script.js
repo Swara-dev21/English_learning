@@ -132,33 +132,33 @@ document.addEventListener('DOMContentLoaded', function() {
     const animateElements = document.querySelectorAll('.value-card, .feature, .step, .faq-item');
     animateElements.forEach(el => observer.observe(el));
         
-    // ===== FORM VALIDATION (If forms are added later) =====
-    const forms = document.querySelectorAll('form');
+    // // ===== FORM VALIDATION (If forms are added later) =====
+    // const forms = document.querySelectorAll('form');
     
-    forms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
+    // forms.forEach(form => {
+    //     form.addEventListener('submit', function(e) {
+    //         e.preventDefault();
             
-            // Basic validation
-            const inputs = this.querySelectorAll('input[required], textarea[required]');
-            let isValid = true;
+    //         // Basic validation
+    //         const inputs = this.querySelectorAll('input[required], textarea[required]');
+    //         let isValid = true;
             
-            inputs.forEach(input => {
-                if (!input.value.trim()) {
-                    isValid = false;
-                    input.classList.add('error');
-                } else {
-                    input.classList.remove('error');
-                }
-            });
+    //         inputs.forEach(input => {
+    //             if (!input.value.trim()) {
+    //                 isValid = false;
+    //                 input.classList.add('error');
+    //             } else {
+    //                 input.classList.remove('error');
+    //             }
+    //         });
             
-            if (isValid) {
-                // Form submission logic here
-                console.log('Form submitted successfully');
-                this.reset();
-            }
-        });
-    });
+    //         if (isValid) {
+    //             // Form submission logic here
+    //             console.log('Form submitted successfully');
+    //             this.reset();
+    //         }
+    //     });
+    // });
     
     // ===== LOADING ANIMATION =====
     window.addEventListener('load', () => {

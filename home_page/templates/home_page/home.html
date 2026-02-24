@@ -1,48 +1,17 @@
-<!DOCTYPE html>
+{% extends 'home_page/base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TheFluentEngineer | Learn English Online</title>
-    <link rel="stylesheet" href="{% static 'home_page/css/styles.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <!-- Navigation Bar - UPDATED -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <!-- TheFluentEngineer on LEFT side -->
-            <a href="#home" class="logo" id="logoBox">
-                <div class="logo-placeholder">
-                    <i class="fas fa-language"></i>
-                    <span>TheFluentEngineer</span>
-                </div>
-            </a>
 
-            <button class="menu-btn" id="menuBtn">
-                <span class="hamburger">
-                    <div></div>
-                </span>
-                <span class="menu-text">Menu</span>
-            </button>
+{% block title %}TheFluentEngineer | Learn English Online - Home{% endblock %}
 
-            <div class="nav-links" id="navLinks">
-                <a href="#about-us">About</a>
-                <a href="#skills">Skills</a>
-                <a href="#our-values">Our Values</a>
-                <a href="#why-us">Why Us</a>
-                <a href="#how-we-work">How We Work</a>
-                <a href="#faq">FAQ</a>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'home_page:start_pretest' %}" class="nav-cta">Take Test</a>
-                {% else %}
-                    <a href="{% url 'home_page:login' %}" class="nav-cta">Take Test</a>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
+{% block extra_css %}
+<style>
+    /* Any page-specific CSS can go here */
+</style>
+{% endblock %}
 
+
+{% block content %}
+{% include 'home_page/includes/header.html' with hide_header=hide_header|default:False %}
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-bg"></div>
@@ -63,12 +32,16 @@
                 <a href="#skills" class="btn btn-primary">
                     Explore More <span>→</span>
                 </a>
-                <a href="{% url 'home_page:login' %}" class="btn btn-secondary">
-                    Login <span>→</span>
-                </a>
-                <a href="{% url 'home_page:register' %}" class="btn btn-outline">
-                    Register <span>→</span>
-                </a>
+                
+                <!-- Conditionally show Login/Register buttons only when user is NOT authenticated -->
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'home_page:login' %}" class="btn btn-secondary">
+                        Login <span>→</span>
+                    </a>
+                    <a href="{% url 'home_page:register' %}" class="btn btn-outline">
+                        Register <span>→</span>
+                    </a>
+                {% endif %}
             </div>
         </div>
         
@@ -77,7 +50,7 @@
         </div>
     </section>
 
-    <!-- About Section - UPDATED with TheFluentEngineer -->
+    <!-- About Section -->
     <section class="about-section" id="about-us">
         <div class="container">
             <div class="about-container">
@@ -129,8 +102,7 @@
         </div>
     </section>
 
-
-    <!-- SKILLS SECTION - LSRW Slider (EXACTLY as you requested) -->
+    <!-- SKILLS SECTION - LSRW Slider -->
     <section class="lsrw-section" id="skills">
         <div class="container">
             <div class="lsrw-header">
@@ -413,216 +385,96 @@
         </div>
     </section>
 
-    <!-- Footer - UPDATED with TheFluentEngineer -->
-    <footer class="site-footer" id="contact">
+    <!-- Optional: Add a CTA section for logged-in users -->
+    {% if user.is_authenticated %}
+    <section class="cta-section" style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 60px; text-align: center; color: white;">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="brand-logo">
-                        <i class="fas fa-language"></i>
-                        <span>TheFluentEngineer</span>
-                    </div>
-                    <p>We help engineering students master English communication for academic and professional success.</p>
-                    
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-                
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <a href="#about-us">About Us</a>
-                    <a href="#skills">Skills</a>
-                    <a href="#our-values">Our Values</a>
-                    <a href="#why-us">Why Us</a>
-                    <a href="#how-we-work">How We Work</a>
-                    <a href="#faq">FAQ</a>
-                </div>
-                
-                <div class="footer-links">
-                    <h4>Resources</h4>
-                    <a href="#">Blog</a>
-                    <a href="#">Free Lessons</a>
-                    <a href="#">Practice Tests</a>
-                    <a href="#">Grammar Guide</a>
-                    <a href="#">Vocabulary Lists</a>
-                </div>
-                
-                <div class="footer-links">
-                    <h4>Legal</h4>
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Cookie Policy</a>
-                    <a href="#">Accessibility</a>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2024 TheFluentEngineer. All rights reserved.</p>
-                <p>Designed with <i class="fas fa-heart"></i> for engineering learners worldwide</p>
-            </div>
+            <h2 style="font-size: 36px; margin-bottom: 20px;">Ready to continue your journey?</h2>
+            <p style="font-size: 18px; margin-bottom: 30px; opacity: 0.9;">You're making great progress! Keep practicing to improve your English skills.</p>
+            {% if user.profile.pretest_completed %}
+                <a href="{% url 'home_page:pretest_results' %}" class="btn" style="background: white; color: #667eea; padding: 15px 40px; font-size: 18px;">View Your Results</a>
+            {% else %}
+                <a href="{% url 'home_page:start_pretest' %}" class="btn" style="background: white; color: #667eea; padding: 15px 40px; font-size: 18px;">Continue Pretest</a>
+            {% endif %}
         </div>
-    </footer>
+    </section>
+    {% endif %}
+{% endblock %}
 
-    <!-- Back to Top Button -->
-    <button class="back-to-top" id="backToTop">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
-    <script src="{% static 'home_page/js/script.js' %}"></script>
-    
-    <!-- Slider JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const sliderTrack = document.getElementById('sliderTrack');
-            const prevBtn = document.querySelector('.prev-btn');
-            const nextBtn = document.querySelector('.next-btn');
-            const dots = document.querySelectorAll('.dot');
-            const slides = document.querySelectorAll('.slide');
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sliderTrack = document.getElementById('sliderTrack');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        const dots = document.querySelectorAll('.dot');
+        const slides = document.querySelectorAll('.slide');
+        const sliderContainer = document.querySelector('.slider-container');
+        
+        if (sliderTrack && prevBtn && nextBtn && slides.length > 0) {
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+            let slideInterval;
             
-            if (sliderTrack && prevBtn && nextBtn && slides.length > 0) {
-                let currentSlide = 0;
-                const totalSlides = slides.length;
-                
-                function updateSlider() {
-                    sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
-                    dots.forEach((dot, index) => {
-                        dot.classList.toggle('active', index === currentSlide);
-                    });
-                }
-                
-                nextBtn.addEventListener('click', () => {
-                    currentSlide = (currentSlide + 1) % totalSlides;
-                    updateSlider();
+            function updateSlider() {
+                sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentSlide);
                 });
-                
-                prevBtn.addEventListener('click', () => {
-                    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-                    updateSlider();
-                });
-                
-                dots.forEach(dot => {
-                    dot.addEventListener('click', function() {
-                        currentSlide = parseInt(this.getAttribute('data-slide'));
-                        updateSlider();
-                    });
-                });
-                
-                // Auto-slide
-                let slideInterval = setInterval(() => {
-                    currentSlide = (currentSlide + 1) % totalSlides;
-                    updateSlider();
-                }, 5000);
-                
-                // Pause on hover
-                const sliderContainer = document.querySelector('.slider-container');
-                if (sliderContainer) {
-                    sliderContainer.addEventListener('mouseenter', () => clearInterval(slideInterval));
-                    sliderContainer.addEventListener('mouseleave', () => {
-                        slideInterval = setInterval(() => {
-                            currentSlide = (currentSlide + 1) % totalSlides;
-                            updateSlider();
-                        }, 5000);
-                    });
-                }
             }
-        });
-
-    
-document.addEventListener('DOMContentLoaded', function() {
-    const sliderTrack = document.getElementById('sliderTrack');
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
-    const dots = document.querySelectorAll('.dot');
-    const slides = document.querySelectorAll('.slide');
-    const sliderContainer = document.querySelector('.slider-container');
-    
-    if (sliderTrack && prevBtn && nextBtn && slides.length > 0) {
-        let currentSlide = 0;
-        const totalSlides = slides.length;
-        let slideInterval;
-        
-        // Function to update slider position and active dot
-        function updateSlider() {
-            sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentSlide);
-            });
-        }
-        
-        // Function to go to next slide
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % totalSlides;
-            updateSlider();
-        }
-        
-        // Function to go to previous slide
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-            updateSlider();
-        }
-        
-        // Function to start auto-slide
-        function startAutoSlide() {
-            // Clear any existing interval first
-            if (slideInterval) {
-                clearInterval(slideInterval);
-            }
-            // Start new interval (5000ms = 5 seconds)
-            slideInterval = setInterval(nextSlide, 2000);
-        }
-        
-        // Function to stop auto-slide
-        function stopAutoSlide() {
-            if (slideInterval) {
-                clearInterval(slideInterval);
-                slideInterval = null;
-            }
-        }
-        
-        // Event listeners for manual navigation
-        nextBtn.addEventListener('click', function() {
-            stopAutoSlide();
-            nextSlide();
-            startAutoSlide(); // Restart auto-slide after manual click
-        });
-        
-        prevBtn.addEventListener('click', function() {
-            stopAutoSlide();
-            prevSlide();
-            startAutoSlide(); // Restart auto-slide after manual click
-        });
-        
-        // Event listeners for dots
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', function() {
-                stopAutoSlide();
-                currentSlide = index;
+            
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % totalSlides;
                 updateSlider();
-                startAutoSlide(); // Restart auto-slide after dot click
-            });
-        });
-        
-        // Pause auto-slide when mouse enters slider container
-        if (sliderContainer) {
-            sliderContainer.addEventListener('mouseenter', function() {
-                stopAutoSlide();
-            });
+            }
             
-            // Resume auto-slide when mouse leaves slider container
-            sliderContainer.addEventListener('mouseleave', function() {
+            function prevSlide() {
+                currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                updateSlider();
+            }
+            
+            function startAutoSlide() {
+                if (slideInterval) {
+                    clearInterval(slideInterval);
+                }
+                slideInterval = setInterval(nextSlide, 2000);
+            }
+            
+            function stopAutoSlide() {
+                if (slideInterval) {
+                    clearInterval(slideInterval);
+                    slideInterval = null;
+                }
+            }
+            
+            nextBtn.addEventListener('click', function() {
+                stopAutoSlide();
+                nextSlide();
                 startAutoSlide();
             });
+            
+            prevBtn.addEventListener('click', function() {
+                stopAutoSlide();
+                prevSlide();
+                startAutoSlide();
+            });
+            
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', function() {
+                    stopAutoSlide();
+                    currentSlide = index;
+                    updateSlider();
+                    startAutoSlide();
+                });
+            });
+            
+            if (sliderContainer) {
+                sliderContainer.addEventListener('mouseenter', stopAutoSlide);
+                sliderContainer.addEventListener('mouseleave', startAutoSlide);
+            }
+            
+            startAutoSlide();
         }
-        
-        // Start auto-slide when page loads
-        startAutoSlide();
-    }
-});
-    </script>
-</body>
-</html>
+    });
+</script>
+{% endblock %}

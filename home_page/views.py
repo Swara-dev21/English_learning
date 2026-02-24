@@ -103,44 +103,57 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    """View and edit user profile"""
-    profile = get_object_or_404(StudentProfile, user=request.user)
+    print("\n" + "="*50)
+    print("PROFILE VIEW CALLED")
+    print(f"Request method: {request.method}")
+    print(f"POST data: {request.POST}")
+    print("="*50 + "\n")
     
+    profile = get_object_or_404(StudentProfile, user=request.user)
+
     if request.method == 'POST':
-        # Check which form was submitted
+        print(f"update_profile in POST: {'update_profile' in request.POST}")
+        print(f"change_password in POST: {'change_password' in request.POST}")
+        
         if 'update_profile' in request.POST:
+            print("PROFILE UPDATE FORM SUBMITTED")
             form = ProfileUpdateForm(request.POST, instance=profile)
+            print(f"Form valid: {form.is_valid()}")
+            if not form.is_valid():
+                print(f"Form errors: {form.errors}")
+            
             if form.is_valid():
                 form.save()
                 messages.success(request, "Your profile has been updated successfully!")
                 return redirect('home_page:profile')
-            else:
-                # If profile form is invalid, still need to initialize password form
-                password_form = PasswordChangeForm(request.user)
+            # If invalid, continue to render with errors
+        
         elif 'change_password' in request.POST:
+            print("PASSWORD CHANGE FORM SUBMITTED")
             password_form = PasswordChangeForm(request.user, request.POST)
+            print(f"Form valid: {password_form.is_valid()}")
+            if not password_form.is_valid():
+                print(f"Password errors: {password_form.errors}")
+            
             if password_form.is_valid():
                 user = request.user
-                user.set_password(password_form.cleaned_data['new_password'])
+                new_password = password_form.cleaned_data['new_password']
+                user.set_password(new_password)
                 user.save()
-                # Keep the user logged in after password change
                 update_session_auth_hash(request, user)
                 messages.success(request, "Your password has been changed successfully!")
                 return redirect('home_page:profile')
-            else:
-                # If password form is invalid, still need to initialize profile form
-                form = ProfileUpdateForm(instance=profile)
-    else:
-        form = ProfileUpdateForm(instance=profile)
-        password_form = PasswordChangeForm(request.user)
+            # If invalid, continue to render with errors
     
-    context = {
+    # For GET requests or invalid POST, initialize both forms
+    form = ProfileUpdateForm(instance=profile)
+    password_form = PasswordChangeForm(request.user)
+
+    return render(request, 'home_page/profile.html', {
         'form': form,
         'password_form': password_form,
         'profile': profile,
-    }
-    return render(request, 'home_page/profiles.html', context)
-
+    })
 
 @login_required
 def start_pretest(request):
