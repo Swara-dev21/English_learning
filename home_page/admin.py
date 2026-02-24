@@ -2,6 +2,9 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
+from django.urls import path
+from django.shortcuts import redirect
+from django.contrib import messages
 from .models import StudentProfile
 
 
@@ -57,3 +60,27 @@ class StudentProfileAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    # ===== CUSTOM URLS FOR EXPORT BUTTON =====
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('export-results/', self.admin_site.admin_view(self.export_results_view), name='export_results'),
+        ]
+        return custom_urls + urls
+    
+    def export_results_view(self, request):
+        """Redirect to the main export view"""
+        return redirect('home_page:export_results')
+    
+    # ===== CUSTOM BUTTON IN ADMIN =====
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['export_button'] = True
+        return super().changelist_view(request, extra_context=extra_context)
+    
+    # ===== OPTIONAL: Add export button to top of admin =====
+    class Media:
+        css = {
+            'all': ('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',)
+        }

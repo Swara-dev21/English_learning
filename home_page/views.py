@@ -1,4 +1,13 @@
 # home_page/views.py
+import csv
+from django.http import HttpResponse
+from django.contrib.admin.views.decorators import staff_member_required
+from listening.models import TestResult as ListeningResult
+from reading.models import ReadingResult
+from speaking.models import SpeakingResult
+from writing.models import WritingTestResult as WritingResult
+
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -423,3 +432,104 @@ def password_reset_confirm(request, token):
         'token': token,
         'email': reset_token.user.email
     })
+
+@staff_member_required
+def export_all_results_csv(request):
+    """Export all student results in CSV format for analysis - Clean version"""
+    
+    # Create HttpResponse with CSV header
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': 'attachment; filename="lsrw_student_results_clean.csv"'},
+    )
+    
+    writer = csv.writer(response)
+    
+    # Write header row - CLEAN VERSION
+    writer.writerow([
+        'Student_ID',
+        'Student_Name',
+        'Email',
+        'Institute',
+        'Department',
+        'Year',
+        'Listening_%',
+        'Speaking_%',
+        'Reading_%',
+        'Writing_%',
+        'Overall_%',
+        'Overall_Level'
+    ])
+    
+    # Get all users who have a profile
+    users = User.objects.filter(profile__isnull=False).select_related('profile')
+    
+    for user in users:
+        profile = user.profile
+        
+        # ----- LISTENING -----
+        listening = ListeningResult.objects.filter(user=user).first()
+        if listening and listening.score is not None:
+            listening_percentage = round((listening.score / listening.total_questions * 100), 1)
+        else:
+            listening_percentage = 0
+        
+        # ----- READING -----
+        reading = ReadingResult.objects.filter(user=user).first()
+        if reading and reading.score is not None:
+            reading_percentage = round((reading.score / reading.total * 100), 1)
+        else:
+            reading_percentage = 0
+        
+        # ----- SPEAKING (Average of pronunciation, accent, accuracy) -----
+        speaking = SpeakingResult.objects.filter(user=user).first()
+        if speaking:
+            # Speaking already has overall_score which is average of all three
+            speaking_percentage = round(speaking.overall_score, 1)
+        else:
+            speaking_percentage = 0
+        
+        # ----- WRITING (Convert 0-500 to percentage) -----
+        writing = WritingResult.objects.filter(user=user).first()
+        if writing and writing.total_score is not None:
+            writing_percentage = round((writing.total_score / 500 * 100), 1)
+        else:
+            writing_percentage = 0
+        
+        # Calculate overall percentage (average of all 4 skills)
+        valid_scores = []
+        if listening_percentage > 0: valid_scores.append(listening_percentage)
+        if speaking_percentage > 0: valid_scores.append(speaking_percentage)
+        if reading_percentage > 0: valid_scores.append(reading_percentage)
+        if writing_percentage > 0: valid_scores.append(writing_percentage)
+        
+        if valid_scores:
+            overall_percentage = round(sum(valid_scores) / len(valid_scores), 1)
+        else:
+            overall_percentage = 0
+        
+        # Determine overall level
+        if overall_percentage < 40:
+            overall_level = 'Beginner'
+        elif overall_percentage < 75:
+            overall_level = 'Intermediate'
+        else:
+            overall_level = 'Advanced'
+        
+        # Write row - CLEAN VERSION
+        writer.writerow([
+            user.id,
+            user.username,
+            user.email,
+            profile.institute,
+            profile.department,
+            profile.year,
+            f"{listening_percentage}%",
+            f"{speaking_percentage}%",
+            f"{reading_percentage}%",
+            f"{writing_percentage}%",
+            f"{overall_percentage}%",
+            overall_level
+        ])
+    
+    return response

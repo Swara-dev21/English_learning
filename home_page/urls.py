@@ -15,4 +15,5 @@ urlpatterns = [
     path('continue_pretest/', views.continue_pretest, name='continue_pretest'),
     path('password-reset/', views.password_reset_request, name='password_reset'),
     path('password-reset/<str:token>/', views.password_reset_confirm, name='password_reset_confirm'),
+    path('export-results/', views.export_all_results_csv, name='export_results'),
 ]
