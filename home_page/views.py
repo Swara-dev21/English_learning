@@ -341,10 +341,6 @@ def pretest_results(request):
     return render(request, 'home_page/pretest_results.html', context)
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 376fed1df717dc0e57a1511600a231bcfa8b3e2d
 def password_reset_request(request):
     """View for requesting password reset"""
     
