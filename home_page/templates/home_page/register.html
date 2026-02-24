@@ -132,6 +132,7 @@
     /* Form Groups */
     .form-group {
         margin-bottom: 1.5rem;
+        position: relative;
     }
 
     .form-group label {
@@ -163,6 +164,46 @@
     .form-control::placeholder {
         color: var(--text-muted);
         opacity: 0.7;
+    }
+
+    /* Email validation styles */
+    .form-control.email-valid {
+        border-color: #10b981;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 16px;
+        padding-right: 2.5rem;
+    }
+
+    .form-control.email-invalid {
+        border-color: #ef4444;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ef4444' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='12' y1='8' x2='12' y2='12'%3E%3C/line%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'%3E%3C/line%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 16px;
+        padding-right: 2.5rem;
+    }
+
+    /* Validation message */
+    .validation-message {
+        font-size: 0.8rem;
+        margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .validation-message.valid {
+        color: #10b981;
+    }
+
+    .validation-message.invalid {
+        color: #ef4444;
+    }
+
+    .validation-message i {
+        font-size: 0.9rem;
     }
 
     /* Select dropdown styling */
@@ -348,7 +389,7 @@
                 </div>
             {% endif %}
 
-            <form method="POST" novalidate autocomplete="off">
+            <form method="POST" novalidate autocomplete="off" id="registrationForm">
                 {% csrf_token %}
 
                 {{ form.non_field_errors }} 
@@ -362,11 +403,12 @@
                     </div>
                 </div>
 
-                <!-- Email -->
+                <!-- Email with Gmail validation -->
                 <div class="form-group">
                     <label>{{ form.email.label }}</label>
                     {{ form.email }}
-                    <div class="error-text">
+                    <div class="validation-message" id="emailValidationMessage"></div>
+                    <div class="error-text" id="emailError">
                         {{ form.email.errors }}
                     </div>
                 </div>
@@ -432,7 +474,7 @@
 
                 <!-- Submit Button with Icon -->
                 <div class="form-group">
-                    <button type="submit" class="register-btn">
+                    <button type="submit" class="register-btn" id="submitBtn">
                         <i class="fas fa-user-plus"></i>
                         Create Account
                     </button>
@@ -451,8 +493,61 @@
 </div>
 
 <script>
-    // Add placeholders and classes to form fields
+    // Function to validate Gmail address properly
+    function validateGmailEmail(email) {
+        // More comprehensive Gmail validation
+        // Must have valid username before @ and end with @gmail.com
+        
+        // First, check if it ends with @gmail.com (case insensitive)
+        if (!email.toLowerCase().endsWith('@gmail.com')) {
+            return false;
+        }
+        
+        // Get the username part (everything before @gmail.com)
+        const username = email.split('@')[0];
+        
+        // Check if username is valid:
+        // - Cannot be empty
+        // - Must have at least 2 letters
+        // - Cannot start or end with dot
+        // - Cannot have consecutive dots
+        // - Can only contain letters, numbers, dots, and underscores
+        
+        if (username.length < 2) {
+            return false; // Too short
+        }
+        
+        if (username.length > 64) {
+            return false; // Too long (Gmail username max)
+        }
+        
+        // Check for valid characters (letters, numbers, dots, underscores)
+        const validChars = /^[a-zA-Z0-9._]+$/;
+        if (!validChars.test(username)) {
+            return false; // Contains invalid characters
+        }
+        
+        // Check if starts or ends with dot
+        if (username.startsWith('.') || username.endsWith('.')) {
+            return false;
+        }
+        
+        // Check for consecutive dots
+        if (username.includes('..')) {
+            return false;
+        }
+        
+        // Check if it has at least two letters
+        const letterCount = (username.match(/[a-zA-Z]/g) || []).length;
+        if (letterCount < 2) {
+            return false; // Less than 2 letters
+        }
+        
+        return true;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        // Add placeholders and classes to form fields
         // Username
         const usernameField = document.querySelector('#id_username');
         if (usernameField) {
@@ -460,13 +555,123 @@
             usernameField.classList.add('form-control');
         }
         
-        // Email
+        // Email - with enhanced validation
         const emailField = document.querySelector('#id_email');
         if (emailField) {
-            emailField.placeholder = 'your.email@example.com';
+            emailField.placeholder = 'username@gmail.com';
             emailField.classList.add('form-control');
+            
+            // Variable to track if field has focus
+            let emailFieldFocused = false;
+            
+            // Add focus event listener
+            emailField.addEventListener('focus', function() {
+                emailFieldFocused = true;
+            });
+            
+            // Add input event listener for real-time validation (only shows when focused)
+            emailField.addEventListener('input', function() {
+                const email = this.value;
+                const validationMessage = document.getElementById('emailValidationMessage');
+                const emailError = document.getElementById('emailError');
+                
+                // Only show validation message if field is focused
+                if (emailFieldFocused) {
+                    if (email.length === 0) {
+                        // Empty field
+                        this.classList.remove('email-valid', 'email-invalid');
+                        validationMessage.innerHTML = '';
+                        validationMessage.className = 'validation-message';
+                    } else if (validateGmailEmail(email)) {
+                        // Valid Gmail
+                        this.classList.add('email-valid');
+                        this.classList.remove('email-invalid');
+                        validationMessage.innerHTML = '<i class="fas fa-check-circle"></i> Valid Gmail address';
+                        validationMessage.className = 'validation-message valid';
+                        emailError.innerHTML = ''; // Clear any Django errors
+                    } else {
+                        // Invalid Gmail
+                        this.classList.add('email-invalid');
+                        this.classList.remove('email-valid');
+                        
+                        // Provide specific error messages
+                        if (!email.includes('@')) {
+                            validationMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Email must contain @';
+                        } else if (!email.toLowerCase().includes('@gmail.com')) {
+                            validationMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Email must end with @gmail.com';
+                        } else if (email.startsWith('@')) {
+                            validationMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please enter a username before @';
+                        } else {
+                            const username = email.split('@')[0];
+                            const letterCount = (username.match(/[a-zA-Z]/g) || []).length;
+                            
+                            if (username.length < 2) {
+                                validationMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Username must be at least 2 characters';
+                            } else if (username.length > 64) {
+                                validationMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Username is too long';
+                            } else if (!/^[a-zA-Z0-9._]+$/.test(username)) {
+                                validationMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Username can only contain letters, numbers, dots, and underscores';
+                            } else if (username.startsWith('.') || username.endsWith('.')) {
+                                validationMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Username cannot start or end with a dot';
+                            } else if (username.includes('..')) {
+                                validationMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Username cannot contain consecutive dots';
+                            } else if (letterCount < 2) {
+                                validationMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Username must contain at least 2 letters';
+                            } else {
+                                validationMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please enter a valid Gmail address';
+                            }
+                        }
+                        
+                        validationMessage.className = 'validation-message invalid';
+                    }
+                }
+            });
+            
+            // Add blur event to hide validation message when focus is lost
+            emailField.addEventListener('blur', function() {
+                emailFieldFocused = false;
+                const email = this.value;
+                const validationMessage = document.getElementById('emailValidationMessage');
+                
+                // Hide the validation message when focus is lost
+                validationMessage.innerHTML = '';
+                validationMessage.className = 'validation-message';
+                
+                // Keep the border color to indicate validity/invalidity
+                // But only show Django errors if present
+                if (email.length > 0 && !validateGmailEmail(email)) {
+                    // Create a custom error message (this will still show)
+                    const errorDiv = document.getElementById('emailError');
+                    
+                    if (!email.includes('@')) {
+                        errorDiv.innerHTML = '<ul class="errorlist"><li>Email must contain @ symbol</li></ul>';
+                    } else if (!email.toLowerCase().includes('@gmail.com')) {
+                        errorDiv.innerHTML = '<ul class="errorlist"><li>Email must be a Gmail address (ends with @gmail.com)</li></ul>';
+                    } else if (email.startsWith('@')) {
+                        errorDiv.innerHTML = '<ul class="errorlist"><li>Please enter a username before @</li></ul>';
+                    } else {
+                        const username = email.split('@')[0];
+                        const letterCount = (username.match(/[a-zA-Z]/g) || []).length;
+                        
+                        if (username.length < 2) {
+                            errorDiv.innerHTML = '<ul class="errorlist"><li>Username must be at least 2 characters long</li></ul>';
+                        } else if (!/^[a-zA-Z0-9._]+$/.test(username)) {
+                            errorDiv.innerHTML = '<ul class="errorlist"><li>Username can only contain letters, numbers, dots, and underscores</li></ul>';
+                        } else if (username.startsWith('.') || username.endsWith('.')) {
+                            errorDiv.innerHTML = '<ul class="errorlist"><li>Username cannot start or end with a dot</li></ul>';
+                        } else if (username.includes('..')) {
+                            errorDiv.innerHTML = '<ul class="errorlist"><li>Username cannot contain consecutive dots</li></ul>';
+                        } else if (letterCount < 2) {
+                            errorDiv.innerHTML = '<ul class="errorlist"><li>Username must contain at least 2 letters</li></ul>';
+                        } else {
+                            errorDiv.innerHTML = '<ul class="errorlist"><li>Please enter a valid Gmail address</li></ul>';
+                        }
+                    }
+                }
+            });
         }
         
+        // Rest of your existing code for other fields...
         // Institute
         const instituteField = document.querySelector('#id_institute');
         if (instituteField) {
@@ -499,6 +704,43 @@
             confirmPasswordField.placeholder = 'Re-enter your password';
             confirmPasswordField.classList.add('form-control');
         }
+
+        // Form submission validation
+        const form = document.getElementById('registrationForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const email = emailField.value;
+                
+                // Final validation before submission
+                if (!validateGmailEmail(email)) {
+                    e.preventDefault();
+                    
+                    // Show error message
+                    const errorDiv = document.getElementById('emailError');
+                    
+                    if (!email.includes('@')) {
+                        errorDiv.innerHTML = '<ul class="errorlist"><li>Please enter a valid Gmail address (username@gmail.com)</li></ul>';
+                    } else if (!email.toLowerCase().includes('@gmail.com')) {
+                        errorDiv.innerHTML = '<ul class="errorlist"><li>Email must be a Gmail address (ends with @gmail.com)</li></ul>';
+                    } else {
+                        errorDiv.innerHTML = '<ul class="errorlist"><li>Please enter a valid Gmail address with at least 2 letters in the username</li></ul>';
+                    }
+                    
+                    // Highlight the field
+                    emailField.classList.add('email-invalid');
+                    emailField.focus();
+                    
+                    // Scroll to email field
+                    emailField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        }
     });
 </script>
+
+<!-- Add Font Awesome if not already included in base.html -->
+{% block extra_js %}
+<script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+{% endblock %}
+
 {% endblock %}
