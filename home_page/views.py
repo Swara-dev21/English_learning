@@ -1,4 +1,13 @@
 # home_page/views.py
+import csv
+from django.http import HttpResponse
+from django.contrib.admin.views.decorators import staff_member_required
+from listening.models import TestResult as ListeningResult
+from reading.models import ReadingResult
+from speaking.models import SpeakingResult
+from writing.models import WritingTestResult as WritingResult
+
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -103,43 +112,70 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    """View and edit user profile"""
-    profile = get_object_or_404(StudentProfile, user=request.user)
+    print("\n" + "="*50)
+    print("PROFILE VIEW CALLED")
+    print(f"Request method: {request.method}")
+    print(f"POST data: {request.POST}")
+    print("="*50 + "\n")
     
+    profile = get_object_or_404(StudentProfile, user=request.user)
+
     if request.method == 'POST':
-        # Check which form was submitted
+        print(f"update_profile in POST: {'update_profile' in request.POST}")
+        print(f"change_password in POST: {'change_password' in request.POST}")
+        
         if 'update_profile' in request.POST:
+            print("PROFILE UPDATE FORM SUBMITTED")
             form = ProfileUpdateForm(request.POST, instance=profile)
+            print(f"Form valid: {form.is_valid()}")
+            if not form.is_valid():
+                print(f"Form errors: {form.errors}")
+            
             if form.is_valid():
                 form.save()
                 messages.success(request, "Your profile has been updated successfully!")
                 return redirect('home_page:profile')
-            else:
-                # If profile form is invalid, still need to initialize password form
-                password_form = PasswordChangeForm(request.user)
+            # If invalid, continue to render with errors
+        
         elif 'change_password' in request.POST:
+            print("PASSWORD CHANGE FORM SUBMITTED")
             password_form = PasswordChangeForm(request.user, request.POST)
+            print(f"Form valid: {password_form.is_valid()}")
+            if not password_form.is_valid():
+                print(f"Password errors: {password_form.errors}")
+            
             if password_form.is_valid():
                 user = request.user
-                user.set_password(password_form.cleaned_data['new_password'])
+                new_password = password_form.cleaned_data['new_password']
+                user.set_password(new_password)
                 user.save()
-                # Keep the user logged in after password change
                 update_session_auth_hash(request, user)
                 messages.success(request, "Your password has been changed successfully!")
                 return redirect('home_page:profile')
-            else:
-                # If password form is invalid, still need to initialize profile form
-                form = ProfileUpdateForm(instance=profile)
-    else:
-        form = ProfileUpdateForm(instance=profile)
-        password_form = PasswordChangeForm(request.user)
+            # If invalid, continue to render with errors
     
-    context = {
+    # For GET requests or invalid POST, initialize both forms
+    form = ProfileUpdateForm(instance=profile)
+    password_form = PasswordChangeForm(request.user)
+
+    return render(request, 'home_page/profile.html', {
         'form': form,
         'password_form': password_form,
         'profile': profile,
-    }
-    return render(request, 'home_page/profiles.html', context)
+    })
+
+    
+@login_required
+def test_introduction(request):
+    """Show test introduction page before starting the pretest"""
+    profile = get_object_or_404(StudentProfile, user=request.user)
+    
+    # If user already completed the test, redirect to results
+    if profile.pretest_completed:
+        messages.info(request, "You've already completed the pretest. View your results below.")
+        return redirect('home_page:pretest_results')
+    
+    return render(request, 'home_page/test_introduction.html')
 
 
 @login_required
@@ -305,7 +341,10 @@ def pretest_results(request):
     return render(request, 'home_page/pretest_results.html', context)
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 376fed1df717dc0e57a1511600a231bcfa8b3e2d
 def password_reset_request(request):
     """View for requesting password reset"""
     
@@ -397,3 +436,104 @@ def password_reset_confirm(request, token):
         'token': token,
         'email': reset_token.user.email
     })
+
+@staff_member_required
+def export_all_results_csv(request):
+    """Export all student results in CSV format for analysis - Clean version"""
+    
+    # Create HttpResponse with CSV header
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': 'attachment; filename="lsrw_student_results_clean.csv"'},
+    )
+    
+    writer = csv.writer(response)
+    
+    # Write header row - CLEAN VERSION
+    writer.writerow([
+        'Student_ID',
+        'Student_Name',
+        'Email',
+        'Institute',
+        'Department',
+        'Year',
+        'Listening_%',
+        'Speaking_%',
+        'Reading_%',
+        'Writing_%',
+        'Overall_%',
+        'Overall_Level'
+    ])
+    
+    # Get all users who have a profile
+    users = User.objects.filter(profile__isnull=False).select_related('profile')
+    
+    for user in users:
+        profile = user.profile
+        
+        # ----- LISTENING -----
+        listening = ListeningResult.objects.filter(user=user).first()
+        if listening and listening.score is not None:
+            listening_percentage = round((listening.score / listening.total_questions * 100), 1)
+        else:
+            listening_percentage = 0
+        
+        # ----- READING -----
+        reading = ReadingResult.objects.filter(user=user).first()
+        if reading and reading.score is not None:
+            reading_percentage = round((reading.score / reading.total * 100), 1)
+        else:
+            reading_percentage = 0
+        
+        # ----- SPEAKING (Average of pronunciation, accent, accuracy) -----
+        speaking = SpeakingResult.objects.filter(user=user).first()
+        if speaking:
+            # Speaking already has overall_score which is average of all three
+            speaking_percentage = round(speaking.overall_score, 1)
+        else:
+            speaking_percentage = 0
+        
+        # ----- WRITING (Convert 0-500 to percentage) -----
+        writing = WritingResult.objects.filter(user=user).first()
+        if writing and writing.total_score is not None:
+            writing_percentage = round((writing.total_score / 500 * 100), 1)
+        else:
+            writing_percentage = 0
+        
+        # Calculate overall percentage (average of all 4 skills)
+        valid_scores = []
+        if listening_percentage > 0: valid_scores.append(listening_percentage)
+        if speaking_percentage > 0: valid_scores.append(speaking_percentage)
+        if reading_percentage > 0: valid_scores.append(reading_percentage)
+        if writing_percentage > 0: valid_scores.append(writing_percentage)
+        
+        if valid_scores:
+            overall_percentage = round(sum(valid_scores) / len(valid_scores), 1)
+        else:
+            overall_percentage = 0
+        
+        # Determine overall level
+        if overall_percentage < 40:
+            overall_level = 'Beginner'
+        elif overall_percentage < 75:
+            overall_level = 'Intermediate'
+        else:
+            overall_level = 'Advanced'
+        
+        # Write row - CLEAN VERSION
+        writer.writerow([
+            user.id,
+            user.username,
+            user.email,
+            profile.institute,
+            profile.department,
+            profile.year,
+            f"{listening_percentage}%",
+            f"{speaking_percentage}%",
+            f"{reading_percentage}%",
+            f"{writing_percentage}%",
+            f"{overall_percentage}%",
+            overall_level
+        ])
+    
+    return response

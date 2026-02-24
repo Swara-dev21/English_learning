@@ -31,9 +31,10 @@ def submit_test(request, test_id):
 
         profile, _ = StudentProfile.objects.get_or_create(user=request.user)
 
-        if profile.reading_completed:
-            messages.warning(request, "You have already completed the reading test.")
-            return redirect('home_page:pretest_status')
+        # REMOVED: This block that checks reading_completed and redirects
+        # if profile.reading_completed:
+        #     messages.warning(request, "You have already completed the reading test.")
+        #     return redirect('home_page:pretest_status')
 
         test = get_object_or_404(Test, id=test_id)
         questions = Question.objects.filter(test=test)

@@ -1,196 +1,391 @@
-{% comment %} <!-- templates/home_page/includes/header.html -->
 {% load static %}
-<header>
-  <div class="logo">
-    <a href="{% url 'home_page:home' %}">
-      <img src="{% static 'home_page/images/logo.jpeg' %}" alt="TheFluentEngineer Logo">
-    </a>
-  </div>
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <!-- Logo on LEFT side -->
+        <a href="{% url 'home_page:home' %}" class="logo" id="logoBox">
+            <div class="logo-placeholder">
+                <span>TheFluentEngineer</span>
+            </div>
+        </a>
 
-  <nav class="main-nav">
-    <!-- Home Link -->
-    <div class="nav-item">
-      <a href="{% url 'home_page:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
-    </div>
-    
-    <!-- Skills Dropdown -->
-    <div class="nav-item">
-      <a href="#" class="nav-link">Skills</a>
-      <div class="dropdown-content">
-        <a href="{% url 'listening:index' %}">
-          <i class="fas fa-headphones"></i> Listening
-        </a>
-        <a href="#">
-          <i class="fas fa-microphone"></i> Speaking
-        </a>
-        <a href="#">
-          <i class="fas fa-book-open"></i> Reading
-        </a>
-        <a href="#">
-          <i class="fas fa-pen"></i> Writing
-        </a>
-      </div>
-    </div>
-    
-    <!-- Learn Dropdown -->
-    <div class="nav-item">
-      <a href="#" class="nav-link">Learn</a>
-      <div class="dropdown-content">
-        <a href="#">
-          <i class="fas fa-book"></i> Vocabulary Builder
-        </a>
-        <a href="#">
-          <i class="fas fa-spell-check"></i> Grammar for Communication
-        </a>
-        <a href="#">
-          <i class="fas fa-comments"></i> Functional English
-        </a>
-      </div>
-    </div>
-    
-    <!-- Practice Dropdown -->
-    <div class="nav-item">
-      <a href="#" class="nav-link">Practice</a>
-      <div class="dropdown-content">
-        <a href="#"><i class="fas fa-check-double"></i> Sentence Correction</a>
-        <a href="#"><i class="fas fa-underline"></i> Fill in the Blanks</a>
-        <a href="#"><i class="fas fa-arrows-alt"></i> Rearrange Sentences</a>
-        <a href="#"><i class="fas fa-comment-dots"></i> Dialogue Completion</a>
-        <a href="#"><i class="fas fa-paragraph"></i> Short Paragraph Writing</a>
-        <a href="#"><i class="fas fa-microphone-alt"></i> Audio-based Speaking</a>
-      </div>
-    </div>
-    
-    <!-- Dynamic Test Button -->
-    <div class="nav-item">
-      {% if user.is_authenticated %}
-        {% if user.profile.pretest_completed %}
-          <a href="{% url 'home_page:pretest_results' %}" class="nav-link view-result-btn">View Result</a>
-        {% else %}
-          <a href="{% url 'home_page:start_pretest' %}" class="nav-link take-test-btn">Take Test</a>
-        {% endif %}
-      {% else %}
-        <a href="{% url 'home_page:login' %}?next={% url 'home_page:start_pretest' %}" class="nav-link take-test-btn">Take Test</a>
-      {% endif %}
-    </div>
-  </nav>
+        <!-- Main Navigation Links -->
+        <div class="nav-links" id="navLinks">
+            <a href="{% url 'home_page:home' %}#about-us" class="nav-link">About</a>
+            <a href="{% url 'home_page:home' %}#skills" class="nav-link">Skills</a>
+            <a href="{% url 'home_page:home' %}#our-values" class="nav-link">Our Values</a>
+            <a href="{% url 'home_page:home' %}#why-us" class="nav-link">Why Us</a>
+            <a href="{% url 'home_page:home' %}#how-we-work" class="nav-link">How We Work</a>
+            <a href="{% url 'home_page:home' %}#faq" class="nav-link">FAQ</a>
+            
+            <!-- Dynamic Test/Result Button -->
+            {% if user.is_authenticated %}
+            {% if user.profile.pretest_completed %}
+                 <a href="{% url 'home_page:pretest_results' %}" class="nav-link result-btn">View Result</a>
+                {% else %}
+                 <a href="{% url 'home_page:test_introduction' %}" class="nav-link test-btn">Take Test</a>
+                {% endif %}
+          {% else %}
+               <a href="{% url 'home_page:login' %}?next={% url 'home_page:test_introduction' %}" class="nav-link test-btn">Take Test</a>
+            {% endif %}
+                   </div>
 
-  <!-- Authentication Links -->
-  <div class="top-links">
-    {% if user.is_authenticated %}
-      <span class="welcome-text">Welcome, {{ user.username }}</span>
-      <a href="{% url 'home_page:profile' %}" class="profile-btn">
-        <i class="fas fa-user-circle"></i> Profile
-      </a>
-      <a href="{% url 'home_page:logout' %}" class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </a>
-    {% else %}
-      <a href="{% url 'home_page:login' %}" class="login-btn">Login</a>
-      <a href="{% url 'home_page:register' %}" class="register-btn">Register</a>
-    {% endif %}
-  </div>
-</header>
+        <!-- Profile Section (Right side) -->
+        <div class="profile-section">
+            {% if user.is_authenticated %}
+                <div class="profile-wrapper">
+                    <span class="welcome-text">Welcome, {{ user.username }}</span>
+                    <a href="{% url 'home_page:profile' %}" class="profile-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
 
-<!-- Add Font Awesome if not already in base -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <!-- Mobile Menu Button -->
+        <button class="menu-btn" id="menuBtn">
+            <span class="hamburger">
+                <div></div>
+            </span>
+            <span class="menu-text">Menu</span>
+        </button>
+    </div>
+</nav>
 
-<!-- Dropdown CSS -->
 <style>
-  .nav-item {
-    position: relative;
-  }
-  
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: var(--white);
-    min-width: 260px;
-    box-shadow: var(--shadow-hover);
-    border-radius: 12px;
-    padding: 10px 0;
-    z-index: 1000;
-    border: 1px solid var(--border-gray);
-    margin-top: 5px;
-  }
-  
-  .dropdown-content a {
-    color: var(--dark-gray);
-    padding: 12px 20px;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 15px;
-    transition: all 0.3s ease;
-  }
-  
-  .dropdown-content a i {
-    width: 20px;
-    color: var(--primary-green);
-    font-size: 16px;
-  }
-  
-  .dropdown-content a:hover {
-    background-color: var(--light-green);
-    color: var(--primary-green);
-    padding-left: 25px;
-  }
-  
-  .nav-item:hover .dropdown-content {
-    display: block;
-  }
-  
-  .nav-item:hover .nav-link::after {
-    transform: rotate(180deg);
-  }
-  
-  .welcome-text {
-    font-weight: 600;
-    color: var(--dark-gray);
-    margin-right: 10px;
-  }
-  
-  .profile-btn, .logout-btn {
-    text-decoration: none;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-  }
-  
-  .profile-btn {
-    background-color: var(--light-green);
-    color: var(--primary-green);
-  }
-  
-  .logout-btn {
-    background-color: #ffebee;
-    color: #f44336;
-  }
-  
-  .profile-btn:hover, .logout-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-  }
-  
-  .view-result-btn {
-    background: linear-gradient(135deg, var(--primary-green), var(--duolingo-blue)) !important;
-    color: white !important;
-    padding: 8px 20px !important;
-    border-radius: 25px !important;
-  }
-  
-  .take-test-btn {
-    background: linear-gradient(135deg, var(--duolingo-blue), #0da5e0) !important;
-    color: white !important;
-    padding: 8px 20px !important;
-    border-radius: 25px !important;
-  }
-  
-  .view-result-btn::after, .take-test-btn::after {
-    display: none !important;
-  }
-</style> {% endcomment %}
+    /* Navigation Bar */
+    .navbar {
+        background: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        padding: 10px 0;
+    }
+
+    .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Logo Styles */
+    .logo {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    .logo-placeholder {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .logo-placeholder span {
+        font-size: 20px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Navigation Links */
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        margin-left: 50px;
+        flex: 1;
+    }
+
+    .nav-link {
+        color: #4a5568;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 15px;
+        transition: color 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .nav-link:hover {
+        color: #667eea;
+    }
+
+    /* Test/Result Button Styles */
+    .test-btn, .result-btn {
+        padding: 8px 20px !important;
+        border-radius: 50px !important;
+        font-weight: 600 !important;
+    }
+
+    .test-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white !important;
+        animation: pulse 2s infinite;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .result-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white !important;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .test-btn:hover, .result-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(245, 87, 108, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(245, 87, 108, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(245, 87, 108, 0);
+        }
+    }
+
+    /* Profile Section */
+    .profile-section {
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: #f8f9fa;
+        padding: 5px 15px 5px 20px;
+        border-radius: 50px;
+        border: 1px solid #e9ecef;
+    }
+
+    .welcome-text {
+        color: #4a5568;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .profile-icon {
+        color: #667eea;
+        font-size: 32px;
+        line-height: 1;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-icon:hover {
+        color: #764ba2;
+        transform: scale(1.05);
+    }
+
+    .profile-icon i {
+        font-size: 32px;
+    }
+
+    /* Auth Buttons */
+    .auth-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .login-btn, .register-btn {
+        padding: 8px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .login-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .login-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .register-btn {
+        background: transparent;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+
+    .register-btn:hover {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Mobile Menu Button */
+    .menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .hamburger div {
+        width: 25px;
+        height: 3px;
+        background: #667eea;
+        margin: 4px 0;
+        transition: 0.3s;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .nav-links {
+            gap: 20px;
+            margin-left: 30px;
+        }
+        
+        .nav-link {
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .nav-container {
+            padding: 0 20px;
+        }
+
+        .logo-placeholder span {
+            font-size: 18px;
+        }
+
+        .nav-links {
+            gap: 15px;
+            margin-left: 20px;
+        }
+
+        .profile-wrapper {
+            padding: 5px 12px 5px 15px;
+        }
+
+        .welcome-text {
+            font-size: 13px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .menu-btn {
+            display: block;
+            order: 3;
+        }
+
+        .nav-links {
+            display: none;
+            position: absolute;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background: white;
+            flex-direction: column;
+            padding: 20px;
+            gap: 15px;
+            margin-left: 0;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .nav-links.show {
+            display: flex;
+        }
+
+        .nav-link {
+            width: 100%;
+            text-align: center;
+            padding: 10px !important;
+        }
+
+        .profile-section {
+            order: 2;
+            margin-left: auto;
+            margin-right: 15px;
+        }
+
+        .profile-wrapper {
+            padding: 3px 10px 3px 12px;
+        }
+
+        .welcome-text {
+            display: none;
+        }
+
+        .profile-icon {
+            font-size: 28px;
+        }
+
+        .profile-icon i {
+            font-size: 28px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .logo-placeholder span {
+            display: none;
+        }
+
+        .logo-placeholder img {
+            height: 35px;
+        }
+
+        .auth-buttons {
+            gap: 5px;
+        }
+
+        .login-btn, .register-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuBtn = document.getElementById('menuBtn');
+        const navLinks = document.getElementById('navLinks');
+        
+        if (menuBtn) {
+            menuBtn.addEventListener('click', function() {
+                navLinks.classList.toggle('show');
+                
+                // Animate hamburger
+                const hamburger = this.querySelector('.hamburger');
+                hamburger.classList.toggle('active');
+            });
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!menuBtn?.contains(e.target) && !navLinks?.contains(e.target)) {
+                navLinks?.classList.remove('show');
+            }
+        });
+
+        // Close menu when clicking a link
+        navLinks?.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('show');
+            });
+        });
+    });
+</script>

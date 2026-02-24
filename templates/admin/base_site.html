@@ -1,0 +1,31 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | {% trans 'TheFluentEngineer Admin' %}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        TheFluentEngineer Administration
+    </a>
+</h1>
+{% endblock %}
+
+{% block welcome-msg %}
+    {% if user.is_authenticated and not user.is_staff %}
+        <!-- Hide welcome message for non-staff users -->
+        <span style="display:none;"></span>
+    {% else %}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{% block userlinks %}
+    {% if user.is_staff %}
+        {{ block.super }}
+    {% else %}
+        <!-- Custom links for non-staff users -->
+        <a href="{% url 'home_page:home' %}">Back to Site</a> /
+        <a href="{% url 'home_page:logout' %}">{% trans 'Log out' %}</a>
+    {% endif %}
+{% endblock %}
