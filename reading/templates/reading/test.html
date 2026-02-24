@@ -4,224 +4,224 @@
     <meta charset="UTF-8">
     <title>Reading Test</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'reading/css/style.css' %}?v=18">
+    <link rel="stylesheet" href="{% static 'reading/css/style.css' %}?v=22">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Simplified CSS - only what's needed */
-        .test-container {
+        /* ===== BASE STYLES ===== */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e3f2f9 0%, #d3eaf3 100%);
+            margin: 0;
+            padding: 0;
             min-height: 100vh;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .test-wrapper {
+            max-width: 800px;
+            width: 90%;
+            margin: 2rem auto;
+        }
+        
+        /* ===== UNIFIED MAIN CARD ===== */
+        .test-card {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 153, 214, 0.25);
+            overflow: hidden;
+            animation: slideUp 0.6s ease;
         }
 
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ===== HEADER SECTION ===== */
         .test-header {
-            background: linear-gradient(135deg, #3b82f6, #6366f1);
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: linear-gradient(135deg, #0099d6, #0077b3);
             color: white;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            text-align: center; 
+            display: flex;              
+            justify-content: center;    
+            align-items: center;        
         }
 
-        .question-counter {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
-            border-radius: 50px;
+        .test-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
         }
 
-        /* Friend's Progress Dots/Circles CSS */
-        .question-dots {
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .test-header h1 {
             display: flex;
-            justify-content: center;
+            align-items: center;
             gap: 1rem;
-            margin: 2rem 0;
-            padding: 1rem;
-            background: white;
-            border-radius: 3rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0;
+            position: relative;
+            z-index: 1;
         }
 
-        .question-dot {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 50%;
-            background: #e2e8f0;  /* Gray for unanswered */
-            color: #64748b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-weight: 600;
+        .test-header h1 i {
+            color: #fdfdf9;
+            font-size: 2.5rem;
+        }
+        
+        /* ===== CONTENT SECTION ===== */
+        .test-content {
+            padding: 2rem;
+        }
+        
+        /* ===== PROGRESS SECTION ===== */
+        .progress-wrapper {
+            margin-bottom: 2rem;
+        }
+
+        .question-indicator {
             font-size: 1.2rem;
-            transition: all 0.3s ease;
-            border: 2px solid #cbd5e1;
-        }
-
-        .question-dot.active {
-            background: #3b82f6;  /* Blue for current question */
-            color: white;
-            border-color: #1d4ed8;
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .question-dot.answered {
-            background: #10b981;  /* Green for answered questions */
-            color: white;
-            border-color: #059669;
-        }
-
-        .question-dot:hover {
-            transform: scale(1.1);
-        }
-
-        /* Pulse animation for red warning */
-        @keyframes pulse-red {
-            0% {
-                transform: scale(1);
-                background: #e2e8f0;
-                border-color: #cbd5e1;
-            }
-            50% {
-                transform: scale(1.2);
-                background: #ef4444;
-                border-color: #dc2626;
-                color: white;
-            }
-            100% {
-                transform: scale(1);
-                background: #e2e8f0;
-                border-color: #cbd5e1;
-            }
-        }
-
-        .question-dot.pulse-red {
-            animation: pulse-red 0.5s ease;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
-
-        /* Question Cards */
-        .section-card {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.08);
-            padding: 35px;
-            margin-bottom: 25px;
-            display: none;
-        }
-
-        .section-card.active {
-            display: block;
-        }
-
-        /* Progress Bar inside card */
-        .card-progress-container {
-            margin-bottom: 25px;
-        }
-
-        .card-progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 0 5px;
-        }
-
-        .card-progress-title {
             font-weight: 600;
             color: #1e293b;
-            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
         }
 
-        .card-progress-time {
-            color: #64748b;
-            font-size: 0.9rem;
-        }
-
-        .card-progress-bar-bg {
-            height: 6px;
+        .progress-bar-container {
             background: #e2e8f0;
-            border-radius: 3px;
+            height: 0.5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0099d6, #0077b3);
+            border-radius: 1rem;
+            transition: width 0.3s ease;
+            position: relative;
             overflow: hidden;
         }
 
-        .card-progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #6366f1);
-            border-radius: 3px;
-            transition: width 0.3s ease;
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
         }
 
-        /* Passage */
-        .passage {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e2e8f0;
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* ===== PASSAGE CONTAINER (UPDATED - SINGLE BOX) ===== */
+        .passage-container {
+            margin-bottom: 2rem;
         }
 
-        .passage h2 {
+        .passage-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .passage-header i {
+            font-size: 1.5rem;
+            color: #0099d6;
         }
 
         .passage-text {
             background: #f8fafc;
-            padding: 25px;
-            border-radius: 16px;
+            padding: 1.5rem;
+            border-radius: 1rem;
             font-size: 1.1rem;
             line-height: 1.7;
+            color: #334155;
             border: 1px solid #e2e8f0;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
         .shared-badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: #f1f5f9;
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            color: #475569;
-            margin-top: 15px;
-            border: 1px dashed #94a3b8;
+            gap: 0.5rem;
+            background: #e0f2fe;
+            padding: 0.3rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            color: #0099d6;
+            font-weight: 500;
+            border: 1px dashed #0099d6;
+            margin-left: 0.5rem;
         }
 
         .shared-badge i {
-            color: #3b82f6;
+            color: #0099d6;
+            font-size: 0.9rem;
+        }
+        
+        /* ===== QUESTION SECTION ===== */
+        .question-section {
+            margin-bottom: 2rem;
         }
 
-        .question-number {
+        /* UPDATED - Smaller Q badge */
+        .question-number-badge {
             display: inline-block;
-            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            background: #0099d6;
             color: white;
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-weight: 600;
-            margin-bottom: 15px;
+            padding: 0.3rem 1.2rem;  /* Reduced from 0.5rem 1.5rem */
+            border-radius: 2rem;        /* Changed from 2.5rem */
+            margin-bottom: 1rem;
+            font-size: 1rem;            /* Reduced from 1.2rem */
+            font-weight: 600;            /* Reduced from 700 */
+            box-shadow: 0 4px 10px rgba(0, 153, 214, 0.2);
+            letter-spacing: 0.5px;
         }
 
         .question-text {
             font-size: 1.3rem;
             font-weight: 600;
-            margin: 15px 0;
+            color: #1e293b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
         }
-
-        /* Options */
-        .options-container {
+        
+        /* ===== OPTIONS ===== */
+        .options-grid {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
 
         .option {
@@ -229,116 +229,125 @@
         }
 
         .option input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
+            display: none;
         }
 
         .option-label {
             display: flex;
             align-items: center;
-            gap: 20px;
-            padding: 18px 25px;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
             background: white;
             border: 2px solid #e2e8f0;
-            border-radius: 16px;
+            border-radius: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .option-label:hover {
-            border-color: #3b82f6;
-            background: #eff6ff;
+            border-color: #0099d6;
+            background: #e0f2fe;
+            transform: translateX(5px);
         }
 
         .option input[type="radio"]:checked + .option-label {
-            border-color: #3b82f6;
+            border-color: #0099d6;
+            background: #e0f2fe;
+            box-shadow: 0 0 0 4px rgba(0, 153, 214, 0.1);
         }
 
         .option-letter {
-            width: 45px;
-            height: 45px;
+            width: 2.5rem;
+            height: 2.5rem;
             background: #f1f5f9;
-            border-radius: 12px;
+            border-radius: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.2rem;
+            color: #0099d6;
             border: 2px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .option input[type="radio"]:checked + .option-label .option-letter {
+            background: #0099d6;
+            color: white;
+            border-color: #0099d6;
+            transform: scale(1.05);
         }
 
         .option-text {
             flex: 1;
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: #334155;
-        }
-
-        /* Message Container - NEW */
-        .message-container {
-            margin: 15px 0 20px;
-            padding: 12px 20px;
-            border-radius: 50px;
             font-weight: 500;
+        }
+        
+        /* ===== MESSAGE CONTAINER ===== */
+        .message-container {
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.75rem;
+            font-weight: 500;
             transition: all 0.3s ease;
-        }
-
-        .message-container.success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #10b981;
-        }
-
-        .message-container.warning {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #ef4444;
-        }
-
-        .message-container i {
-            font-size: 1.2rem;
         }
 
         .message-container.hidden {
             display: none;
         }
 
-        /* Navigation */
-        .question-nav {
+        .message-container.success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .message-container.warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .message-container i {
+            font-size: 1.2rem;
+        }
+        
+        /* ===== NAVIGATION ===== */
+        .navigation-section {
             display: flex;
             justify-content: flex-end;
-            margin-top: 10px;
+            align-items: center;
+            margin-top: 1rem;
+            width: 100%;
         }
 
         .nav-btn {
-            padding: 14px 40px;
-            border: none;
-            background: linear-gradient(135deg, #3b82f6, #6366f1);
-            color: white;
-            border-radius: 50px;
+            padding: 0.75rem 2rem;
+            border-radius: 2rem;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            border: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .nav-btn:hover {
+        .btn-next {
+            background: #0099d6;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 153, 214, 0.2);
+        }
+
+        .btn-next:hover {
+            background: #0077b3;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .submit-wrapper {
-            text-align: center;
-            margin: 30px 0;
-            display: none;
-        }
-
-        .submit-wrapper.show {
-            display: block;
+            box-shadow: 0 6px 15px rgba(0, 153, 214, 0.3);
         }
 
         .btn-submit {
@@ -351,190 +360,282 @@
             font-size: 1.2rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
         }
 
         .btn-submit:hover {
+            background: linear-gradient(135deg, #059669, #047857);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+        }
+        
+        /* ===== QUESTION STATUS DOTS ===== */
+        .question-status {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .status-dot {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #64748b;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .status-dot.active {
+            background: #0099d6;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(0, 153, 214, 0.3);
+        }
+
+        .status-dot.answered {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-dot.answered.active {
+            background: #0099d6;
+        }
+
+        .status-dot.pulse-red {
+            animation: pulse-red 0.5s ease;
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(1); background: #e2e8f0; }
+            50% { transform: scale(1.2); background: #ef4444; color: white; }
+            100% { transform: scale(1); background: #e2e8f0; }
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 640px) {
+            .test-wrapper {
+                width: 95%;
+                margin: 1rem auto;
+            }
+            
+            .test-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .navigation-section {
+                justify-content: center;
+            }
+            
+            .question-text {
+                font-size: 1.1rem;
+            }
+            
+            .option-label {
+                padding: 0.75rem 1rem;
+            }
         }
     </style>
 </head>
 <body>
-<div class="test-container">
-
-    <!-- Header -->
-    <div class="test-header">
-        <h1>
-            <i class="fas fa-book-reader"></i>
-            Reading Test
-        </h1>
-        <div class="question-counter">
-            <span id="currentQuestionDisplay">1</span>/<span id="totalQuestionsDisplay">{{ questions|length }}</span>
-        </div>
-    </div>
-
-    <div class="container">
-        <form method="POST" action="{% url 'reading:submit_test' test.id %}" id="testForm">
-            {% csrf_token %}
-
-            {% for question in questions %}
-            <div class="section-card" id="card-{{ question.order }}" data-question="{{ question.order }}">
+    <div class="test-wrapper">
+        <!-- UNIFIED MAIN CARD -->
+        <div class="test-card">
+            
+            <!-- Header Section - Centered -->
+            <div class="test-header">
+                <h1>
+                    <i class="fas fa-book-reader"></i>
+                    Reading Test
+                </h1>
+            </div>
+            
+            <!-- Content Section -->
+            <div class="test-content">
                 
-                <!-- Progress Bar - INSIDE each card, directly above Reading Passage -->
-                <div class="card-progress-container">
-                    <div class="card-progress-header">
-                        <div class="card-progress-title">
-                            Question {{ question.order }} of {{ questions|length }}
-                        </div>
-                    </div>
-                    <div class="card-progress-bar-bg">
-                        <div class="card-progress-bar-fill" id="progressFill-{{ question.order }}" style="width: {% widthratio question.order questions|length 100 %}%;"></div>
-                    </div>
+                <!-- Question Indicator Above Progress Bar -->
+                <div class="question-indicator">
+                    Question <span id="currentQuestionDisplay">1</span> of <span id="totalQuestionsDisplay">{{ questions|length }}</span>
                 </div>
-
-                <!-- Passage -->
-                <div class="passage">
-                    <h2><i class="fas fa-paragraph"></i> Reading Passage</h2>
-                    <div class="passage-text">{{ question.paragraph.content }}</div>
-                    {% if question.paragraph.order == 4 %}
-                    <div class="shared-badge">
-                        <i class="fas fa-link"></i> This passage is for Questions 4 and 5
-                    </div>
-                    {% endif %}
+                
+                <!-- Progress Bar -->
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressBar" style="width: {% widthratio 1 questions|length 100 %}%"></div>
                 </div>
-
-                <!-- Question -->
-                <div>
-                    <div class="question-number">Q{{ question.order }}</div>
-                    <h3 class="question-text">{{ question.question_text }}</h3>
-
-                    <!-- Options -->
-                    <div class="options-container">
-                        <div class="option">
-                            <input type="radio" name="q{{ question.id }}" value="1" id="q{{ question.id }}_1" class="q-radio" data-qid="{{ question.order }}">
-                            <label class="option-label" for="q{{ question.id }}_1">
-                                <span class="option-letter">A</span>
-                                <span class="option-text">{{ question.option1 }}</span>
-                            </label>
-                        </div>
-
-                        <div class="option">
-                            <input type="radio" name="q{{ question.id }}" value="2" id="q{{ question.id }}_2" class="q-radio" data-qid="{{ question.order }}">
-                            <label class="option-label" for="q{{ question.id }}_2">
-                                <span class="option-letter">B</span>
-                                <span class="option-text">{{ question.option2 }}</span>
-                            </label>
-                        </div>
-
-                        {% if question.option3 %}
-                        <div class="option">
-                            <input type="radio" name="q{{ question.id }}" value="3" id="q{{ question.id }}_3" class="q-radio" data-qid="{{ question.order }}">
-                            <label class="option-label" for="q{{ question.id }}_3">
-                                <span class="option-letter">C</span>
-                                <span class="option-text">{{ question.option3 }}</span>
-                            </label>
+                
+                <!-- Questions Form -->
+                <form method="POST" action="{% url 'reading:submit_test' test.id %}" id="testForm">
+                    {% csrf_token %}
+                    
+                    {% for question in questions %}
+                    <div class="question-section" id="question{{ forloop.counter }}" data-question-num="{{ forloop.counter }}" style="{% if forloop.counter != 1 %}display: none;{% endif %}">
+                        
+                        <!-- Passage Container - UPDATED: Single box design -->
+                        {% if forloop.first or question.paragraph.id != questions.previous.paragraph.id %}
+                        <div class="passage-container">
+                            <div class="passage-header">
+                                <i class="fas fa-paragraph"></i>
+                                <span>Reading Passage</span>
+                                {% if question.paragraph.order == 4 %}
+                                <span class="shared-badge">
+                                    <i class="fas fa-link"></i> Q4 & Q5
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="passage-text">
+                                {{ question.paragraph.content }}
+                            </div>
                         </div>
                         {% endif %}
-
-                        {% if question.option4 %}
-                        <div class="option">
-                            <input type="radio" name="q{{ question.id }}" value="4" id="q{{ question.id }}_4" class="q-radio" data-qid="{{ question.order }}">
-                            <label class="option-label" for="q{{ question.id }}_4">
-                                <span class="option-letter">D</span>
-                                <span class="option-text">{{ question.option4 }}</span>
-                            </label>
+                        
+                        <!-- Question Number Badge - UPDATED: Smaller size -->
+                        <div class="question-number-badge">
+                            Q{{ question.order }}
                         </div>
-                        {% endif %}
-                    </div>
+                        
+                        <!-- Question Text -->
+                        <h3 class="question-text">{{ question.question_text }}</h3>
+                        
+                        <!-- Options -->
+                        <div class="options-grid">
+                            <div class="option">
+                                <input type="radio" name="q{{ question.id }}" id="q{{ question.id }}_1" value="1" class="q-radio" data-qid="{{ question.order }}">
+                                <label class="option-label" for="q{{ question.id }}_1">
+                                    <span class="option-letter">A</span>
+                                    <span class="option-text">{{ question.option1 }}</span>
+                                </label>
+                            </div>
 
-                    <!-- Message Container - Between Options and Next Button -->
-                    <div id="message-{{ question.order }}" class="message-container hidden">
-                        <i class="fas fa-check-circle"></i>
-                        <span></span>
-                    </div>
+                            <div class="option">
+                                <input type="radio" name="q{{ question.id }}" id="q{{ question.id }}_2" value="2" class="q-radio" data-qid="{{ question.order }}">
+                                <label class="option-label" for="q{{ question.id }}_2">
+                                    <span class="option-letter">B</span>
+                                    <span class="option-text">{{ question.option2 }}</span>
+                                </label>
+                            </div>
 
-                    <!-- Next Button -->
-                    {% if not forloop.last %}
-                    <div class="question-nav">
-                        <button type="button" class="nav-btn" onclick="goToNextQuestion({{ question.order }})">
-                            Next <i class="fas fa-arrow-right"></i>
-                        </button>
+                            {% if question.option3 %}
+                            <div class="option">
+                                <input type="radio" name="q{{ question.id }}" id="q{{ question.id }}_3" value="3" class="q-radio" data-qid="{{ question.order }}">
+                                <label class="option-label" for="q{{ question.id }}_3">
+                                    <span class="option-letter">C</span>
+                                    <span class="option-text">{{ question.option3 }}</span>
+                                </label>
+                            </div>
+                            {% endif %}
+
+                            {% if question.option4 %}
+                            <div class="option">
+                                <input type="radio" name="q{{ question.id }}" id="q{{ question.id }}_4" value="4" class="q-radio" data-qid="{{ question.order }}">
+                                <label class="option-label" for="q{{ question.id }}_4">
+                                    <span class="option-letter">D</span>
+                                    <span class="option-text">{{ question.option4 }}</span>
+                                </label>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Message Container -->
+                        <div class="message-container hidden" id="message-{{ question.order }}">
+                            <i class="fas"></i>
+                            <span></span>
+                        </div>
+                        
+                        <!-- Navigation Section -->
+                        <div class="navigation-section">
+                            {% if forloop.last %}
+                            <button type="button" class="nav-btn btn-submit" onclick="handleSubmitClick()">
+                                <i class="fas fa-paper-plane"></i> Submit Test
+                            </button>
+                            {% else %}
+                            <button type="button" class="nav-btn btn-next" onclick="goToNextQuestion({{ question.order }})">
+                                Next <i class="fas fa-arrow-right"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                        
                     </div>
-                    {% endif %}
+                    {% endfor %}
+                    
+                    <!-- Hidden navigation input -->
+                    <input type="hidden" name="current_question" id="currentQuestionInput" value="1">
+                </form>
+                
+                <!-- Question Status Dots -->
+                <div class="question-status">
+                    {% for question in questions %}
+                    <div class="status-dot" id="dot-{{ question.order }}" data-dot="{{ question.order }}" onclick="jumpToQuestion({{ question.order }})">
+                        {{ question.order }}
+                    </div>
+                    {% endfor %}
                 </div>
-            </div>
-            {% endfor %}
-
-            <!-- Submit Button -->
-            <div class="submit-wrapper" id="submitWrapper">
-                <button type="submit" class="btn-submit">
-                    <i class="fas fa-paper-plane"></i> Submit Test
-                </button>
-            </div>
-
-            <!-- Friend's Progress Dots/Circles -->
-            <div class="question-dots" id="questionDots">
-                <div class="question-dot" id="dot-1" onclick="jumpToQuestion(1)">1</div>
-                <div class="question-dot" id="dot-2" onclick="jumpToQuestion(2)">2</div>
-                <div class="question-dot" id="dot-3" onclick="jumpToQuestion(3)">3</div>
-                <div class="question-dot" id="dot-4" onclick="jumpToQuestion(4)">4</div>
-                <div class="question-dot" id="dot-5" onclick="jumpToQuestion(5)">5</div>
-            </div>
-
-        </form>
-    </div>
-</div>
+                
+            </div> <!-- End test-content -->
+        </div> <!-- End test-card -->
+    </div> <!-- End test-wrapper -->
 
 <script>
-    // SIMPLE AND DIRECT JAVASCRIPT
+    // Variables
     const totalQuestions = {{ questions|length }};
     let currentQuestion = 1;
     let answered = new Array(totalQuestions + 1).fill(false);
-
+    
     // Get elements
-    const cards = document.querySelectorAll('.section-card');
-    const dots = {
-        1: document.getElementById('dot-1'),
-        2: document.getElementById('dot-2'),
-        3: document.getElementById('dot-3'),
-        4: document.getElementById('dot-4'),
-        5: document.getElementById('dot-5')
-    };
-    const submitWrapper = document.getElementById('submitWrapper');
     const currentDisplay = document.getElementById('currentQuestionDisplay');
-
-    // Function to show message for a specific question
-function showMessage(type, text, questionNum = null) {
-    const qNum = questionNum || currentQuestion;
-    const messageDiv = document.getElementById(`message-${qNum}`);
-    if (!messageDiv) return;
+    const progressBar = document.getElementById('progressBar');
     
-    // Remove hidden class
-    messageDiv.classList.remove('hidden', 'success', 'warning');
+    // Initialize answered object from existing selections
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check for any pre-selected radios (from saved session)
+        document.querySelectorAll('.q-radio:checked').forEach(radio => {
+            const qid = parseInt(radio.dataset.qid);
+            answered[qid] = true;
+        });
+        
+        updateDots();
+        updateProgressBar();
+    });
     
-    // Set icon and class based on type
-    const icon = messageDiv.querySelector('i');
-    const span = messageDiv.querySelector('span');
-    
-    if (type === 'success') {
-        messageDiv.classList.add('success');
-        icon.className = 'fas fa-check-circle';
-        span.textContent = text || ' Answer saved!';
-    } else if (type === 'warning') {
-        messageDiv.classList.add('warning');
-        icon.className = 'fas fa-exclamation-triangle';
-        span.textContent = text || 'Please answer this question first';
+    // Show message function
+    function showMessage(type, text, questionNum = null) {
+        const qNum = questionNum || currentQuestion;
+        const messageDiv = document.getElementById(`message-${qNum}`);
+        if (!messageDiv) return;
+        
+        messageDiv.classList.remove('hidden', 'success', 'warning');
+        
+        const icon = messageDiv.querySelector('i');
+        const span = messageDiv.querySelector('span');
+        
+        if (type === 'success') {
+            messageDiv.classList.add('success');
+            icon.className = 'fas fa-check-circle';
+            span.textContent = text || ' Answer saved!';
+        } else if (type === 'warning') {
+            messageDiv.classList.add('warning');
+            icon.className = 'fas fa-exclamation-triangle';
+            span.textContent = text || ' Please answer this question first';
+        }
+        
+        setTimeout(() => {
+            messageDiv.classList.add('hidden');
+        }, 5000);
     }
     
-    // Auto-hide after 5 seconds
-    setTimeout(() => {
-        messageDiv.classList.add('hidden');
-    }, 5000);
-}
-
     // Pulse red function
     function pulseRed(questionNum) {
-        const dot = dots[questionNum];
+        const dot = document.getElementById(`dot-${questionNum}`);
         if (dot) {
             dot.classList.add('pulse-red');
             setTimeout(() => {
@@ -542,168 +643,113 @@ function showMessage(type, text, questionNum = null) {
             }, 500);
         }
     }
-
-    // Update progress bar for current card
-    function updateCardProgressBar() {
-        for (let i = 1; i <= totalQuestions; i++) {
-            const progressFill = document.getElementById(`progressFill-${i}`);
-            if (progressFill) {
-                const progress = (i / totalQuestions) * 100;
-                progressFill.style.width = progress + '%';
-            }
-        }
-    }
-
-    // Friend's update dots function
+    
+    // Update dots function
     function updateDots() {
         for (let i = 1; i <= totalQuestions; i++) {
-            const dot = dots[i];
+            const dot = document.getElementById(`dot-${i}`);
             if (!dot) continue;
             
-            // Remove all classes
             dot.classList.remove('active', 'answered');
             
             if (i === currentQuestion) {
-                dot.classList.add('active');  // Blue for current
+                dot.classList.add('active');
             } else if (answered[i]) {
-                dot.classList.add('answered');  // Green for answered
+                dot.classList.add('answered');
             }
-            // Else keep default gray (no class needed)
         }
     }
-
+    
+    // Update progress bar
+    function updateProgressBar() {
+        const progress = (currentQuestion / totalQuestions) * 100;
+        progressBar.style.width = progress + '%';
+    }
+    
     // Show a specific question
     function showQuestion(num) {
-        // Hide all cards
-        cards.forEach(card => {
-            card.classList.remove('active');
-        });
+        // Hide all questions
+        for (let i = 1; i <= totalQuestions; i++) {
+            const questionDiv = document.getElementById(`question${i}`);
+            if (questionDiv) {
+                questionDiv.style.display = 'none';
+            }
+        }
         
-        // Show selected card
-        const card = document.getElementById(`card-${num}`);
-        if (card) card.classList.add('active');
+        // Show selected question
+        const selectedDiv = document.getElementById(`question${num}`);
+        if (selectedDiv) {
+            selectedDiv.style.display = 'block';
+        }
         
         // Update current question
         currentQuestion = num;
         if (currentDisplay) currentDisplay.textContent = num;
         
-        // Update card progress bars
-        updateCardProgressBar();
-        
-        // Show/hide submit button
-        if (num === totalQuestions) {
-            submitWrapper.classList.add('show');
-        } else {
-            submitWrapper.classList.remove('show');
-        }
+        // Update progress bar
+        updateProgressBar();
         
         // Update dots
         updateDots();
         
-        // Hide any visible messages from previous question
+        // Hide any visible messages
         document.querySelectorAll('.message-container').forEach(msg => {
             msg.classList.add('hidden');
         });
     }
-
-    // Go to next question - WITH VALIDATION
-   
-    window.goToNextQuestion = function(num) {
-        // Check if current question is answered
-        if (!answered[currentQuestion]) {
-            // Show warning message for current question
-            showMessage('warning', ' Please answer this question first', currentQuestion);
-            
-            // Pulse the circle red
-            pulseRed(currentQuestion);
-            
-            // Don't proceed to next question
+    
+    // Go to next question
+    window.goToNextQuestion = function(currentQ) {
+        if (!answered[currentQ]) {
+            showMessage('warning', ' Please answer this question first', currentQ);
+            pulseRed(currentQ);
             return;
         }
         
-        // If answered, proceed to next question
-        if (num < totalQuestions) {
-            showQuestion(num + 1);
+        if (currentQ < totalQuestions) {
+            showQuestion(currentQ + 1);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
-
-    // Jump to question - WITH VALIDATION (optional - can jump anytime)
+    
+    // Jump to question
     window.jumpToQuestion = function(num) {
         showQuestion(num);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-
-    // Radio button handler
- 
-document.querySelectorAll('.q-radio').forEach(radio => {
-    radio.addEventListener('click', function() {
-        const qid = parseInt(this.dataset.qid);
-        answered[qid] = true;
-        updateDots();
-        
-        // Show success message if this is the current question
-        if (qid === currentQuestion) {
-            showMessage('success', 'Answer saved!', qid);
-        }
-        
-        console.log('Question ' + qid + ' answered - Dot should be green now');
-    });
     
-    radio.addEventListener('change', function() {
-        const qid = parseInt(this.dataset.qid);
-        answered[qid] = true;
-        updateDots();
-        
-        // Show success message if this is the current question
-        if (qid === currentQuestion) {
-            showMessage('success', ' Answer saved!', qid);
-        }
-        
-        console.log('Question ' + qid + ' answered via change');
-    });
-});
-
-    // Form validation
-document.getElementById('testForm').addEventListener('submit', function(e) {
-    const checked = document.querySelectorAll('input[type="radio"]:checked').length;
-    
-    if (checked !== totalQuestions) {
-        e.preventDefault();
-        
-        // Find first unanswered question
-        for (let i = 1; i <= totalQuestions; i++) {
-            const card = document.getElementById(`card-${i}`);
-            const radios = card.querySelectorAll('input[type="radio"]');
-            let isAnswered = false;
-            
-            radios.forEach(r => {
-                if (r.checked) isAnswered = true;
-            });
-            
-            if (!isAnswered) {
-                // Show this question
-                showQuestion(i);
-                
-                // Pulse the circle red
-                pulseRed(i);
-                
-                // Show warning message for this question
-                showMessage('warning', 'Please answer this question first');
-                
-                // Highlight the card
-                card.style.border = '2px solid red';
-                setTimeout(() => card.style.border = '', 5000);
-                break;
+  // Handle submit button click
+        window.handleSubmitClick = function() {
+            if (!answered[currentQuestion]) {
+                showMessage('warning', ' Please answer this question before submitting', currentQuestion);
+                pulseRed(currentQuestion);
+                return;
             }
-        }
-    }
-});
-
-    // Initialize progress bars on load
-    updateCardProgressBar();
-
-    // Start with question 1
+            
+            const answeredCount = answered.filter(v => v).length;
+            if (answeredCount < totalQuestions) {
+                if (!confirm(`You have answered ${answeredCount} out of ${totalQuestions} questions. Submit anyway?`)) {
+                    return;
+                }
+            }
+            
+            document.getElementById('testForm').submit();
+        };
+    
+    // Radio button handler
+    document.querySelectorAll('.q-radio').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const qid = parseInt(this.dataset.qid);
+            answered[qid] = true;
+            updateDots();
+            
+            if (qid === currentQuestion) {
+                showMessage('success', ' Answer saved!', qid);
+            }
+        });
+    });
+    
+    // Initialize
     showQuestion(1);
 </script>
 </body>

@@ -195,7 +195,7 @@ def submit_test(request, test_id):
             return redirect('home_page:pretest_results')
         if profile.listening_completed:
             messages.warning(request, "You have already completed the listening test.")
-            return redirect('home_page:pretest_status')
+            return redirect('listening:latest_result')
     except StudentProfile.DoesNotExist:
         profile = StudentProfile.objects.create(user=request.user)
     
@@ -227,7 +227,7 @@ def submit_test(request, test_id):
         feedback = "Good progress, keep practicing regularly"
     else:  # 80-100% (4-5 correct)
         level = "Advanced"
-        feedback = "Excellent listening comprehension skills!"
+        feedback = "Excellent ,Regular practice will keep you sharp."
     
     # Create test result - WITHOUT 'user' field first to test
     test_result = TestResult.objects.create(
