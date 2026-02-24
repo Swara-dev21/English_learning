@@ -3,111 +3,461 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'home_page/CSS/register.css' %}">
+<style>
+    /* ===== PROFESSIONAL PERIWINKLE COLOR SCHEME ===== */
+    :root {
+        --gradient-start: #667eea;
+        --gradient-mid: #764ba2;
+        --gradient-end: #5a3d8c;
+        --gradient-primary: linear-gradient(135deg, #667eea, #764ba2);
+        --gradient-hover: linear-gradient(135deg, #764ba2, #5a3d8c, #3f2a63);
+        
+        --primary: #667eea;
+        --primary-dark: #5a3d8c;
+        --primary-deep: #3f2a63;
+        --primary-light: #e0e7ff;
+        --primary-soft: #f0f3ff;
+        
+        --text-dark: #1a1f33;
+        --text-medium: #2a3150;
+        --text-light: #4a5578;
+        --text-muted: #6b7191;
+        --bg-white: #ffffff;
+        --border-light: #e2e8f0;
+        
+        --shadow-sm: 0 2px 4px rgba(102, 126, 234, 0.05);
+        --shadow-md: 0 8px 20px rgba(102, 126, 234, 0.1);
+        --shadow-lg: 0 15px 30px rgba(102, 126, 234, 0.15);
+        
+        --radius: 10px;
+        --radius-lg: 14px;
+        --radius-xl: 20px;
+    }
+
+    body {
+        background: linear-gradient(135deg, #f0f3ff 0%, #e8eeff 100%);
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .registration-wrapper {
+        width: 100%;
+        max-width: 550px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        animation: fadeInUp 0.5s ease;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Main Card */
+    .registration-card {
+        background: var(--bg-white);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+    }
+
+    /* Professional Header - Matching Login Button Color */
+    .registration-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        padding: 2.5rem 2rem;
+        text-align: center;
+        position: relative;
+        border-bottom: 4px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .registration-header h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+
+    .registration-header p {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 400;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    /* Content Area */
+    .registration-content {
+        padding: 2.5rem 2rem;
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: var(--text-medium);
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+        border: 2px solid var(--border-light);
+        border-radius: var(--radius);
+        background: var(--bg-white);
+        color: var(--text-dark);
+        transition: all 0.2s ease;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .form-control::placeholder {
+        color: var(--text-muted);
+        opacity: 0.7;
+    }
+
+    /* Select dropdown styling */
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7191' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 16px;
+        padding-right: 2.5rem;
+    }
+
+    /* Error Text */
+    .error-text {
+        color: #ef4444;
+        font-size: 0.8rem;
+        margin-top: 0.4rem;
+    }
+
+    .error-text ul {
+        margin: 0;
+        padding-left: 0;
+        list-style: none;
+    }
+
+    .error-text li {
+        color: #ef4444;
+        list-style: none;
+    }
+
+    /* Form error message */
+    .form-error {
+        background: #fee2e2;
+        color: #ef4444;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius);
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        border-left: 4px solid #ef4444;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Captcha Container */
+    .captcha-container {
+        background: var(--primary-soft);
+        border: 2px solid var(--border-light);
+        border-radius: var(--radius);
+        padding: 0.75rem;
+    }
+
+    .captcha-container img {
+        max-width: 100%;
+        border-radius: var(--radius-sm);
+    }
+
+    /* Register Button with Icon - Matching Header Color */
+    .register-btn {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: var(--radius);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: var(--shadow-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .register-btn:hover {
+        background: linear-gradient(135deg, #764ba2, #5a3d8c);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .register-btn i {
+        font-size: 1.2rem;
+    }
+
+    /* Login Link */
+    .login-link {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-light);
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    .login-link a {
+        color: var(--primary);
+        font-weight: 600;
+        text-decoration: none;
+        margin-left: 0.5rem;
+    }
+
+    .login-link a:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+
+    /* Two column layout for department and year */
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+        .registration-header {
+            padding: 2rem 1.5rem;
+        }
+
+        .registration-header h1 {
+            font-size: 2rem;
+        }
+
+        .registration-content {
+            padding: 2rem 1.5rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .registration-wrapper {
+            margin: 1rem auto;
+        }
+
+        .header-icon {
+            width: 60px;
+            height: 60px;
+        }
+
+        .header-icon i {
+            font-size: 1.5rem;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 
 {{ form.media }}
 
-<div class="registration-container">
-    <h2>Create Account</h2>
-
-       <!-- Single general form error: place it here, above the form -->
-    {% if form.errors %}
-        <div class="form-error">
-            Please correct the errors below.
+<div class="registration-wrapper">
+    <div class="registration-card">
+        <!-- Professional Header with Icon - Matching Login Button Color -->
+        <div class="registration-header">
+            <h1>Create Account</h1>
+            <p>Join us to start your learning journey</p>
         </div>
-    {% endif %}
 
-    <form method="POST" novalidate autocomplete="off">
-        {% csrf_token %}
+        <div class="registration-content">
+            <!-- Single general form error -->
+            {% if form.errors %}
+                <div class="form-error">
+                    <i class="fas fa-exclamation-circle"></i> Please correct the errors below.
+                </div>
+            {% endif %}
 
-        {{ form.non_field_errors }} 
+            <form method="POST" novalidate autocomplete="off">
+                {% csrf_token %}
 
-        <!-- Username -->
-        <div class="form-group">
-            {{ form.username.label_tag }}
-            {{ form.username }}
-            <div class="error-text">
-                {{ form.username.errors }}
+                {{ form.non_field_errors }} 
+
+                <!-- Username -->
+                <div class="form-group">
+                    <label>{{ form.username.label }}</label>
+                    {{ form.username }}
+                    <div class="error-text">
+                        {{ form.username.errors }}
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label>{{ form.email.label }}</label>
+                    {{ form.email }}
+                    <div class="error-text">
+                        {{ form.email.errors }}
+                    </div>
+                </div>
+
+                <!-- Institute -->
+                <div class="form-group">
+                    <label>{{ form.institute.label }}</label>
+                    {{ form.institute }}
+                    <div class="error-text">
+                        {{ form.institute.errors }}
+                    </div>
+                </div>
+
+                <!-- Department & Year Row -->
+                <div class="form-row">
+                    <!-- Department -->
+                    <div class="form-group">
+                        <label>{{ form.department.label }}</label>
+                        {{ form.department }}
+                        <div class="error-text">
+                            {{ form.department.errors }}
+                        </div>
+                    </div>
+
+                    <!-- Year -->
+                    <div class="form-group">
+                        <label>{{ form.year.label }}</label>
+                        {{ form.year }}
+                        <div class="error-text">
+                            {{ form.year.errors }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label>{{ form.password.label }}</label>
+                    {{ form.password }}
+                    <div class="error-text">
+                        {{ form.password.errors }}
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label>{{ form.confirm_password.label }}</label>
+                    {{ form.confirm_password }}
+                    <div class="error-text">
+                        {{ form.confirm_password.errors }}
+                    </div>
+                </div>
+
+                <!-- CAPTCHA -->
+                <div class="form-group">
+                    <label>{{ form.captcha.label }}</label>
+                    <div class="captcha-container">
+                        {{ form.captcha }} 
+                    </div>
+                    <div class="error-text">
+                        {{ form.captcha.errors }}
+                    </div>
+                </div>
+
+                <!-- Submit Button with Icon -->
+                <div class="form-group">
+                    <button type="submit" class="register-btn">
+                        <i class="fas fa-user-plus"></i>
+                        Create Account
+                    </button>
+                </div>
+            </form>
+
+            <!-- Login Link -->
+            <div class="login-link">
+                Already have an account?
+                <a href="{% url 'home_page:login' %}">
+                    Sign In <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
         </div>
-
-        <!-- Email -->
-        <div class="form-group">
-            {{ form.email.label_tag }}
-            {{ form.email }}
-            <div class="error-text">
-                {{ form.email.errors }}
-            </div>
-        </div>
-
-        <!-- Institute -->
-        <div class="form-group">
-            {{ form.institute.label_tag }}
-            {{ form.institute }}
-            <div class="error-text">
-                {{ form.institute.errors }}
-            </div>
-        </div>
-
-        <!-- Department -->
-        <div class="form-group">
-            {{ form.department.label_tag }}
-            {{ form.department }}
-            <div class="error-text">
-                {{ form.department.errors }}
-            </div>
-        </div>
-
-        <!-- Year -->
-        <div class="form-group">
-            {{ form.year.label_tag }}
-            {{ form.year }}
-            <div class="error-text">
-                {{ form.year.errors }}
-            </div>
-        </div>
-
-        <!-- Password -->
-        <div class="form-group">
-            {{ form.password.label_tag }}
-            {{ form.password }}
-            <div class="error-text">
-                {{ form.password.errors }}
-            </div>
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="form-group">
-            {{ form.confirm_password.label_tag }}
-            {{ form.confirm_password }}
-            <div class="error-text">
-                {{ form.confirm_password.errors }}
-            </div>
-        </div>
-
-        <!-- CAPTCHA -->
-        <div class="form-group">
-            {{ form.captcha.label_tag }}
-            <div class="captcha-container">
-                {{ form.captcha }} 
- 
-            </div>
-            <div class="error-text">
-                {{ form.captcha.errors }}
-            </div>
-        </div>
-
-        <!-- Submit -->
-        <div class="form-group">
-            <button type="submit" class="register-btn">
-                Create Account
-            </button>
-        </div>
-
-    </form>
+    </div>
 </div>
 
-
+<script>
+    // Add placeholders and classes to form fields
+    document.addEventListener('DOMContentLoaded', function() {
+        // Username
+        const usernameField = document.querySelector('#id_username');
+        if (usernameField) {
+            usernameField.placeholder = 'Choose a username';
+            usernameField.classList.add('form-control');
+        }
+        
+        // Email
+        const emailField = document.querySelector('#id_email');
+        if (emailField) {
+            emailField.placeholder = 'your.email@example.com';
+            emailField.classList.add('form-control');
+        }
+        
+        // Institute
+        const instituteField = document.querySelector('#id_institute');
+        if (instituteField) {
+            instituteField.placeholder = 'Select your institute';
+            instituteField.classList.add('form-control');
+        }
+        
+        // Department
+        const departmentField = document.querySelector('#id_department');
+        if (departmentField) {
+            departmentField.classList.add('form-control');
+        }
+        
+        // Year
+        const yearField = document.querySelector('#id_year');
+        if (yearField) {
+            yearField.classList.add('form-control');
+        }
+        
+        // Password
+        const passwordField = document.querySelector('#id_password');
+        if (passwordField) {
+            passwordField.placeholder = 'Create a strong password';
+            passwordField.classList.add('form-control');
+        }
+        
+        // Confirm Password
+        const confirmPasswordField = document.querySelector('#id_confirm_password');
+        if (confirmPasswordField) {
+            confirmPasswordField.placeholder = 'Re-enter your password';
+            confirmPasswordField.classList.add('form-control');
+        }
+    });
+</script>
 {% endblock %}

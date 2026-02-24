@@ -147,6 +147,30 @@ def count_words(text):
     return len(words)
 
 
+def is_gibberish(text, threshold=0.3):
+    """
+    Check if text is gibberish (mostly non-dictionary words)
+    Returns True if text is gibberish, False otherwise
+    """
+    spell = get_spell_checker()
+    words = text.split()
+    
+    if len(words) == 0:
+        return True
+    
+    # Count recognizable words
+    recognizable = 0
+    translator = str.maketrans('', '', string.punctuation)
+    
+    for word in words:
+        clean_word = word.translate(translator).lower()
+        if len(clean_word) > 2 and clean_word in spell:
+            recognizable += 1
+    
+    # If less than threshold% of words are recognizable, it's gibberish
+    return (recognizable / len(words)) < threshold
+
+
 def grade_fill_blanks(user_answer, question):
     """Grade Q1: Fill in the blanks (grammatical accuracy)"""
     # Expected format: "goes, are, a" or "goes,are,a"
@@ -225,6 +249,22 @@ def grade_rewrite_sentence(user_answer, question):
     user_text = user_answer.strip()
     expected = "Communication skills are important; however, students often ignore punctuation, grammar, and clarity."
     
+    # ===== CHECK FOR EMPTY OR VERY SHORT ANSWERS =====
+    if len(user_text.split()) < 3:
+        return {
+            'score': 0,
+            'feedback': ["❌ Answer is too short. Please write a complete sentence."],
+            'needs_manual_review': False
+        }
+    
+    # ===== CHECK FOR GIBBERISH =====
+    if is_gibberish(user_text, threshold=0.3):
+        return {
+            'score': 0,
+            'feedback': ["❌ Your answer doesn't contain enough recognizable English words. Please write a proper sentence."],
+            'needs_manual_review': False
+        }
+    
     feedback = []
     score = 0
     mistake_count = 0
@@ -262,9 +302,9 @@ def grade_rewrite_sentence(user_answer, question):
         # Show unique misspelled words (limit to 3)
         unique_errors = list(set([w.lower() for w in misspelled]))[:3]
         feedback.append(f"❌ Spelling errors: {', '.join(unique_errors)}")
-        # Give partial credit
+        # Give partial credit only if there are some correct words
         correct_words = len(words) - len(misspelled)
-        if correct_words > 0:
+        if correct_words > 0 and len(misspelled) < len(words):
             spell_score = (correct_words / len(words)) * 40
             score += spell_score
         mistake_count += len(misspelled)
@@ -360,6 +400,25 @@ def grade_paragraph_writing(user_answer, question):
     user_text = user_answer.strip()
     clue_words = ["time management", "planning", "daily routine", "stress", "success"]
     
+    # ===== CHECK FOR EMPTY OR VERY SHORT ANSWERS =====
+    words = user_text.split()
+    if len(words) < 10:
+        return {
+            'score': 0,
+            'feedback': ["❌ Answer is too short. Please write a complete paragraph of 5-6 sentences (at least 50 words)."],
+            'needs_manual_review': False,
+            'level': 'Beginner'
+        }
+    
+    # ===== CHECK FOR GIBBERISH =====
+    if is_gibberish(user_text, threshold=0.4):
+        return {
+            'score': 0,
+            'feedback': ["❌ Your answer doesn't contain enough recognizable English words. Please write a proper paragraph."],
+            'needs_manual_review': False,
+            'level': 'Beginner'
+        }
+    
     # FEEDBACK STORAGE - ONLY ERRORS
     error_feedback = []
     mistake_count = 0
@@ -421,7 +480,6 @@ def grade_paragraph_writing(user_answer, question):
         mistake_count += len(missing_words)
     
     # Check word variety (10 points)
-    words = user_text.split()
     unique_words = len(set([w.lower() for w in words]))
     
     if unique_words >= 15:
@@ -494,7 +552,6 @@ def grade_paragraph_writing(user_answer, question):
     spelling_errors = []
     
     # IMPROVED SPELLING CHECK
-    words = user_text.split()
     misspelled = []
     
     for word in words:
@@ -538,6 +595,11 @@ def grade_paragraph_writing(user_answer, question):
     
     # Ensure score is between 0-100
     total_score = round(max(0, min(100, total_score)), 2)
+    
+    # If most words are misspelled, give 0
+    if len(misspelled) > len(words) * 0.7:  # More than 70% misspelled
+        total_score = 0
+        error_feedback = ["❌ Your answer contains too many spelling errors. Please write using proper English words."]
     
     # ===== DETERMINE LEVEL =====
     if total_score >= 90:
