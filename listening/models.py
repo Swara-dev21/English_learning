@@ -98,7 +98,7 @@ class AnswerOption(models.Model):
 
 class UserResponse(models.Model):
     """Store user's answers"""
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # ADD THIS
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     session_key = models.CharField(max_length=100)  # For anonymous users
     question = models.ForeignKey(AudioQuestion, on_delete=models.CASCADE)
     
@@ -124,6 +124,11 @@ class UserResponse(models.Model):
         elif self.question.is_typing():
             return self.typed_answer or "No answer provided"
         return "No answer"
+    
+    def username_display(self):
+        """Return username if user exists, otherwise 'Anonymous'"""
+        return self.user.username if self.user else 'Anonymous'
+    username_display.short_description = 'Username'
     
     def normalize_text(self, text):
         """
@@ -227,7 +232,7 @@ class UserResponse(models.Model):
 
 class TestResult(models.Model):
     """Store complete test results"""
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # ADD THIS
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     session_key = models.CharField(max_length=100)
     test = models.ForeignKey(ListeningTest, on_delete=models.CASCADE)
     score = models.IntegerField(default=0)
@@ -244,6 +249,11 @@ class TestResult(models.Model):
         if self.total_questions > 0 and self.percentage == 0:
             self.percentage = (self.score / self.total_questions) * 100
         super().save(*args, **kwargs)
+    
+    def username_display(self):
+        """Return username if user exists, otherwise 'Anonymous'"""
+        return self.user.username if self.user else 'Anonymous'
+    username_display.short_description = 'Username'
     
     def get_pending_typing_questions(self):
         """Get typing questions that need manual grading"""
