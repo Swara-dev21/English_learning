@@ -44,6 +44,91 @@
         position: relative;
     }
 
+    /* Toast notification styles - Same as login page */
+    .toast-notification {
+        position: fixed;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        color: #333;
+        padding: 16px 24px;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 15px;
+        font-weight: 500;
+        min-width: 320px;
+        max-width: 450px;
+        animation: slideDown 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        border-left: 4px solid transparent;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.98);
+    }
+
+    .toast-notification.success {
+        border-left-color: #10b981;
+    }
+
+    .toast-notification.success i {
+        color: #10b981;
+    }
+
+    .toast-notification.error {
+        border-left-color: #ef4444;
+    }
+
+    .toast-notification.error i {
+        color: #ef4444;
+    }
+
+    .toast-notification i {
+        font-size: 20px;
+    }
+
+    .toast-message {
+        flex: 1;
+        line-height: 1.4;
+    }
+
+    .toast-close {
+        cursor: pointer;
+        color: #999;
+        font-size: 20px;
+        transition: color 0.2s;
+        padding: 0 5px;
+        font-weight: 300;
+    }
+
+    .toast-close:hover {
+        color: #333;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -30px);
+        }
+        to {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+    }
+
+    .toast-notification.fade-out {
+        animation: fadeOutUp 0.3s ease forwards;
+    }
+
+    @keyframes fadeOutUp {
+        to {
+            opacity: 0;
+            transform: translate(-50%, -20px);
+        }
+    }
+
     .registration-wrapper {
         width: 100%;
         max-width: 550px;
@@ -63,7 +148,7 @@
         }
     }
 
-    /* Back to Home Button - Same as login.html */
+    /* Back to Home Button */
     .back-link-top {
         position: absolute;
         top: 30px;
@@ -74,8 +159,8 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        transition: color 0.2s;
-        padding: 10px 15px;
+        transition: all 0.2s;
+        padding: 10px 20px;
         background-color: white;
         border-radius: 30px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -85,6 +170,7 @@
     .back-link-top:hover {
         color: #667eea;
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        transform: translateX(-3px);
     }
 
     .back-link-top i {
@@ -99,7 +185,7 @@
         overflow: hidden;
     }
 
-    /* Professional Header - Matching Login Button Color */
+    /* Professional Header */
     .registration-header {
         background: linear-gradient(135deg, #667eea, #764ba2);
         padding: 2.5rem 2rem;
@@ -136,11 +222,19 @@
     }
 
     .form-group label {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
         font-weight: 600;
         color: var(--text-medium);
         margin-bottom: 0.5rem;
         font-size: 0.95rem;
+    }
+
+    .form-group label i {
+        color: #667eea;
+        font-size: 0.9rem;
+        width: 18px;
     }
 
     .form-control {
@@ -166,9 +260,47 @@
         opacity: 0.7;
     }
 
+    /* Error state for inputs - ONLY input border and background changes, labels stay normal */
+    .form-group.error .form-control {
+        border-color: #ef4444;
+        background-color: #fef2f2;
+    }
+
+    /* Labels and icons stay normal color - NOT red */
+    .form-group.error label i,
+    .form-group.error label {
+        color: var(--text-medium);
+    }
+
+    /* Inline error message */
+    .inline-error {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        font-size: 13px;
+        color: #ef4444;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .inline-error i {
+        font-size: 12px;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     /* Email validation styles */
     .form-control.email-valid {
-        border-color: #10b981;
+        border-color: #10b981 !important;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 1rem center;
@@ -177,7 +309,8 @@
     }
 
     .form-control.email-invalid {
-        border-color: #ef4444;
+        border-color: #ef4444 !important;
+        background-color: #fef2f2;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ef4444' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='12' y1='8' x2='12' y2='12'%3E%3C/line%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'%3E%3C/line%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 1rem center;
@@ -216,22 +349,9 @@
         padding-right: 2.5rem;
     }
 
-    /* Error Text */
-    .error-text {
-        color: #ef4444;
-        font-size: 0.8rem;
-        margin-top: 0.4rem;
-    }
-
-    .error-text ul {
-        margin: 0;
-        padding-left: 0;
-        list-style: none;
-    }
-
-    .error-text li {
-        color: #ef4444;
-        list-style: none;
+    /* Hide original error text since we show inline errors */
+    .errorlist {
+        display: none;
     }
 
     /* Form error message */
@@ -261,7 +381,24 @@
         border-radius: var(--radius-sm);
     }
 
-    /* Register Button with Icon - Matching Header Color */
+    /* Style for CAPTCHA input field */
+    .captcha-container input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+        border: 2px solid var(--border-light);
+        border-radius: var(--radius);
+        margin-top: 10px;
+        background: var(--bg-white);
+    }
+
+    .captcha-container input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    /* Register Button with Icon */
     .register-btn {
         width: 100%;
         padding: 1rem;
@@ -289,6 +426,12 @@
 
     .register-btn i {
         font-size: 1.2rem;
+    }
+
+    .register-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
     }
 
     /* Login Link */
@@ -320,12 +463,22 @@
         gap: 1rem;
     }
 
+    /* Loading spinner */
+    .fa-spinner {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
     /* Responsive */
     @media (max-width: 640px) {
         .back-link-top {
             top: 15px;
             left: 15px;
-            padding: 8px 12px;
+            padding: 8px 15px;
             font-size: 14px;
         }
 
@@ -345,20 +498,12 @@
             grid-template-columns: 1fr;
             gap: 0;
         }
-    }
 
-    @media (max-width: 480px) {
-        .registration-wrapper {
-            margin: 1rem auto;
-        }
-
-        .header-icon {
-            width: 60px;
-            height: 60px;
-        }
-
-        .header-icon i {
-            font-size: 1.5rem;
+        .toast-notification {
+            min-width: 280px;
+            padding: 14px 20px;
+            font-size: 14px;
+            top: 20px;
         }
     }
 </style>
@@ -368,115 +513,142 @@
 
 {{ form.media }}
 
-<!-- Back to Home Button - Exactly like login.html -->
+<!-- Back to Home Button -->
 <a href="{% url 'home_page:home' %}" class="back-link-top">
     <i class="fas fa-arrow-left"></i> Back to Home
 </a>
 
 <div class="registration-wrapper">
     <div class="registration-card">
-        <!-- Professional Header with Icon - Matching Login Button Color -->
+        <!-- Professional Header -->
         <div class="registration-header">
             <h1>Create Account</h1>
             <p>Join us to start your learning journey</p>
         </div>
 
         <div class="registration-content">
-            <!-- Single general form error -->
-            {% if form.errors %}
-                <div class="form-error">
-                    <i class="fas fa-exclamation-circle"></i> Please correct the errors below.
-                </div>
-            {% endif %}
-
             <form method="POST" novalidate autocomplete="off" id="registrationForm">
                 {% csrf_token %}
 
                 {{ form.non_field_errors }} 
 
                 <!-- Username -->
-                <div class="form-group">
-                    <label>{{ form.username.label }}</label>
+                <div class="form-group" id="username-group">
+                    <label>
+                        <i class="fas fa-user"></i>
+                        {{ form.username.label }}
+                    </label>
                     {{ form.username }}
-                    <div class="error-text">
-                        {{ form.username.errors }}
+                    <div class="inline-error" id="username-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="username-error-text"></span>
                     </div>
                 </div>
 
                 <!-- Email with Gmail validation -->
-                <div class="form-group">
-                    <label>{{ form.email.label }}</label>
+                <div class="form-group" id="email-group">
+                    <label>
+                        <i class="fas fa-envelope"></i>
+                        {{ form.email.label }}
+                    </label>
                     {{ form.email }}
                     <div class="validation-message" id="emailValidationMessage"></div>
-                    <div class="error-text" id="emailError">
-                        {{ form.email.errors }}
+                    <div class="inline-error" id="email-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="email-error-text"></span>
                     </div>
                 </div>
 
                 <!-- Institute -->
-                <div class="form-group">
-                    <label>{{ form.institute.label }}</label>
+                <div class="form-group" id="institute-group">
+                    <label>
+                        <i class="fas fa-university"></i>
+                        {{ form.institute.label }}
+                    </label>
                     {{ form.institute }}
-                    <div class="error-text">
-                        {{ form.institute.errors }}
+                    <div class="inline-error" id="institute-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="institute-error-text"></span>
                     </div>
                 </div>
 
                 <!-- Department & Year Row -->
                 <div class="form-row">
                     <!-- Department -->
-                    <div class="form-group">
-                        <label>{{ form.department.label }}</label>
+                    <div class="form-group" id="department-group">
+                        <label>
+                            <i class="fas fa-code-branch"></i>
+                            {{ form.department.label }}
+                        </label>
                         {{ form.department }}
-                        <div class="error-text">
-                            {{ form.department.errors }}
+                        <div class="inline-error" id="department-error" style="display: none;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span id="department-error-text"></span>
                         </div>
                     </div>
 
                     <!-- Year -->
-                    <div class="form-group">
-                        <label>{{ form.year.label }}</label>
+                    <div class="form-group" id="year-group">
+                        <label>
+                            <i class="fas fa-calendar-alt"></i>
+                            {{ form.year.label }}
+                        </label>
                         {{ form.year }}
-                        <div class="error-text">
-                            {{ form.year.errors }}
+                        <div class="inline-error" id="year-error" style="display: none;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span id="year-error-text"></span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Password -->
-                <div class="form-group">
-                    <label>{{ form.password.label }}</label>
+                <div class="form-group" id="password-group">
+                    <label>
+                        <i class="fas fa-lock"></i>
+                        {{ form.password.label }}
+                    </label>
                     {{ form.password }}
-                    <div class="error-text">
-                        {{ form.password.errors }}
+                    <div class="inline-error" id="password-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="password-error-text"></span>
                     </div>
                 </div>
 
                 <!-- Confirm Password -->
-                <div class="form-group">
-                    <label>{{ form.confirm_password.label }}</label>
+                <div class="form-group" id="confirm-password-group">
+                    <label>
+                        <i class="fas fa-lock"></i>
+                        {{ form.confirm_password.label }}
+                    </label>
                     {{ form.confirm_password }}
-                    <div class="error-text">
-                        {{ form.confirm_password.errors }}
+                    <div class="inline-error" id="confirm-password-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="confirm-password-error-text"></span>
                     </div>
                 </div>
 
                 <!-- CAPTCHA -->
-                <div class="form-group">
-                    <label>{{ form.captcha.label }}</label>
+                <div class="form-group" id="captcha-group">
+                    <label>
+                        <i class="fas fa-shield-alt"></i>
+                        {{ form.captcha.label }}
+                    </label>
                     <div class="captcha-container">
                         {{ form.captcha }} 
                     </div>
-                    <div class="error-text">
-                        {{ form.captcha.errors }}
+                    <div class="inline-error" id="captcha-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="captcha-error-text"></span>
                     </div>
                 </div>
 
                 <!-- Submit Button with Icon -->
                 <div class="form-group">
                     <button type="submit" class="register-btn" id="submitBtn">
-                        <i class="fas fa-user-plus"></i>
-                        Create Account
+                        <span class="btn-text"><i class="fas fa-user-plus"></i> Create Account</span>
+                        <span class="btn-loader" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> Creating Account...
+                        </span>
                     </button>
                 </div>
             </form>
@@ -493,6 +665,70 @@
 </div>
 
 <script>
+    // Toast notification function (same as login page)
+    function showToast(message, type = 'success') {
+        // Remove any existing toast
+        const existingToast = document.querySelector('.toast-notification');
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        // Create new toast
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${type}`;
+        
+        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        
+        toast.innerHTML = `
+            <i class="fas ${icon}"></i>
+            <span class="toast-message">${message}</span>
+            <span class="toast-close">&times;</span>
+        `;
+        
+        document.body.appendChild(toast);
+
+        // Close button functionality
+        toast.querySelector('.toast-close').addEventListener('click', () => {
+            toast.remove();
+        });
+
+        // Auto remove after 4 seconds
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.classList.add('fade-out');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 300);
+            }
+        }, 4000);
+    }
+
+    // Function to show field error
+    function showFieldError(fieldId, errorMessage) {
+        const group = document.getElementById(fieldId + '-group');
+        const errorDiv = document.getElementById(fieldId + '-error');
+        const errorText = document.getElementById(fieldId + '-error-text');
+        
+        if (group && errorDiv && errorText) {
+            group.classList.add('error');
+            errorText.textContent = errorMessage;
+            errorDiv.style.display = 'flex';
+        }
+    }
+
+    // Function to clear field error
+    function clearFieldError(fieldId) {
+        const group = document.getElementById(fieldId + '-group');
+        const errorDiv = document.getElementById(fieldId + '-error');
+        
+        if (group && errorDiv) {
+            group.classList.remove('error');
+            errorDiv.style.display = 'none';
+        }
+    }
+
     // Function to validate Gmail address properly
     function validateGmailEmail(email) {
         // More comprehensive Gmail validation
@@ -546,6 +782,122 @@
         return true;
     }
 
+    // Handle specific error messages for registration page
+    function handleErrorMessages(errorMessage) {
+        // Show the actual error message in toast
+        showToast(errorMessage, 'error');
+        
+        const errorMsg = errorMessage.toLowerCase();
+        
+        // Check for required field errors
+        if (errorMsg.includes('required') || errorMsg.includes('this field is required')) {
+            if (errorMsg.includes('username')) {
+                showFieldError('username', 'Username is required.');
+            }
+            if (errorMsg.includes('email')) {
+                showFieldError('email', 'Email is required.');
+            }
+            if (errorMsg.includes('institute')) {
+                showFieldError('institute', 'Please select your institute.');
+            }
+            if (errorMsg.includes('department')) {
+                showFieldError('department', 'Please select your department.');
+            }
+            if (errorMsg.includes('year')) {
+                showFieldError('year', 'Please select your year of study.');
+            }
+            if (errorMsg.includes('password')) {
+                showFieldError('password', 'Password is required.');
+            }
+            if (errorMsg.includes('confirm')) {
+                showFieldError('confirm-password', 'Please confirm your password.');
+            }
+            if (errorMsg.includes('captcha')) {
+                showFieldError('captcha', 'CAPTCHA is required.');
+            }
+            
+            // If no specific field mentioned, check which fields are empty
+            const fields = ['username', 'email', 'institute', 'department', 'year', 'password', 'confirm-password', 'captcha'];
+            fields.forEach(field => {
+                const fieldId = field === 'confirm-password' ? 'confirm-password' : field;
+                const element = field === 'captcha' ? document.querySelector('[name="captcha_1"]') : document.getElementById(`id_${field === 'confirm-password' ? 'confirm_password' : field}`);
+                
+                if (element && !element.value) {
+                    if (field === 'institute' || field === 'department' || field === 'year') {
+                        showFieldError(fieldId, `Please select your ${field.replace('-', ' ')}.`);
+                    } else if (field === 'confirm-password') {
+                        showFieldError(fieldId, 'Please confirm your password.');
+                    } else {
+                        showFieldError(fieldId, `${field.charAt(0).toUpperCase() + field.slice(1).replace('-', ' ')} is required.`);
+                    }
+                }
+            });
+            return;
+        }
+        
+        // Username errors
+        if (errorMsg.includes('username')) {
+            if (errorMsg.includes('already exists') || errorMsg.includes('taken')) {
+                showFieldError('username', 'This username is already taken. Please choose another.');
+            } else if (errorMsg.includes('length') || errorMsg.includes('characters')) {
+                showFieldError('username', 'Username must be between 2-20 characters.');
+            } else {
+                showFieldError('username', errorMessage);
+            }
+        }
+        
+        // Email errors
+        if (errorMsg.includes('email')) {
+            if (errorMsg.includes('already registered') || errorMsg.includes('already exists')) {
+                showFieldError('email', 'This email is already registered. Please login instead.');
+            } else if (errorMsg.includes('valid') || errorMsg.includes('gmail')) {
+                showFieldError('email', 'Please enter a valid Gmail address (username@gmail.com).');
+            } else {
+                showFieldError('email', errorMessage);
+            }
+        }
+        
+        // Institute errors
+        if (errorMsg.includes('institute')) {
+            showFieldError('institute', 'Please select your institute.');
+        }
+        
+        // Department errors
+        if (errorMsg.includes('department')) {
+            showFieldError('department', 'Please select your department.');
+        }
+        
+        // Year errors
+        if (errorMsg.includes('year')) {
+            showFieldError('year', 'Please select your year of study.');
+        }
+        
+        // Password errors
+        if (errorMsg.includes('password') && !errorMsg.includes('confirm')) {
+            if (errorMsg.includes('match') || errorMsg.includes('confirm')) {
+                showFieldError('confirm-password', 'Passwords do not match.');
+            } else if (errorMsg.includes('weak') || errorMsg.includes('length') || errorMsg.includes('short')) {
+                showFieldError('password', 'Password must be at least 8 characters long.');
+            } else {
+                showFieldError('password', errorMessage);
+            }
+        }
+        
+        // Confirm password errors
+        if (errorMsg.includes('confirm')) {
+            if (errorMsg.includes('match')) {
+                showFieldError('confirm-password', 'Passwords do not match.');
+            } else {
+                showFieldError('confirm-password', errorMessage);
+            }
+        }
+        
+        // CAPTCHA errors
+        if (errorMsg.includes('captcha') || errorMsg.includes('verification')) {
+            showFieldError('captcha', 'Incorrect CAPTCHA. Please try again.');
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // Add placeholders and classes to form fields
         // Username
@@ -553,9 +905,14 @@
         if (usernameField) {
             usernameField.placeholder = 'Choose a username';
             usernameField.classList.add('form-control');
+            
+            // Clear error when typing
+            usernameField.addEventListener('input', function() {
+                clearFieldError('username');
+            });
         }
         
-        // Email - with enhanced validation
+        // Email
         const emailField = document.querySelector('#id_email');
         if (emailField) {
             emailField.placeholder = 'username@gmail.com';
@@ -564,16 +921,12 @@
             // Variable to track if field has focus
             let emailFieldFocused = false;
             
-            // Add focus event listener
-            emailField.addEventListener('focus', function() {
-                emailFieldFocused = true;
-            });
-            
-            // Add input event listener for real-time validation (only shows when focused)
+            // Clear error when typing
             emailField.addEventListener('input', function() {
+                clearFieldError('email');
+                
                 const email = this.value;
                 const validationMessage = document.getElementById('emailValidationMessage');
-                const emailError = document.getElementById('emailError');
                 
                 // Only show validation message if field is focused
                 if (emailFieldFocused) {
@@ -588,7 +941,6 @@
                         this.classList.remove('email-invalid');
                         validationMessage.innerHTML = '<i class="fas fa-check-circle"></i> Valid Gmail address';
                         validationMessage.className = 'validation-message valid';
-                        emailError.innerHTML = ''; // Clear any Django errors
                     } else {
                         // Invalid Gmail
                         this.classList.add('email-invalid');
@@ -627,6 +979,11 @@
                 }
             });
             
+            // Add focus event listener
+            emailField.addEventListener('focus', function() {
+                emailFieldFocused = true;
+            });
+            
             // Add blur event to hide validation message when focus is lost
             emailField.addEventListener('blur', function() {
                 emailFieldFocused = false;
@@ -638,107 +995,170 @@
                 validationMessage.className = 'validation-message';
                 
                 // Keep the border color to indicate validity/invalidity
-                // But only show Django errors if present
                 if (email.length > 0 && !validateGmailEmail(email)) {
-                    // Create a custom error message (this will still show)
-                    const errorDiv = document.getElementById('emailError');
-                    
-                    if (!email.includes('@')) {
-                        errorDiv.innerHTML = '<ul class="errorlist"><li>Email must contain @ symbol</li></ul>';
-                    } else if (!email.toLowerCase().includes('@gmail.com')) {
-                        errorDiv.innerHTML = '<ul class="errorlist"><li>Email must be a Gmail address (ends with @gmail.com)</li></ul>';
-                    } else if (email.startsWith('@')) {
-                        errorDiv.innerHTML = '<ul class="errorlist"><li>Please enter a username before @</li></ul>';
-                    } else {
-                        const username = email.split('@')[0];
-                        const letterCount = (username.match(/[a-zA-Z]/g) || []).length;
-                        
-                        if (username.length < 2) {
-                            errorDiv.innerHTML = '<ul class="errorlist"><li>Username must be at least 2 characters long</li></ul>';
-                        } else if (!/^[a-zA-Z0-9._]+$/.test(username)) {
-                            errorDiv.innerHTML = '<ul class="errorlist"><li>Username can only contain letters, numbers, dots, and underscores</li></ul>';
-                        } else if (username.startsWith('.') || username.endsWith('.')) {
-                            errorDiv.innerHTML = '<ul class="errorlist"><li>Username cannot start or end with a dot</li></ul>';
-                        } else if (username.includes('..')) {
-                            errorDiv.innerHTML = '<ul class="errorlist"><li>Username cannot contain consecutive dots</li></ul>';
-                        } else if (letterCount < 2) {
-                            errorDiv.innerHTML = '<ul class="errorlist"><li>Username must contain at least 2 letters</li></ul>';
-                        } else {
-                            errorDiv.innerHTML = '<ul class="errorlist"><li>Please enter a valid Gmail address</li></ul>';
-                        }
-                    }
+                    this.classList.add('email-invalid');
                 }
             });
         }
         
-        // Rest of your existing code for other fields...
         // Institute
         const instituteField = document.querySelector('#id_institute');
         if (instituteField) {
-            instituteField.placeholder = 'Select your institute';
             instituteField.classList.add('form-control');
+            instituteField.addEventListener('change', function() {
+                clearFieldError('institute');
+            });
         }
         
         // Department
         const departmentField = document.querySelector('#id_department');
         if (departmentField) {
             departmentField.classList.add('form-control');
+            departmentField.addEventListener('change', function() {
+                clearFieldError('department');
+            });
         }
         
         // Year
         const yearField = document.querySelector('#id_year');
         if (yearField) {
             yearField.classList.add('form-control');
+            yearField.addEventListener('change', function() {
+                clearFieldError('year');
+            });
         }
         
         // Password
         const passwordField = document.querySelector('#id_password');
         if (passwordField) {
-            passwordField.placeholder = 'Create a strong password';
+            passwordField.placeholder = 'Enter your Roll No as password';
             passwordField.classList.add('form-control');
+            passwordField.addEventListener('input', function() {
+                clearFieldError('password');
+                clearFieldError('confirm-password'); // Clear confirm error when password changes
+            });
         }
         
         // Confirm Password
         const confirmPasswordField = document.querySelector('#id_confirm_password');
         if (confirmPasswordField) {
-            confirmPasswordField.placeholder = 'Re-enter your password';
+            confirmPasswordField.placeholder = 'Re-enter your Roll No to confirm';
             confirmPasswordField.classList.add('form-control');
+            confirmPasswordField.addEventListener('input', function() {
+                clearFieldError('confirm-password');
+            });
         }
 
-        // Form submission validation
+        // CAPTCHA
+        const captchaInput = document.querySelector('[name="captcha_1"]');
+        if (captchaInput) {
+            captchaInput.classList.add('form-control');
+            captchaInput.addEventListener('input', function() {
+                clearFieldError('captcha');
+            });
+        }
+
+        // Check URL parameters for messages
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (urlParams.get('registered') === 'true') {
+            showToast('✓ Registration successful! Please check your email to verify your account.', 'success');
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        
+        if (urlParams.get('email_verified') === 'true') {
+            showToast('✓ Email verified successfully! You can now login.', 'success');
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // Handle Django form errors
+        {% if form.errors %}
+            {% for field, errors in form.errors.items %}
+                {% if field != '__all__' %}
+                    handleErrorMessages('{{ errors.0|escapejs }}');
+                {% else %}
+                    handleErrorMessages('{{ errors.0|escapejs }}');
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        // Handle Django messages
+        {% if messages %}
+            {% for message in messages %}
+                handleErrorMessages('{{ message|escapejs }}');
+            {% endfor %}
+        {% endif %}
+
+        // Check for empty fields on page load (if form was submitted with errors)
+        {% if form.errors %}
+            const fields = ['username', 'email', 'institute', 'department', 'year', 'password', 'confirm-password', 'captcha'];
+            fields.forEach(field => {
+                const fieldId = field === 'confirm-password' ? 'confirm-password' : field;
+                const element = field === 'captcha' ? document.querySelector('[name="captcha_1"]') : document.getElementById(`id_${field === 'confirm-password' ? 'confirm_password' : field}`);
+                
+                if (element && !element.value) {
+                    if (field === 'institute' || field === 'department' || field === 'year') {
+                        showFieldError(fieldId, `Please select your ${field.replace('-', ' ')}.`);
+                    } else if (field === 'confirm-password') {
+                        showFieldError(fieldId, 'Please confirm your password.');
+                    } else {
+                        showFieldError(fieldId, `${field.charAt(0).toUpperCase() + field.slice(1).replace('-', ' ')} is required.`);
+                    }
+                }
+            });
+        {% endif %}
+
+        // Form submission with loading state
         const form = document.getElementById('registrationForm');
         if (form) {
             form.addEventListener('submit', function(e) {
-                const email = emailField.value;
+                const email = emailField?.value || '';
+                const button = document.getElementById('submitBtn');
+                const btnText = button.querySelector('.btn-text');
+                const btnLoader = button.querySelector('.btn-loader');
                 
-                // Final validation before submission
-                if (!validateGmailEmail(email)) {
+                // Clear all previous inline errors before submission
+                clearFieldError('username');
+                clearFieldError('email');
+                clearFieldError('institute');
+                clearFieldError('department');
+                clearFieldError('year');
+                clearFieldError('password');
+                clearFieldError('confirm-password');
+                clearFieldError('captcha');
+                
+                // Final email validation before submission
+                if (email && !validateGmailEmail(email)) {
                     e.preventDefault();
                     
                     // Show error message
-                    const errorDiv = document.getElementById('emailError');
-                    
                     if (!email.includes('@')) {
-                        errorDiv.innerHTML = '<ul class="errorlist"><li>Please enter a valid Gmail address (username@gmail.com)</li></ul>';
+                        showFieldError('email', 'Email must contain @ symbol');
                     } else if (!email.toLowerCase().includes('@gmail.com')) {
-                        errorDiv.innerHTML = '<ul class="errorlist"><li>Email must be a Gmail address (ends with @gmail.com)</li></ul>';
+                        showFieldError('email', 'Email must be a Gmail address (ends with @gmail.com)');
                     } else {
-                        errorDiv.innerHTML = '<ul class="errorlist"><li>Please enter a valid Gmail address with at least 2 letters in the username</li></ul>';
+                        showFieldError('email', 'Please enter a valid Gmail address with at least 2 letters in the username');
                     }
                     
                     // Highlight the field
-                    emailField.classList.add('email-invalid');
-                    emailField.focus();
+                    emailField?.classList.add('email-invalid');
+                    emailField?.focus();
                     
                     // Scroll to email field
-                    emailField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    emailField?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    return;
                 }
+                
+                button.disabled = true;
+                btnText.style.display = 'none';
+                btnLoader.style.display = 'inline';
             });
         }
     });
 </script>
 
-<!-- Add Font Awesome if not already included in base.html -->
+<!-- Add Font Awesome if not already included -->
 {% block extra_js %}
 <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
 {% endblock %}

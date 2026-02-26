@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home_page', '0002_passwordresettoken'),
+        ('home_page', '0004_passwordresettoken'),
     ]
 
     operations = [

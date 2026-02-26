@@ -11,26 +11,25 @@
 
         <!-- Main Navigation Links -->
         <div class="nav-links" id="navLinks">
-            <a href="{% url 'home_page:home' %}#about-us" class="nav-link">About</a>
-            <a href="{% url 'home_page:home' %}#skills" class="nav-link">Skills</a>
-            <a href="{% url 'home_page:home' %}#our-values" class="nav-link">Our Values</a>
-            <a href="{% url 'home_page:home' %}#why-us" class="nav-link">Why Us</a>
-            <a href="{% url 'home_page:home' %}#how-we-work" class="nav-link">How We Work</a>
-            <a href="{% url 'home_page:home' %}#faq" class="nav-link">FAQ</a>
+            <a href="{% url 'home_page:home' %}#our-mission" class="nav-link">Our mission</a>
+            <a href="{% url 'home_page:home' %}#skills" class="nav-link">Learning Outcome</a>
+            <a href="{% url 'home_page:home' %}#our-values" class="nav-link">Our Approach</a>
+            <a href="{% url 'home_page:home' %}#why-us" class="nav-link">Why The Fluent Engineer</a>
+            <a href="{% url 'home_page:home' %}#how-we-work" class="nav-link">Learning Process</a>
             
             <!-- Dynamic Test/Result Button -->
             {% if user.is_authenticated %}
-            {% if user.profile.pretest_completed %}
-                 <a href="{% url 'home_page:pretest_results' %}" class="nav-link result-btn">View Result</a>
+                {% if user.profile.pretest_completed %}
+                    <a href="{% url 'home_page:pretest_results' %}" class="nav-link result-btn">View Result</a>
                 {% else %}
-                 <a href="{% url 'home_page:test_introduction' %}" class="nav-link test-btn">Take Test</a>
+                    <a href="{% url 'home_page:continue_pretest' %}" class="nav-link test-btn">Take Free Assessment</a>
                 {% endif %}
-          {% else %}
-               <a href="{% url 'home_page:login' %}?next={% url 'home_page:test_introduction' %}" class="nav-link test-btn">Take Test</a>
+            {% else %}
+                <a href="{% url 'home_page:login' %}?next={% url 'home_page:continue_pretest' %}" class="nav-link test-btn">Take Free Assessment</a>
             {% endif %}
-                   </div>
+        </div>
 
-        <!-- Profile Section (Right side) -->
+        <!-- Profile Section (Right side) - Only shown when logged in -->
         <div class="profile-section">
             {% if user.is_authenticated %}
                 <div class="profile-wrapper">
@@ -46,8 +45,9 @@
         <button class="menu-btn" id="menuBtn">
             <span class="hamburger">
                 <div></div>
+                <div></div>
+                <div></div>
             </span>
-            <span class="menu-text">Menu</span>
         </button>
     </div>
 </nav>
@@ -60,16 +60,17 @@
         position: sticky;
         top: 0;
         z-index: 1000;
-        padding: 10px 0;
+        padding: 8px 0;
     }
 
     .nav-container {
         max-width: 1400px;
         margin: 0 auto;
-        padding: 0 30px;
+        padding: 0 20px;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 15px;
     }
 
     /* Logo Styles */
@@ -77,107 +78,95 @@
         display: flex;
         align-items: center;
         text-decoration: none;
-    }
-
-    .logo-placeholder {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        flex-shrink: 0;
     }
 
     .logo-placeholder span {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 700;
         background: linear-gradient(135deg, #667eea, #764ba2);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        white-space: nowrap;
     }
 
     /* Navigation Links */
     .nav-links {
         display: flex;
         align-items: center;
-        gap: 30px;
-        margin-left: 50px;
+        gap: 12px;
         flex: 1;
+        justify-content: center;
     }
 
     .nav-link {
         color: #4a5568;
         text-decoration: none;
         font-weight: 500;
-        font-size: 15px;
+        font-size: 13px;
         transition: color 0.3s ease;
         white-space: nowrap;
+        padding: 4px 0;
     }
 
     .nav-link:hover {
         color: #667eea;
     }
 
-    /* Test/Result Button Styles */
+    /* Test/Result Button Styles - SMALLER */
     .test-btn, .result-btn {
-        padding: 8px 20px !important;
-        border-radius: 50px !important;
+        padding: 5px 12px !important;
+        border-radius: 30px !important;
         font-weight: 600 !important;
+        font-size: 12px !important;
+        letter-spacing: 0.3px;
     }
 
     .test-btn {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white !important;
-        animation: pulse 2s infinite;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     }
 
     .result-btn {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white !important;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     }
 
     .test-btn:hover, .result-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
 
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(245, 87, 108, 0.7);
-        }
-        70% {
-            box-shadow: 0 0 0 10px rgba(245, 87, 108, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(245, 87, 108, 0);
-        }
-    }
-
-    /* Profile Section */
+    /* Profile Section - SMALLER */
     .profile-section {
         display: flex;
         align-items: center;
+        flex-shrink: 0;
     }
 
     .profile-wrapper {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 8px;
         background: #f8f9fa;
-        padding: 5px 15px 5px 20px;
-        border-radius: 50px;
+        padding: 3px 10px 3px 12px;
+        border-radius: 40px;
         border: 1px solid #e9ecef;
     }
 
     .welcome-text {
         color: #4a5568;
         font-weight: 500;
-        font-size: 14px;
+        font-size: 12px;
+        white-space: nowrap;
     }
 
     .profile-icon {
         color: #667eea;
-        font-size: 32px;
+        font-size: 22px;
         line-height: 1;
         transition: all 0.3s ease;
         display: flex;
@@ -189,121 +178,65 @@
         transform: scale(1.05);
     }
 
-    .profile-icon i {
-        font-size: 32px;
-    }
-
-    /* Auth Buttons */
-    .auth-buttons {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .login-btn, .register-btn {
-        padding: 8px 20px;
-        border-radius: 50px;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        white-space: nowrap;
-    }
-
-    .login-btn {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    }
-
-    .login-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-    }
-
-    .register-btn {
-        background: transparent;
-        color: #667eea;
-        border: 2px solid #667eea;
-    }
-
-    .register-btn:hover {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        transform: translateY(-2px);
-    }
-
     /* Mobile Menu Button */
     .menu-btn {
         display: none;
         background: none;
         border: none;
         cursor: pointer;
-        padding: 10px;
+        padding: 6px;
+        flex-shrink: 0;
     }
 
     .hamburger div {
-        width: 25px;
-        height: 3px;
+        width: 20px;
+        height: 2px;
         background: #667eea;
         margin: 4px 0;
         transition: 0.3s;
+        border-radius: 2px;
     }
 
     /* Responsive Design */
-    @media (max-width: 1200px) {
+    @media (max-width: 1100px) {
         .nav-links {
-            gap: 20px;
-            margin-left: 30px;
+            gap: 8px;
         }
         
         .nav-link {
-            font-size: 14px;
+            font-size: 12px;
         }
     }
 
     @media (max-width: 992px) {
         .nav-container {
-            padding: 0 20px;
+            padding: 0 15px;
         }
 
         .logo-placeholder span {
-            font-size: 18px;
-        }
-
-        .nav-links {
-            gap: 15px;
-            margin-left: 20px;
-        }
-
-        .profile-wrapper {
-            padding: 5px 12px 5px 15px;
-        }
-
-        .welcome-text {
-            font-size: 13px;
+            font-size: 16px;
         }
     }
 
     @media (max-width: 768px) {
         .menu-btn {
             display: block;
-            order: 3;
         }
 
         .nav-links {
             display: none;
             position: absolute;
-            top: 70px;
+            top: 100%;
             left: 0;
             right: 0;
             background: white;
             flex-direction: column;
-            padding: 20px;
-            gap: 15px;
-            margin-left: 0;
+            padding: 15px;
+            gap: 12px;
+            margin: 0;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             z-index: 999;
+            border-top: 1px solid #e9ecef;
         }
 
         .nav-links.show {
@@ -313,48 +246,62 @@
         .nav-link {
             width: 100%;
             text-align: center;
-            padding: 10px !important;
+            padding: 8px !important;
+            font-size: 14px;
         }
 
-        .profile-section {
-            order: 2;
-            margin-left: auto;
-            margin-right: 15px;
+        .test-btn, .result-btn {
+            width: 100%;
+            text-align: center;
         }
 
         .profile-wrapper {
-            padding: 3px 10px 3px 12px;
+            padding: 2px 8px 2px 10px;
         }
 
         .welcome-text {
-            display: none;
+            font-size: 11px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .logo-placeholder span {
+            font-size: 14px;
+        }
+
+        .profile-wrapper {
+            padding: 2px 5px 2px 8px;
+        }
+
+        .welcome-text {
+            max-width: 70px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 11px;
         }
 
         .profile-icon {
-            font-size: 28px;
-        }
-
-        .profile-icon i {
-            font-size: 28px;
+            font-size: 20px;
         }
     }
 
     @media (max-width: 480px) {
-        .logo-placeholder span {
+        .welcome-text {
             display: none;
         }
 
-        .logo-placeholder img {
-            height: 35px;
+        .profile-wrapper {
+            padding: 2px;
+            background: transparent;
+            border: none;
         }
 
-        .auth-buttons {
-            gap: 5px;
+        .profile-icon {
+            font-size: 24px;
         }
 
-        .login-btn, .register-btn {
-            padding: 6px 12px;
-            font-size: 12px;
+        .logo-placeholder span {
+            font-size: 13px;
         }
     }
 </style>
@@ -365,19 +312,20 @@
         const navLinks = document.getElementById('navLinks');
         
         if (menuBtn) {
-            menuBtn.addEventListener('click', function() {
+            menuBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('active');
                 navLinks.classList.toggle('show');
-                
-                // Animate hamburger
-                const hamburger = this.querySelector('.hamburger');
-                hamburger.classList.toggle('active');
             });
         }
 
         // Close menu when clicking outside
         document.addEventListener('click', function(e) {
-            if (!menuBtn?.contains(e.target) && !navLinks?.contains(e.target)) {
-                navLinks?.classList.remove('show');
+            if (navLinks && navLinks.classList.contains('show')) {
+                if (!menuBtn?.contains(e.target) && !navLinks.contains(e.target)) {
+                    navLinks.classList.remove('show');
+                    menuBtn?.classList.remove('active');
+                }
             }
         });
 
@@ -385,6 +333,7 @@
         navLinks?.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', () => {
                 navLinks.classList.remove('show');
+                menuBtn?.classList.remove('active');
             });
         });
     });
