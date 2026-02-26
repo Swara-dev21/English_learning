@@ -71,7 +71,7 @@ class WritingResponse(models.Model):
     session_key = models.CharField(max_length=100, blank=True)
     question = models.ForeignKey(WritingQuestion, on_delete=models.CASCADE)
     user_answer = models.TextField()
-    score = models.IntegerField(default=0, help_text="Score out of 100")
+    score = models.FloatField(default=0, help_text="Score out of 100")  # Changed to FloatField to match grading
     feedback = models.JSONField(default=list, blank=True, help_text="List of feedback points")
     needs_manual_review = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -81,6 +81,11 @@ class WritingResponse(models.Model):
     
     def __str__(self):
         return f"Response to Q{self.question.order}: {self.user_answer[:50]}..."
+    
+    def username_display(self):
+        """Return username if user exists, otherwise 'Anonymous'"""
+        return self.user.username if self.user else 'Anonymous'
+    username_display.short_description = 'Username'
 
 
 class WritingTestResult(models.Model):

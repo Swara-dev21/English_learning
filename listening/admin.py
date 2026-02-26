@@ -169,17 +169,17 @@ class AnswerOptionAdmin(admin.ModelAdmin):
 
 @admin.register(UserResponse)
 class UserResponseAdmin(admin.ModelAdmin):
-    list_display = ['id', 'session_key', 'question', 'answer_summary', 'is_correct_display', 
-                   'auto_graded_correct', 'matched_answer_display', 'created_at']
-    list_display_links = ['id', 'session_key']
+    list_display = ['id', 'username_display', 'session_key', 'question', 'answer_summary', 
+                   'is_correct_display', 'auto_graded_correct', 'matched_answer_display', 'created_at']
+    list_display_links = ['id', 'username_display']
     list_filter = ['question__test', 'question__question_type', 'created_at', 'is_auto_graded', 'auto_graded_correct']
-    search_fields = ['session_key', 'typed_answer', 'matched_answer']
+    search_fields = ['session_key', 'user__username', 'typed_answer', 'matched_answer']
     readonly_fields = ['created_at', 'matched_answer']
     list_editable = ['auto_graded_correct']
     
     fieldsets = (
         ('Session Information', {
-            'fields': ('session_key',)
+            'fields': ('user', 'session_key')
         }),
         ('Question', {
             'fields': ('question',)
@@ -196,6 +196,12 @@ class UserResponseAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    def username_display(self, obj):
+        """Display username or 'Anonymous'"""
+        return obj.user.username if obj.user else 'Anonymous'
+    username_display.short_description = 'Username'
+    username_display.admin_order_field = 'user__username'
     
     def answer_summary(self, obj):
         if obj.question and obj.question.is_mcq() and obj.selected_option:
@@ -214,21 +220,19 @@ class UserResponseAdmin(admin.ModelAdmin):
         return obj.matched_answer or "—"
     matched_answer_display.short_description = 'Matched Pattern'
 
-# listening/admin.py - Update TestResultAdmin
-
 @admin.register(TestResult)
 class TestResultAdmin(admin.ModelAdmin):
-    list_display = ['id', 'session_key', 'test', 'score', 'total_questions', 'percentage_display', 
-                   'level', 'pending_grading', 'created_at']
-    list_display_links = ['id', 'session_key']
+    list_display = ['id', 'username_display', 'session_key', 'test', 'score', 'total_questions', 
+                   'percentage_display', 'level', 'pending_grading', 'created_at']
+    list_display_links = ['id', 'username_display']
     list_filter = ['test', 'pending_manual_grading', 'created_at', 'level']
-    search_fields = ['session_key']
+    search_fields = ['session_key', 'user__username']
     readonly_fields = ['created_at', 'percentage']
     actions = ['recalculate_score']
     
     fieldsets = (
         ('Result Information', {
-            'fields': ('session_key', 'test')
+            'fields': ('user', 'session_key', 'test')
         }),
         ('Score', {
             'fields': ('score', 'total_questions', 'percentage', 'level', 'feedback', 'pending_manual_grading')
@@ -238,6 +242,12 @@ class TestResultAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    def username_display(self, obj):
+        """Display username or 'Anonymous'"""
+        return obj.user.username if obj.user else 'Anonymous'
+    username_display.short_description = 'Username'
+    username_display.admin_order_field = 'user__username'
     
     def percentage_display(self, obj):
         return f"{obj.percentage:.1f}%"

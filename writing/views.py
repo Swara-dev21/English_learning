@@ -691,10 +691,11 @@ def save_answer(request, test_id, question_number):
     # Delete any previous response for this question
     WritingResponse.objects.filter(session_key=session_key, question=question).delete()
     
-    # Create new response
+    # Create new response with user
     response = WritingResponse.objects.create(
         session_key=session_key,
         question=question,
+        user=request.user,  # 👈 Add the user here
         user_answer=user_answer,
         score=float(grading_result['score']),  # Ensure float
         feedback=grading_result['feedback'],

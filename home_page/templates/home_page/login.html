@@ -7,50 +7,6 @@
     <link rel="stylesheet" href="{% static 'home_page/css/login.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Popup message styles */
-        .popup-message {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #10b981;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-            font-size: 14px;
-            font-weight: 500;
-            max-width: 350px;
-            word-wrap: break-word;
-        }
-
-        .popup-message.error {
-            background-color: #ef4444;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .popup-message.fade-out {
-            animation: fadeOut 0.3s ease forwards;
-        }
-
-        @keyframes fadeOut {
-            to {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -68,6 +24,92 @@
             position: relative;
         }
 
+        /* Toast notification styles - Clean and centered */
+        .toast-notification {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            color: #333;
+            padding: 16px 24px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            min-width: 320px;
+            max-width: 450px;
+            animation: slideDown 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-left: 4px solid transparent;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .toast-notification.success {
+            border-left-color: #10b981;
+        }
+
+        .toast-notification.success i {
+            color: #10b981;
+        }
+
+        .toast-notification.error {
+            border-left-color: #ef4444;
+        }
+
+        .toast-notification.error i {
+            color: #ef4444;
+        }
+
+        .toast-notification i {
+            font-size: 20px;
+        }
+
+        .toast-message {
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        .toast-close {
+            cursor: pointer;
+            color: #999;
+            font-size: 20px;
+            transition: color 0.2s;
+            padding: 0 5px;
+            font-weight: 300;
+        }
+
+        .toast-close:hover {
+            color: #333;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -30px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        .toast-notification.fade-out {
+            animation: fadeOutUp 0.3s ease forwards;
+        }
+
+        @keyframes fadeOutUp {
+            to {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+        }
+
+        /* Back link */
         .back-link-top {
             position: absolute;
             top: 30px;
@@ -78,26 +120,30 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: color 0.2s;
-            padding: 10px 15px;
+            transition: all 0.2s;
+            padding: 10px 20px;
             background-color: white;
             border-radius: 30px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 100;
         }
 
         .back-link-top:hover {
             color: #667eea;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+            transform: translateX(-3px);
         }
 
         .back-link-top i {
             font-size: 14px;
         }
 
+        /* Main login wrapper */
         .login-wrapper {
             max-width: 480px;
             width: 100%;
             animation: fadeInUp 0.5s ease;
+            padding: 0 20px;
         }
 
         @keyframes fadeInUp {
@@ -113,21 +159,21 @@
 
         .login-card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(74, 98, 176, 0.15);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(74, 98, 176, 0.15);
             overflow: hidden;
             width: 100%;
         }
 
-        /* Header with gradient matching login button */
+        /* Header with gradient */
         .login-header {
             background: linear-gradient(135deg, #667eea, #764ba2);
-            padding: 2rem 2rem;
+            padding: 2.5rem 2rem;
             text-align: center;
         }
 
         .login-header h2 {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 700;
             color: white;
             margin-bottom: 0.5rem;
@@ -138,6 +184,7 @@
             font-size: 1rem;
             color: rgba(255, 255, 255, 0.9);
             font-weight: 400;
+            opacity: 0.95;
         }
 
         .login-content {
@@ -145,7 +192,8 @@
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.8rem;
+            position: relative;
         }
 
         .form-label {
@@ -155,7 +203,7 @@
             font-size: 0.9rem;
             font-weight: 500;
             color: #333;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
         }
 
         .form-label i {
@@ -167,21 +215,63 @@
         .form-group input {
             width: 100%;
             padding: 14px 18px;
-            border: 1.5px solid #e0e0e0;
-            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
             font-size: 15px;
             transition: all 0.2s;
             font-family: inherit;
+            background: #fafafa;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
         }
 
         .form-group input::placeholder {
-            color: #999;
+            color: #aaa;
+            font-weight: 400;
+        }
+
+        /* Error state for inputs - ONLY input border and background changes, labels stay normal */
+        .form-group.error input,
+        .form-group.error .captcha-container input {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        /* Labels and icons stay normal color - NOT red */
+        .form-group.error .form-label i,
+        .form-group.error .form-label label {
+            color: #333;
+        }
+
+        /* Inline error message */
+        .inline-error {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #ef4444;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .inline-error i {
+            font-size: 12px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .password-header {
@@ -211,16 +301,39 @@
 
         .captcha-container img {
             display: block;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
             max-width: 100%;
+            transition: border-color 0.2s;
+        }
+
+        .captcha-container img:hover {
+            border-color: #667eea;
+        }
+
+        /* Style for CAPTCHA input field */
+        .captcha-container input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            margin-top: 10px;
+            background: #fafafa;
+        }
+
+        .captcha-container input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
         }
 
         .login-btn {
             width: 50%;
             max-width: 200px;
-            min-width: 150px;
-            padding: 14px 24px;
+            min-width: 160px;
+            padding: 14px 28px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white !important;
             border: none;
@@ -229,7 +342,7 @@
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s;
             display: block;
             margin: 30px auto 20px auto;
             letter-spacing: 0.5px;
@@ -245,13 +358,19 @@
             transform: translateY(0);
         }
 
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .register-link {
             text-align: center;
             font-size: 0.95rem;
             color: #666;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e0e0e0;
+            margin-top: 1.8rem;
+            padding-top: 1.8rem;
+            border-top: 2px solid #f0f0f0;
         }
 
         .register-link a {
@@ -259,6 +378,7 @@
             text-decoration: none;
             font-weight: 600;
             margin-left: 0.5rem;
+            transition: color 0.2s;
         }
 
         .register-link a:hover {
@@ -266,95 +386,98 @@
             text-decoration: underline;
         }
 
-        .error-text {
-            color: #dc2626 !important;
-            font-size: 13px;
-            margin-top: 5px;
-            font-weight: normal;
+        /* Hide original error text */
+        .errorlist {
+            display: none;
         }
 
-        .error-text ul {
-            margin: 0;
-            padding-left: 0;
-            list-style: none;
-            color: #dc2626 !important;
-        }
-
-        .error-text li {
-            color: #dc2626 !important;
-            list-style: none;
-        }
-
+        /* Responsive design */
         @media (max-width: 480px) {
             .back-link-top {
                 top: 15px;
                 left: 15px;
-                padding: 8px 12px;
+                padding: 8px 15px;
                 font-size: 14px;
             }
 
             .login-wrapper {
-                padding: 0 1rem;
+                padding: 0 15px;
             }
 
             .login-header {
-                padding: 1.5rem;
+                padding: 2rem 1.5rem;
             }
 
             .login-header h2 {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
 
             .login-content {
-                padding: 1.5rem;
+                padding: 2rem 1.5rem;
             }
 
             .login-btn {
                 width: 100%;
                 max-width: none;
             }
+
+            .toast-notification {
+                min-width: 280px;
+                padding: 14px 20px;
+                font-size: 14px;
+                top: 20px;
+            }
+        }
+
+        /* Loading spinner */
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Back to Home Button - Outside the login container -->
+    <!-- Back to Home Button -->
     <a href="{% url 'home_page:home' %}" class="back-link-top">
         <i class="fas fa-arrow-left"></i> Back to Home
     </a>
 
     <div class="login-wrapper">
         <div class="login-card">
-            <!-- Header with gradient matching login button -->
+            <!-- Header with gradient -->
             <div class="login-header">
                 <h2>Welcome Again</h2>
                 <p>Sign in to continue to your account</p>
             </div>
 
             <div class="login-content">
-                <form method="POST" novalidate autocomplete="off">
+                <form method="POST" id="loginForm" novalidate autocomplete="off">
                     {% csrf_token %}
                     {% if next %}
                         <input type="hidden" name="next" value="{{ next }}">
                     {% endif %}
 
-                    <!-- Email Field with Icon -->
-                    <div class="form-group">
+                    <!-- Email Field -->
+                    <div class="form-group" id="email-group">
                         <div class="form-label">
                             <i class="fas fa-envelope"></i>
-                            <label for="id_email">Email</label>
+                            <label for="id_email">Email Address</label>
                         </div>
-                        <input type="email" name="email" id="id_email" placeholder="you@example.com" {% if form.email.value %}value="{{ form.email.value }}"{% endif %}>
-                        {% if form.email.errors %}
-                            <div class="error-text">
-                                {% for error in form.email.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
+                        <input type="email" name="email" id="id_email" 
+                               placeholder="you@example.com" 
+                               value="{{ form.email.value|default:'' }}">
+                        <div class="inline-error" id="email-error" style="display: none;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span id="email-error-text"></span>
+                        </div>
                     </div>
 
-                    <!-- Password Field with Icon and Forgot Password -->
-                    <div class="form-group">
+                    <!-- Password Field -->
+                    <div class="form-group" id="password-group">
                         <div class="password-header">
                             <div class="form-label" style="margin-bottom: 0;">
                                 <i class="fas fa-lock"></i>
@@ -362,18 +485,16 @@
                             </div>
                             <a href="{% url 'home_page:password_reset' %}" class="forgot-password-link">Forgot Password?</a>
                         </div>
-                        <input type="password" name="password" id="id_password" placeholder="Enter your password">
-                        {% if form.password.errors %}
-                            <div class="error-text">
-                                {% for error in form.password.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
+                        <input type="password" name="password" id="id_password" 
+                               placeholder="Enter your password">
+                        <div class="inline-error" id="password-error" style="display: none;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span id="password-error-text"></span>
+                        </div>
                     </div>
 
                     <!-- Captcha Field -->
-                    <div class="form-group">
+                    <div class="form-group" id="captcha-group">
                         <div class="form-label">
                             <i class="fas fa-shield-alt"></i>
                             <label>{{ form.captcha.label }}</label>
@@ -381,16 +502,18 @@
                         <div class="captcha-container">
                             {{ form.captcha }} 
                         </div>
-                        {% if form.captcha.errors %}
-                            <div class="error-text">
-                                {% for error in form.captcha.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
+                        <div class="inline-error" id="captcha-error" style="display: none;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span id="captcha-error-text"></span>
+                        </div>
                     </div>
 
-                    <button type="submit" class="login-btn">Login</button>
+                    <button type="submit" class="login-btn" id="loginButton">
+                        <span class="btn-text">Login</span>
+                        <span class="btn-loader" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> Logging in...
+                        </span>
+                    </button>
                 </form>
 
                 <div class="register-link">
@@ -402,57 +525,260 @@
     </div>
 
 <script>
-    // Function to show popup message
-    function showPopupMessage(message, isError = false) {
-        // Remove any existing popup
-        const existingPopup = document.querySelector('.popup-message');
-        if (existingPopup) {
-            existingPopup.remove();
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        // Remove any existing toast
+        const existingToast = document.querySelector('.toast-notification');
+        if (existingToast) {
+            existingToast.remove();
         }
 
-        // Create new popup
-        const popup = document.createElement('div');
-        popup.className = `popup-message ${isError ? 'error' : ''}`;
-        popup.textContent = message;
-        document.body.appendChild(popup);
+        // Create new toast
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${type}`;
+        
+        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        
+        toast.innerHTML = `
+            <i class="fas ${icon}"></i>
+            <span class="toast-message">${message}</span>
+            <span class="toast-close">&times;</span>
+        `;
+        
+        document.body.appendChild(toast);
 
-        // Auto remove after 3 seconds
+        // Close button functionality
+        toast.querySelector('.toast-close').addEventListener('click', () => {
+            toast.remove();
+        });
+
+        // Auto remove after 4 seconds
         setTimeout(() => {
-            popup.classList.add('fade-out');
-            setTimeout(() => {
-                popup.remove();
-            }, 300);
-        }, 3000);
+            if (toast.parentNode) {
+                toast.classList.add('fade-out');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 300);
+            }
+        }, 4000);
+    }
+
+    // Function to show field error
+    function showFieldError(fieldId, errorMessage) {
+        const group = document.getElementById(fieldId + '-group');
+        const errorDiv = document.getElementById(fieldId + '-error');
+        const errorText = document.getElementById(fieldId + '-error-text');
+        
+        if (group && errorDiv && errorText) {
+            group.classList.add('error');
+            errorText.textContent = errorMessage;
+            errorDiv.style.display = 'flex';
+        }
+    }
+
+    // Function to clear field error
+    function clearFieldError(fieldId) {
+        const group = document.getElementById(fieldId + '-group');
+        const errorDiv = document.getElementById(fieldId + '-error');
+        
+        if (group && errorDiv) {
+            group.classList.remove('error');
+            errorDiv.style.display = 'none';
+        }
+    }
+
+    // Clear errors when user starts typing
+    document.getElementById('id_email')?.addEventListener('input', function() {
+        clearFieldError('email');
+    });
+
+    document.getElementById('id_password')?.addEventListener('input', function() {
+        clearFieldError('password');
+    });
+
+    // Handle CAPTCHA refresh if needed
+    const captchaInput = document.querySelector('[name="captcha_1"]');
+    if (captchaInput) {
+        captchaInput.addEventListener('input', function() {
+            clearFieldError('captcha');
+        });
+    }
+
+    // Handle specific error messages from Django messages and form errors
+    function handleErrorMessages(errorMessage) {
+        // Show the actual error message in toast
+        showToast(errorMessage, 'error');
+        
+        const errorMsg = errorMessage.toLowerCase();
+        
+        // Check for required field errors
+        if (errorMsg.includes('required') || errorMsg.includes('this field is required')) {
+            if (errorMsg.includes('email')) {
+                showFieldError('email', 'Email is required.');
+            }
+            if (errorMsg.includes('password')) {
+                showFieldError('password', 'Password is required.');
+            }
+            if (errorMsg.includes('captcha')) {
+                showFieldError('captcha', 'CAPTCHA is required.');
+            }
+            // If no specific field mentioned, check which fields are empty
+            else {
+                const emailField = document.getElementById('id_email');
+                const passwordField = document.getElementById('id_password');
+                const captchaField = document.querySelector('[name="captcha_1"]');
+                
+                if (emailField && !emailField.value) {
+                    showFieldError('email', 'Email is required.');
+                }
+                if (passwordField && !passwordField.value) {
+                    showFieldError('password', 'Password is required.');
+                }
+                if (captchaField && !captchaField.value) {
+                    showFieldError('captcha', 'CAPTCHA is required.');
+                }
+            }
+            return;
+        }
+        
+        // Check for email-related errors
+        if (errorMsg.includes('email') || errorMsg.includes('e-mail')) {
+            // Check if it's a "not registered" type error
+            if (errorMsg.includes('not register') || errorMsg.includes('does not exist') || errorMsg.includes('no account')) {
+                showFieldError('email', 'This email is not registered. Please check or create a new account.');
+            }
+            // Check if it's a "valid" error
+            else if (errorMsg.includes('valid')) {
+                showFieldError('email', 'Please enter a valid email address.');
+            }
+            // For other email errors, show the actual message
+            else {
+                showFieldError('email', errorMessage);
+            }
+        }
+        
+        // Check for password-related errors
+        if (errorMsg.includes('password')) {
+            // Check if it's an "incorrect" error
+            if (errorMsg.includes('incorrect') || errorMsg.includes('wrong') || errorMsg.includes('invalid')) {
+                showFieldError('password', 'Incorrect password. Please try again.');
+            }
+            // For other password errors, show the actual message
+            else {
+                showFieldError('password', errorMessage);
+            }
+        }
+        
+        // Check for CAPTCHA-related errors
+        if (errorMsg.includes('captcha') || errorMsg.includes('verification')) {
+            showFieldError('captcha', 'Incorrect CAPTCHA. Please try again.');
+        }
+        
+        // Check for inactive account
+        if (errorMsg.includes('inactive') || errorMsg.includes('not activated') || errorMsg.includes('verify')) {
+            // No field-specific error for this, just toast
+            showToast('Your account is not activated. Please check your email for the activation link.', 'error');
+        }
+        
+        // Check for too many attempts
+        if (errorMsg.includes('too many') || errorMsg.includes('attempts') || errorMsg.includes('locked')) {
+            showToast('Too many failed attempts. Please try again after 15 minutes.', 'error');
+        }
+        
+        // Check for general form errors (invalid email/password combination)
+        if (errorMsg.includes('please enter a correct') || errorMsg.includes('username and password')) {
+            showFieldError('email', 'Invalid email or password.');
+            showFieldError('password', 'Invalid email or password.');
+        }
     }
 
     // Check URL parameters for messages
     const urlParams = new URLSearchParams(window.location.search);
     
     if (urlParams.get('reset_sent') === 'true') {
-        showPopupMessage('✓ Reset link has been sent to your registered email! Please check your inbox.');
+        showToast('✓ Password reset link sent to your email!', 'success');
         window.history.replaceState({}, document.title, window.location.pathname);
     }
     
     if (urlParams.get('reset_success') === 'true') {
-        showPopupMessage('✓ Password reset successfully! You can now login with your new password.');
+        showToast('✓ Password reset successful! You can now login.', 'success');
         window.history.replaceState({}, document.title, window.location.pathname);
     }
     
     if (urlParams.get('expired') === 'true') {
-        showPopupMessage('✗ This reset link has expired. Please request a new one.', true);
+        showToast('✗ Reset link expired. Please request a new one.', 'error');
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 
-    // Check for login error messages from Django messages
+    if (urlParams.get('registered') === 'true') {
+        showToast('✓ Registration successful! Please verify your email.', 'success');
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    if (urlParams.get('verified') === 'true') {
+        showToast('✓ Email verified! You can now login.', 'success');
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // Handle Django messages
     {% if messages %}
         {% for message in messages %}
-            {% if message.tags == 'error' %}
-                showPopupMessage('{{ message|escapejs }}', true);
-            {% elif message.tags == 'success' %}
-                showPopupMessage('{{ message|escapejs }}');
+            handleErrorMessages('{{ message|escapejs }}');
+        {% endfor %}
+    {% endif %}
+
+    // Handle Django form errors
+    {% if form.errors %}
+        {% for field, errors in form.errors.items %}
+            {% if field == 'email' %}
+                handleErrorMessages('{{ errors.0|escapejs }}');
+            {% elif field == 'password' %}
+                handleErrorMessages('{{ errors.0|escapejs }}');
+            {% elif field == 'captcha' %}
+                handleErrorMessages('{{ errors.0|escapejs }}');
+            {% elif field == '__all__' %}
+                handleErrorMessages('{{ errors.0|escapejs }}');
             {% endif %}
         {% endfor %}
     {% endif %}
+
+    // Check for empty fields on page load (if form was submitted with errors)
+    document.addEventListener('DOMContentLoaded', function() {
+        const emailField = document.getElementById('id_email');
+        const passwordField = document.getElementById('id_password');
+        const captchaField = document.querySelector('[name="captcha_1"]');
+        
+        // Check if any fields are empty and there are form errors
+        {% if form.errors %}
+            if (emailField && !emailField.value) {
+                showFieldError('email', 'Email is required.');
+            }
+            if (passwordField && !passwordField.value) {
+                showFieldError('password', 'Password is required.');
+            }
+            if (captchaField && !captchaField.value) {
+                showFieldError('captcha', 'CAPTCHA is required.');
+            }
+        {% endif %}
+    });
+
+    // Form submission with loading state
+    document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+        const button = document.getElementById('loginButton');
+        const btnText = button.querySelector('.btn-text');
+        const btnLoader = button.querySelector('.btn-loader');
+        
+        // Clear all previous inline errors before submission
+        clearFieldError('email');
+        clearFieldError('password');
+        clearFieldError('captcha');
+        
+        button.disabled = true;
+        btnText.style.display = 'none';
+        btnLoader.style.display = 'inline';
+    });
 </script>
 </body>
 </html>

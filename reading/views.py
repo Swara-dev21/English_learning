@@ -159,7 +159,6 @@ def submit_test(request, test_id):
 
 @login_required
 def reading_results(request, result_id):
-
     result = get_object_or_404(ReadingResult, id=result_id)
 
     writing_test = WritingTest.objects.filter(is_active=True).first()
@@ -197,7 +196,7 @@ def reading_results(request, result_id):
 
     context = {
         'result': result,
-        'test':result.test,
+        'test': result.test,
         'percentage': result.percentage,
         'score': correct_count,              # ← Changed from result.score to show count (e.g., 2)
         'total': total_questions,             # ← Changed from result.total to show 5
@@ -208,7 +207,7 @@ def reading_results(request, result_id):
         'specific_percent': specific_percent,
         'organisation_percent': organisation_percent,
         'results': results_list,
-        'writing_test':writing_test,
+        'writing_test': writing_test,
     }
 
     return render(request, 'reading/result.html', context)

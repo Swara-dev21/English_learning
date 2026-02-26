@@ -64,7 +64,7 @@ class WritingQuestionAdmin(admin.ModelAdmin):
 
 @admin.register(WritingResponse)
 class WritingResponseAdmin(admin.ModelAdmin):
-    list_display = ['id', 'question', 'user', 'session_key', 'score', 'needs_manual_review', 'created_at']
+    list_display = ['id', 'question', 'username_display', 'session_key', 'score', 'needs_manual_review', 'created_at']
     list_display_links = ['id', 'question']
     list_filter = ['score', 'needs_manual_review', 'created_at', 'question__question_type']
     search_fields = ['session_key', 'user__username', 'user_answer']
@@ -82,6 +82,12 @@ class WritingResponseAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    def username_display(self, obj):
+        """Display username or 'Anonymous'"""
+        return obj.user.username if obj.user else 'Anonymous'
+    username_display.short_description = 'Username'
+    username_display.admin_order_field = 'user__username'
 
 
 @admin.register(WritingTestResult)
