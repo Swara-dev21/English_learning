@@ -28,6 +28,18 @@
         font-family: 'Inter', sans-serif;
     }
 
+    @media (max-width: 768px) {
+        .index-page {
+            padding: 1rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .index-page {
+            padding: 0.75rem;
+        }
+    }
+
     .welcome-card {
         background: var(--white);
         border-radius: 2rem;
@@ -60,6 +72,18 @@
         overflow: hidden;
     }
 
+    @media (max-width: 768px) {
+        .card-header {
+            padding: 2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card-header {
+            padding: 1.5rem;
+        }
+    }
+
     .card-header::before {
         content: '';
         position: absolute;
@@ -81,11 +105,31 @@
         align-items: center;
         justify-content: center;
         gap: 0.75rem;
+        word-break: break-word;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+        .card-header h1 {
+            font-size: 2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card-header h1 {
+            font-size: 1.6rem;
+        }
     }
 
     .card-header h1 i {
         color: #fef9c3;
         font-size: 2.5rem;
+    }
+
+    @media (max-width: 576px) {
+        .card-header h1 i {
+            font-size: 2rem;
+        }
     }
 
     .card-header p {
@@ -94,10 +138,28 @@
         position: relative;
     }
 
+    @media (max-width: 576px) {
+        .card-header p {
+            font-size: 1rem;
+        }
+    }
+
     /* Content */
     .card-body {
         padding: 3rem;
         text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card-body {
+            padding: 1.5rem;
+        }
     }
 
     .icon-large {
@@ -105,6 +167,13 @@
         color: var(--primary);
         margin-bottom: 2rem;
         opacity: 0.8;
+    }
+
+    @media (max-width: 576px) {
+        .icon-large {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
     }
 
     /* Test Info Box - Matching Reading/Listening exactly */
@@ -118,6 +187,13 @@
         margin-left: auto;
         margin-right: auto;
         border: 1px solid var(--border);
+        width: 100%;
+    }
+
+    @media (max-width: 576px) {
+        .test-info {
+            padding: 1.5rem;
+        }
     }
 
     .info-item {
@@ -127,6 +203,15 @@
         margin-bottom: 1rem;
         color: var(--text-dark);
         font-size: 1rem;
+        text-align: left;
+        word-break: break-word;
+    }
+
+    @media (max-width: 576px) {
+        .info-item {
+            font-size: 0.95rem;
+            gap: 0.75rem;
+        }
     }
 
     .info-item:last-child {
@@ -137,6 +222,12 @@
         color: var(--primary);
         width: 24px;
         font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .info-item span {
+        flex: 1;
+        word-break: break-word;
     }
 
     /* Start Button - Matching Reading/Listening exactly */
@@ -156,6 +247,18 @@
         text-decoration: none;
         box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
         margin-top: 1rem;
+        max-width: 100%;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    @media (max-width: 576px) {
+        .start-btn {
+            width: 100%;
+            justify-content: center;
+            padding: 0.875rem 1.5rem;
+            font-size: 1.1rem;
+        }
     }
 
     .start-btn:hover {
@@ -181,37 +284,17 @@
         margin-top: 1rem;
         border: 1px solid #fecaca;
         font-weight: 500;
+        word-break: break-word;
     }
 
-    /* Responsive */
-    @media (max-width: 640px) {
-        .index-page {
-            padding: 1rem;
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+        .start-btn:hover {
+            transform: none;
         }
-
-        .card-header h1 {
-            font-size: 2rem;
-        }
-
-        .card-header {
-            padding: 2rem;
-        }
-
-        .card-body {
-            padding: 2rem 1.5rem;
-        }
-
-        .test-info {
-            padding: 1.5rem;
-        }
-
-        .info-item {
-            font-size: 0.95rem;
-        }
-
-        .start-btn {
-            width: 100%;
-            justify-content: center;
+        
+        .start-btn:active {
+            transform: translateY(-2px);
         }
     }
 </style>
@@ -259,9 +342,9 @@
                     <span>Choose correct spelling from multiple options.</span>
                 </div>
                 
-                 <div class="info-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Answer all 5 questions to submit.</span>
+                <div class="info-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Answer all 5 questions to submit.</span>
                 </div>
                 
                 <div class="info-item">
@@ -272,9 +355,9 @@
 
             <!-- Start Test Button -->
             {% if test %}
-                <a href="{% url 'writing:writing_question' test.id question_number %}" class="start-btn">
-                    Start Writing Question {{ question_number }}
-                </a>
+            <a href="{% url 'writing:writing_question' test.id 1 %}" class="start-btn">
+                <i class="fas fa-play-circle"></i> Start Writing Test
+            </a>
             {% else %}
             <div class="no-test">
                 <p>⚠️ Test not available yet. Please create a test in admin panel.</p>
