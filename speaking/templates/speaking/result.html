@@ -1,617 +1,376 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Speaking Test Results</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Results - Speaking Assessment</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'speaking/style.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'speaking/css/style.css' %}">
     <style>
-        /* Clean, minimal design matching the start page */
-        :root {
-            --primary: #5e548e;        /* Slate purple */
-            --primary-light: #f0edf7;  /* Light lavender */
-            --primary-dark: #453c6b;   /* Dark slate */
-            --accent: #9f8bc9;          /* Soft purple for accents */
-            --success: #10b981;         /* Green for high scores */
-            --warning: #f59e0b;          /* Orange for medium scores */
-            --danger: #ef4444;           /* Red for low scores */
-            --text-dark: #1e293b;
-            --text-light: #475569;
-            --text-muted: #64748b;
-            --white: #ffffff;
-            --border: #e2e8f0;
-            --shadow: 0 20px 40px -15px rgba(94, 84, 142, 0.2);
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
         }
-
-        .card {
-            max-width: 1200px;
-            width: 100%;
-            background: var(--white);
-            border-radius: 32px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            animation: slideUp 0.6s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header {
-            background: var(--primary);
-            padding: 40px 30px;
+        
+        header {
             text-align: center;
-            color: var(--white);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            animation: rotate 20s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .header i {
-            font-size: 4rem;
-            margin-bottom: 15px;
-            opacity: 0.95;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
-            position: relative;
-            z-index: 1;
-        }
-
-        .header h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: -1px;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 1;
-        }
-
-        .header .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.95;
-            max-width: 500px;
-            margin: 0 auto;
-            font-weight: 400;
-            line-height: 1.6;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 1;
-        }
-
-        .content {
-            padding: 40px;
-        }
-
-        /* Overall Score Card */
-        .overall-card {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: 24px;
-            padding: 30px;
-            margin-bottom: 30px;
-            text-align: center;
+            padding: 40px 0;
             color: white;
-            box-shadow: 0 15px 30px rgba(94, 84, 142, 0.3);
         }
-
-        .overall-card span {
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
             font-size: 1.2rem;
             opacity: 0.9;
-            display: block;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
         }
-
-        .overall-card h1 {
-            font-size: 4rem;
-            font-weight: 700;
-            margin: 0;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        
+        main {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-
-        /* Feedback Section */
-        .feedback-section {
-            background: var(--primary-light);
-            border-radius: 24px;
-            padding: 25px;
+        
+        h2 {
+            color: #333;
             margin-bottom: 30px;
-            border: 1px solid var(--border);
+            text-align: center;
+            font-size: 2rem;
+        }
+        
+        .overall-score {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecf5 100%);
+            border-radius: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .big-score {
+            font-size: 4rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+        
+        .score-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .performance-level {
             text-align: center;
         }
-
-        .feedback-message {
-            font-size: 1.2rem;
-            color: var(--text-dark);
-            font-weight: 500;
+        
+        .performance-level h3 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
         }
-
-        /* Score Grid */
-        .scores-grid {
+        
+        .performance-level p {
+            color: #666;
+            font-size: 1.2rem;
+            max-width: 400px;
+        }
+        
+        .detailed-scores {
+            margin-top: 40px;
+        }
+        
+        .detailed-scores h3 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        
+        .score-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 40px;
         }
-
+        
         .score-item {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 25px 15px;
-            text-align: center;
-            border: 1px solid var(--border);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
-            transition: all 0.3s ease;
+            display: grid;
+            grid-template-columns: 200px 1fr 80px;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: transform 0.2s;
         }
-
+        
         .score-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(94, 84, 142, 0.1);
-            border-color: var(--primary-light);
-        }
-
-        .score-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--primary-light);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            color: var(--primary);
-            font-size: 1.3rem;
-        }
-
-        .score-label {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-        }
-
-        .score-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-            line-height: 1.2;
-            margin-bottom: 5px;
-        }
-
-        .score-max {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-        /* Score colors based on value */
-        .score-value.high {
-            color: #10b981;
+            transform: translateX(5px);
+            background: #f0f2f5;
         }
         
-        .score-value.medium {
-            color: #f59e0b;
-        }
-        
-        .score-value.low {
-            color: #ef4444;
-        }
-
-        /* Section Title */
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 40px 0 20px;
-            color: var(--text-dark);
-            font-size: 1.3rem;
+        .question-label {
             font-weight: 600;
-        }
-
-        .section-title i {
-            color: var(--primary);
-            font-size: 1.4rem;
-        }
-
-        /* Table Styling */
-        .table-container {
-            background: var(--white);
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            overflow-x: auto;
-            margin-bottom: 30px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1000px;
-        }
-
-        th {
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 18px 12px;
-            text-align: center;
-            border-bottom: 2px solid var(--primary);
-        }
-
-        td {
-            padding: 16px 12px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-light);
-            text-align: center;
-        }
-
-        td:first-child {
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        td:nth-child(2) {
-            text-align: left;
-            max-width: 300px;
-            white-space: normal;
-            word-wrap: break-word;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background: #f8fafc;
-        }
-
-        .score-chip {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            background: var(--primary-light);
-            color: var(--primary-dark);
-        }
-
-        .score-chip.high {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .score-chip.medium {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .score-chip.low {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        /* Action Buttons */
-        .actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .btn {
-            padding: 16px 32px;
-            border-radius: 16px;
-            font-weight: 600;
+            color: #555;
             font-size: 1.1rem;
-            text-decoration: none;
-            display: inline-flex;
+        }
+        
+        .score-bar-container {
+            width: 100%;
+        }
+        
+        .score-bar {
+            width: 100%;
+            height: 24px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            transition: width 1s ease-in-out;
+            display: flex;
             align-items: center;
-            gap: 12px;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: var(--primary);
+            justify-content: flex-end;
+            padding-right: 10px;
             color: white;
-            box-shadow: 0 8px 20px rgba(94, 84, 142, 0.3);
+            font-size: 0.9rem;
+            font-weight: bold;
         }
-
+        
+        .score-value {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.2rem;
+            text-align: right;
+        }
+        
+        .question-breakdown {
+            margin-top: 40px;
+            padding: 25px;
+            background: #f0f4ff;
+            border-radius: 15px;
+        }
+        
+        .question-breakdown h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .breakdown-text {
+            color: #666;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
         .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(94, 84, 142, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
         }
-
-        /* Empty state */
-        .empty-state {
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        footer {
             text-align: center;
-            padding: 40px;
-            color: var(--text-muted);
+            padding: 30px 20px 20px;
+            color: rgba(255,255,255,0.8);
         }
-
-        @media (max-width: 700px) {
-            .header {
-                padding: 30px 20px;
+        
+        @media (max-width: 768px) {
+            .score-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
             }
-            
-            .header h1 {
-                font-size: 2.2rem;
-            }
-            
-            .content {
-                padding: 25px 20px;
-            }
-            
-            .overall-card h1 {
-                font-size: 3rem;
-            }
-            
-            .scores-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-            }
-            
-            .actions {
+            .overall-score {
                 flex-direction: column;
+                gap: 30px;
             }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
+            .score-value {
+                text-align: left;
             }
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <!-- Header matching speaking test theme -->
-        <div class="header">
-            <i class="fas fa-trophy"></i>
-            <h1>Test Complete!</h1>
-            <div class="subtitle">Here's how you performed</div>
-        </div>
+    <div class="container">
+        <header>
+            <h1>🎓 Speaking Assessment Results</h1>
+            <p>Your performance analysis</p>
+        </header>
         
-        <!-- Content -->
-        <div class="content">
-            <!-- Overall Score Card -->
-            <div class="overall-card">
-                <span>Overall Score</span>
-                <h1>{{ overall_score|default:"0.0"|floatformat:2 }}/100</h1>
-            </div>
-
-            <!-- Feedback Section -->
-            <div class="feedback-section">
-                <div class="feedback-message">
-                    <i class="fas fa-lightbulb" style="color: var(--primary); margin-right: 10px;"></i>
-                    Keep practicing daily. Focus on basic sounds first.
+        <main>
+            <h2>Assessment Complete!</h2>
+            
+            <div class="overall-score">
+                <div class="score-circle">
+                    <span class="big-score">{{ average|floatformat:0 }}</span>
+                    <span class="score-label">Overall</span>
+                </div>
+                <div class="performance-level">
+                    {% if average <= 45 %}
+                        <h3>Basic Level</h3>
+                    {% elif average <= 75 %}
+                        <h3>Intermediate Level</h3>
+                    {% else %}
+                        <h3>Advanced Level</h3>
+                    {% endif %}
+                    
+                    <p>{{ message }}</p>
                 </div>
             </div>
-
-            <!-- Score Cards Grid -->
-            <div class="scores-grid">
-                <!-- Pronunciation -->
-                <div class="score-item">
-                    <div class="score-icon">
-                        <i class="fas fa-microphone-alt"></i>
+            
+            <div class="detailed-scores">
+                <h3>Question-wise Performance</h3>
+                <div class="score-grid">
+                    <div class="score-item">
+                        <div class="question-label">Q1: Word Pronunciation</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: {{ q1_score }}%;">
+                                    {% if q1_score > 30 %}{{ q1_score|floatformat:0 }}%{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="score-value">{{ q1_score|floatformat:1 }}%</div>
                     </div>
-                    <div class="score-label">Pronunciation</div>
-                    <div class="score-value 
-                        {% if avg_pronunciation >= 75 %}high
-                        {% elif avg_pronunciation >= 50 %}medium
-                        {% else %}low{% endif %}">
-                        {{ avg_pronunciation|default:"0.0"|floatformat:2 }}
+                    
+                    <div class="score-item">
+                        <div class="question-label">Q2: Sentence Rearrangement</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: {{ q2_score }}%;">
+                                    {% if q2_score > 30 %}{{ q2_score|floatformat:0 }}%{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="score-value">{{ q2_score|floatformat:1 }}%</div>
                     </div>
-                    <div class="score-max">out of 100</div>
+                    
+                    <div class="score-item">
+                        <div class="question-label">Q3: Phrase Reading</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: {{ q3_score }}%;">
+                                    {% if q3_score > 30 %}{{ q3_score|floatformat:0 }}%{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="score-value">{{ q3_score|floatformat:1 }}%</div>
+                    </div>
+                    
+                    <div class="score-item">
+                        <div class="question-label">Q4: Sentence Reading</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: {{ q4_score }}%;">
+                                    {% if q4_score > 30 %}{{ q4_score|floatformat:0 }}%{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="score-value">{{ q4_score|floatformat:1 }}%</div>
+                    </div>
+                    
+                    <div class="score-item">
+                        <div class="question-label">Q5: Grammar Correction</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: {{ q5_score }}%;">
+                                    {% if q5_score > 30 %}{{ q5_score|floatformat:0 }}%{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="score-value">{{ q5_score|floatformat:1 }}%</div>
+                    </div>
                 </div>
-
-                <!-- Accent -->
-                <div class="score-item">
-                    <div class="score-icon">
-                        <i class="fas fa-language"></i>
-                    </div>
-                    <div class="score-label">Accent</div>
-                    <div class="score-value 
-                        {% if avg_accent >= 75 %}high
-                        {% elif avg_accent >= 50 %}medium
-                        {% else %}low{% endif %}">
-                        {{ avg_accent|default:"0.0"|floatformat:2 }}
-                    </div>
-                    <div class="score-max">out of 100</div>
-                </div>
-
-                <!-- Accuracy -->
-                <div class="score-item">
-                    <div class="score-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="score-label">Accuracy</div>
-                    <div class="score-value 
-                        {% if avg_accuracy >= 75 %}high
-                        {% elif avg_accuracy >= 50 %}medium
-                        {% else %}low{% endif %}">
-                        {{ avg_accuracy|default:"0.0"|floatformat:2 }}
-                    </div>
-                    <div class="score-max">out of 100</div>
-                </div>
-
-                <!-- Voice Match (MFCC) -->
-                <div class="score-item">
-                    <div class="score-icon">
-                        <i class="fas fa-wave-square"></i>
-                    </div>
-                    <div class="score-label">Voice Match</div>
-                    <div class="score-value 
-                        {% if avg_mfcc >= 75 %}high
-                        {% elif avg_mfcc >= 50 %}medium
-                        {% else %}low{% endif %}">
-                        {{ avg_mfcc|default:"0.0"|floatformat:2 }}
-                    </div>
-                    <div class="score-max">out of 100</div>
-                </div>
-
-                <!-- Sound Accuracy (G2P) -->
-                <div class="score-item">
-                    <div class="score-icon">
-                        <i class="fas fa-music"></i>
-                    </div>
-                    <div class="score-label">Sound Accuracy</div>
-                    <div class="score-value 
-                        {% if avg_g2p >= 75 %}high
-                        {% elif avg_g2p >= 50 %}medium
-                        {% else %}low{% endif %}">
-                        {{ avg_g2p|default:"0.0"|floatformat:2 }}
-                    </div>
-                    <div class="score-max">out of 100</div>
-                </div>
-
-                <!-- Speech Rhythm (DTW) -->
-                <div class="score-item">
-                    <div class="score-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="score-label">Speech Rhythm</div>
-                    <div class="score-value 
-                        {% if avg_dtw_score >= 75 %}high
-                        {% elif avg_dtw_score >= 50 %}medium
-                        {% else %}low{% endif %}">
-                        {{ avg_dtw_score|default:"0.0"|floatformat:2 }}
-                    </div>
-                    <div class="score-max">out of 100</div>
+            </div>
+            
+            <div class="question-breakdown">
+                <h4>📊 What was evaluated:</h4>
+                <div class="breakdown-text">
+                    <p><strong>Q1 - Word Pronunciation:</strong> Individual word accuracy for 5 words</p>
+                    <p><strong>Q2 - Sentence Rearrangement:</strong> Sentence structure and fluency</p>
+                    <p><strong>Q3 - Phrase Reading:</strong> Clarity and natural phrasing</p>
+                    <p><strong>Q4 - Sentence Reading:</strong> Connected speech and rhythm</p>
+                    <p><strong>Q5 - Grammar Correction:</strong> Grammar understanding and correction</p>
                 </div>
             </div>
 
-            <!-- Question Details -->
-            <div class="section-title">
-                <i class="fas fa-list-check"></i>
-                Question Details
+            <div class="action-buttons">
+                <a href="{% url 'reading:index' %}" class="btn btn-primary">Take Another Test</a>
+                {% comment %} <a href="{% url 'clear_session' %}" class="btn btn-secondary">Clear & Start Over</a> {% endcomment %}
             </div>
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Question</th>
-                            <th>Pronunciation</th>
-                            <th>Accent</th>
-                            <th>Accuracy</th>
-                            <th>Voice Match</th>
-                            <th>Sound Acc.</th>
-                            <th>Speech Rhythm</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for res in results %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ res.question }}</td>
-                            <td>
-                                <span class="score-chip 
-                                    {% if res.pron_score >= 75 %}high
-                                    {% elif res.pron_score >= 50 %}medium
-                                    {% else %}low{% endif %}">
-                                    {{ res.pron_score|floatformat:2 }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="score-chip 
-                                    {% if res.accent_score >= 75 %}high
-                                    {% elif res.accent_score >= 50 %}medium
-                                    {% else %}low{% endif %}">
-                                    {{ res.accent_score|floatformat:2 }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="score-chip 
-                                    {% if res.text_score >= 75 %}high
-                                    {% elif res.text_score >= 50 %}medium
-                                    {% else %}low{% endif %}">
-                                    {{ res.text_score|floatformat:2 }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="score-chip 
-                                    {% if res.mfcc_score >= 75 %}high
-                                    {% elif res.mfcc_score >= 50 %}medium
-                                    {% else %}low{% endif %}">
-                                    {{ res.mfcc_score|floatformat:2 }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="score-chip 
-                                    {% if res.g2p_score >= 75 %}high
-                                    {% elif res.g2p_score >= 50 %}medium
-                                    {% else %}low{% endif %}">
-                                    {{ res.g2p_score|floatformat:2 }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="score-chip 
-                                    {% if res.dtw_score >= 75 %}high
-                                    {% elif res.dtw_score >= 50 %}medium
-                                    {% else %}low{% endif %}">
-                                    {{ res.dtw_score|floatformat:2 }}
-                                </span>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="empty-state">No results found.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="actions">
-                <a href="{% url 'reading:index' %}" class="btn btn-primary">
-                    <i class="fas fa-arrow-right"></i>
-                    Continue to Reading Test
-                </a>
-            </div>
-        </div>
+        </main>
+        
+        <footer>
+            <p>© 2026 AI Speaking Assessment System | Research Purpose</p>
+        </footer>
     </div>
 </body>
 </html>

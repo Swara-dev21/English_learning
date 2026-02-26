@@ -1,12 +1,12 @@
 from django.urls import path
-from speaking import views
-
-app_name = "speaking"
-
+from . import views
+app_name = 'speaking'
 urlpatterns = [
-    path("start/", views.start, name="start"),
-    path("question/<int:q_index>/", views.question, name="question"),
-    path("record/<int:q_index>/", views.record_question, name="record_question"),
-    path("result/", views.result_final, name="result"),
-
+    path('', views.start, name='start'),
+    path('initialize-test/', views.initialize_test, name='initialize_test'),
+    path('question/<int:q_num>/', views.question, name='question'),
+    path('submit-recording/', views.submit_recording, name='submit_recording'),
+    path('process-results/', views.process_results, name='process_results'),
+    path('result/', views.result, name='result'),
+    path('clear-session/', views.clear_session, name='clear_session'),
 ]

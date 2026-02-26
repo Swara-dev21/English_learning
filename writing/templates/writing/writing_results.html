@@ -1,575 +1,324 @@
-{% extends 'writing/base.html' %}
-{% load static %}
-
-{% block title %}Writing Test Results{% endblock %}
-
-{% block extra_css %}
-<style>
-    :root {
-        --primary: #4f46e5;
-        --primary-dark: #7c3aed;
-        --primary-gradient: linear-gradient(135deg, #4f46e5, #7c3aed);
-    }
-
-    .results-container {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    
-    .score-circle {
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
-        color: white;
-        font-weight: bold;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        border: 8px solid white;
-        outline: 3px solid;
-    }
-    
-    .score-circle .display-2 {
-        font-size: 4rem;
-        font-weight: 800;
-        line-height: 1;
-        color: white;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-    
-    .score-circle .h4 {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-top: 5px;
-        color: white;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-    }
-    
-    .score-excellent { 
-        background: linear-gradient(135deg, #28a745, #20c997);
-        outline-color: #28a745;
-    }
-    .score-good { 
-        background: linear-gradient(135deg, #17a2b8, #0dcaf0);
-        outline-color: #17a2b8;
-    }
-    .score-average { 
-        background: linear-gradient(135deg, #ffc107, #fd7e14);
-        outline-color: #ffc107;
-    }
-    .score-poor { 
-        background: linear-gradient(135deg, #dc3545, #ff6b6b);
-        outline-color: #dc3545;
-    }
-    
-    .mistake-review {
-        border-radius: 16px;
-        margin-bottom: 30px;
-        padding: 25px;
-        background: white;
-        box-shadow: 0 5px 20px rgba(220, 53, 69, 0.1);
-        border-left: 6px solid #dc3545;
-        transition: all 0.3s ease;
-    }
-    
-    .user-answer-box {
-        background: rgba(220, 53, 69, 0.05);
-        border: 2px solid rgba(220, 53, 69, 0.2);
-        border-radius: 12px;
-        padding: 18px;
-        margin: 12px 0;
-        font-size: 18px;
-        line-height: 1.6;
-    }
-    
-    .correct-answer-box {
-        background: rgba(40, 167, 69, 0.05);
-        border: 2px solid rgba(40, 167, 69, 0.2);
-        border-radius: 12px;
-        padding: 18px;
-        margin: 12px 0;
-        font-size: 18px;
-        line-height: 1.6;
-    }
-    
-    .perfect-score {
-        background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1));
-        border-radius: 20px;
-        padding: 40px;
-        text-align: center;
-        margin: 30px 0;
-        border: 2px dashed #28a745;
-    }
-    
-    /* Feedback section styles */
-    .feedback-section {
-        margin-top: 20px;
-        padding: 20px;
-        background: #fff9f9;
-        border-radius: 12px;
-        border: 1px solid #ffcdcd;
-    }
-    
-    .feedback-title {
-        font-weight: 700;
-        color: #dc3545;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 1.1rem;
-    }
-    
-    .feedback-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    
-    .feedback-item {
-        padding: 12px 15px;
-        margin-bottom: 8px;
-        background: white;
-        border-radius: 8px;
-        font-size: 15px;
-        border-left: 4px solid;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-    }
-    
-    .feedback-item.error {
-        border-left-color: #dc3545;
-        color: #721c24;
-        background: #fff5f5;
-    }
-    
-    .feedback-item.correct {
-        border-left-color: #28a745;
-        color: #155724;
-        background: #f0fff4;
-    }
-    
-    .feedback-item.info {
-        border-left-color: #17a2b8;
-        color: #0c5460;
-        background: #e7f3ff;
-    }
-    
-    .feedback-icon {
-        margin-top: 2px;
-        width: 18px;
-        flex-shrink: 0;
-    }
-    
-    .example-box {
-        background: linear-gradient(135deg, #fff3e0, #ffffff);
-        border-radius: 12px;
-        padding: 20px;
-        margin-top: 20px;
-        border: 1px solid #ffd79c;
-    }
-    
-    .example-text {
-        background: white;
-        padding: 15px;
-        border-radius: 8px;
-        font-style: italic;
-        margin-top: 10px;
-        color: #495057;
-        border: 1px dashed #ffb347;
-        line-height: 1.8;
-    }
-    
-    /* Stats cards - ONLY percentage and level */
-    .stats-card {
-        background: linear-gradient(135deg, #f8f9fa, #ffffff);
-        border-radius: 16px;
-        padding: 25px;
-        margin: 25px auto;
-        border: 1px solid #e9ecef;
-        max-width: 350px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-    }
-    
-    .stats-card .row {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-    }
-    
-    .stat-item {
-        text-align: center;
-        min-width: 120px;
-    }
-    
-    .stat-value {
-        font-size: 2.5rem;
-        font-weight: 800;
-        line-height: 1.2;
-        color: var(--primary);
-    }
-    
-    .stat-label {
-        font-size: 1rem;
-        color: #6c757d;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        margin-top: 8px;
-        font-weight: 600;
-    }
-    
-    /* Button styling */
-    .btn {
-        font-size: 16px;
-        padding: 12px 30px;
-        border-radius: 50px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    
-    .btn-primary {
-        background: var(--primary-gradient);
-        border: none;
-        color: white;
-    }
-    
-    .btn-outline-primary {
-        background: white;
-        border: 2px solid var(--primary);
-        color: var(--primary);
-    }
-    
-    .btn-outline-primary:hover {
-        background: var(--primary-gradient);
-        color: white;
-    }
-    
-    .btn-success {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        border: none;
-    }
-    
-    /* Detailed Summary Section */
-    .detailed-summary {
-        display: none;
-        margin-top: 30px;
-        animation: fadeIn 0.5s ease;
-    }
-    
-    .detailed-summary.show {
-        display: block;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .summary-toggle {
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border-width: 2px;
-    }
-    
-    /* Missing keywords highlight */
-    .missing-keyword {
-        background-color: #fff3cd;
-        color: #856404;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-weight: 600;
-    }
-    
-    .used-keyword {
-        background-color: #d4edda;
-        color: #155724;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-weight: 600;
-    }
-    
-    /* Grammar error highlight */
-    .grammar-error {
-        background-color: #f8d7da;
-        color: #721c24;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-weight: 600;
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .score-circle {
-            width: 160px;
-            height: 160px;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing Test Results</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'writing/css/style.css' %}?v=2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .results-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f0f3ff 0%, #e8eeff 100%);
+            font-family: 'Inter', sans-serif;
         }
         
-        .score-circle .display-2 {
-            font-size: 3rem;
+        .results-card {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.2);
+            overflow: hidden;
         }
         
-        .stat-value {
+        .results-header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        
+        .results-header h1 {
             font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
         }
         
-        .btn {
-            padding: 10px 20px;
-            font-size: 14px;
+        .results-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
         
-        .stats-card .row {
-            gap: 15px;
+        /* Center alignment for content */
+        .results-content {
+            padding: 2rem;
+            text-align: center;
         }
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="results-container">
-    <div class="card shadow-lg border-0">
-        <!-- Header -->
-        <div class="card-header text-white py-3" style="background: var(--primary-gradient);">
-            <h2 class="mb-0 text-center">
-                <i class="fas fa-chart-bar me-2"></i>Writing Test Results
-            </h2>
-        </div>
         
-        <div class="card-body p-4 p-md-5">
-            <!-- Score Summary - ONLY percentage and level -->
-            <div class="text-center mb-4">
-                <div class="score-circle 
-                    {% if percentage >= 80 %}score-excellent
-                    {% elif percentage >= 60 %}score-good
-                    {% elif percentage >= 40 %}score-average
-                    {% else %}score-poor{% endif %} mb-4">
-                    <div class="display-2 fw-bold">{{ percentage|floatformat:0 }}</div>
-                    <div class="h4 fw-bold">%</div>
+        /* Score Circle - Shows PERCENTAGE (like writing) */
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            border: 8px solid #e0e7ff;
+        }
+        
+        .score-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+        
+        .score-percent {
+            font-size: 1.5rem;
+            color: white;
+            opacity: 0.9;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+        
+        /* Level Badge - Same as reading - FIXED to show colors */
+        .level-badge {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            border-radius: 2rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 1rem;  /* Increased top and bottom margin */
+            background: transparent;  /* Default transparent, overridden by specific classes */
+        }
+        
+        .level-basic {
+            background: #ffe4e4 !important;
+            color: #b91c1c !important;
+            border: 2px solid #fecaca !important;
+        }
+        
+        .level-intermediate {
+            background: #fef9c3 !important;
+            color: #854d0e !important;
+            border: 2px solid #fde68a !important;
+        }
+        
+        .level-advanced {
+            background: #dcfce7 !important;
+            color: #166534 !important;
+            border: 2px solid #bbf7d0 !important;
+        }
+        
+        /* Percentage Text */
+        .percentage-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 1rem 0 1rem;  /* Adjusted margin */
+        }
+        
+        /* Feedback Text - With emoji - FIXED alignment */
+        .feedback-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #4f46e5;
+            padding: 1rem 2rem;
+            margin: 1.5rem auto 2rem;
+            max-width: 80%;
+            line-height: 1.6;
+            text-align: center;
+            display: flex;
+            align-items: center;      /* Vertically centers text and emoji */
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        
+        .feedback-text span {
+            display: inline-block;
+            line-height: 1;            /* Prevents emoji from affecting line height */
+            font-size: 1.6rem;
+            margin-left: 0.5rem;
+            vertical-align: middle;    /* Ensures emoji aligns with text */
+        }
+        
+        /* Summary Title */
+        .summary-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        
+        .summary-title i {
+            color: #4f46e5;
+            font-size: 1.5rem;
+        }
+        
+        /* Questions Grid - 5 Boxes */
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem;
+            padding: 0 2rem 2rem;
+        }
+        
+        .q-item {
+            text-align: center;
+            padding: 1.25rem 0.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .q-correct {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #86efac;
+        }
+        
+        .q-incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #fecaca;
+        }
+        
+        .q-number {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .q-icon {
+            font-size: 1.5rem;
+        }
+        
+        /* Action Buttons Section - Single centered button */
+        .actions {
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 2px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            min-width: 180px;
+            width: auto;
+            white-space: nowrap;
+        }
+        
+        .overall-btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: 2px solid transparent;
+        }
+        
+        .overall-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
+        
+        /* Responsive */
+        @media (max-width: 640px) {
+            .questions-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+                padding: 0 1rem 1.5rem;
+            }
+            
+            .actions {
+                padding: 1.5rem;
+            }
+            
+            .action-btn {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .feedback-text {
+                max-width: 100%;
+            }
+            
+            .results-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="results-page">
+        <div class="results-card">
+            <!-- Header -->
+            <div class="results-header">
+                <h1>
+                    <i class="fas fa-pen-fancy"></i> 
+                    Test Results
+                </h1>
+                <p>Your writing level assessment</p>
+            </div>
+            
+            <!-- Score Display - All content centered -->
+            <div class="results-content">
+                <div class="score-circle">
+                    <div class="score-value">{{ percentage|floatformat:0 }}</div>
+                    <div class="score-percent">%</div>
                 </div>
                 
-                <h2 class="fw-bold mb-3" style="color: var(--primary-dark);">
-                    {% if percentage >= 80 %}
-                        🎉 Advanced Level
-                    {% elif percentage >= 60 %}
-                         Intermediate Level
-                    {% elif percentage >= 40 %}
-                           Basic Level
+                <!-- Level badge - Same as reading - FIXED colors -->
+              
+                <div class="level-badge 
+                    {% if level == 'Basic' or level|lower == 'basic' %}level-basic
+                    {% elif level == 'Intermediate' or level|lower == 'intermediate' %}level-intermediate
+                    {% elif level == 'Advanced' or level|lower == 'advanced' %}level-advanced
+                    {% else %}level-basic{% endif %}">
+                    {{ level }}
+                </div>
+                
+                <!-- Feedback text with emoji - FIXED alignment -->
+                <div class="feedback-text">
+                    {% if level == 'Advanced' %}
+                        Excellent writing skills!
+                        <span>✨</span>
+                    {% elif level == 'Intermediate' %}
+                        Good progress. Keep practicing.
+                        <span>📈</span>
                     {% else %}
-                        🔰 Beginner Level
+                        Keep practicing your writing.
+                        <span>🎯</span>
                     {% endif %}
-                </h2>
-                
-                <!-- Simple Stats Card - ONLY percentage and level -->
-                <div class="stats-card">
-                    <div class="row">
-                        <div class="col-6 stat-item">
-                            <div class="stat-value">{{ percentage|floatformat:1 }}%</div>
-                            <div class="stat-label">Score</div>
-                        </div>
-                        <div class="col-6 stat-item">
-                            <div class="stat-value" style="color: #6f42c1;">{{ result.level }}</div>
-                            <div class="stat-label">Level</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Detailed Summary Button - Only show if there are wrong answers -->
-                {% if wrong_answers_count > 0 %}
-                <button class="btn btn-outline-primary summary-toggle px-4 py-3 mt-3" onclick="toggleSummary()">
-                    <i class="fas fa-list-alt me-2"></i> 
-                    <span id="toggleText">View Detailed Summary ({{ wrong_answers_count }} mistakes)</span>
-                    <i class="fas fa-chevron-down ms-2" id="toggleIcon"></i>
-                </button>
-                {% endif %}
-            </div>
-            
-            <!-- Detailed Summary Section - Shows ONLY WRONG ANSWERS -->
-            <div id="detailedSummary" class="detailed-summary">
-                <h3 class="mb-4" style="color: var(--primary-dark);">
-                    <i class="fas fa-clipboard-list me-2"></i>Mistakes to Review ({{ wrong_answers_count }})
-                </h3>
-                
-                {% for item in question_data %}
-                    <!-- Show ONLY wrong answers (score < 80) -->
-                    {% if not item.is_correct %}
-                    <div class="mistake-review" id="q{{ item.question.order }}">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="fw-bold mb-0" style="color: #343a40;">
-                                Question {{ item.question.order }}: 
-                                <span class="badge bg-secondary ms-2">{{ item.question.get_question_type_display }}</span>
-                            </h4>
-                            <span class="badge bg-danger p-3 fs-6">
-                                {{ item.score_100 }}/100
-                            </span>
-                        </div>
-                        
-                        <!-- Question Prompt -->
-                        <div class="mb-3 p-3 bg-light rounded">
-                            <strong>Question:</strong> 
-                            {% if item.question.question_type == 'fill_blanks' and item.question.order == 1 %}
-                                Fill in the blanks: 1. She ___ (go/goes) to college every day. 2. The students ___ (is/are) in the classroom. 3. This is ___ useful book. (a / an)
-                            {% elif item.question.question_type == 'sentence_order' and item.question.order == 2 %}
-                                Arrange: A. We submitted the assignment. B. The teacher explained the topic. C. The class started at ten.
-                            {% elif item.question.question_type == 'sentence_rewrite' and item.question.order == 3 %}
-                                Rewrite: "comunication skills are important however students often ignore punctution grammer and clarity"
-                            {% elif item.question.question_type == 'spelling_mcq' and item.question.order == 4 %}
-                                Choose correct spellings for: 1. recieve/receive/recite/receieve, 2. definately/definitely/diffidently/defenetly, 3. seperate/separate/sepereta/seprate
-                            {% elif item.question.question_type == 'paragraph_writing' and item.question.order == 5 %}
-                                Write a paragraph using: time management, planning, daily routine, stress, success (5-6 sentences)
-                            {% else %}
-                                {{ item.question.prompt|truncatechars:150 }}
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Your Answer (Incorrect) -->
-                        <div class="mb-3">
-                            <h5 class="fw-bold mb-2" style="color: #dc3545;">
-                                <i class="fas fa-times-circle me-2"></i>
-                                Your Answer (Incorrect):
-                            </h5>
-                            <div class="user-answer-box">
-                                {{ item.user_answer|linebreaks }}
-                            </div>
-                        </div>
-                        
-                        <!-- Correct Answer -->
-                        <div class="mb-3">
-                            <h5 class="fw-bold mb-2" style="color: #28a745;">
-                                <i class="fas fa-check-circle me-2"></i>
-                                Correct Answer:
-                            </h5>
-                            <div class="correct-answer-box">
-                                {% if item.question.question_type == 'fill_blanks' and item.question.order == 1 %}
-                                    <p class="mb-0 fw-bold fs-5">goes, are, a</p>
-                                    <p class="mt-2 text-muted">• She <strong>goes</strong> (third person singular)<br>• Students <strong>are</strong> (plural)<br>• <strong>a</strong> useful (consonant sound)</p>
-                                    
-                                {% elif item.question.question_type == 'sentence_order' and item.question.order == 2 %}
-                                    <p class="mb-0 fw-bold fs-5">C, B, A</p>
-                                    <div class="mt-2 p-2 bg-light rounded">
-                                        <strong>C.</strong> The class started at ten.<br>
-                                        <strong>B.</strong> The teacher explained the topic.<br>
-                                        <strong>A.</strong> We submitted the assignment.
-                                    </div>
-                                    
-                                {% elif item.question.question_type == 'sentence_rewrite' and item.question.order == 3 %}
-                                    <p class="mb-0 fw-bold fs-5">Communication skills are important; however, students often ignore punctuation, grammar, and clarity.</p>
-                                    
-                                {% elif item.question.question_type == 'spelling_mcq' and item.question.order == 4 %}
-                                    <p class="mb-0 fw-bold fs-5">b, b, b</p>
-                                    <div class="mt-2">
-                                        <span class="badge bg-success me-2">1. receive (b)</span>
-                                        <span class="badge bg-success me-2">2. definitely (b)</span>
-                                        <span class="badge bg-success">3. separate (b)</span>
-                                    </div>
-                                    
-                                {% elif item.question.question_type == 'paragraph_writing' and item.question.order == 5 %}
-                                    <p class="mb-0 fs-5">A well-written paragraph should include all clue words and have proper grammar.</p>
-                                    <div class="mt-2 p-2 bg-light rounded">
-                                        <strong>Sample:</strong> Time management plays an important role in a student's life. Proper planning helps students organize their daily routine effectively. When time is managed well, tasks are completed on time and stress is reduced. This habit builds confidence and discipline. As a result, good time management leads to academic success.
-                                    </div>
-                                {% else %}
-                                    <p class="mb-0 fw-bold fs-5">{{ item.question.correct_answer }}</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <!-- DETAILED FEEDBACK - Show ONLY ERRORS, no correct items -->
-                        {% if item.feedback %}
-                        <div class="feedback-section">
-                            <div class="feedback-title">
-                                <i class="fas fa-exclamation-triangle fa-lg"></i>
-                                What went wrong:
-                            </div>
-                            <ul class="feedback-list">
-                                {% for fb in item.feedback %}
-                                    <!-- FILTER: Show ONLY error items (❌, Missing, error, spelling, grammar) -->
-                                    {% if '❌' in fb or 'Missing' in fb or 'error' in fb or 'spelling' in fb|lower or 'grammar' in fb|lower or 'Blank' in fb and 'Expected' in fb %}
-                                        <!-- Skip summary lines like "You got X/X correct" -->
-                                        {% if not 'You got' in fb %}
-                                            <li class="feedback-item error">
-                                                <i class="fas fa-times-circle feedback-icon"></i>
-                                                <span>{{ fb }}</span>
-                                            </li>
-                                        {% endif %}
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        {% endif %}
-                        
-                        <!-- No additional tips section - removed completely -->
-                    </div>
-                    {% endif %}
-                {% empty %}
-                    <div class="alert alert-info text-center py-4">
-                        <i class="fas fa-info-circle fa-2x mb-3"></i>
-                        <h5>No mistakes to review!</h5>
-                    </div>
-                {% endfor %}
-            </div>
-            
-            <!-- Perfect Score Message - Only if no wrong answers -->
-            {% if wrong_answers_count == 0 %}
-            <div class="perfect-score">
-                <i class="fas fa-trophy fa-4x mb-3" style="color: #ffc107;"></i>
-                <h2 class="text-success fw-bold mb-3">Perfect Score! 🎉</h2>
-                <p class="lead mb-0">You scored <strong class="fs-1">{{ percentage|floatformat:1 }}%</strong><br> {{ result.level }} Level</p>
-            </div>
-            {% endif %}
-        </div>
-        
-        <!-- Footer Actions -->
-        <div class="card-footer bg-white border-0 pt-3 pb-4">
-            <div class="text-center">
-                <div class="d-flex justify-content-center gap-3 flex-wrap">
-                    <a href="{% url 'home_page:pretest_results' %}" class="btn btn-success px-5 py-3">
-                        <i class="fas fa-chart-bar me-2"></i> Overall Results
-                    </a>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+            
 
-<script>
-    function toggleSummary() {
-        const summary = document.getElementById('detailedSummary');
-        const toggleText = document.getElementById('toggleText');
-        const toggleIcon = document.getElementById('toggleIcon');
-        
-        if (summary.classList.contains('show')) {
-            summary.classList.remove('show');
-            toggleText.textContent = 'View Detailed Summary ({{ wrong_answers_count }} mistakes)';
-            toggleIcon.className = 'fas fa-chevron-down ms-2';
-        } else {
-            summary.classList.add('show');
-            toggleText.textContent = 'Hide Detailed Summary';
-            toggleIcon.className = 'fas fa-chevron-up ms-2';
-            
-            // Smooth scroll to summary
-            setTimeout(() => {
-                summary.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-        }
-    }
-    
-    // Auto-expand if URL has #q parameter
-    document.addEventListener('DOMContentLoaded', function() {
-        if (window.location.hash && document.getElementById('detailedSummary')) {
-            document.getElementById('detailedSummary').classList.add('show');
-            document.getElementById('toggleText').textContent = 'Hide Detailed Summary';
-            document.getElementById('toggleIcon').className = 'fas fa-chevron-up ms-2';
-        }
-    });
-</script>
-{% endblock %}
+            <!-- Action Buttons - Overall Results Button (redirects to pretest_results) -->
+            <div class="actions">
+                <a href="{% url 'home_page:pretest_results' %}" class="action-btn overall-btn">
+                    <i class="fas fa-chart-bar"></i> Overall Results
+                </a>
+            </div>
+        </div>    
+    </div>
+</body>
+</html>

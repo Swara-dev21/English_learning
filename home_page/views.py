@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from listening.models import TestResult as ListeningResult
 from reading.models import ReadingResult
-from speaking.models import SpeakingResult
+from speaking.models import TestSession
 from writing.models import WritingTestResult as WritingResult
 
 
@@ -222,7 +222,7 @@ def pretest_results(request):
     """Show combined pretest results"""
     from listening.models import TestResult as ListeningResult
     from reading.models import ReadingResult
-    from speaking.models import SpeakingResult
+    from speaking.models import TestSession
     from writing.models import WritingTestResult as WritingResult
     
     profile = get_object_or_404(StudentProfile, user=request.user)
@@ -240,7 +240,7 @@ def pretest_results(request):
     # Get latest results
     listening_result = ListeningResult.objects.filter(user=request.user).first()
     reading_result = ReadingResult.objects.filter(user=request.user).first()
-    speaking_result = SpeakingResult.objects.filter(user=request.user).first()
+    speaking_result = TestSession.objects.filter(user=request.student).first()
     writing_result = WritingResult.objects.filter(user=request.user).first()
 
 
@@ -267,12 +267,12 @@ def pretest_results(request):
     # Speaking: Already has overall_score as percentage
     if speaking_result:
         # Ensure all speaking metrics are floats
-        speaking_result.avg_pronunciation = float(speaking_result.avg_pronunciation)
-        speaking_result.avg_accent = float(speaking_result.avg_accent)
-        speaking_result.avg_accuracy = float(speaking_result.avg_accuracy)
-        speaking_result.overall_score = float(speaking_result.overall_score)
+        TestSession.avg_pronunciation = float(TestSession.avg_pronunciation)
+        TestSession.avg_accent = float(TestSession.avg_accent)
+        TestSession.avg_accuracy = float(TestSession.avg_accuracy)
+        TestSession.overall_score = float(TestSession.overall_score)
     else:
-        speaking_result = None
+        TestSession = None
     
     # Writing: Convert 0/5 to 0%
     if writing_result:
@@ -296,7 +296,7 @@ def pretest_results(request):
     
     # Speaking (weight: 1)
     if speaking_result:
-        total_weighted_score += speaking_result.overall_score
+        total_weighted_score += TestSession.overall_score
         total_weight += 1
     
     # Writing (weight: 1)
@@ -317,7 +317,7 @@ def pretest_results(request):
     if reading_result:
         total_raw_score += reading_result.score
     if speaking_result:
-        total_raw_score += speaking_result.overall_score / 20  # Convert percentage to /5 scale
+        total_raw_score += TestSession.overall_score / 20  # Convert percentage to /5 scale
     if writing_result:
         total_raw_score += writing_result.total_score
     
@@ -333,7 +333,7 @@ def pretest_results(request):
         'overall_percentage': round(overall_percentage, 1),  # New overall percentage
         'listening_percentage': listening_result.percentage if listening_result else 0,
         'reading_percentage': reading_result.percentage if reading_result else 0,
-        'speaking_percentage': speaking_result.overall_score if speaking_result else 0,
+        'speaking_percentage': TestSession.overall_score if speaking_result else 0,
         'writing_percentage': writing_result.percentage if writing_result else 0,
         'completion_date': completion_date, 
     }
@@ -341,10 +341,6 @@ def pretest_results(request):
     return render(request, 'home_page/pretest_results.html', context)
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 376fed1df717dc0e57a1511600a231bcfa8b3e2d
 def password_reset_request(request):
     """View for requesting password reset"""
     
@@ -484,15 +480,23 @@ def export_all_results_csv(request):
             reading_percentage = round((reading.score / reading.total * 100), 1)
         else:
             reading_percentage = 0
+
+        # speaking
         
-        # ----- SPEAKING (Average of pronunciation, accent, accuracy) -----
-        speaking = SpeakingResult.objects.filter(user=user).first()
+        student, _ = student.objects.get_or_create(
+            email=user.email,
+            defaults={
+                'name': user.username,
+                'roll_number': f"STU{user.id}"
+            }
+        )
+        speaking = TestSession.objects.filter(student=student).order_by('-completed_at').first()
         if speaking:
-            # Speaking already has overall_score which is average of all three
-            speaking_percentage = round(speaking.overall_score, 1)
+            speaking_percentage = round(speaking.get_average_score(), 1)
         else:
             speaking_percentage = 0
-        
+
+
         # ----- WRITING (Convert 0-500 to percentage) -----
         writing = WritingResult.objects.filter(user=user).first()
         if writing and writing.total_score is not None:

@@ -1,616 +1,746 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speaking Test - Question {{ question_index|add:1 }}</title>
-    <link rel="stylesheet" href="{% static 'speaking/style.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Question {{ q_num }} - Speaking Assessment</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'speaking/css/style.css' %}">
     <style>
-        /* Clean, minimal design matching the start page */
-        :root {
-            --primary: #5e548e;        /* Slate purple */
-            --primary-light: #f0edf7;  /* Light lavender */
-            --primary-dark: #453c6b;   /* Dark slate */
-            --accent: #9f8bc9;          /* Soft coral for accents */
-            --text-dark: #1e293b;
-            --text-light: #475569;
-            --text-muted: #64748b;
-            --white: #ffffff;
-            --border: #e2e8f0;
-            --shadow: 0 20px 40px -15px rgba(94, 84, 142, 0.2);
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
         }
-
-        .card {
-            max-width: 750px;
-            width: 100%;
-            background: var(--white);
-            border-radius: 32px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            animation: slideUp 0.6s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header {
-            background: var(--primary);
-            padding: 40px 30px;
+        
+        header {
             text-align: center;
-            color: var(--white);
-            position: relative;
+            padding: 20px 0;
+            color: white;
+        }
+        
+        header h1 {
+            font-size: 2rem;
+        }
+        
+        main {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            min-height: 600px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+        
+        .progress {
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            color: #666;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            margin-top: 10px;
             overflow: hidden;
         }
-
-        .header::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            animation: rotate 20s linear infinite;
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
         }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .header i {
-            font-size: 4rem;
-            margin-bottom: 15px;
-            opacity: 0.95;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
-            position: relative;
-            z-index: 1;
-        }
-
-        .header h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: -1px;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 1;
-        }
-
-        .header .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.95;
-            max-width: 500px;
-            margin: 0 auto;
-            font-weight: 400;
-            line-height: 1.6;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 1;
-        }
-
-        .content {
-            padding: 40px;
-        }
-
-        /* Progress Section */
-        .progress-section {
+        
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
             margin-bottom: 30px;
         }
-
-        .question-info {
+        
+        .question-card h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .instruction {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .question-content {
+            font-size: 1.2rem;
+        }
+        
+        .words-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .word-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        
+        .word-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .word-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .question-badge {
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            font-weight: 600;
-            font-size: 1rem;
-            padding: 6px 16px;
-            border-radius: 30px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .question-badge i {
-            color: var(--primary);
-            font-size: 0.9rem;
-        }
-
-        .timer-info {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #f8fafc;
-            padding: 6px 14px;
-            border-radius: 30px;
-        }
-
-        .timer-info i {
-            color: var(--primary);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: {% widthratio question_index|add:1 5 100 %}%;
-            background: var(--primary);
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-
-        /* Question Card */
-        .question-card {
-            background: var(--white);
-            border-radius: 24px;
-            padding: 35px;
-            margin: 25px 0;
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 25px -10px rgba(0,0,0,0.05);
-        }
-
-        .sentence-label {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
             margin-bottom: 15px;
+        }
+        
+        .word-header h3 {
+            color: #333;
+            font-size: 1.3rem;
+        }
+        
+        .word-status {
+            font-size: 1rem;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: #f0f0f0;
+            color: #666;
+        }
+        
+        .word-status.recorded {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .word-controls {
             display: flex;
+            gap: 10px;
             align-items: center;
-            gap: 8px;
         }
-
-        .sentence-label i {
-            color: var(--primary);
+        
+        .word-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
         }
-
-        .sentence-text {
-            font-size: 1.8rem;
-            line-height: 1.4;
-            color: var(--text-dark);
+        
+        .word {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-size: 1.3rem;
             font-weight: 500;
-            margin-bottom: 30px;
-            padding: 20px 0;
-            border-bottom: 2px dotted var(--border);
-            font-family: 'Georgia', serif;
+            color: #667eea;
         }
-
-        /* Microphone Status */
-        .mic-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
+        
+        .phrases-list {
             margin: 20px 0;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 60px;
         }
-
-        .mic-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--primary);
-            border-radius: 50%;
+        
+        .phrase {
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            border-left: 4px solid #667eea;
+        }
+        
+        .sentence-box {
+            background: #e3f2fd;
+            padding: 25px;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            border-left: 5px solid #2196f3;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .incorrect-sentence {
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 10px;
+            color: #c62828;
+            margin: 10px 0;
+            font-size: 1.2rem;
+        }
+        
+        .recording-section {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        
+        .microphone-status {
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1.4rem;
-            transition: all 0.3s ease;
+            gap: 20px;
+            margin-bottom: 30px;
         }
-
-        .mic-icon.recording {
-            background: #dc2626;
-            animation: micPulse 1.5s infinite;
+        
+        .mic-icon {
+            font-size: 3rem;
+            transition: color 0.3s;
         }
-
-        @keyframes micPulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
-            }
+        
+        .status-text {
+            font-size: 1.2rem;
+            color: #666;
         }
-
-        .mic-status-text {
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        .mic-status-text small {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            display: block;
-            margin-top: 2px;
-        }
-
-        /* Recording Controls */
+        
         .recording-controls {
             display: flex;
             gap: 15px;
             justify-content: center;
-            margin: 30px 0 10px;
+            margin-bottom: 20px;
         }
-
-        .btn-record {
-            padding: 16px 32px;
+        
+        button {
+            padding: 15px 30px;
             font-size: 1.1rem;
-            font-weight: 600;
             border: none;
-            border-radius: 16px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex: 1;
-            max-width: 220px;
+            transition: all 0.3s;
         }
-
-        .btn-record.start {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 8px 20px rgba(94, 84, 142, 0.3);
-        }
-
-        .btn-record.start:hover:not(:disabled) {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(94, 84, 142, 0.4);
-        }
-
-        .btn-record.stop {
-            background: #dc2626;
-            color: white;
-            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
-        }
-
-        .btn-record.stop:hover:not(:disabled) {
-            background: #b91c1c;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(220, 38, 38, 0.4);
-        }
-
-        .btn-record:disabled {
+        
+        button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
-
-        /* Wave Animation */
-        .wave-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            height: 30px;
-            margin: 15px 0;
+        
+        .record-btn {
+            background: #f44336;
+            color: white;
         }
-
-        .wave {
-            width: 4px;
-            height: 20px;
-            background: var(--primary);
-            border-radius: 4px;
-            animation: wave 1s ease-in-out infinite;
+        
+        .record-btn:hover:not(:disabled) {
+            background: #d32f2f;
+            transform: scale(1.05);
         }
-
-        .wave:nth-child(1) { animation-delay: 0.1s; height: 15px; }
-        .wave:nth-child(2) { animation-delay: 0.2s; height: 25px; }
-        .wave:nth-child(3) { animation-delay: 0.3s; height: 30px; }
-        .wave:nth-child(4) { animation-delay: 0.4s; height: 25px; }
-        .wave:nth-child(5) { animation-delay: 0.5s; height: 15px; }
-
-        @keyframes wave {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(1.5); }
+        
+        .stop-btn {
+            background: #ff9800;
+            color: white;
         }
-
-        /* Status Message */
-        .status-message {
-            text-align: center;
+        
+        .stop-btn:hover:not(:disabled) {
+            background: #f57c00;
+            transform: scale(1.05);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 50px;
+            font-size: 1.2rem;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .timer {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
             margin: 20px 0;
-            padding: 12px;
-            background: #f8fafc;
-            border-radius: 12px;
-            color: var(--text-light);
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
-
-        .status-message i {
-            color: var(--primary);
+        
+        .success-message {
+            color: #4caf50;
+            font-size: 1.2rem;
+            margin: 20px 0;
         }
-
-        /* Microphone Note */
-        .microphone-note {
-            text-align: center;
+        
+        .submit-section {
             margin-top: 30px;
-            color: var(--text-muted);
-            font-size: 0.95rem;
+        }
+        
+        .word-bank {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
             justify-content: center;
-            gap: 8px;
-            background: #f1f5f9;
-            padding: 12px 20px;
-            border-radius: 50px;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 20px 0;
+            padding: 20px;
+            background: #fff3e0;
+            border-radius: 10px;
         }
-
-        .microphone-note i {
-            color: var(--primary);
-            font-size: 1rem;
+        
+        .word-tile {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 2px solid #ff9800;
+            font-size: 1.2rem;
+            font-weight: 500;
         }
-
-        /* Hide elements initially */
-        .recording-only {
+        
+        .submit-all-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 50px;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        .submit-all-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
+        }
+        
+        .hidden {
             display: none;
-        }
-
-        .recording-active .recording-only {
-            display: flex;
-        }
-
-        .recording-active .idle-only {
-            display: none;
-        }
-
-        @media (max-width: 600px) {
-            .header {
-                padding: 30px 20px;
-            }
-            
-            .header h1 {
-                font-size: 2.2rem;
-            }
-            
-            .header i {
-                font-size: 3rem;
-            }
-            
-            .content {
-                padding: 25px 20px;
-            }
-            
-            .sentence-text {
-                font-size: 1.4rem;
-            }
-            
-            .recording-controls {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn-record {
-                max-width: 100%;
-                width: 100%;
-            }
-            
-            .question-card {
-                padding: 25px;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <!-- Header - Exactly matching start page -->
-        <div class="header">
-            <i class="fas fa-microphone-alt"></i>
-            <h1>Question {{ question_index|add:1 }}</h1>
-            <div class="subtitle">Read the sentence aloud clearly</div>
-        </div>
+
+
+    <div id="urls" 
+     data-question-url="{% url 'speaking:question' 0 %}"
+     data-submit-url="{% url 'speaking:submit_recording' %}"
+     data-process-url="{% url 'speaking:process_results' %}"
+     data-result-url="{% url 'speaking:result' %}"
+     style="display: none;"></div>   
+
+    <div class="container">
+        <header>
+            <h1>🎓 AI Speaking Assessment</h1>
+        </header>
         
-        <!-- Content -->
-        <div class="content">
-            <!-- Progress Indicator -->
-            <div class="progress-section">
-                <div class="question-info">
-                    <span class="question-badge">
-                        <i class="fas fa-question-circle"></i>
-                        Question {{ question_index|add:1 }} of 5
-                    </span>
-                    <span class="timer-info">
-                        <i class="far fa-clock"></i>
-                        5-7 min total
-                    </span>
-                </div>
+        <main>
+            <div class="progress">
+                Question {{ q_num }} of 5
                 <div class="progress-bar">
-                    <div class="progress-fill"></div>
+                    <div class="progress-fill" style="width: {{ q_num }}0%"></div>
                 </div>
             </div>
             
-            <!-- Question Card -->
             <div class="question-card">
-                <div class="sentence-label">
-                    <i class="fas fa-quote-left"></i>
-                    SENTENCE TO READ
-                </div>
+                <h2>{{ question.title }}</h2>
+                <div class="instruction">{{ question.instruction }}</div>
                 
-                <div class="sentence-text">
-                    "{{ reference_text }}"
-                </div>
-                
-                <!-- Microphone Status -->
-                <div class="mic-status">
-                    <div class="mic-icon" id="micIcon">
-                        <i class="fas fa-microphone"></i>
+                <div class="question-content">
+                    <!-- Question 1: 5 Separate Recording Buttons -->
+                    {% if q_num == 1 %}
+                    <div class="words-list" id="q1-words">
+                        {% for word in question.words %}
+                        <div class="word-item" id="word-{{ forloop.counter }}">
+                            <div class="word-header">
+                                <h3>Word {{ forloop.counter }}: {{ word }}</h3>
+                                <span class="word-status" id="status-{{ forloop.counter }}">⏺️ Not recorded</span>
+                            </div>
+                            <div class="word-controls">
+                                <button class="record-btn word-btn" onclick="startWordRecording({{ forloop.counter }})" 
+                                        id="record-{{ forloop.counter }}">Record Word {{ forloop.counter }}</button>
+                                <button class="stop-btn word-btn" onclick="stopWordRecording({{ forloop.counter }})" 
+                                        id="stop-{{ forloop.counter }}" disabled>Stop</button>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
-                    <div class="mic-status-text" id="micStatus">
-                        Ready to record
-                        <small>Click Start when ready</small>
+                    <button class="submit-all-btn" onclick="submitAllWords()" id="submitAllBtn" disabled>Submit All Words</button>
+                    {% endif %}
+                    
+                    <!-- Question 2: Word Bank -->
+                    {% if q_num == 2 and question.words %}
+                        <div class="word-bank">
+                            {% for word in question.words %}
+                                <span class="word-tile">{{ word }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Question 3: Phrases -->
+                    {% if q_num == 3 and question.phrases %}
+                        <div class="phrases-list">
+                            {% for phrase in question.phrases %}
+                                <div class="phrase">• {{ phrase }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Question 4: Sentence -->
+                    {% if q_num == 4 and question.sentence %}
+                        <div class="sentence-box">
+                            {{ question.sentence }}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Question 5: Incorrect Sentence Only -->
+                    {% if q_num == 5 and question.incorrect_sentence %}
+                        <div class="incorrect-sentence">
+                            <strong>Incorrect:</strong> {{ question.incorrect_sentence }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Recording Section for Q2-Q5 -->
+                {% if q_num != 1 %}
+                <div class="recording-section">
+                    <div class="microphone-status">
+                        <div class="mic-icon" id="micIcon">🎤</div>
+                        <div class="status-text" id="statusText">Ready to record</div>
+                    </div>
+                    
+                    <div class="recording-controls">
+                        <button class="record-btn" onclick="startRecording()" id="recordBtn">
+                            Start Recording
+                        </button>
+                        <button class="stop-btn" onclick="stopRecording()" id="stopBtn" disabled>
+                            Stop Recording
+                        </button>
+                    </div>
+                    
+                    <div class="timer" id="timer">00:00</div>
+                    
+                    <div class="submit-section" style="display: none;" id="submitSection">
+                        <p class="success-message">✓ Recording complete!</p>
+                        <button class="submit-btn" onclick="submitRecording()" id="submitBtn">
+                            Submit & Continue →
+                        </button>
                     </div>
                 </div>
-                
-                <!-- Recording Controls - Clean and prominent -->
-                <div class="recording-controls">
-                    <button onclick="startRecording()" class="btn-record start" id="startBtn">
-                        <i class="fas fa-circle"></i>
-                        Start Recording
-                    </button>
-                    <button onclick="stopRecording()" class="btn-record stop" id="stopBtn" disabled>
-                        <i class="fas fa-stop"></i>
-                        Stop & Submit
-                    </button>
-                </div>
-                
-                <!-- Wave Animation (visible only during recording) -->
-                <div class="wave-container" id="waveAnimation" style="display: none;">
-                    <div class="wave"></div>
-                    <div class="wave"></div>
-                    <div class="wave"></div>
-                    <div class="wave"></div>
-                    <div class="wave"></div>
-                </div>
-                
-                <!-- Status Message -->
-                <div class="status-message" id="statusMessage">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Click Start Recording to begin</span>
-                </div>
+                {% endif %}
             </div>
-            
-            <!-- Microphone Note - Exactly matching start page -->
-            <div class="microphone-note">
-                <i class="fas fa-info-circle"></i>
-                Please ensure your microphone is connected and permissions are granted
-            </div>
-        </div>
+        </main>
+        
+        <footer>
+            <p>© 2026 Speaking Assessment System | Research Purpose</p>
+        </footer>
     </div>
 
     <script>
-        var questionIndex = "{{ question_index }}";
-        
+        // Get URLs from hidden div
+                // Get URLs from hidden div
+        const urls = document.getElementById('urls');
+        const questionBaseUrl = urls ? urls.dataset.questionUrl : 'NOT FOUND';
+        const submitUrl = urls ? urls.dataset.submitUrl : 'NOT FOUND';
+        const processUrl = urls ? urls.dataset.processUrl : 'NOT FOUND';
+        const resultUrl = urls ? urls.dataset.resultUrl : 'NOT FOUND';
+
+        // ADD THESE DEBUG LINES
+        console.log('========== URL DEBUG ==========');
+        console.log('questionBaseUrl:', questionBaseUrl);
+        console.log('submitUrl:', submitUrl);
+        console.log('processUrl:', processUrl);
+        console.log('resultUrl:', resultUrl);
+        console.log('===============================');
+        // Global variables
         let mediaRecorder;
         let audioChunks = [];
         let audioBlob;
+        let timerInterval;
+        let seconds = 0;
+        const qNum = {{ q_num }};
         
+        // Q1 specific variables
+        let currentWord = null;
+        let wordRecordings = {1: null, 2: null, 3: null, 4: null, 5: null};
+        let wordMediaRecorder = {1: null, 2: null, 3: null, 4: null, 5: null};
+        let wordStreams = {1: null, 2: null, 3: null, 4: null, 5: null};
+        
+        // ========== Q1: Individual Word Recording Functions ==========
+        function startWordRecording(wordNum) {
+            currentWord = wordNum;
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    // Store stream for cleanup
+                    wordStreams[wordNum] = stream;
+                    
+                    wordMediaRecorder[wordNum] = new MediaRecorder(stream);
+                    let chunks = [];
+                    
+                    wordMediaRecorder[wordNum].ondataavailable = event => {
+                        if (event.data.size > 0) {
+                            chunks.push(event.data);
+                        }
+                    };
+                    
+                    wordMediaRecorder[wordNum].onstop = () => {
+                        if (chunks.length === 0) {
+                            alert('No audio recorded! Please check your microphone.');
+                            return;
+                        }
+                        
+                        const blob = new Blob(chunks, { type: 'audio/wav' });
+                        
+                        if (blob.size < 1000) {
+                            alert('Recording too short or no audio detected!');
+                            return;
+                        }
+                        
+                        // Save recording
+                        wordRecordings[wordNum] = blob;
+                        
+                        // Update UI
+                        document.getElementById(`status-${wordNum}`).innerHTML = '✅ Recorded';
+                        document.getElementById(`status-${wordNum}`).className = 'word-status recorded';
+                        document.getElementById(`record-${wordNum}`).disabled = false;
+                        document.getElementById(`stop-${wordNum}`).disabled = true;
+                        
+                        // Check if all words recorded
+                        let allRecorded = true;
+                        for (let i = 1; i <= 5; i++) {
+                            if (!wordRecordings[i]) {
+                                allRecorded = false;
+                                break;
+                            }
+                        }
+                        if (allRecorded) {
+                            document.getElementById('submitAllBtn').disabled = false;
+                        }
+                        
+                        // Stop all tracks
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+                    
+                    wordMediaRecorder[wordNum].start();
+                    
+                    // Update UI
+                    document.getElementById(`record-${wordNum}`).disabled = true;
+                    document.getElementById(`stop-${wordNum}`).disabled = false;
+                    document.getElementById(`status-${wordNum}`).innerHTML = '🔴 Recording...';
+                    document.getElementById(`status-${wordNum}`).className = 'word-status';
+                })
+                .catch(error => {
+                    alert('Microphone error: ' + error.message);
+                });
+        }
+        
+        function stopWordRecording(wordNum) {
+            if (wordMediaRecorder[wordNum] && wordMediaRecorder[wordNum].state !== 'inactive') {
+                wordMediaRecorder[wordNum].stop();
+            }
+        }
+        
+       function submitAllWords() {
+    console.log('🚀 submitAllWords STARTED');
+    
+    // Check if all words are recorded
+    for (let i = 1; i <= 5; i++) {
+        if (!wordRecordings[i]) {
+            alert(`Please record Word ${i} first`);
+            return;
+        }
+    }
+    
+    // Disable button and show uploading status
+    document.getElementById('submitAllBtn').disabled = true;
+    document.getElementById('submitAllBtn').textContent = 'Uploading 0/5...';
+    
+    // Upload each word
+    let uploaded = 0;
+    let errors = 0;
+    
+    for (let i = 1; i <= 5; i++) {
+        const formData = new FormData();
+        formData.append('audio', wordRecordings[i], `word${i}.wav`);
+        formData.append('q_num', 1);
+        formData.append('word_num', i);
+        
+        console.log(`📤 Uploading word ${i}...`);
+        
+        fetch(submitUrl, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            uploaded++;
+            document.getElementById('submitAllBtn').textContent = `Uploading ${uploaded}/5...`;
+            console.log(`✅ Word ${i} uploaded successfully`);
+            
+            if (uploaded === 5) {
+                console.log('🎯 ALL WORDS UPLOADED! Redirecting to: /speaking/question/2/');
+                setTimeout(() => {
+                    window.location.href = '/speaking/question/2/';
+                }, 500); // Small delay to ensure everything is processed
+            }
+        })
+        .catch(error => {
+            errors++;
+            console.error(`❌ Upload failed for word ${i}:`, error);
+            alert('Upload failed for word ' + i + ': ' + error.message);
+            document.getElementById('submitAllBtn').disabled = false;
+            document.getElementById('submitAllBtn').textContent = 'Submit All Words';
+        });
+    }
+}
+        
+        // ========== Q2-Q5: Regular Recording Functions ==========
         function startRecording() {
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(stream => {
                     mediaRecorder = new MediaRecorder(stream);
                     audioChunks = [];
-                    mediaRecorder.start();
                     
-                    // Update UI for recording state
-                    document.getElementById('startBtn').disabled = true;
-                    document.getElementById('stopBtn').disabled = false;
-                    document.getElementById('micIcon').classList.add('recording');
-                    document.getElementById('micIcon').innerHTML = '<i class="fas fa-microphone-alt"></i>';
-                    document.getElementById('micStatus').innerHTML = 'Recording in progress<small>Speak clearly...</small>';
-                    document.getElementById('waveAnimation').style.display = 'flex';
-                    document.getElementById('statusMessage').innerHTML = '<i class="fas fa-circle text-danger" style="color: #dc2626;"></i> <span style="color: #dc2626;">Recording... Speak now</span>';
-                    
-                    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                    mediaRecorder.ondataavailable = event => {
+                        if (event.data.size > 0) {
+                            audioChunks.push(event.data);
+                        }
+                    };
                     
                     mediaRecorder.onstop = () => {
-                        audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+                        if (audioChunks.length === 0) {
+                            alert('No audio recorded! Please check your microphone.');
+                            return;
+                        }
+                        
+                        audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        
+                        if (audioBlob.size < 1000) {
+                            alert('Recording too short or no audio detected!');
+                            return;
+                        }
+                        
+                        document.getElementById('submitSection').style.display = 'block';
+                        mediaRecorder.stream.getTracks().forEach(track => track.stop());
                     };
+                    
+                    mediaRecorder.start();
+                    
+                    document.getElementById('recordBtn').disabled = true;
+                    document.getElementById('stopBtn').disabled = false;
+                    document.getElementById('micIcon').style.color = '#ff4444';
+                    document.getElementById('statusText').textContent = 'Recording...';
+                    
+                    startTimer();
                 })
-                .catch(err => {
-                    alert("Microphone error: " + err);
-                    document.getElementById('statusMessage').innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #dc2626;"></i> Microphone access denied';
+                .catch(error => {
+                    alert('Microphone error: ' + error.message);
                 });
         }
         
         function stopRecording() {
-            if (!mediaRecorder) {
-                alert("Please start recording first!");
-                return;
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                
+                document.getElementById('recordBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                document.getElementById('micIcon').style.color = '';
+                document.getElementById('statusText').textContent = 'Recording complete';
+                
+                stopTimer();
             }
+        }
+        
+        function startTimer() {
+            seconds = 0;
+            updateTimerDisplay();
+            timerInterval = setInterval(updateTimerDisplay, 1000);
+        }
+        
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+        
+        function updateTimerDisplay() {
+            seconds++;
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            document.getElementById('timer').textContent = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function submitRecording() {
+            const formData = new FormData();
+            formData.append('audio', audioBlob, `recording_${qNum}.wav`);
+            formData.append('q_num', qNum);
             
-            mediaRecorder.stop();
+            document.getElementById('submitBtn').textContent = 'Uploading...';
+            document.getElementById('submitBtn').disabled = true;
             
-            // Update UI for processing state
-            document.getElementById('stopBtn').disabled = true;
-            document.getElementById('micIcon').classList.remove('recording');
-            document.getElementById('micIcon').innerHTML = '<i class="fas fa-microphone"></i>';
-            document.getElementById('waveAnimation').style.display = 'none';
-            document.getElementById('statusMessage').innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Processing recording...';
-            
-            setTimeout(() => {
-                if (!audioBlob) return;
-                
-                const formData = new FormData();
-                formData.append("audio", audioBlob, "recording.webm");
-                
-                fetch(`/speaking/record/${questionIndex}/`, { 
-                    method: "POST", 
-                    body: formData 
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.next_url) {
-                        document.getElementById('statusMessage').innerHTML = '<i class="fas fa-check-circle" style="color: #10b981;"></i> Recording saved! Moving to next question...';
-                        setTimeout(() => {
-                            window.location.href = data.next_url;
-                        }, 1000);
+            fetch(submitUrl,{
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.next_question) {
+                        window.location.href =  '/speaking/question/' + data.next_question + '/';
                     } else {
-                        alert("Error: " + data.error);
-                        document.getElementById('statusMessage').innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #dc2626;"></i> Error occurred';
-                        document.getElementById('startBtn').disabled = false;
+                        processResults();
                     }
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert("Upload failed");
-                    document.getElementById('statusMessage').innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #dc2626;"></i> Upload failed';
-                    document.getElementById('startBtn').disabled = false;
-                });
-            }, 300);
+                } else {
+                    alert('Error: ' + data.error);
+                    document.getElementById('submitBtn').textContent = 'Submit & Continue →';
+                    document.getElementById('submitBtn').disabled = false;
+                }
+            })
+            .catch(error => {
+                alert('Upload failed: ' + error.message);
+                document.getElementById('submitBtn').textContent = 'Submit & Continue →';
+                document.getElementById('submitBtn').disabled = false;
+            });
+        }
+        
+        function processResults() {
+           fetch(processUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                   window.location.href = '{% url "speaking:result" %}';
+                } else {
+                    alert('Error processing results: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('Failed to process results: ' + error.message);
+            });
         }
     </script>
 </body>

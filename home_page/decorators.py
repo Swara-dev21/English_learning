@@ -159,6 +159,11 @@ def pretest_access_required(test_name=None):
                         prev_completed = getattr(profile, f'{prev_test["name"]}_completed', False)
                         
                         if not prev_completed:
+                            # ADD DEBUG PRINT TO SEE WHAT'S ACTUALLY HAPPENING
+                            print(f"DEBUG - Blocked access to {test_name}")
+                            print(f"DEBUG - Previous test: {prev_test['name']}_completed = {prev_completed}")
+                            print(f"DEBUG - Profile values: listening={profile.listening_completed}, speaking={profile.speaking_completed}, reading={profile.reading_completed}, writing={profile.writing_completed}")
+                            
                             messages.warning(
                                 request,
                                 f"Please complete the {prev_test['name']} test first."
@@ -168,7 +173,6 @@ def pretest_access_required(test_name=None):
             return view_func(request, *args, **kwargs)
         return _wrapped_view
     return decorator
-
 
 def ajax_pretest_check(test_name=None):
     """

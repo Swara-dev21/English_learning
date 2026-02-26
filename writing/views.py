@@ -805,6 +805,26 @@ def writing_results(request, result_id):
     # Count wrong answers
     wrong_answers_count = len([q for q in question_data if not q['is_correct']])
     
+    # Prepare results list for the 5-box grid (like reading)
+    results_list = []
+    for q in questions:
+        response = responses_by_question.get(q.order)
+        is_correct = response.score >= 80 if response else False
+        results_list.append({
+            'question': q,
+            'is_correct': is_correct
+        })
+    
+    # Determine feedback text based on level
+    level_lower = result.level.lower() if result.level else 'basic'
+    
+    if 'advanced' in level_lower:
+        feedback_text = "Excellent! Challenge yourself with native content now"
+    elif 'intermediate' in level_lower:
+        feedback_text = "Good progress. Keep practicing"
+    else:
+        feedback_text = "Keep practicing your writing "
+    
     context = {
         'result': result,
         'question_data': question_data,
@@ -813,6 +833,8 @@ def writing_results(request, result_id):
         'max_score': result.max_score,
         'wrong_answers_count': wrong_answers_count,
         'level': result.level,
+        'results': results_list,  # For the 5-box grid
+        'feedback': feedback_text,  # For feedback text with emoji
     }
     
     return render(request, 'writing/writing_results.html', context)
