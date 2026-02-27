@@ -11,13 +11,9 @@ import tempfile
 import soundfile as sf
 from scipy.ndimage import binary_dilation, binary_erosion
 import math
-import language_tool_python
 import torch
 import re
 from transformers import WhisperForConditionalGeneration, WhisperProcessor, pipeline
-
-# Initialize grammar checker
-# grammar_tool = language_tool_python.LanguageTool('en-US')
 
 # Set device
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -162,6 +158,242 @@ QUESTIONS = {
     }
 }
 
+class SimpleGrammarChecker:
+    """
+    Simple rule-based grammar checker for common English errors
+    """
+    def __init__(self):
+        # Subject-verb agreement rules for common pronouns
+        self.subject_verb_rules = {
+            ('he', 'go'): 'goes',
+            ('she', 'go'): 'goes',
+            ('it', 'go'): 'goes',
+            ('he', 'do'): 'does',
+            ('she', 'do'): 'does',
+            ('it', 'do'): 'does',
+            ('he', 'have'): 'has',
+            ('she', 'have'): 'has',
+            ('it', 'have'): 'has',
+            ('he', 'was'): 'was',
+            ('she', 'was'): 'was',
+            ('it', 'was'): 'was',
+            ('they', 'was'): 'were',
+            ('we', 'was'): 'were',
+            ('he', 'is'): 'is',
+            ('she', 'is'): 'is',
+            ('it', 'is'): 'is',
+            ('they', 'is'): 'are',
+            ('we', 'is'): 'are',
+        }
+        
+        # Common verb forms
+        self.irregular_verbs = {
+            'go': 'went',
+            'see': 'saw',
+            'eat': 'ate',
+            'drink': 'drank',
+            'run': 'ran',
+            'come': 'came',
+            'become': 'became',
+            'begin': 'began',
+            'break': 'broke',
+            'bring': 'brought',
+            'buy': 'bought',
+            'catch': 'caught',
+            'choose': 'chose',
+            'do': 'did',
+            'draw': 'drew',
+            'dream': 'dreamt',
+            'drive': 'drove',
+            'fall': 'fell',
+            'feel': 'felt',
+            'fight': 'fought',
+            'find': 'found',
+            'fly': 'flew',
+            'forget': 'forgot',
+            'forgive': 'forgave',
+            'freeze': 'froze',
+            'get': 'got',
+            'give': 'gave',
+            'have': 'had',
+            'hear': 'heard',
+            'hide': 'hid',
+            'hold': 'held',
+            'keep': 'kept',
+            'know': 'knew',
+            'lead': 'led',
+            'leave': 'left',
+            'lend': 'lent',
+            'let': 'let',
+            'lose': 'lost',
+            'make': 'made',
+            'mean': 'meant',
+            'meet': 'met',
+            'pay': 'paid',
+            'put': 'put',
+            'read': 'read',
+            'ride': 'rode',
+            'ring': 'rang',
+            'rise': 'rose',
+            'say': 'said',
+            'see': 'saw',
+            'sell': 'sold',
+            'send': 'sent',
+            'shake': 'shook',
+            'shine': 'shone',
+            'shoot': 'shot',
+            'show': 'showed',
+            'shut': 'shut',
+            'sing': 'sang',
+            'sink': 'sank',
+            'sit': 'sat',
+            'sleep': 'slept',
+            'speak': 'spoke',
+            'spend': 'spent',
+            'stand': 'stood',
+            'steal': 'stole',
+            'swim': 'swam',
+            'take': 'took',
+            'teach': 'taught',
+            'tell': 'told',
+            'think': 'thought',
+            'throw': 'threw',
+            'understand': 'understood',
+            'wake': 'woke',
+            'wear': 'wore',
+            'win': 'won',
+            'write': 'wrote'
+        }
+        
+        # Articles (a/an/the) rules
+        self.article_rules = {
+            'a': ['consonant_sound'],
+            'an': ['vowel_sound']
+        }
+        
+        # Preposition rules
+        self.common_prepositions = ['in', 'on', 'at', 'to', 'for', 'with', 'by', 'from', 'of']
+        
+    def check_subject_verb_agreement(self, words):
+        """
+        Check for subject-verb agreement errors
+        Returns list of errors with positions and corrections
+        """
+        errors = []
+        
+        for i in range(len(words) - 1):
+            # Check patterns like "He go", "She do", etc.
+            if i < len(words) - 1 and words[i] in ['he', 'she', 'it', 'they', 'we']:
+                subject = words[i]
+                verb = words[i + 1]
+                
+                # Check if this subject-verb pair has a rule
+                key = (subject, verb)
+                if key in self.subject_verb_rules:
+                    expected = self.subject_verb_rules[key]
+                    errors.append({
+                        'position': i + 1,
+                        'word': verb,
+                        'expected': expected,
+                        'rule': 'subject_verb_agreement',
+                        'message': f"'{subject}' should be followed by '{expected}', not '{verb}'"
+                    })
+        
+        return errors
+    
+    def check_verb_tense(self, words, context=None):
+        """
+        Check for incorrect verb tense usage
+        """
+        errors = []
+        
+        # Simple check for past tense indicators
+        time_indicators = ['yesterday', 'last', 'ago', 'previous']
+        
+        for i, word in enumerate(words):
+            # If there's a past time indicator, check nearby verbs
+            if word in time_indicators:
+                # Check previous word (might be a verb)
+                if i > 0 and words[i-1] in self.irregular_verbs:
+                    # Should be past tense
+                    expected = self.irregular_verbs[words[i-1]]
+                    if words[i-1] != expected:
+                        errors.append({
+                            'position': i-1,
+                            'word': words[i-1],
+                            'expected': expected,
+                            'rule': 'verb_tense',
+                            'message': f"With time indicator '{word}', use past tense '{expected}'"
+                        })
+        
+        return errors
+    
+    def check_article_usage(self, words):
+        """
+        Check for a/an/article usage errors
+        """
+        errors = []
+        
+        vowels = ['a', 'e', 'i', 'o', 'u']
+        
+        for i, word in enumerate(words):
+            if word == 'a' and i < len(words) - 1:
+                next_word = words[i + 1]
+                if next_word and next_word[0] in vowels:
+                    errors.append({
+                        'position': i,
+                        'word': 'a',
+                        'expected': 'an',
+                        'rule': 'article_usage',
+                        'message': f"Use 'an' before vowel sound, not 'a'"
+                    })
+            elif word == 'an' and i < len(words) - 1:
+                next_word = words[i + 1]
+                if next_word and next_word[0] not in vowels:
+                    errors.append({
+                        'position': i,
+                        'word': 'an',
+                        'expected': 'a',
+                        'rule': 'article_usage',
+                        'message': f"Use 'a' before consonant sound, not 'an'"
+                    })
+        
+        return errors
+    
+    def check_grammar(self, text):
+        """
+        Main method to check grammar of a text
+        Returns list of grammar errors
+        """
+        words = text.lower().split()
+        all_errors = []
+        
+        # Apply different grammar checks
+        all_errors.extend(self.check_subject_verb_agreement(words))
+        all_errors.extend(self.check_verb_tense(words))
+        all_errors.extend(self.check_article_usage(words))
+        
+        return all_errors
+    
+    def get_grammar_score_for_q5(self, spoken_words, expected_words):
+        """
+        Specialized scoring for Question 5
+        Returns grammar score out of 10
+        """
+        grammar_score = 0
+        
+        # For Q5, we know the expected correction: "He go" -> "He goes"
+        if len(spoken_words) >= 2:
+            # Check if subject "he" is followed by correct verb form
+            if spoken_words[0] == 'he' and spoken_words[1] == 'goes':
+                grammar_score = 10
+            elif spoken_words[0] == 'he' and spoken_words[1] == 'go':
+                grammar_score = 5  # Partial credit for recognizing need for change
+            elif len(spoken_words) > 1 and spoken_words[1] in ['go', 'goes']:
+                grammar_score = 3  # Small credit for using a verb
+        
+        return grammar_score
+
 class PronunciationEngine:
     def __init__(self):
         self.sample_rate = 16000
@@ -169,6 +401,7 @@ class PronunciationEngine:
         self.max_expected_distance = 20000
         self.voice_threshold = 0.001
         self.silence_threshold = 0.005
+        self.grammar_checker = SimpleGrammarChecker()
         
     def transcribe_audio(self, audio_path):
         """
@@ -298,18 +531,21 @@ class PronunciationEngine:
             return 0
     
     def score_q2_sentence(self, student_audio_path):
-    
+        """Score Q2: 5 words, each 20% (10% grammar + 10% coherence)"""
         transcribed_text = self.transcribe_audio(student_audio_path)
         spoken_words = transcribed_text.lower().split()
         
-        # 🔥 ADD THESE 3 LINES HERE - RIGHT AFTER split()
-        import re
+        # Clean words of punctuation
         spoken_words = [re.sub(r'[^\w\s]', '', w) for w in spoken_words]
         print(f"🧹 Cleaned words for Q2: {spoken_words}")  # Debug
         
         expected = QUESTIONS[2]['expected_words']
         word_results = []
         total_score = 0
+        
+        # Use grammar checker for additional insights
+        grammar_errors = self.grammar_checker.check_grammar(transcribed_text)
+        grammar_error_positions = [e['position'] for e in grammar_errors]
         
         for i in range(5):
             word_result = {
@@ -321,11 +557,17 @@ class PronunciationEngine:
                 'total': 0
             }
             
+            # Grammar score: 10 if word is in expected set (any position)
             if i < len(spoken_words) and spoken_words[i] in expected:
                 word_result['grammar_score'] = 10
             
+            # Coherence score: 10 if word is in correct position
             if i < len(spoken_words) and spoken_words[i] == expected[i]:
                 word_result['coherence_score'] = 10
+            
+            # Deduct points if this position has a grammar error
+            if i in grammar_error_positions:
+                word_result['grammar_score'] = max(0, word_result['grammar_score'] - 5)
             
             word_result['total'] = word_result['grammar_score'] + word_result['coherence_score']
             total_score += word_result['total']
@@ -334,7 +576,7 @@ class PronunciationEngine:
         return word_results, total_score
         
     def score_q3_phrases(self, student_audio_path):
-    
+        """Score Q3: 9 words, each 11.1% (5.55% correctness + 5.55% fluency)"""
         transcribed_text = self.transcribe_audio(student_audio_path)
         spoken_words = transcribed_text.lower().split()
         
@@ -374,10 +616,11 @@ class PronunciationEngine:
                 'total': 0
             }
             
+            # Fluency: if they spoke something (even if wrong), give partial fluency credit
             if word_result['correctness_score'] > 0:
                 word_result['fluency_score'] = 5.55
             elif spoken != '[silence]':
-                word_result['fluency_score'] = 2.77
+                word_result['fluency_score'] = 2.77  # Partial credit for attempting
             
             word_result['total'] = round(word_result['correctness_score'] + word_result['fluency_score'], 2)
             total_score += word_result['total']
@@ -404,9 +647,13 @@ class PronunciationEngine:
                 'total': 0
             }
             
+            # Correctness score
             if i < len(spoken_words) and i < len(expected) and spoken_words[i] == expected[i]:
                 word_result['correctness_score'] = 6.25
-                word_result['fluency_score'] = 6.25
+            
+            # Fluency score - partial credit for attempting
+            if i < len(spoken_words):
+                word_result['fluency_score'] = 3.12 if word_result['correctness_score'] == 0 else 6.25
             elif i < len(spoken_words):
                 word_result['fluency_score'] = 3.12
             
@@ -417,7 +664,7 @@ class PronunciationEngine:
         return word_results, total_score
     
     def score_q5_grammar(self, student_audio_path):
-        """Score Q5: 5 words, each 20% (10% correctness + 10% grammar)"""
+        """Score Q5: 6 words, each 20% (10% correctness + 10% grammar)"""
         transcribed_text = self.transcribe_audio(student_audio_path)
         spoken_words = transcribed_text.lower().split()
         
@@ -425,26 +672,38 @@ class PronunciationEngine:
         word_results = []
         total_score = 0
         
-        for i in range(5):
+        # Get grammar score from specialized checker
+        grammar_score_q5 = self.grammar_checker.get_grammar_score_for_q5(spoken_words, expected)
+        
+        for i in range(6):
+            spoken = spoken_words[i] if i < len(spoken_words) else '[silence]'
+            
             word_result = {
                 'position': i + 1,
                 'expected': expected[i],
-                'spoken': spoken_words[i] if i < len(spoken_words) else '[silence]',
+                'spoken': spoken,
                 'correctness_score': 0,
                 'grammar_score': 0,
                 'total': 0
             }
             
-            if i < len(spoken_words) and spoken_words[i] == expected[i]:
+            # Correctness score: 10 if exact match
+            if i < len(spoken_words) and spoken == expected[i]:
                 word_result['correctness_score'] = 10
             
-            if i < len(spoken_words):
-                if i == 1:  # Second word should be "goes"
-                    if spoken_words[i] in ['goes', 'go']:
-                        word_result['grammar_score'] = 10 if spoken_words[i] == 'goes' else 5
-                else:
-                    if spoken_words[i] in expected:
-                        word_result['grammar_score'] = 10
+            # Grammar score: Distribute the overall grammar score across words
+            # For Q5, grammar is mostly about the verb form (position 2)
+            if i == 1:  # The verb position (goes)
+                if spoken == 'goes':
+                    word_result['grammar_score'] = 10
+                elif spoken == 'go':
+                    word_result['grammar_score'] = 5  # Partial credit
+            else:
+                # Other positions get full grammar score if correct
+                if i < len(spoken_words) and spoken in expected:
+                    word_result['grammar_score'] = 10
+                elif spoken != '[silence]':
+                    word_result['grammar_score'] = 5  # Partial for attempting
             
             word_result['total'] = word_result['correctness_score'] + word_result['grammar_score']
             total_score += word_result['total']
@@ -453,7 +712,7 @@ class PronunciationEngine:
         return word_results, total_score
     
     def score_recording(self, student_audio_path, question_number):
-        """Main scoring function - for Q2-Q5 only"""
+        """Main scoring function - for Q1-Q5"""
         if not os.path.exists(student_audio_path):
             return 0, []
         
@@ -466,8 +725,11 @@ class PronunciationEngine:
         except:
             return 0, []
         
-        # Score based on question type (Q2-Q5 only)
-        if question_number == 2:
+        # Score based on question type
+        if question_number == 1:
+            # Q1 handled separately in the view
+            return 0, []
+        elif question_number == 2:
             word_results, total = self.score_q2_sentence(student_audio_path)
         elif question_number == 3:
             word_results, total = self.score_q3_phrases(student_audio_path)
@@ -482,26 +744,51 @@ class PronunciationEngine:
     
     def generate_feedback(self, scores):
         """Generate overall feedback"""
+        if not scores:
+            return {
+                'level': 'No Data',
+                'message': 'No scores available',
+                'average': 0
+            }
+        
         avg_score = sum(scores.values()) / len(scores)
         
         if avg_score >= 85:
             level = "Excellent"
-            message = "Your pronunciation and grammar are excellent!"
+            message = "Your pronunciation and grammar are excellent! You have a strong command of English."
         elif avg_score >= 70:
             level = "Good"
-            message = "Good job! Minor improvements needed."
+            message = "Good job! You're doing well. Focus on the specific words and grammar rules where you lost points."
         elif avg_score >= 50:
             level = "Fair"
-            message = "You're doing well. Focus on problem areas."
+            message = "You're making progress. Pay attention to word order, verb forms, and speaking clearly."
         else:
             level = "Needs Practice"
-            message = "Keep practicing! Focus on speaking clearly."
+            message = "Keep practicing! Focus on speaking clearly and using correct grammar. Try to practice each word multiple times."
         
         return {
             'level': level,
             'message': message,
             'average': round(avg_score, 2)
         }
+    
+    def get_grammar_tips(self, question_number, word_results):
+        """Generate grammar tips based on errors"""
+        tips = []
+        
+        if question_number == 2:
+            # Tips for sentence rearrangement
+            expected_order = QUESTIONS[2]['expected_words']
+            tips.append("💡 Tip: The correct word order should be: " + " ".join(expected_order))
+            tips.append("💡 Tip: In English, the subject usually comes before the verb.")
+        
+        elif question_number == 5:
+            # Tips for grammar correction
+            tips.append("💡 Tip: With 'he', 'she', or 'it', verbs usually end with 's' or 'es'.")
+            tips.append("💡 Tip: 'He goes' is correct, not 'He go'.")
+            tips.append("💡 Tip: 'Everyday' is an adjective; use 'every day' for frequency.")
+        
+        return tips
 
 # Create singleton instance
 pronunciation_engine = PronunciationEngine()
