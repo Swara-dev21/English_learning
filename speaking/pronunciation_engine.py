@@ -17,7 +17,7 @@ import re
 from transformers import WhisperForConditionalGeneration, WhisperProcessor, pipeline
 
 # Initialize grammar checker
-grammar_tool = language_tool_python.LanguageTool('en-US')
+# grammar_tool = language_tool_python.LanguageTool('en-US')
 
 # Set device
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
