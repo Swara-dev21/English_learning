@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Results - Speaking Assessment</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'speaking/css/style.css' %}">
+    {% comment %} <link rel="stylesheet" href="{% static 'speaking/css/style.css' %}"> {% endcomment %}
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -15,362 +17,412 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #ffffff;
             min-height: 100vh;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 700px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
         }
         
-        header {
+        /* Header with gradient from start.html */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
             text-align: center;
-            padding: 40px 0;
             color: white;
+            box-shadow: 0 15px 30px -10px rgba(102, 126, 234, 0.3);
         }
         
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
         }
         
-        header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
+        .header p {
+            font-size: 1rem;
+            opacity: 0.95;
+            font-weight: 400;
         }
         
-        main {
+        /* Results Card */
+        .results-card {
             background: white;
             border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        
-        h2 {
-            color: #333;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 2rem;
-        }
-        
-        .overall-score {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 50px;
-            margin-bottom: 50px;
             padding: 30px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecf5 100%);
-            border-radius: 20px;
-            flex-wrap: wrap;
+            box-shadow: 0 5px 20px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #edf2f7;
+        }
+        
+        /* Assessment Complete Section */
+        .complete-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eef2f6;
+        }
+        
+        .complete-section h2 {
+            font-size: 1.8rem;
+            color: #0f172a;
+            margin-bottom: 25px;
+            font-weight: 600;
         }
         
         .score-circle {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: white;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 15px 30px -8px rgba(102, 126, 234, 0.4);
         }
         
         .big-score {
-            font-size: 4rem;
-            font-weight: bold;
+            font-size: 3rem;
+            font-weight: 700;
             line-height: 1;
         }
         
         .score-label {
-            font-size: 1.1rem;
+            font-size: 0.85rem;
             opacity: 0.9;
-            margin-top: 5px;
+            letter-spacing: 0.5px;
         }
         
-        .performance-level {
-            text-align: center;
-        }
-        
-        .performance-level h3 {
-            color: #667eea;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        .performance-level p {
-            color: #666;
-            font-size: 1.2rem;
-            max-width: 400px;
-        }
-        
-        .detailed-scores {
-            margin-top: 40px;
-        }
-        
-        .detailed-scores h3 {
-            margin-bottom: 25px;
-            color: #333;
-            font-size: 1.5rem;
-            text-align: center;
-        }
-        
-        .score-grid {
-            display: grid;
-            gap: 15px;
-            margin-bottom: 40px;
-        }
-        
-        .score-item {
-            display: grid;
-            grid-template-columns: 200px 1fr 80px;
-            align-items: center;
-            gap: 20px;
-            padding: 15px 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            transition: transform 0.2s;
-        }
-        
-        .score-item:hover {
-            transform: translateX(5px);
-            background: #f0f2f5;
-        }
-        
-        .question-label {
+        .level-badge {
+            background: #f1f4f9;
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 40px;
             font-weight: 600;
-            color: #555;
-            font-size: 1.1rem;
+            color: #475569;
+            margin: 12px 0 8px;
+            font-size: 1rem;
         }
         
-        .score-bar-container {
-            width: 100%;
+        .level-badge span {
+            color: #667eea;
+            font-weight: 700;
         }
         
-        .score-bar {
-            width: 100%;
-            height: 24px;
-            background: #e0e0e0;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
+        .feedback-text {
+            color: #64748b;
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
         }
         
-        .score-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            transition: width 1s ease-in-out;
+        /* Question-wise Performance */
+        .performance-section {
+            margin-bottom: 30px;
+        }
+        
+        .performance-section h3 {
+            font-size: 1.3rem;
+            color: #0f172a;
+            margin-bottom: 20px;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            padding-right: 10px;
+            gap: 8px;
+        }
+        
+        .performance-section h3 i {
+            color: #667eea;
+        }
+        
+        .scores-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .score-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 14px;
+            border: 1px solid #e9eef3;
+            transition: all 0.2s ease;
+        }
+        
+        .score-row:hover {
+            border-color: #667eea;
+            background: white;
+        }
+        
+        .question-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            font-size: 0.9rem;
-            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+        
+        .question-info {
+            flex: 1;
+        }
+        
+        .question-name {
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 2px;
+            font-size: 1rem;
+        }
+        
+        .question-desc {
+            font-size: 0.8rem;
+            color: #64748b;
         }
         
         .score-value {
+            font-size: 1.3rem;
             font-weight: 700;
             color: #667eea;
-            font-size: 1.2rem;
+            margin-right: 15px;
+            min-width: 65px;
             text-align: right;
         }
         
-        .question-breakdown {
-            margin-top: 40px;
-            padding: 25px;
-            background: #f0f4ff;
-            border-radius: 15px;
+        .score-bar-container {
+            width: 120px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
         }
         
-        .question-breakdown h4 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
+        .score-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 20px;
+            transition: width 0.3s ease;
         }
         
-        .breakdown-text {
-            color: #666;
-            line-height: 1.8;
-            font-size: 1.1rem;
-        }
-        
-        .action-buttons {
+        /* Action Buttons */
+        .actions {
             display: flex;
-            gap: 20px;
+            gap: 12px;
             justify-content: center;
-            margin-top: 50px;
-            flex-wrap: wrap;
+            margin-top: 20px;
         }
         
         .btn {
-            padding: 15px 40px;
+            padding: 12px 28px;
             border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
+            border-radius: 12px;
             font-weight: 600;
+            font-size: 0.95rem;
             cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             text-decoration: none;
-            transition: all 0.3s;
-            display: inline-block;
         }
         
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 16px -8px rgba(102, 126, 234, 0.4);
         }
         
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -8px rgba(102, 126, 234, 0.5);
         }
         
         .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-            border: 1px solid #ddd;
+            background: white;
+            color: #475569;
+            border: 1px solid #e2e8f0;
         }
         
-        footer {
-            text-align: center;
-            padding: 30px 20px 20px;
-            color: rgba(255,255,255,0.8);
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
         }
         
-        @media (max-width: 768px) {
-            .score-item {
-                grid-template-columns: 1fr;
-                gap: 10px;
+        /* Responsive */
+        @media (max-width: 640px) {
+            .score-row {
+                flex-wrap: wrap;
             }
-            .overall-score {
-                flex-direction: column;
-                gap: 30px;
-            }
+            
             .score-value {
+                margin-left: 55px;
                 text-align: left;
+                width: 100%;
+            }
+            
+            .score-bar-container {
+                margin-left: 55px;
+                width: 100%;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .results-card {
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>🎓 Speaking Assessment Results</h1>
-            <p>Your performance analysis</p>
-        </header>
+        <!-- Header with gradient matching question page -->
+        <div class="header">
+            <h1>Speaking Assessment Results</h1>
         
-        <main>
-            <h2>Assessment Complete!</h2>
-            
-            <div class="overall-score">
+        </div>
+        
+        <!-- Results Card -->
+        <div class="results-card">
+            <!-- Assessment Complete Section -->
+            <div class="complete-section">
+                <h2>Assessment Complete!</h2>
+                
                 <div class="score-circle">
                     <span class="big-score">{{ average|floatformat:0 }}</span>
                     <span class="score-label">Overall</span>
                 </div>
-                <div class="performance-level">
+                
+                <div class="level-badge">
                     {% if average <= 45 %}
-                        <h3>Basic Level</h3>
+                        <span>Basic Level</span>
                     {% elif average <= 75 %}
-                        <h3>Intermediate Level</h3>
+                        <span>Intermediate Level</span>
                     {% else %}
-                        <h3>Advanced Level</h3>
+                        <span>Advanced Level</span>
                     {% endif %}
-                    
-                    <p>{{ message }}</p>
                 </div>
+                
+                <p class="feedback-text">{{ message }}</p>
             </div>
             
-            <div class="detailed-scores">
-                <h3>Question-wise Performance</h3>
-                <div class="score-grid">
-                    <div class="score-item">
-                        <div class="question-label">Q1: Word Pronunciation</div>
-                        <div class="score-bar-container">
-                            <div class="score-bar">
-                                <div class="score-fill" style="width: {{ q1_score }}%;">
-                                    {% if q1_score > 30 %}{{ q1_score|floatformat:0 }}%{% endif %}
-                                </div>
-                            </div>
+            <!-- Question-wise Performance (What was evaluated section removed) -->
+            <div class="performance-section">
+                <h3>
+                    Question-wise Performance
+                </h3>
+                
+                <div class="scores-grid">
+                    <!-- Q1: Word Pronunciation -->
+                    <div class="score-row">
+                        <div class="question-icon">
+                            <i class="fas fa-microphone"></i>
+                        </div>
+                        <div class="question-info">
+                            <div class="question-name">Q1: Word Pronunciation</div>
+                            <div class="question-desc">{{ q1_score|floatformat:1 }}% score</div>
                         </div>
                         <div class="score-value">{{ q1_score|floatformat:1 }}%</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar-fill" style="width: {{ q1_score }}%"></div>
+                        </div>
                     </div>
                     
-                    <div class="score-item">
-                        <div class="question-label">Q2: Sentence Rearrangement</div>
-                        <div class="score-bar-container">
-                            <div class="score-bar">
-                                <div class="score-fill" style="width: {{ q2_score }}%;">
-                                    {% if q2_score > 30 %}{{ q2_score|floatformat:0 }}%{% endif %}
-                                </div>
-                            </div>
+                    <!-- Q2: Sentence Rearrangement -->
+                    <div class="score-row">
+                        <div class="question-icon">
+                            <i class="fas fa-random"></i>
+                        </div>
+                        <div class="question-info">
+                            <div class="question-name">Q2: Sentence Rearrangement</div>
+                            <div class="question-desc">{{ q2_score|floatformat:1 }}% score</div>
                         </div>
                         <div class="score-value">{{ q2_score|floatformat:1 }}%</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar-fill" style="width: {{ q2_score }}%"></div>
+                        </div>
                     </div>
                     
-                    <div class="score-item">
-                        <div class="question-label">Q3: Phrase Reading</div>
-                        <div class="score-bar-container">
-                            <div class="score-bar">
-                                <div class="score-fill" style="width: {{ q3_score }}%;">
-                                    {% if q3_score > 30 %}{{ q3_score|floatformat:0 }}%{% endif %}
-                                </div>
-                            </div>
+                    <!-- Q3: Phrase Reading -->
+                    <div class="score-row">
+                        <div class="question-icon">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <div class="question-info">
+                            <div class="question-name">Q3: Phrase Reading</div>
+                            <div class="question-desc">{{ q3_score|floatformat:1 }}% score</div>
                         </div>
                         <div class="score-value">{{ q3_score|floatformat:1 }}%</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar-fill" style="width: {{ q3_score }}%"></div>
+                        </div>
                     </div>
                     
-                    <div class="score-item">
-                        <div class="question-label">Q4: Sentence Reading</div>
-                        <div class="score-bar-container">
-                            <div class="score-bar">
-                                <div class="score-fill" style="width: {{ q4_score }}%;">
-                                    {% if q4_score > 30 %}{{ q4_score|floatformat:0 }}%{% endif %}
-                                </div>
-                            </div>
+                    <!-- Q4: Sentence Reading -->
+                    <div class="score-row">
+                        <div class="question-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="question-info">
+                            <div class="question-name">Q4: Sentence Reading</div>
+                            <div class="question-desc">{{ q4_score|floatformat:1 }}% score</div>
                         </div>
                         <div class="score-value">{{ q4_score|floatformat:1 }}%</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar-fill" style="width: {{ q4_score }}%"></div>
+                        </div>
                     </div>
                     
-                    <div class="score-item">
-                        <div class="question-label">Q5: Grammar Correction</div>
-                        <div class="score-bar-container">
-                            <div class="score-bar">
-                                <div class="score-fill" style="width: {{ q5_score }}%;">
-                                    {% if q5_score > 30 %}{{ q5_score|floatformat:0 }}%{% endif %}
-                                </div>
-                            </div>
+                    <!-- Q5: Grammar Correction -->
+                    <div class="score-row">
+                        <div class="question-icon">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                        <div class="question-info">
+                            <div class="question-name">Q5: Grammar Correction</div>
+                            <div class="question-desc">{{ q5_score|floatformat:1 }}% score</div>
                         </div>
                         <div class="score-value">{{ q5_score|floatformat:1 }}%</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar-fill" style="width: {{ q5_score }}%"></div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            
-            <div class="question-breakdown">
-                <h4>📊 What was evaluated:</h4>
-                <div class="breakdown-text">
-                    <p><strong>Q1 - Word Pronunciation:</strong> Individual word accuracy for 5 words</p>
-                    <p><strong>Q2 - Sentence Rearrangement:</strong> Sentence structure and fluency</p>
-                    <p><strong>Q3 - Phrase Reading:</strong> Clarity and natural phrasing</p>
-                    <p><strong>Q4 - Sentence Reading:</strong> Connected speech and rhythm</p>
-                    <p><strong>Q5 - Grammar Correction:</strong> Grammar understanding and correction</p>
                 </div>
             </div>
 
-            <div class="action-buttons">
-                <a href="{% url 'reading:index' %}" class="btn btn-primary">Take Another Test</a>
-                {% comment %} <a href="{% url 'clear_session' %}" class="btn btn-secondary">Clear & Start Over</a> {% endcomment %}
+            <!-- Action Buttons -->
+            <div class="actions">
+                <a href="{% url 'reading:index' %}" class="btn btn-primary">
+                    <i class="fas fa-redo-alt"></i>
+                    Go to reading
+                </a>
             </div>
-        </main>
-        
-        <footer>
-            <p>© 2026 AI Speaking Assessment System | Research Purpose</p>
-        </footer>
+        </div>
     </div>
 </body>
 </html>

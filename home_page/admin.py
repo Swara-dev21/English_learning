@@ -1,86 +1,125 @@
-# home_page/admin.py
 from django.contrib import admin
-from django.contrib.auth.models import User
-from django.contrib.auth.admin import UserAdmin
-from django.urls import path
-from django.shortcuts import redirect
-from django.contrib import messages
 from .models import StudentProfile
 
-
-class StudentProfileInline(admin.StackedInline):
-    model = StudentProfile
-    can_delete = False
-    extra = 0
-    fields = ['institute', 'department', 'year', 
-              'listening_completed', 'reading_completed', 
-              'speaking_completed', 'writing_completed', 
-              'pretest_completed', 'pretest_completed_at']
-
-
-class CustomUserAdmin(UserAdmin):
-    inlines = (StudentProfileInline,)
-    list_display = ['username', 'email', 'first_name', 'last_name', 'is_staff', 'date_joined']
-    list_filter = ['is_staff', 'is_superuser', 'is_active', 'groups']
-
-
-# Re-register User with custom admin
-admin.site.unregister(User)
-admin.site.register(User, CustomUserAdmin)
-
-
 @admin.register(StudentProfile)
-class StudentProfileAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'institute', 'department', 'year', 
-                    'listening_completed', 'reading_completed', 
-                    'speaking_completed', 'writing_completed', 
-                    'pretest_completed', 'pretest_completed_at']
-    list_display_links = ['id', 'user']
-    list_filter = ['institute', 'department', 'year', 
-                   'listening_completed', 'reading_completed', 
-                   'speaking_completed', 'writing_completed', 
-                   'pretest_completed']
-    search_fields = ['user__username', 'user__email', 'institute', 'department']
-    readonly_fields = ['pretest_completed_at']
-    list_editable = ['listening_completed', 'reading_completed', 
-                     'speaking_completed', 'writing_completed', 
-                     'pretest_completed']
+class StudentProgressAdmin(admin.ModelAdmin):
+    verbose_name = "Student Progress"
+    verbose_name_plural = "👨‍🎓 All Students Progress"
     
-    fieldsets = (
-        ('User Information', {
-            'fields': ('user',)
-        }),
-        ('Academic Information', {
-            'fields': ('institute', 'department', 'year')
-        }),
-        ('Pretest Progress', {
-            'fields': ('listening_completed', 'reading_completed', 
-                      'speaking_completed', 'writing_completed',
-                      'pretest_completed', 'pretest_completed_at'),
-            'classes': ('collapse',)
-        }),
-    )
+    list_display = [
+        'student_name',
+        'email',
+        'institute',
+        'department',
+        'year',
+        'tests_completed',
+        'pretest_status',
+        'listening_score',
+        'reading_score',
+        'speaking_score',
+        'writing_score',
+        'overall_score',
+        'last_active',
+    ]
     
-    # ===== CUSTOM URLS FOR EXPORT BUTTON =====
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path('export-results/', self.admin_site.admin_view(self.export_results_view), name='export_results'),
-        ]
-        return custom_urls + urls
+    list_filter = ['institute', 'department', 'year', 'pretest_completed']
+    search_fields = ['user__username', 'user__email', 'institute']
     
-    def export_results_view(self, request):
-        """Redirect to the main export view"""
-        return redirect('home_page:export_results')
+    def student_name(self, obj):
+        return obj.user.username
+    student_name.short_description = 'Student'
     
-    # ===== CUSTOM BUTTON IN ADMIN =====
-    def changelist_view(self, request, extra_context=None):
-        extra_context = extra_context or {}
-        extra_context['export_button'] = True
-        return super().changelist_view(request, extra_context=extra_context)
+    def email(self, obj):
+        return obj.user.email
+    email.short_description = 'Email'
     
-    # ===== OPTIONAL: Add export button to top of admin =====
-    class Media:
-        css = {
-            'all': ('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',)
-        }
+    def tests_completed(self, obj):
+        completed = 0
+        if obj.listening_completed: completed += 1
+        if obj.reading_completed: completed += 1
+        if obj.speaking_completed: completed += 1
+        if obj.writing_completed: completed += 1
+        return f"{completed}/4"
+    tests_completed.short_description = 'Tests Done'
+    
+    def pretest_status(self, obj):
+        return "✅ Completed" if obj.pretest_completed else "⏳ In Progress"
+    pretest_status.short_description = 'Pretest Status'
+    
+    def listening_score(self, obj):
+        from listening.models import TestResult
+        result = TestResult.objects.filter(user=obj.user).first()
+        return f"{result.percentage:.1f}%" if result else "—"
+    listening_score.short_description = 'Listening'
+    
+    def reading_score(self, obj):
+        from reading.models import ReadingResult
+        result = ReadingResult.objects.filter(user=obj.user).first()
+        return f"{result.percentage:.1f}%" if result else "—"
+    reading_score.short_description = 'Reading'
+    
+    def speaking_score(self, obj):
+        from speaking.models import TestSession
+        session = TestSession.objects.filter(user=obj.user, completed_at__isnull=False).first()
+        return f"{session.get_average_score():.1f}%" if session else "—"
+    speaking_score.short_description = 'Speaking'
+    
+    def writing_score(self, obj):
+        from writing.models import WritingTestResult
+        result = WritingTestResult.objects.filter(user=obj.user).first()
+        return f"{result.percentage:.1f}%" if result else "—"
+    writing_score.short_description = 'Writing'
+    
+    def overall_score(self, obj):
+        scores = []
+        if obj.listening_completed:
+            from listening.models import TestResult
+            lr = TestResult.objects.filter(user=obj.user).first()
+            if lr: scores.append(lr.percentage)
+        
+        if obj.reading_completed:
+            from reading.models import ReadingResult
+            rr = ReadingResult.objects.filter(user=obj.user).first()
+            if rr: scores.append(rr.percentage)
+        
+        if obj.speaking_completed:
+            from speaking.models import TestSession
+            sr = TestSession.objects.filter(user=obj.user, completed_at__isnull=False).first()
+            if sr: scores.append(sr.get_average_score())
+        
+        if obj.writing_completed:
+            from writing.models import WritingTestResult
+            wr = WritingTestResult.objects.filter(user=obj.user).first()
+            if wr: scores.append(wr.percentage)
+        
+        if scores:
+            avg = sum(scores) / len(scores)
+            return f"{avg:.1f}%"
+        return "—"
+    overall_score.short_description = 'Overall'
+    
+    def last_active(self, obj):
+        from listening.models import TestResult
+        from reading.models import ReadingResult
+        from speaking.models import TestSession
+        from writing.models import WritingTestResult
+        
+        dates = []
+        
+        lr = TestResult.objects.filter(user=obj.user).order_by('-created_at').first()
+        if lr: dates.append(lr.created_at)
+        
+        rr = ReadingResult.objects.filter(user=obj.user).order_by('-created_at').first()
+        if rr: dates.append(rr.created_at)
+        
+        sr = TestSession.objects.filter(user=obj.user).order_by('-created_at').first()
+        if sr: dates.append(sr.created_at)
+        
+        wr = WritingTestResult.objects.filter(user=obj.user).order_by('-created_at').first()
+        if wr: dates.append(wr.created_at)
+        
+        if dates:
+            latest = max(dates)
+            return latest.strftime("%d %b %Y")
+        return "Never"
+    last_active.short_description = 'Last Active'

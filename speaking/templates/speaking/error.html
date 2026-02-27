@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Something Went Wrong</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 48px 40px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .error-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .error-code {
+            font-size: 120px;
+            font-weight: 800;
+            line-height: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            letter-spacing: -4px;
+        }
+
+        .error-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 16px;
+        }
+
+        .error-message {
+            font-size: 18px;
+            color: #718096;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+
+        .btn {
+            padding: 12px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: scale(1.05);
+        }
+
+        .error-details {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: left;
+            border: 1px solid #e2e8f0;
+        }
+
+        .error-details summary {
+            color: #4a5568;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .error-details summary:hover {
+            color: #667eea;
+        }
+
+        .error-details pre {
+            margin-top: 16px;
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .support-link {
+            color: #718096;
+            font-size: 14px;
+            margin-top: 24px;
+        }
+
+        .support-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .support-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .error-container {
+                padding: 32px 20px;
+            }
+            
+            .error-code {
+                font-size: 80px;
+            }
+            
+            .error-title {
+                font-size: 24px;
+            }
+            
+            .error-message {
+                font-size: 16px;
+            }
+            
+            .btn {
+                padding: 10px 24px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <!-- Error code - can be updated via JavaScript or hardcoded -->
+        <div class="error-code" id="errorCode">500</div>
+        
+        <!-- Error title - dynamic based on status -->
+        <h1 class="error-title" id="errorTitle">Internal Server Error</h1>
+        
+        <!-- User-friendly message -->
+        <p class="error-message" id="errorMessage">
+            Sorry, something went wrong on our end. We're working to fix it as soon as possible.
+        </p>
+        
+        <!-- Action buttons -->
+        <div class="error-actions">
+            <a href="/" class="btn btn-primary" onclick="goHome(event)">Go to Homepage</a>
+            <a href="#" class="btn btn-secondary" onclick="refreshPage(event)">Try Again</a>
+        </div>
+        
+        <!-- Technical details (collapsible) - helpful for debugging -->
+        <details class="error-details">
+            <summary>Technical Details</summary>
+            <pre id="technicalDetails">
+Error: Connection refused
+    at Database.connect (/app/db.js:45:15)
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+Timestamp: 2024-01-15T10:30:00.000Z
+Request ID: abc-123-xyz-789</pre>
+        </details>
+        
+        <!-- Support link -->
+        <div class="support-link">
+            Need help? <a href="/support" id="supportLink">Contact Support</a>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * This script allows dynamic error page configuration.
+         * You can update the error details by setting URL parameters or calling functions.
+         * 
+         * Examples:
+         * - ?code=404&title=Not%20Found&message=The%20page%20you're%20looking%20for%20doesn't%20exist.
+         * - ?code=403&title=Forbidden&message=You%20don't%20have%20permission%20to%20access%20this%20resource.
+         */
+
+        (function() {
+            // Get URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Error configuration - can be set via URL params
+            const config = {
+                code: urlParams.get('code') || '500',
+                title: urlParams.get('title') || 'Internal Server Error',
+                message: urlParams.get('message') || 'Sorry, something went wrong on our end. We\'re working to fix it as soon as possible.',
+                details: urlParams.get('details') || null
+            };
+
+            // Common HTTP status codes and their default messages
+            const errorMessages = {
+                '400': { title: 'Bad Request', message: 'The request could not be understood by the server.' },
+                '401': { title: 'Unauthorized', message: 'You need to be authenticated to access this resource.' },
+                '403': { title: 'Forbidden', message: 'You don\'t have permission to access this resource.' },
+                '404': { title: 'Not Found', message: 'The page you\'re looking for doesn\'t exist.' },
+                '408': { title: 'Request Timeout', message: 'The server timed out waiting for the request.' },
+                '429': { title: 'Too Many Requests', message: 'You\'ve made too many requests. Please wait and try again.' },
+                '500': { title: 'Internal Server Error', message: 'Sorry, something went wrong on our end.' },
+                '502': { title: 'Bad Gateway', message: 'The server received an invalid response from the upstream server.' },
+                '503': { title: 'Service Unavailable', message: 'The service is temporarily unavailable. Please try again later.' },
+                '504': { title: 'Gateway Timeout', message: 'The server timed out while waiting for the upstream server.' }
+            };
+
+            // If no custom title/message provided but we have a common error code, use defaults
+            if (!urlParams.get('title') && errorMessages[config.code]) {
+                config.title = errorMessages[config.code].title;
+            }
+            if (!urlParams.get('message') && errorMessages[config.code]) {
+                config.message = errorMessages[config.code].message;
+            }
+
+            // Update DOM elements
+            document.getElementById('errorCode').textContent = config.code;
+            document.getElementById('errorTitle').textContent = config.title;
+            document.getElementById('errorMessage').textContent = config.message;
+            
+            // Update technical details if provided
+            if (config.details) {
+                const detailsEl = document.getElementById('technicalDetails');
+                detailsEl.textContent = config.details;
+            }
+
+            // Add timestamp to technical details if not custom provided
+            if (!config.details) {
+                const detailsEl = document.getElementById('technicalDetails');
+                const timestamp = new Date().toISOString();
+                const requestId = generateRequestId();
+                detailsEl.textContent = `Error Code: ${config.code}\nTimestamp: ${timestamp}\nRequest ID: ${requestId}\nPath: ${window.location.pathname}`;
+            }
+        })();
+
+        // Helper function to generate a simple request ID
+        function generateRequestId() {
+            return 'xxxx-xxxx-xxxx-xxxx'.replace(/[x]/g, function() {
+                return Math.floor(Math.random() * 16).toString(16);
+            });
+        }
+
+        // Navigation functions
+        function goHome(event) {
+            event.preventDefault();
+            window.location.href = '/';
+        }
+
+        function refreshPage(event) {
+            event.preventDefault();
+            window.location.reload();
+        }
+
+        // Optional: Make functions available globally for onclick handlers
+        window.goHome = goHome;
+        window.refreshPage = refreshPage;
+    </script>
+</body>
+</html>

@@ -240,9 +240,22 @@ def pretest_results(request):
     # Get latest results
     listening_result = ListeningResult.objects.filter(user=request.user).first()
     reading_result = ReadingResult.objects.filter(user=request.user).first()
-    speaking_result = TestSession.objects.filter(user=request.student).first()
+    
+    # FIXED: Get the most recent COMPLETED speaking test (with scores)
+    speaking_result = TestSession.objects.filter(
+        user=request.user,
+        completed_at__isnull=False  # Only completed tests
+    ).order_by('-completed_at').first()  # Get the latest one
+    
+    # If no completed test found, try to get any test with non-zero scores
+    if not speaking_result:
+        speaking_result = TestSession.objects.filter(
+            user=request.user
+        ).exclude(
+            q1_score=0, q2_score=0, q3_score=0, q4_score=0, q5_score=0
+        ).order_by('-created_at').first()
+    
     writing_result = WritingResult.objects.filter(user=request.user).first()
-
 
     completion_date = None
     if writing_result:
@@ -250,78 +263,66 @@ def pretest_results(request):
     elif profile.pretest_completed_at:
         completion_date = profile.pretest_completed_at
     
-    # Calculate percentages for each section
-    # Listening: Convert 3/5 to 60%
+    # Calculate percentages
+    listening_percentage = 0
     if listening_result:
-        listening_result.percentage = (listening_result.score / listening_result.total_questions) * 100
-    else:
-        listening_result = None
+        listening_percentage = (listening_result.score / listening_result.total_questions) * 100
     
-    # Reading: Already has percentage field but ensure it's calculated
+    reading_percentage = 0
     if reading_result:
-        if not hasattr(reading_result, 'percentage') or reading_result.percentage is None:
-            reading_result.percentage = (reading_result.score / reading_result.total) * 100
-    else:
-        reading_result = None
+        reading_percentage = reading_result.percentage or ((reading_result.score / reading_result.total) * 100)
     
-    # Speaking: Already has overall_score as percentage
+    # FIXED: Get speaking percentage from the result
+    speaking_percentage = 0
     if speaking_result:
-        # Ensure all speaking metrics are floats
-        TestSession.avg_pronunciation = float(TestSession.avg_pronunciation)
-        TestSession.avg_accent = float(TestSession.avg_accent)
-        TestSession.avg_accuracy = float(TestSession.avg_accuracy)
-        TestSession.overall_score = float(TestSession.overall_score)
-    else:
-        TestSession = None
+        speaking_percentage = speaking_result.get_average_score()  # This returns the percentage
+        print(f"Speaking score found: {speaking_percentage}% for user {request.user.username}")
     
-    # Writing: Convert 0/5 to 0%
+    writing_percentage = 0
     if writing_result:
-        writing_result.percentage = (writing_result.total_score / 500) * 100
-    else:
-        writing_result = None
+        writing_percentage = (writing_result.total_score / 500) * 100
     
-    # Calculate overall score (weighted average of all sections)
+    # Calculate overall score
     total_weighted_score = 0
     total_weight = 0
     
-    # Listening (weight: 1)
     if listening_result:
-        total_weighted_score += listening_result.percentage
+        total_weighted_score += listening_percentage
         total_weight += 1
     
-    # Reading (weight: 1)
     if reading_result:
-        total_weighted_score += reading_result.percentage
+        total_weighted_score += reading_percentage
         total_weight += 1
     
-    # Speaking (weight: 1)
     if speaking_result:
-        total_weighted_score += TestSession.overall_score
+        total_weighted_score += speaking_percentage
         total_weight += 1
     
-    # Writing (weight: 1)
     if writing_result:
-        total_weighted_score += writing_result.percentage
+        total_weighted_score += writing_percentage
         total_weight += 1
     
-    # Calculate overall percentage (average of all sections)
     if total_weight > 0:
         overall_percentage = total_weighted_score / total_weight
     else:
         overall_percentage = 0
     
-    # Also keep the original overall_score if needed (sum of raw scores)
     total_raw_score = 0
     if listening_result:
         total_raw_score += listening_result.score
     if reading_result:
         total_raw_score += reading_result.score
     if speaking_result:
-        total_raw_score += TestSession.overall_score / 20  # Convert percentage to /5 scale
+        total_raw_score += speaking_percentage / 20
     if writing_result:
         total_raw_score += writing_result.total_score
     
     overall_raw_score = round(total_raw_score, 1)
+    
+    # Debug print
+    print(f"User: {request.user.username}")
+    print(f"Speaking result found: {speaking_result is not None}")
+    print(f"Speaking percentage: {speaking_percentage}")
     
     context = {
         'profile': profile,
@@ -329,17 +330,16 @@ def pretest_results(request):
         'reading_result': reading_result,
         'speaking_result': speaking_result,
         'writing_result': writing_result,
-        'overall_score': overall_raw_score,  # Keep original for backward compatibility
-        'overall_percentage': round(overall_percentage, 1),  # New overall percentage
-        'listening_percentage': listening_result.percentage if listening_result else 0,
-        'reading_percentage': reading_result.percentage if reading_result else 0,
-        'speaking_percentage': TestSession.overall_score if speaking_result else 0,
-        'writing_percentage': writing_result.percentage if writing_result else 0,
+        'overall_score': overall_raw_score,
+        'overall_percentage': round(overall_percentage, 1),
+        'listening_percentage': round(listening_percentage, 1),
+        'reading_percentage': round(reading_percentage, 1),
+        'speaking_percentage': round(speaking_percentage, 1),
+        'writing_percentage': round(writing_percentage, 1),
         'completion_date': completion_date, 
     }
     
     return render(request, 'home_page/pretest_results.html', context)
-
 
 def password_reset_request(request):
     """View for requesting password reset"""
@@ -437,6 +437,9 @@ def password_reset_confirm(request, token):
 def export_all_results_csv(request):
     """Export all student results in CSV format for analysis - Clean version"""
     
+    # IMPORT the Student model at the top of the function
+    from speaking.models import Student
+    
     # Create HttpResponse with CSV header
     response = HttpResponse(
         content_type='text/csv',
@@ -481,21 +484,22 @@ def export_all_results_csv(request):
         else:
             reading_percentage = 0
 
-        # speaking
-        
-        student, _ = student.objects.get_or_create(
+        # ----- SPEAKING (FIXED) -----
+        # Get or create Student record for this user
+        student_record, _ = Student.objects.get_or_create(
             email=user.email,
             defaults={
                 'name': user.username,
                 'roll_number': f"STU{user.id}"
             }
         )
-        speaking = TestSession.objects.filter(student=student).order_by('-completed_at').first()
+        
+        # Get the most recent speaking session for this student
+        speaking = TestSession.objects.filter(student=student_record).order_by('-completed_at').first()
         if speaking:
             speaking_percentage = round(speaking.get_average_score(), 1)
         else:
             speaking_percentage = 0
-
 
         # ----- WRITING (Convert 0-500 to percentage) -----
         writing = WritingResult.objects.filter(user=user).first()

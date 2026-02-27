@@ -6,149 +6,165 @@
 {% block extra_css %}
 <style>
 
-    .hero {
-        position: relative;
-        min-height: clamp(600px, 90vh, 1000px);
-        display: flex;
-        align-items: flex-start;
-        overflow: hidden;
-        padding-top: 40px;
-    }
+.hero {
+    position: relative;
+    min-height: clamp(600px, 90vh, 1000px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: hidden;
+    padding-top: 100px;
+}
 
-    .hero::before {
-        content: "";
-        position: absolute;
-        inset: 0;
+/* Updated gradient background - dark at top, fading to white at bottom */
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, 
+        #7851d2 40%,
+        #9f7aea 60%,
+        #c6a4f6 80%,
+        #ffffff 100%
+    );
+    z-index: -2;
+}
 
-        background-image: url('{% static "home_page/images/homepage.png" %}');
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-position: 75% center;
-    }
+/* Optional overlay for extra smoothness */
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 0%, white 100%);
+    z-index: -1;
+    opacity: 0.3;
+}
 
-    .hero-inner {
-        width: 100%;
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 10px;
-        position: relative;
-        z-index: 2;
-    }
+.hero-inner {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 10px;
+    position: relative;
+    z-index: 2;
+    margin-top: -80px;
+}
 
-    .hero-content {
-        color: white;
-    }
+.hero-content {
+    color: white;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
 
-    .hero-content h1 {
-        font-size: 40px;
-        font-weight: 700;
-        line-height: 1.2;
-        margin-bottom: 20px;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        max-width: 800px;
-        text-align: left;
-    }
+.hero-content h1 {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    text-align: center;
+}
 
-    .hero-content p {
-        font-size: 18px;
-        line-height: 1.6;
-        margin-bottom: 30px;
-        opacity: 0.95;
-        max-width: 600px;
-        text-align: left;
-    }
+.hero-content p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    opacity: 0.95;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
 
-    .hero-buttons {
-        display: flex;
-        gap: 20px;
-        justify-content: flex-start;
-        margin-bottom: 40px;
-        flex-wrap: wrap;
-    }
+.hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
 
-    .btn-primary {
-        background: white;
-        color: #667eea;
-        padding: 15px 35px;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 16px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
+.btn-primary {
+    background: white;
+    color: #667eea;
+    padding: 15px 35px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
 
-    .btn-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-        background: #f8f9fa;
-    }
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    background: #f8f9fa;
+}
 
-    .btn-secondary {
-        background: transparent;
-        color: white;
-        padding: 15px 35px;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 16px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: 2px solid white;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
+.btn-secondary {
+    background: transparent;
+    color: white;
+    padding: 15px 35px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid white;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
 
-    .btn-secondary:hover {
-        background: white;
-        color: #667eea;
-        transform: translateY(-3px);
-    }
+.btn-secondary:hover {
+    background: white;
+    color: #667eea;
+    transform: translateY(-3px);
+}
 
-    .btn-outline {
-        background: transparent;
-        color: white;
-        padding: 15px 35px;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 16px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: 2px solid rgba(255,255,255,0.5);
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
+.btn-outline {
+    background: transparent;
+    color: white;
+    padding: 15px 35px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255,255,255,0.5);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
 
-    .btn-outline:hover {
-        border-color: white;
-        background: rgba(255,255,255,0.1);
-        transform: translateY(-3px);
-    }
+.btn-outline:hover {
+    border-color: white;
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-3px);
+}
 
-    .hero-footer {
-        text-align: left;
-        color: rgba(255,255,255,0.8);
-        font-size: 17px;
-        margin-top: 20px;
-    }
+.hero-footer {
+    text-align: center;
+    color: rgba(255,255,255,0.8);
+    font-size: 17px;
+    margin-top: 20px;
+}
 
-    .hero-footer i {
-        margin: 0 5px;
-        color: #ff6b6b;
-    }
+.hero-footer i {
+    margin: 0 5px;
+    color: #ff6b6b;
+}
 
-/* About Section - Updated with boxes in one line */
+/* About Section - Compact with boxes */
 .about-section-compact {
     padding: 80px 0;
     background: white;
 }
 
 .about-container-compact {
-    max-width: 1400px;  /* Increased max-width for more space */
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -164,16 +180,15 @@
     margin-left: auto;
     margin-right: auto;
 }
-/* Features Grid - All 4 boxes in one row */
+
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);  /* 4 columns in one row */
+    grid-template-columns: repeat(4, 1fr);
     gap: 25px;
     max-width: 1300px;
     margin: 0 auto;
 }
 
-/* Feature Box */
 .feature-box {
     background: white;
     padding: 30px 25px;
@@ -181,14 +196,13 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     border: 1px solid #e9ecef;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;  /* Changed from left to center */
+    text-align: center;
     height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;  /* Center all content horizontally */
+    align-items: center;
 }
 
-/* Feature Icon */
 .feature-icon {
     width: 60px;
     height: 60px;
@@ -198,18 +212,9 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
-    margin-left: auto;  /* Add auto margins to center */
-    margin-right: auto; /* Add auto margins to center */
+    margin-left: auto;
+    margin-right: auto;
     flex-shrink: 0;
-}
-
-/* Feature Box Content */
-.feature-box-content {
-    font-size: 16px;
-    color: #4a5568;
-    line-height: 1.6;
-    text-align: center;  /* Center the text */
-    width: 100%;
 }
 
 .feature-box:hover {
@@ -222,7 +227,6 @@
     color: white;
 }
 
-/* Feature Box Title */
 .feature-box-title {
     font-size: 18px;
     font-weight: 600;
@@ -231,17 +235,116 @@
     line-height: 1.4;
 }
 
-/* Feature Box Description */
-.feature-box-desc {
-    font-size: 14px;
-    color: #6b7280;
-    line-height: 1.6;
-    margin-top: auto;
+/* About Section - Original */
+.about-section {
+    padding: 80px 0;
+    background: white;
 }
 
-/* Slide Content Styling */
+.about-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.image-item {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.image-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.image-item:hover img {
+    transform: scale(1.05);
+}
+
+.about-content h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 20px;
+}
+
+.about-content p {
+    font-size: 16px;
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+/* LSRW Slider Section */
+.lsrw-section {
+    padding: 80px 0;
+    background: #f8fafc;
+}
+
+.lsrw-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 50px;
+}
+
+.section-heading {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 15px;
+}
+
+.section-subtitle {
+    font-size: 16px;
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.slider-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.slider-track {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.slide {
+    flex: 0 0 100%;
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    padding: 0 20px;
+}
+
 .slide-content {
+    flex: 1;
     padding: 30px;
+}
+
+.slide-image {
+    flex: 1;
+}
+
+.slide-image img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }
 
 .skill-tag {
@@ -265,7 +368,7 @@
 }
 
 .nowrap {
-    white-space: nowrap;  
+    white-space: nowrap;
 }
 
 .slide-description {
@@ -312,41 +415,442 @@
     left: 0;
 }
 
-.slide-footer {
-    font-size: 14px;
-    color: #718096;
-    font-style: italic;
-    border-top: 1px solid #e9ecef;
-    padding-top: 15px;
-    margin-top: 10px;
+.slider-nav {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    pointer-events: none;
 }
 
+.arrow-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    font-size: 24px;
+    color: #667eea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+}
 
-/* Responsive - Switch to 2 columns on tablet, 1 on mobile */
+.arrow-btn:hover {
+    background: #667eea;
+    color: white;
+    transform: scale(1.1);
+}
+
+.slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background: #cbd5e0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: #667eea;
+    transform: scale(1.2);
+}
+
+/* Our Values Section */
+.our-values {
+    padding: 80px 0;
+    background: white;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.value-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+    transition: transform 0.3s ease;
+}
+
+.value-card:hover {
+    transform: translateY(-10px);
+}
+
+.value-icon {
+    font-size: 40px;
+    color: #667eea;
+    margin-bottom: 20px;
+}
+
+.value-card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 15px;
+}
+
+.value-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.value-card ul li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4a5568;
+}
+
+.value-card ul li i {
+    color: #48bb78;
+}
+
+.value-image {
+    margin-top: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.value-image img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+/* Why Us Section */
+.why-us {
+    padding: 80px 0;
+    background: #f8fafc;
+}
+
+.why-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.why-images {
+    position: relative;
+}
+
+.why-img-main {
+    width: 100%;
+    border-radius: 20px;
+    height: 400px;
+    object-fit: cover;
+}
+
+.why-img-small {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    width: 200px;
+    height: 150px;
+    border-radius: 12px;
+    border: 5px solid white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.why-features {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.feature {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.feature:hover {
+    border-color: #667eea;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+}
+
+.feature-progress {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 3px;
+}
+
+.feature-content h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 10px;
+}
+
+.feature-content p {
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* How We Work Section */
+.how-work {
+    padding: 80px 0;
+    background: white;
+}
+
+.work-steps {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.step {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.step:not(:last-child):after {
+    content: '';
+    position: absolute;
+    left: 25px;
+    top: 60px;
+    bottom: -40px;
+    width: 2px;
+    background: #e2e8f0;
+}
+
+.step-number {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.step-content {
+    flex: 1;
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+}
+
+.step-content h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 10px;
+}
+
+.step-content p {
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* FAQ Section */
+.faq-section {
+    padding: 80px 0;
+    background: #f8fafc;
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.faq-item {
+    background: white;
+    border-radius: 16px;
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+}
+
+.faq-question {
+    padding: 20px 25px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s ease;
+}
+
+.faq-question:hover {
+    background: #f8fafc;
+}
+
+.faq-question h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a202c;
+    margin: 0;
+}
+
+.faq-icon {
+    font-size: 24px;
+    color: #667eea;
+    transition: transform 0.3s ease;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+    padding: 0 25px;
+    background: #f8fafc;
+}
+
+.faq-answer p {
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px 0;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 200px;
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(45deg);
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 60px;
+    text-align: center;
+    color: white;
+}
+
+.cta-section h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.cta-section p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+/* Responsive */
 @media (max-width: 1100px) {
     .features-grid {
-        grid-template-columns: repeat(2, 1fr);  /* 2 columns on tablet */
+        grid-template-columns: repeat(2, 1fr);
         gap: 20px;
     }
 }
 
+@media (max-width: 992px) {
+    .values-grid,
+    .why-content,
+    .about-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .why-img-small {
+        display: none;
+    }
+    
+    .slide {
+        flex-direction: column;
+    }
+}
+
 @media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 36px;
+    }
+    
+    .hero-content p {
+        font-size: 16px;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .btn-primary, .btn-secondary, .btn-outline {
+        width: 100%;
+        justify-content: center;
+    }
+
     .about-title {
         font-size: 28px;
         margin-bottom: 40px;
     }
     
     .features-grid {
-        grid-template-columns: 1fr;  /* 1 column on mobile */
+        grid-template-columns: 1fr;
         gap: 20px;
     }
     
     .feature-box {
         padding: 25px 20px;
     }
+    
+    .section-heading {
+        font-size: 28px;
+    }
 }
 
 @media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 28px;
+    }
+    
     .about-title {
         font-size: 24px;
     }
@@ -364,68 +868,29 @@
         font-size: 16px;
     }
 }
-
-    /* Responsive */
-    @media (max-width: 992px) {
-        .boxes-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    @media (max-width: 768px) {
-        .hero-content h1 {
-            font-size: 36px;
-        }
-        
-        .hero-content p {
-            font-size: 16px;
-        }
-        
-        .hero-buttons {
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .btn-primary, .btn-secondary, .btn-outline {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .about-title {
-            font-size: 28px;
-        }
-
-        .boxes-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .hero-content h1 {
-            font-size: 28px;
-        }
-    }
 </style>
 {% endblock %}
 
 {% block content %}
 {% include 'home_page/includes/header.html' with hide_header=hide_header|default:False %}
 
-<!-- Hero Section - Text left aligned with background image -->
+<!-- Hero Section -->
 <section class="hero" id="home">
-    <div class = "hero-inner">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    
+    <div class="hero-inner">
         <div class="hero-content">
             <h1>
-                Turning Technical Minds into<br>Confident Communicators
+                Turning Technical Minds into Confident Communicators
             </h1>
             
             <p>
-                Build confidence in speaking, clarity in writing, and power in professional communication —<br>
-                designed especially for engineering students.
+                Build confidence in speaking, clarity in writing, and power in professional communication — designed especially for engineering students.
             </p>
             
             <div class="hero-buttons">
-                <a href="#our Mission" class="btn-primary">
+                <a href="#how-we-work" class="btn-primary">
                     Start Your Journey →
                 </a>
                 
@@ -440,13 +905,13 @@
             </div>
             
             <div class="hero-footer">
-                <i></i> Designed by experienced English educators for engineering learners.
+                Designed by experienced English educators for engineering learners.
             </div>
         </div>
     </div>
 </section>
 
-<!-- New Added Section -->
+<!-- Mission/Features Section -->
 <section class="about-section-compact" id="our-mission">
     <div class="about-container-compact">
         <h2 class="about-title">
@@ -455,7 +920,6 @@
         </h2>
         
         <div class="features-grid">
-            <!-- Feature Box 1 -->
             <div class="feature-box">
                 <div class="feature-icon">
                     <i class="fas fa-graduation-cap"></i>
@@ -463,7 +927,6 @@
                 <h3 class="feature-box-title">Perfect for engineering & diploma students.</h3>
             </div>
             
-            <!-- Feature Box 2 -->
             <div class="feature-box">
                 <div class="feature-icon">
                     <i class="fas fa-lightbulb"></i>
@@ -471,7 +934,6 @@
                 <h3 class="feature-box-title">For learners who understand English but hesitate to speak.</h3>
             </div>
             
-            <!-- Feature Box 3 -->
             <div class="feature-box">
                 <div class="feature-icon">
                     <i class="fas fa-briefcase"></i>
@@ -479,7 +941,6 @@
                 <h3 class="feature-box-title">From preparing interviews & presentations to professional life.</h3>
             </div>
             
-            <!-- Feature Box 4 -->
             <div class="feature-box">
                 <div class="feature-icon">
                     <i class="fas fa-handshake"></i>
@@ -490,49 +951,48 @@
     </div>
 </section>
 
-    <!-- About Section -->
-    <section class="about-section" id="about-us">
-        <div class="container">
-            <div class="about-container">
-                <div class="about-images">
-                    <div class="image-grid">
-                        <div class="image-item">
-                            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Students learning English">
-                        </div>
-                        <div class="image-item">
-                            <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Online English class">
-                        </div>
-                        <div class="image-item">
-                            <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="English writing practice">
-                        </div>
-                        <div class="image-item">
-                            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Language learning">
-                        </div>
+<!-- About Section -->
+<section class="about-section" id="about-us">
+    <div class="container">
+        <div class="about-container">
+            <div class="about-images">
+                <div class="image-grid">
+                    <div class="image-item">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Students learning English">
+                    </div>
+                    <div class="image-item">
+                        <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Online English class">
+                    </div>
+                    <div class="image-item">
+                        <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="English writing practice">
+                    </div>
+                    <div class="image-item">
+                        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Language learning">
                     </div>
                 </div>
-                
-                <div class="about-content">
-                    <h2>Empowering Engineers Through Effective Communication</h2>
-                    <p>
-                        The Fluent Engineer is a communication development platform
-                        designed exclusively for engineering students.
-                        We help learners build confidence in speaking, clarity in writing,
-                        and effectiveness in professional communication.
-                        Through structured guidance, practical activities, and real
-                        academic and workplace contexts, students develop the
-                        communication skills required for presentations, interviews,
-                        teamwork, and career growth.
-                    </p>
-                    <a href="#how-we-work" class="btn btn-primary">
-                        Explore Our Learning Process  <span>→</span>
-                    </a>
-                </div>
+            </div>
+            
+            <div class="about-content">
+                <h2>Empowering Engineers Through Effective Communication</h2>
+                <p>
+                    The Fluent Engineer is a communication development platform
+                    designed exclusively for engineering students.
+                    We help learners build confidence in speaking, clarity in writing,
+                    and effectiveness in professional communication.
+                    Through structured guidance, practical activities, and real
+                    academic and workplace contexts, students develop the
+                    communication skills required for presentations, interviews,
+                    teamwork, and career growth.
+                </p>
+                <a href="#how-we-work" class="btn btn-primary">
+                    Explore Our Learning Process  <span>→</span>
+                </a>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-
-<!-- SKILLS SECTION - LSRW Slider -->
+<!-- LSRW Slider Section -->
 <section class="lsrw-section" id="skills">
     <div class="container">
         <div class="lsrw-header">
@@ -559,8 +1019,6 @@
                                 <li>Gain insights through podcasts, interviews and industry-specific audio</li>
                             </ul>
                         </div>
-                        
-                        {% comment %} <p class="slide-footer">Aligned with workplace and academic communication needs</p> {% endcomment %}
                     </div>
                     <div class="slide-image">
                         <img src="{% static 'home_page/images/listening.jpg' %}" alt="Listening practice">
@@ -607,8 +1065,6 @@
                                 <li>Reading efficiency tasks to improve speed and accuracy</li>
                             </ul>
                         </div>
-                        
-                        {% comment %} <p class="slide-footer">Designed to support academic and professional communication needs.</p> {% endcomment %}
                     </div>
                     <div class="slide-image">
                         <img src="{% static 'home_page/images/reading.webp' %}" alt="Reading practice">
@@ -637,14 +1093,13 @@
                         <img src="{% static 'home_page/images/writting.jpg' %}" alt="Writing practice">
                     </div>
                 </div>
-            </div> <!-- Close slider-track -->
+            </div>
             
-            <!-- Navigation buttons - Moved outside slider-track -->
             <div class="slider-nav">
                 <button class="arrow-btn prev-btn">‹</button>
                 <button class="arrow-btn next-btn">›</button>
             </div>
-        </div> <!-- Close slider-container -->
+        </div>
         
         <div class="slider-dots" id="sliderDots">
             <button class="dot active" data-slide="0"></button>
@@ -837,25 +1292,12 @@
     </div>
 </section>
 
-<!-- Optional: Add a CTA section for logged-in users -->
-{% if user.is_authenticated %}
-<section class="cta-section" style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 60px; text-align: center; color: white;">
-    <div class="container">
-        <h2 style="font-size: 36px; margin-bottom: 20px;">Ready to continue your journey?</h2>
-        <p style="font-size: 18px; margin-bottom: 30px; opacity: 0.9;">You're making great progress! Keep practicing to improve your English skills.</p>
-        {% if user.profile.pretest_completed %}
-            <a href="{% url 'home_page:pretest_results' %}" class="btn" style="background: white; color: #667eea; padding: 15px 40px; font-size: 18px;">View Your Results</a>
-        {% else %}
-            <a href="{% url 'home_page:start_pretest' %}" class="btn" style="background: white; color: #667eea; padding: 15px 40px; font-size: 18px;">Continue Pretest</a>
-        {% endif %}
-    </div>
-</section>
-{% endif %}
 {% endblock %}
 
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Slider functionality
         const sliderTrack = document.getElementById('sliderTrack');
         const prevBtn = document.querySelector('.prev-btn');
         const nextBtn = document.querySelector('.next-btn');
@@ -889,7 +1331,7 @@
                 if (slideInterval) {
                     clearInterval(slideInterval);
                 }
-                slideInterval = setInterval(nextSlide, 50000);
+                slideInterval = setInterval(nextSlide, 5000);
             }
             
             function stopAutoSlide() {
