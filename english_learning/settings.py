@@ -21,18 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
-
+SECRET_KEY = 'django-insecure-*+ksmi)lsz$dqlwqtocyxc$&f7tz!zmrf&2^)lq6_d)tj+$sn)'
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
-    'english_learning.onrender.com',
-    'english-learning-jfde.onrender.com',  # Add this
-    'localhost',
-    '127.0.0.1'
+    "localhost",
+    "127.0.0.1",
+    ".ngrok-free.app",
+    ".ngrok-free.dev",
 ]
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -156,3 +154,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.ngrok-free.app",
+    "https://*.ngrok-free.dev",
+]
