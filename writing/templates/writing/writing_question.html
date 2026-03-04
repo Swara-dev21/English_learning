@@ -5,14 +5,16 @@
 
 {% block extra_css %}
 <style>
-    /* ===== PROFESSIONAL PERIWINKLE COLOR SCHEME ===== */
+    /* ===== PURPLE THEME - MATCHING READING/LISTENING ===== */
     :root {
-        --primary: #4a62b0;
-        --primary-dark: #2e4085;
-        --primary-deep: #1f2d5c;
-        --primary-light: #e0e7ff;
-        --primary-soft: #f0f3ff;
-        --gradient-primary: linear-gradient(135deg, #5f7ad4, #4a62b0, #3f58ad);
+        --primary: #5e548e;
+        --primary-dark: #453c6b;
+        --primary-deep: #2d2a4a;
+        --primary-light: #f0edf7;
+        --primary-soft: #f8f5ff;
+        --accent: #9f8bc9;
+        --gradient-primary: linear-gradient(135deg, #5e548e, #453c6b, #2d2a4a);
+        --gradient-hover: linear-gradient(135deg, #6b5e9e, #5e548e);
         
         --success: #10b981;
         --success-light: #d1fae5;
@@ -21,22 +23,24 @@
         --warning: #f59e0b;
         --warning-light: #fef3c7;
         
-        --text-dark: #1a1f33;
-        --text-medium: #2a3150;
-        --text-light: #4a5578;
-        --text-muted: #6b7191;
-        --bg-light: #f8faff;
+        --text-dark: #1e293b;
+        --text-medium: #334155;
+        --text-light: #475569;
+        --text-muted: #64748b;
+        --bg-light: #f8fafc;
         --bg-white: #ffffff;
         --border-light: #e2e8f0;
         --border-medium: #cbd5e1;
         
-        --shadow-sm: 0 2px 4px rgba(74, 98, 176, 0.05);
-        --shadow-md: 0 8px 20px rgba(74, 98, 176, 0.1);
-        --shadow-lg: 0 15px 30px rgba(74, 98, 176, 0.15);
+        --shadow-sm: 0 4px 6px -1px rgba(94, 84, 142, 0.1);
+        --shadow-md: 0 10px 15px -3px rgba(94, 84, 142, 0.1);
+        --shadow-lg: 0 20px 25px -5px rgba(94, 84, 142, 0.15);
+        --shadow-xl: 0 25px 50px -12px rgba(94, 84, 142, 0.25);
         
         --radius: 10px;
         --radius-lg: 14px;
         --radius-xl: 20px;
+        --radius-xxl: 24px;
     }
 
     * {
@@ -47,7 +51,7 @@
 
     body {
         font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #f0f3ff 0%, #e8eeff 100%);
+        background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
         color: var(--text-dark);
         line-height: 1.5;
         min-height: 100vh;
@@ -55,87 +59,124 @@
         align-items: center;
         justify-content: center;
     }
-            /* Back buttons container - outside the box */
+    
+    /* Back buttons container - outside the box */
+    .back-buttons-container {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        right: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: calc(100% - 60px);
+        z-index: 10;
+    }
+
+    @media (max-width: 768px) {
         .back-buttons-container {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            right: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: calc(100% - 60px);
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            width: calc(100% - 40px);
         }
+    }
 
-        .back-link-top, .home-link-top {
-            color: #4a5568;
-            text-decoration: none;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
+    @media (max-width: 576px) {
+        .back-buttons-container {
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            width: calc(100% - 30px);
+        }
+    }
+
+    @media (max-width: 400px) {
+        .back-buttons-container {
             gap: 8px;
-            transition: all 0.2s;
-            padding: 10px 15px;
-            background-color: white;
-            border-radius: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
+    }
 
-        .back-link-top:hover, .home-link-top:hover {
-            color: #667eea;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-            transform: translateY(-2px);
-        }
+    .back-link-top, .home-link-top {
+        color: #4a5568;
+        text-decoration: none;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+        padding: 10px 15px;
+        background-color: white;
+        border-radius: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        white-space: nowrap;
+    }
 
-        .back-link-top i, .home-link-top i {
+    @media (max-width: 768px) {
+        .back-link-top, .home-link-top {
+            padding: 8px 12px;
             font-size: 14px;
         }
+    }
 
-        .reset-wrapper {
-            max-width: 480px;
-            width: 100%;
-            animation: fadeInUp 0.5s ease;
+    @media (max-width: 576px) {
+        .back-link-top, .home-link-top {
+            padding: 8px 12px;
+            font-size: 14px;
+            gap: 5px;
         }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        
+        .back-link-top i, .home-link-top i {
+            font-size: 12px;
         }
+    }
 
-        .reset-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(74, 98, 176, 0.15);
-            overflow: hidden;
-            width: 100%;
+    @media (max-width: 400px) {
+        .back-link-top, .home-link-top {
+            padding: 6px 10px;
+            font-size: 13px;
         }
+    }
 
+    .back-link-top:hover, .home-link-top:hover {
+        color: #667eea;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        transform: translateY(-2px);
+    }
 
-    /* ===== FIXED WIDTH STRUCTURE - 800px ===== */
+    /* ===== MAIN CONTAINER - CONSISTENT WIDTH ===== */
     .test-wrapper {
-        width: 800px;
+        width: 100%;
         max-width: 800px;
-        min-width: 800px;
         margin: 2rem auto;
+        /* No padding on desktop - padding only on mobile via media query */
+    }
+
+    @media (max-width: 768px) {
+        .test-wrapper {
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .test-wrapper {
+            margin: 1rem auto;
+            padding: 0 0.75rem;
+        }
     }
 
     /* ===== UNIFIED MAIN CARD ===== */
     .test-card {
         background: var(--bg-white);
-        border-radius: var(--radius-xl);
-        box-shadow: var(--shadow-lg);
+        border-radius: var(--radius-xxl);
+        box-shadow: var(--shadow-xl);
         border: 1px solid var(--border-light);
         overflow: hidden;
         animation: slideUp 0.6s ease;
-        width: 800px;
+        width: 100%;
     }
 
     @keyframes slideUp {
@@ -153,14 +194,26 @@
     .test-header {
         background: var(--gradient-primary);
         color: white;
-        padding: 40px 0;
+        padding: 40px 20px;
         position: relative;
         overflow: hidden;
         text-align: center;
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 800px;
+        width: 100%;
+    }
+
+    @media (max-width: 768px) {
+        .test-header {
+            padding: 35px 15px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .test-header {
+            padding: 30px 10px;
+        }
     }
 
     .test-header::after {
@@ -188,33 +241,79 @@
         margin: 0;
         position: relative;
         z-index: 1;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+        .test-header h1 {
+            font-size: 1.8rem;
+            gap: 0.8rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .test-header h1 {
+            font-size: 1.6rem;
+            gap: 0.6rem;
+        }
     }
 
     .test-header h1 i {
-        color: #fef9c3;
+        color: var(--accent);
         font-size: 2.3rem;
+    }
+
+    @media (max-width: 768px) {
+        .test-header h1 i {
+            font-size: 2.1rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .test-header h1 i {
+            font-size: 1.9rem;
+        }
     }
 
     /* ===== CONTENT SECTION ===== */
     .test-content {
         padding: 1.5rem;
-        width: 800px;
+        width: 100%;
         overflow-x: hidden;
         box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+        .test-content {
+            padding: 1.25rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .test-content {
+            padding: 1rem;
+        }
     }
 
     /* ===== PROGRESS SECTION ===== */
     .question-indicator {
         font-size: 1.1rem;
         font-weight: 600;
-        color: #1e293b;
+        color: var(--text-dark);
         margin-bottom: 0.5rem;
         text-align: left;
         width: 100%;
     }
 
+    @media (max-width: 576px) {
+        .question-indicator {
+            font-size: 1rem;
+        }
+    }
+
     .progress-bar-container {
-        background: #e2e8f0;
+        background: var(--border-light);
         height: 0.5rem;
         border-radius: 1rem;
         overflow: hidden;
@@ -250,16 +349,16 @@
     /* ===== QUESTION NUMBER BADGE ===== */
     .question-number-badge {
         display: inline-block;
-        background: var(--primary);
+        background: var(--gradient-primary);
         color: white;
         padding: 0.3rem 1.2rem;
         border-radius: 2rem;
         margin-bottom: 1rem;
         font-size: 1rem;
         font-weight: 600;
-        box-shadow: 0 4px 10px rgba(74, 98, 176, 0.2);
+        box-shadow: 0 4px 10px rgba(94, 84, 142, 0.2);
         letter-spacing: 0.5px;
-        margin-right:0.75rem;
+        margin-right: 0.75rem;
     }
 
     /* ===== QUESTION TYPE BADGE ===== */
@@ -275,22 +374,35 @@
         font-size: 0.9rem;
         margin-bottom: 1.5rem;
         border: 1px solid var(--primary);
+        flex-wrap: wrap;
     }
 
     .type-badge i {
         font-size: 0.95rem;
     }
 
-    /* ===== QUESTION DISPLAY ===== */
+    /* ===== QUESTION DISPLAY - CONSISTENT PADDING FOR ALL ===== */
     .question-display {
         background: var(--bg-light);
         border-radius: var(--radius-lg);
-        padding: 1.25rem;
+        padding: 1.5rem;
         margin-bottom: 1.5rem;
         border: 1px solid var(--border-light);
         width: 100%;
         box-sizing: border-box;
         overflow-x: auto;
+    }
+
+    @media (max-width: 768px) {
+        .question-display {
+            padding: 1.25rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .question-display {
+            padding: 1rem;
+        }
     }
 
     .question-display h5 {
@@ -301,6 +413,7 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        flex-wrap: wrap;
     }
 
     .question-display h5 i {
@@ -308,7 +421,7 @@
         font-size: 1.1rem;
     }
 
-    /* ===== Q1: FILL IN THE BLANKS - IMPROVED LAYOUT ===== */
+    /* ===== Q1: FILL IN THE BLANKS ===== */
     .fill-blanks-container {
         width: 100%;
     }
@@ -317,12 +430,26 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.75rem 1rem;
+        padding: 1rem;
         background: white;
         border: 1px solid var(--border-light);
         border-radius: var(--radius);
         margin-bottom: 0.8rem;
         flex-wrap: wrap;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+        .blank-sentence {
+            padding: 0.9rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .blank-sentence {
+            padding: 0.8rem;
+        }
     }
 
     .sentence-number {
@@ -335,6 +462,12 @@
     .sentence-prefix {
         color: var(--text-dark);
         font-size: 1rem;
+    }
+
+    .sentence-suffix {
+        color: var(--text-dark);
+        font-size: 1rem;
+        margin-left: 0.2rem;
     }
 
     .blank-space {
@@ -353,14 +486,8 @@
     .blank-space.filled {
         background: var(--success-light);
         border-color: var(--success);
-        color: var(--success-dark);
+        color: var(--success);
         border-style: solid;
-    }
-
-    .sentence-suffix {
-        color: var(--text-dark);
-        font-size: 1rem;
-        margin-left: 0.2rem;
     }
 
     .options-row {
@@ -368,6 +495,7 @@
         gap: 0.5rem;
         margin-left: auto;
         flex-shrink: 0;
+        flex-wrap: wrap;
     }
 
     .option-btn {
@@ -397,7 +525,7 @@
 
     .selected-answers-display {
         margin-top: 1rem;
-        padding: 0.75rem 1rem;
+        padding: 1rem 1.2rem;
         background: var(--primary-soft);
         border-radius: var(--radius);
         font-size: 0.95rem;
@@ -405,6 +533,9 @@
         align-items: center;
         gap: 0.5rem;
         border-left: 4px solid var(--primary);
+        width: 100%;
+        box-sizing: border-box;
+        flex-wrap: wrap;
     }
 
     .selected-answers-display strong {
@@ -421,7 +552,7 @@
         background: var(--primary-soft);
         border: 1px solid var(--primary);
         border-radius: var(--radius);
-        padding: 0.75rem 1rem;
+        padding: 1rem 1.2rem;
         margin-bottom: 1rem;
         display: flex;
         align-items: center;
@@ -429,6 +560,8 @@
         font-size: 0.95rem;
         color: var(--text-dark);
         border-left: 4px solid var(--primary);
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .instruction-box i {
@@ -441,116 +574,203 @@
         color: var(--primary-dark);
     }
 
-    /* ===== Q2: SENTENCE ORDER ===== */
+    /* ===== Q2: SENTENCE ORDER - MOBILE FRIENDLY TAP ORDER ===== */
     .sentence-order-container {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.75rem;
         margin: 1rem 0;
         min-height: 200px;
+        width: 100%;
     }
-    
-    .sentence-card {
+
+    .sentence-tap-card {
         background: white;
-        border: 2px solid var(--primary-light);
+        border: 2px solid var(--border-light);
         border-radius: var(--radius-lg);
-        padding: 0.7rem 1.2rem;
-        font-size: 1.1rem;
-        cursor: grab;
-        transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+        padding: 1rem 1.2rem;
         display: flex;
         align-items: center;
-        gap: 0.8rem;
+        gap: 1rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        width: 100%;
+        box-sizing: border-box;
         box-shadow: var(--shadow-sm);
         position: relative;
-        user-select: none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        transform-origin: center;
-        width: 100%;
-        margin: 0;
+        min-height: 70px;
     }
-    
-    .sentence-card:hover {
+
+    @media (max-width: 576px) {
+        .sentence-tap-card {
+            padding: 1rem;
+            gap: 0.8rem;
+        }
+    }
+
+    .sentence-tap-card:hover {
         border-color: var(--primary);
-        transform: translateY(-2px) scale(1.01);
+        background: var(--primary-soft);
+        transform: translateY(-2px);
         box-shadow: var(--shadow-md);
-        background: linear-gradient(to right, white, var(--primary-soft));
     }
-    
-    .sentence-card:active {
-        cursor: grabbing;
-        transform: scale(1.02);
-        box-shadow: var(--shadow-lg);
-    }
-    
-    .sentence-card.dragging {
-        opacity: 0.7;
-        transform: scale(1.03) rotate(1deg);
-        box-shadow: var(--shadow-lg);
-        cursor: grabbing;
-        background: linear-gradient(135deg, white, var(--primary-soft));
+
+    .sentence-tap-card.selected {
+        background: var(--primary-light);
         border-color: var(--primary);
-        z-index: 1000;
+        border-width: 3px;
+        box-shadow: 0 8px 20px rgba(94, 84, 142, 0.15);
     }
-    
+
+    .sentence-tap-card.selected .sentence-letter {
+        background: var(--primary);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .sentence-tap-card.placed {
+        opacity: 0.8;
+        background: linear-gradient(135deg, var(--primary-soft), white);
+        border-color: var(--success);
+        cursor: not-allowed;
+    }
+
+    .sentence-tap-card.placed .sentence-letter {
+        background: var(--success);
+        color: white;
+    }
+
     .sentence-letter {
-        display: inline-flex;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: var(--gradient-primary);
+        color: white;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 8px rgba(94, 84, 142, 0.2);
+    }
+
+    @media (max-width: 576px) {
+        .sentence-letter {
+            width: 36px;
+            height: 36px;
+            font-size: 1rem;
+            border-radius: 10px;
+        }
+    }
+
+    .sentence-text {
+        flex: 1;
+        font-size: 1rem;
+        line-height: 1.4;
+        color: var(--text-dark);
+        font-weight: 500;
+        word-break: break-word;
+    }
+
+    .order-badge {
+        display: flex;
         align-items: center;
         justify-content: center;
         width: 32px;
         height: 32px;
-        background: var(--gradient-primary);
+        background: var(--primary);
         color: white;
         border-radius: 50%;
         font-weight: 700;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-        box-shadow: 0 4px 8px rgba(74, 98, 176, 0.3);
-        transition: all 0.2s ease;
-    }
-    
-    .sentence-text {
-        flex: 1;
-        color: var(--text-dark);
-        font-weight: 500;
-        line-height: 1.4;
-    }
-    
-    .drag-handle {
-        color: var(--primary);
         font-size: 1rem;
-        opacity: 0.4;
-        transition: all 0.2s ease;
+        flex-shrink: 0;
+        box-shadow: 0 4px 8px rgba(94, 84, 142, 0.2);
+    }
+
+    .order-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background: var(--success);
+        color: white;
+        border-radius: 50%;
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-left: 0.75rem;
+        flex-shrink: 0;
+    }
+
+    .tap-status-bar {
         display: flex;
         align-items: center;
-        gap: 0.1rem;
-        padding: 0.2rem 0.4rem;
-        border-radius: 20px;
-        background: var(--primary-light);
-        cursor: grab;
-        flex-shrink: 0;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding: 0.75rem 1rem;
+        background: var(--primary-soft);
+        border-radius: var(--radius);
+        margin: 1rem 0 0.5rem;
+        font-size: 0.95rem;
     }
-    
-    .sentence-card:hover .drag-handle {
-        opacity: 1;
+
+    .tap-status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .tap-status-indicator .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--warning);
+        animation: pulse-warning 1.5s infinite;
+    }
+
+    .tap-status-indicator .dot.complete {
+        background: var(--success);
+        animation: none;
+    }
+
+    @keyframes pulse-warning {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    .reset-tap-btn {
+        background: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        padding: 0.4rem 1rem;
+        border-radius: 30px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: auto;
+    }
+
+    .reset-tap-btn:hover {
         background: var(--primary);
         color: white;
-        transform: scale(1.05);
-    }
-    
-    .drag-handle i {
-        font-size: 0.8rem;
     }
 
     .current-order-display {
         background: var(--primary-soft);
         border-radius: var(--radius);
-        padding: 0.6rem 1rem;
+        padding: 0.8rem 1.2rem;
         margin: 0.8rem 0 0;
         border-left: 4px solid var(--primary);
         display: inline-block;
+        min-width: 200px;
+        box-sizing: border-box;
     }
 
     .current-order-label {
@@ -560,6 +780,7 @@
         align-items: center;
         gap: 0.5rem;
         font-size: 0.95rem;
+        flex-wrap: wrap;
     }
 
     .current-order-label i {
@@ -578,11 +799,17 @@
         margin-left: 0.5rem;
     }
 
+    @media (max-width: 576px) {
+        .current-order-display {
+            width: 100%;
+        }
+    }
+
     /* ===== Q3: SENTENCE REWRITE ===== */
     .format-box {
         background: var(--primary-soft);
         border-radius: var(--radius);
-        padding: 0.75rem 1rem;
+        padding: 1rem 1.2rem;
         margin-top: 1rem;
         display: flex;
         align-items: center;
@@ -590,6 +817,8 @@
         flex-wrap: wrap;
         font-size: 0.95rem;
         border-left: 4px solid var(--primary);
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .format-box i {
@@ -609,35 +838,62 @@
         font-weight: 500;
     }
 
-    /* ===== Q4: RADIO BUTTONS ===== */
+    /* ===== Q4: RADIO BUTTONS - FIXED TO MATCH OTHER QUESTIONS ===== */
     .mcq-radio-container {
-        margin: 0.5rem 0 1rem;
+        margin: 0.5rem 0 0;
         width: 100%;
     }
-    
+
     .mcq-question-item {
         background: white;
         border: 1px solid var(--border-light);
         border-radius: var(--radius);
-        padding: 1rem;
+        padding: 0;
         margin-bottom: 1rem;
         box-shadow: var(--shadow-sm);
         transition: all 0.2s ease;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
     }
-    
+
     .mcq-question-header {
-        margin-bottom: 0.8rem;
+        padding: 1rem 1.2rem;
+        margin-bottom: 0;
         font-weight: 600;
         color: var(--text-dark);
         font-size: 1rem;
+        background: var(--bg-light);
+        border-bottom: 1px solid var(--border-light);
     }
-    
+
     .mcq-options-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 0.8rem;
+        padding: 1rem 1.2rem;
+        width: 100%;
+        box-sizing: border-box;
     }
-    
+
+    @media (max-width: 768px) {
+        .mcq-options-grid {
+            padding: 0.9rem 1rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .mcq-options-grid {
+            padding: 0.8rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .mcq-options-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
     .mcq-radio-option {
         display: flex;
         align-items: center;
@@ -649,33 +905,33 @@
         cursor: pointer;
         transition: all 0.2s ease;
     }
-    
+
     .mcq-radio-option:hover {
         background: var(--primary-light);
         border-color: var(--primary);
         transform: translateY(-2px);
     }
-    
+
     .mcq-radio-option.selected {
         background: var(--primary-light);
         border-color: var(--primary);
-        box-shadow: 0 4px 12px rgba(74, 98, 176, 0.2);
+        box-shadow: 0 4px 12px rgba(94, 84, 142, 0.2);
     }
-    
+
     .mcq-radio-option input[type="radio"] {
         width: 18px;
         height: 18px;
         accent-color: var(--primary);
         cursor: pointer;
     }
-    
+
     .mcq-radio-option .option-letter {
         font-weight: 700;
         color: var(--primary);
         min-width: 22px;
         font-size: 1rem;
     }
-    
+
     .mcq-radio-option .option-text {
         color: var(--text-dark);
         font-size: 0.95rem;
@@ -703,10 +959,22 @@
         background: white;
         border: 1px solid var(--border-light);
         border-radius: var(--radius);
-        padding: 1.4rem;
+        padding: 1.5rem;
         margin-top: 1rem;
         width: 100%;
         box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+        .requirements-list {
+            padding: 1.25rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .requirements-list {
+            padding: 1rem;
+        }
     }
 
     .requirements-list p {
@@ -757,11 +1025,25 @@
     .answer-box {
         border: 2px solid var(--border-light);
         border-radius: var(--radius-lg);
-        padding: 1.25rem;
-        margin: 1.25rem 0;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
         background: white;
         width: 100%;
         box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+        .answer-box {
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .answer-box {
+            padding: 1rem;
+            margin: 1rem 0;
+        }
     }
 
     .answer-box:focus-within {
@@ -830,15 +1112,15 @@
     }
 
     .message-container.success {
-        background: #d1fae5;
-        color: #065f46;
-        border-left: 4px solid #10b981;
+        background: var(--success-light);
+        color: var(--success);
+        border-left: 4px solid var(--success);
     }
 
     .message-container.warning {
-        background: #fef3c7;
-        color: #92400e;
-        border-left: 4px solid #f59e0b;
+        background: var(--warning-light);
+        color: var(--warning);
+        border-left: 4px solid var(--warning);
     }
 
     .message-container i {
@@ -855,6 +1137,12 @@
         width: 100%;
     }
 
+    @media (max-width: 576px) {
+        .navigation-section {
+            justify-content: center !important;
+        }
+    }
+
     .nav-btn {
         padding: 0.65rem 1.75rem;
         border-radius: 2rem;
@@ -867,6 +1155,22 @@
         align-items: center;
         gap: 0.5rem;
         text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .nav-btn {
+            padding: 0.6rem 1.5rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .nav-btn {
+            padding: 0.6rem 1.25rem;
+            font-size: 0.9rem;
+            width: 100%;
+            justify-content: center;
+        }
     }
 
     .btn-next {
@@ -897,6 +1201,21 @@
         gap: 0.75rem;
     }
 
+    @media (max-width: 768px) {
+        .btn-submit {
+            padding: 12px 40px;
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .btn-submit {
+            padding: 12px 30px;
+            font-size: 1rem;
+            width: 100%;
+        }
+    }
+
     .btn-submit:hover {
         background: linear-gradient(135deg, #059669, #047857);
         transform: translateY(-2px);
@@ -916,27 +1235,43 @@
         width: 2.2rem;
         height: 2.2rem;
         border-radius: 50%;
-        background: #e2e8f0;
+        background: var(--border-light);
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 600;
         font-size: 0.85rem;
-        color: #64748b;
+        color: var(--text-muted);
         transition: all 0.2s ease;
         cursor: pointer;
         flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+        .status-dot {
+            width: 2rem;
+            height: 2rem;
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .status-dot {
+            width: 1.8rem;
+            height: 1.8rem;
+            font-size: 0.75rem;
+        }
     }
 
     .status-dot.active {
         background: var(--primary);
         color: white;
         transform: scale(1.1);
-        box-shadow: 0 4px 10px rgba(74, 98, 176, 0.3);
+        box-shadow: 0 4px 10px rgba(94, 84, 142, 0.3);
     }
 
     .status-dot.answered {
-        background: #10b981;
+        background: var(--success);
         color: white;
     }
 
@@ -949,9 +1284,9 @@
     }
 
     @keyframes pulse-red {
-        0% { transform: scale(1); background: #e2e8f0; }
-        50% { transform: scale(1.2); background: #ef4444; color: white; }
-        100% { transform: scale(1); background: #e2e8f0; }
+        0% { transform: scale(1); background: var(--border-light); }
+        50% { transform: scale(1.2); background: var(--danger); color: white; }
+        100% { transform: scale(1); background: var(--border-light); }
     }
 
     /* ===== AUTO-SAVE INDICATORS ===== */
@@ -980,7 +1315,7 @@
         display: none;
     }
 
-    /* ===== RESPONSIVE ===== */
+    /* ===== RESPONSIVE BREAKPOINTS ===== */
     @media (max-width: 640px) {
         .blank-sentence {
             flex-direction: column;
@@ -993,13 +1328,120 @@
             justify-content: flex-start;
         }
         
-        .sentence-card {
+        .sentence-tap-card {
             width: 100%;
         }
         
         .mcq-options-grid {
             grid-template-columns: 1fr;
         }
+        
+        .tap-status-bar {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .reset-tap-btn {
+            margin-left: 0;
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .test-header h1 {
+            font-size: 1.4rem;
+        }
+        
+        .test-header h1 i {
+            font-size: 1.6rem;
+        }
+        
+        .question-number-badge {
+            font-size: 0.9rem;
+            padding: 0.2rem 0.9rem;
+        }
+        
+        .type-badge {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.8rem;
+        }
+        
+        .blank-space {
+            min-width: 40px;
+            padding: 0.2rem 0.4rem;
+            font-size: 0.85rem;
+        }
+        
+        .option-btn {
+            padding: 0.35rem 0.6rem;
+            font-size: 0.8rem;
+        }
+        
+        .status-dot {
+            width: 1.6rem;
+            height: 1.6rem;
+            font-size: 0.7rem;
+        }
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+        .sentence-tap-card:hover {
+            transform: none;
+        }
+        
+        .sentence-tap-card:active {
+            transform: scale(1.02);
+        }
+        
+        .option-btn:hover {
+            transform: none;
+        }
+        
+        .option-btn:active {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .back-link-top:hover, .home-link-top:hover {
+            transform: none;
+        }
+        
+        .back-link-top:active, .home-link-top:active {
+            transform: translateY(-2px);
+        }
+        
+        .reset-tap-btn:hover {
+            background: transparent;
+            color: var(--primary);
+        }
+        
+        .reset-tap-btn:active {
+            background: var(--primary);
+            color: white;
+        }
+    }
+
+    /* Landscape orientation */
+    @media (max-width: 768px) and (orientation: landscape) {
+        .test-wrapper {
+            margin: 3rem auto 1rem;
+        }
+        
+        .test-content {
+            padding: 1rem;
+        }
+        
+        .mcq-options-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* Ensure no horizontal scrolling */
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
     }
 </style>
 {% endblock %}
@@ -1052,7 +1494,7 @@
 
             <!-- ===== HARDCODED QUESTIONS BY TYPE ===== -->
 
-            <!-- Q1: Fill in the Blanks - IMPROVED LAYOUT -->
+            <!-- Q1: Fill in the Blanks -->
             {% if question.question_type == 'fill_blanks' and question_number == 1 %}
             <div class="question-display">
                 <h5>
@@ -1105,7 +1547,7 @@
             </div>
             {% endif %}
 
-            <!-- Q2: Sentence Order - WITH INSTRUCTION BOX -->
+            <!-- Q2: Sentence Order - MOBILE FRIENDLY TAP ORDER -->
             {% if question.question_type == 'sentence_order' and question_number == 2 %}
             <div class="question-display">
                 <h5>
@@ -1113,21 +1555,33 @@
                     Arrange these sentences in logical order:
                 </h5>
                 
-                <!-- Instruction Box for Drag and Drop -->
+                <!-- Instruction Box for Tap Order -->
                 <div class="instruction-box">
-                    <span><strong>How to arrange:</strong> Click and drag the sentence boxes to reorder them. Release to drop in the new position.</span>
+                    <i class="fas fa-hand-pointer"></i>
+                    <span><strong>How to arrange:</strong> Tap sentences in the correct order (1st, 2nd, 3rd). Selected sentences will show their position number.</span>
                 </div>
                 
-                <!-- Drag and Drop Container -->
+                <!-- Tap Order Container -->
                 <div class="sentence-order-container" id="sentenceOrderContainer">
                     <!-- Sentences will be populated by JavaScript -->
+                </div>
+                
+                <!-- Status Bar -->
+                <div class="tap-status-bar" id="tapStatusBar">
+                    <div class="tap-status-indicator" id="tapStatus">
+                        <span class="dot" id="statusDot"></span>
+                        <span id="statusText">Tap sentences in order (0/3 selected)</span>
+                    </div>
+                    <button class="reset-tap-btn" id="resetTapBtn">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
                 </div>
                 
                 <!-- Current order display -->
                 <div class="current-order-display">
                     <span class="current-order-label">
                         <i class="fas fa-arrow-right"></i> Your order:
-                        <span class="current-order-value" id="currentOrderValue">A, B, C</span>
+                        <span class="current-order-value" id="currentOrderValue">Not arranged yet</span>
                     </span>
                 </div>
                 
@@ -1144,7 +1598,7 @@
                     Rewrite the sentence correctly:
                 </h5>
                 
-                <div style="background: var(--bg-light); padding: 0.85rem; border-radius: var(--radius); margin-bottom: 1rem;">
+                <div style="background: var(--bg-light); padding: 1rem 1.2rem; border-radius: var(--radius); margin-bottom: 1rem; width: 100%; box-sizing: border-box;">
                     <div style="font-weight: 700; color: var(--text-medium); margin-bottom: 0.5rem; font-size: 0.95rem;">
                         Original Sentence:
                     </div>
@@ -1155,7 +1609,7 @@
                 
                 <div class="format-box">
                     <i class="fas fa-check-circle"></i>
-                    <strong>Check for:</strong>  <span class="format-example">Spelling, punctuation, capitalization, and grammar</span>
+                    <strong>Check for:</strong>  <span class="format-example">Spelling, punctuation (? , ; .), capitalization, and grammar</span>
                 </div>
             </div>
             {% endif %}
@@ -1218,26 +1672,9 @@
                 <div class="requirements-list">
                     <p>
                         <i class="fas fa-pencil-alt"></i>  
-                        <span style="font-weight: 700;">Write 5-6 sentences. Evaluation criteria:</span>
+                        <span style="font-weight: 600;">Write at least 5-6 sentences. <br>Your response will be evaluated on grammatical accuracy, appropriate vocabulary usage (including all clue words), organization and coherence, as well as correct spelling and punctuation.</span>
                     </p>
-                    <ul>
-                        <li>
-                            <span class="requirement-number">1</span>
-                            Grammatical Accuracy (25%)
-                        </li>
-                        <li>
-                            <span class="requirement-number">2</span>
-                            Vocabulary Use (25%) - Include all clue words
-                        </li>
-                        <li>
-                            <span class="requirement-number">3</span>
-                            Organization & Coherence (25%)
-                        </li>
-                        <li>
-                            <span class="requirement-number">4</span>
-                            Spelling & Punctuation (25%)
-                        </li>
-                    </ul>
+                    
                 </div>
             </div>
             {% endif %}
@@ -1487,16 +1924,15 @@
     
     {% elif question.question_type == 'sentence_order' and question_number == 2 %}
     
-    // ===== Q2: ENHANCED DRAG AND DROP FUNCTIONALITY =====
+    // ===== Q2: MOBILE-FRIENDLY TAP ORDER FUNCTIONALITY =====
     const sentences = [
         { letter: 'A', text: 'We submitted the assignment.' },
         { letter: 'B', text: 'The teacher explained the topic.' },
         { letter: 'C', text: 'The class started at ten.' }
     ];
     
-    let currentOrder = ['A', 'B', 'C']; // Default to correct order
-    let draggedItem = null;
-    let dragOverItem = null;
+    let selectedOrder = []; // Array to store selected letters in order
+    let availableSentences = [...sentences]; // Copy of sentences not yet selected
     
     // Load previous answer if it exists
     document.addEventListener('DOMContentLoaded', function() {
@@ -1504,156 +1940,152 @@
         if (previousAnswer) {
             const parts = previousAnswer.split(',').map(p => p.trim().toUpperCase());
             if (parts.length === 3 && parts.every(p => ['A', 'B', 'C'].includes(p))) {
-                currentOrder = parts;
+                selectedOrder = parts;
+                // Mark all as selected (they will be shown in order)
+                availableSentences = [];
             }
         }
         
-        renderSentences();
+        renderTapSentences();
+        updateTapStatus();
         updateHiddenField();
         updateOrderDisplay();
         checkAllSentencesArranged();
     });
     
-    // Render sentences with enhanced drag and drop
-    function renderSentences() {
+    // Render sentences with tap functionality
+    function renderTapSentences() {
         const container = document.getElementById('sentenceOrderContainer');
         container.innerHTML = '';
         
-        currentOrder.forEach((letter, index) => {
-            const sentence = sentences.find(s => s.letter === letter);
-            if (!sentence) return;
-            
-            const card = document.createElement('div');
-            card.className = 'sentence-card';
-            card.setAttribute('data-letter', letter);
-            card.setAttribute('data-index', index);
-            card.setAttribute('draggable', 'true');
-            
-            card.innerHTML = `
-                <span class="sentence-letter">${letter}</span>
-                <span class="sentence-text">${sentence.text}</span>
-                <span class="drag-handle">
-                    <i class="fas fa-grip-vertical"></i>
-                    <i class="fas fa-grip-lines"></i>
-                </span>
-            `;
-            
-            // Drag events
-            card.addEventListener('dragstart', handleDragStart);
-            card.addEventListener('dragend', handleDragEnd);
-            card.addEventListener('dragover', handleDragOver);
-            card.addEventListener('dragleave', handleDragLeave);
-            card.addEventListener('drop', handleDrop);
-            
+        // First, render sentences in the order they were selected (if any)
+        if (selectedOrder.length > 0) {
+            selectedOrder.forEach((letter, index) => {
+                const sentence = sentences.find(s => s.letter === letter);
+                if (!sentence) return;
+                
+                const card = createTapCard(sentence, index + 1, true);
+                container.appendChild(card);
+            });
+        }
+        
+        // Then render remaining available sentences
+        const remainingSentences = sentences.filter(s => !selectedOrder.includes(s.letter));
+        remainingSentences.forEach(sentence => {
+            const card = createTapCard(sentence, null, false);
             container.appendChild(card);
         });
     }
     
-    function handleDragStart(e) {
-        draggedItem = this;
-        this.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', this.getAttribute('data-index'));
+    function createTapCard(sentence, position, isSelected) {
+        const card = document.createElement('div');
+        card.className = `sentence-tap-card ${isSelected ? 'placed' : ''}`;
+        card.setAttribute('data-letter', sentence.letter);
         
-        // Create custom drag image
-        const rect = this.getBoundingClientRect();
-        const dragImage = this.cloneNode(true);
-        dragImage.style.width = rect.width + 'px';
-        dragImage.style.opacity = '0.7';
-        dragImage.style.transform = 'scale(1.05)';
-        dragImage.style.position = 'absolute';
-        dragImage.style.top = '-1000px';
-        document.body.appendChild(dragImage);
-        e.dataTransfer.setDragImage(dragImage, e.offsetX, e.offsetY);
-        setTimeout(() => document.body.removeChild(dragImage), 0);
-    }
-    
-    function handleDragEnd(e) {
-        this.classList.remove('dragging');
-        draggedItem = null;
+        card.innerHTML = `
+            <span class="sentence-letter">${sentence.letter}</span>
+            <span class="sentence-text">${sentence.text}</span>
+            ${position ? `<span class="order-number">${position}</span>` : ''}
+        `;
         
-        // Remove all drag-over classes
-        document.querySelectorAll('.sentence-card').forEach(card => {
-            card.classList.remove('drag-over', 'drag-over-top', 'drag-over-bottom');
-        });
-    }
-    
-    function handleDragOver(e) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        
-        if (this === draggedItem) return;
-        
-        const rect = this.getBoundingClientRect();
-        const midY = rect.top + rect.height / 2;
-        
-        // Remove previous classes
-        this.classList.remove('drag-over-top', 'drag-over-bottom');
-        
-        // Add direction class based on mouse position
-        if (e.clientY < midY) {
-            this.classList.add('drag-over-top');
-        } else {
-            this.classList.add('drag-over-bottom');
+        if (!isSelected) {
+            card.addEventListener('click', () => handleTapSelect(sentence.letter));
         }
         
-        this.classList.add('drag-over');
-        dragOverItem = this;
+        return card;
     }
     
-    function handleDragLeave(e) {
-        this.classList.remove('drag-over', 'drag-over-top', 'drag-over-bottom');
-    }
-    
-    function handleDrop(e) {
-        e.preventDefault();
-        this.classList.remove('drag-over', 'drag-over-top', 'drag-over-bottom');
+    function handleTapSelect(letter) {
+        // Add to selected order
+        selectedOrder.push(letter);
         
-        if (!draggedItem || this === draggedItem) return;
-        
-        const draggedIndex = parseInt(draggedItem.getAttribute('data-index'));
-        const targetIndex = parseInt(this.getAttribute('data-index'));
-        
-        // Reorder the array
-        const [draggedLetter] = currentOrder.splice(draggedIndex, 1);
-        currentOrder.splice(targetIndex, 0, draggedLetter);
+        // Remove from available
+        const index = availableSentences.findIndex(s => s.letter === letter);
+        if (index !== -1) {
+            availableSentences.splice(index, 1);
+        }
         
         // Re-render
-        renderSentences();
+        renderTapSentences();
         
-        // Update everything
+        // Update UI
+        updateTapStatus();
         updateHiddenField();
         updateOrderDisplay();
         checkAllSentencesArranged();
         
-        // Auto-save after drop
-        autoSave();
+        // Auto-save when all selected
+        if (selectedOrder.length === 3) {
+            autoSave();
+        }
+    }
+    
+    function updateTapStatus() {
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        
+        if (selectedOrder.length === 0) {
+            statusDot.className = 'dot';
+            statusText.textContent = 'Tap sentences in order (0/3 selected)';
+        } else if (selectedOrder.length < 3) {
+            statusDot.className = 'dot';
+            statusText.textContent = `Tap next sentence (${selectedOrder.length}/3 selected)`;
+        } else {
+            statusDot.className = 'dot complete';
+            statusText.textContent = 'All sentences arranged! ✓';
+        }
     }
     
     function updateOrderDisplay() {
         const orderValue = document.getElementById('currentOrderValue');
         if (orderValue) {
-            orderValue.textContent = currentOrder.join(', ');
+            if (selectedOrder.length === 0) {
+                orderValue.textContent = 'Not arranged yet';
+            } else {
+                orderValue.textContent = selectedOrder.join(' → ');
+            }
         }
     }
     
     function updateHiddenField() {
         const hiddenField = document.getElementById('sentenceOrderAnswer');
         if (hiddenField) {
-            hiddenField.value = currentOrder.join(',');
+            hiddenField.value = selectedOrder.join(',');
         }
     }
     
     function checkAllSentencesArranged() {
-        if (currentOrder.length === 3) {
+        if (selectedOrder.length === 3) {
             answered[currentQuestion] = true;
+            updateDots();
+        } else {
+            answered[currentQuestion] = false;
             updateDots();
         }
     }
     
+    // Reset function
+    document.getElementById('resetTapBtn').addEventListener('click', function() {
+        selectedOrder = [];
+        availableSentences = [...sentences];
+        renderTapSentences();
+        updateTapStatus();
+        updateHiddenField();
+        updateOrderDisplay();
+        checkAllSentencesArranged();
+        
+        // Show reset message
+        showMessage('warning', ' Order reset');
+    });
+    
     function autoSave() {
         return new Promise((resolve, reject) => {
-            const userAnswer = currentOrder.join(',');
+            if (selectedOrder.length !== 3) {
+                resolve({success: true, message: 'Incomplete order'});
+                return;
+            }
+            
+            const userAnswer = selectedOrder.join(',');
             
             const formData = new FormData();
             formData.append('user_answer', userAnswer);
@@ -1681,7 +2113,7 @@
     }
     
     function hasUserAnswered() {
-        return currentOrder.length === 3;
+        return selectedOrder.length === 3;
     }
     
     {% elif question.question_type == 'spelling_mcq' and question_number == 4 %}
@@ -1706,7 +2138,7 @@
         },
         {
             id: 2,
-            correct: 'b',
+            correct: 'd',
             options: [
                 { letter: 'a', text: 'definately' },
                 { letter: 'b', text: 'defenetly' },  
@@ -1716,7 +2148,7 @@
         },
         {
             id: 3,
-            correct: 'b',
+            correct: 'a',
             options: [
                 { letter: 'a', text: 'separate' },  // correct a
                 { letter: 'b', text: 'seperate' },  
@@ -2010,7 +2442,7 @@
         {% if question.question_type == 'fill_blanks' and question_number == 1 %}
         const userAnswered = fillBlanksAnswers[1] && fillBlanksAnswers[2] && fillBlanksAnswers[3];
         {% elif question.question_type == 'sentence_order' and question_number == 2 %}
-        const userAnswered = currentOrder && currentOrder.length === 3;
+        const userAnswered = selectedOrder && selectedOrder.length === 3;
         {% elif question.question_type == 'spelling_mcq' and question_number == 4 %}
         const userAnswered = mcqSelectedAnswers[1] && mcqSelectedAnswers[2] && mcqSelectedAnswers[3];
         {% else %}
@@ -2036,7 +2468,7 @@
         {% if question.question_type == 'fill_blanks' and question_number == 1 %}
         const userAnswered = fillBlanksAnswers[1] && fillBlanksAnswers[2] && fillBlanksAnswers[3];
         {% elif question.question_type == 'sentence_order' and question_number == 2 %}
-        const userAnswered = currentOrder && currentOrder.length === 3;
+        const userAnswered = selectedOrder && selectedOrder.length === 3;
         {% elif question.question_type == 'spelling_mcq' and question_number == 4 %}
         const userAnswered = mcqSelectedAnswers[1] && mcqSelectedAnswers[2] && mcqSelectedAnswers[3];
         {% else %}

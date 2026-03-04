@@ -260,6 +260,23 @@
         /* ===== QUESTION SECTION ===== */
         .question-section {
             margin-bottom: 2rem;
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease;
+        }
+
+        .question-section.visible {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .question-number-badge {
@@ -569,6 +586,53 @@
             50% { transform: scale(1.2); background: #ef4444; color: white; }
             100% { transform: scale(1); background: #e2e8f0; }
         }
+
+        /* ===== AUDIO WAITING OVERLAY ===== */
+        .audio-waiting-overlay {
+            background: #f8fafc;
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            border: 2px dashed #cbd5e1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .waiting-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .waiting-icon i {
+            font-size: 3rem;
+            color: #5e548e;
+        }
+
+        .waiting-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .waiting-subtext {
+            color: #64748b;
+            font-size: 1rem;
+        }
         
         /* ===== RESPONSIVE ===== */
         @media (max-width: 640px) {
@@ -591,6 +655,19 @@
             
             .option-label {
                 padding: 0.75rem 1rem;
+            }
+
+            .waiting-text {
+                font-size: 1.2rem;
+            }
+            
+            .waiting-icon {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .waiting-icon i {
+                font-size: 2rem;
             }
         }
 
@@ -734,6 +811,11 @@
         height: 2.2rem;
         font-size: 0.85rem;
     }
+
+    .audio-waiting-overlay {
+        padding: 2rem 1.5rem;
+        margin-bottom: 1.5rem;
+    }
 }
 
 /* Small mobile devices */
@@ -804,6 +886,14 @@
         width: 2rem;
         height: 2rem;
         font-size: 0.8rem;
+    }
+
+    .audio-waiting-overlay {
+        padding: 1.5rem 1rem;
+    }
+    
+    .waiting-text {
+        font-size: 1.1rem;
     }
 }
 
@@ -882,6 +972,10 @@
 
     .typing-textarea {
         min-height: 80px;
+    }
+
+    .audio-waiting-overlay {
+        padding: 1.5rem;
     }
 }
 
@@ -976,7 +1070,7 @@
                         <span>Listen carefully - Question {{ question_number }}</span>
                     </div>
                     
-                    <audio id="mainAudio" controls autoplay>
+                    <audio id="mainAudio" controls>
                         <source src="{% static 'listening/audio/' %}{{ current_question.audio_filename }}" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>
@@ -987,14 +1081,23 @@
                     </div>
                 </div>
                 
-                <!-- Questions Form -->
+                <!-- Waiting for audio to finish overlay (Shows until audio ends) -->
+                <div class="audio-waiting-overlay" id="waitingOverlay">
+                    <div class="waiting-icon">
+                        <i class="fas fa-headphones"></i>
+                    </div>
+                    <div class="waiting-text">Listening in Progress...</div>
+                    <div class="waiting-subtext">Please listen to the complete audio. The question will appear automatically when the audio ends.</div>
+                </div>
+                
+                <!-- Questions Form (Hidden until audio ends) -->
                 <form method="POST" action="{% url 'listening:submit_test' test.id %}" id="testForm">
                     {% csrf_token %}
                     
                     {% for q in all_questions %}
-                    <div class="question-section" id="question{{ forloop.counter0 }}" data-question-num="{{ forloop.counter }}" style="{% if forloop.counter != question_number %}display: none;{% endif %}">
+                    <div class="question-section" id="question{{ forloop.counter0 }}" data-question-num="{{ forloop.counter }}" style="display: none;">
                         
-                        <!-- Question Number Badge - Only Q1 with increased size -->
+                        <!-- Question Number Badge -->
                         <div class="question-number-badge">
                             Q{{ forloop.counter }}
                         </div>
@@ -1088,6 +1191,7 @@
     let testId = {{ test.id }};
     let autoSaveTimer = null;
     let hasShownReplayWarning = false;
+    let audioEndedForCurrentQuestion = false;  // Track if audio has ended for current question
     
     // Track answered questions
     let answered = {};
@@ -1111,7 +1215,34 @@
         setupReplayCounter();
         updateCircularProgress();
         updateDots();
+        
+        // Check if current question has been answered before
+        checkIfQuestionAnswered();
     });
+    
+    // Check if current question has been answered before
+    function checkIfQuestionAnswered() {
+        // If question is already answered, we can show it immediately
+        if (answered[currentQuestion]) {
+            showQuestion();
+            audioEndedForCurrentQuestion = true; // Mark as ended since it was answered
+        }
+    }
+    
+    // Show question and hide waiting overlay
+    function showQuestion() {
+        const waitingOverlay = document.getElementById('waitingOverlay');
+        const questionSection = document.getElementById(`question${currentQuestion - 1}`);
+        
+        if (waitingOverlay) {
+            waitingOverlay.style.display = 'none';
+        }
+        
+        if (questionSection) {
+            questionSection.style.display = 'block';
+            questionSection.classList.add('visible');
+        }
+    }
     
     // Initialize all event listeners
     function initializeEventListeners() {
@@ -1226,6 +1357,13 @@
     
     // Go to next question with validation
     function goToNextQuestion(num) {
+        // Check if audio has ended for current question
+        if (!audioEndedForCurrentQuestion && !answered[currentQuestion]) {
+            showMessage('warning', ' Please listen to the complete audio first', currentQuestion);
+            pulseRed(currentQuestion);
+            return;
+        }
+        
         // Check if current question is answered
         if (!answered[currentQuestion]) {
             // Show warning message for current question
@@ -1265,6 +1403,13 @@
     
     // Handle submit button click
     function handleSubmitClick() {
+        // Check if audio has ended for current question
+        if (!audioEndedForCurrentQuestion && !answered[currentQuestion]) {
+            showMessage('warning', ' Please listen to the complete audio first', currentQuestion);
+            pulseRed(currentQuestion);
+            return;
+        }
+        
         if (!answered[currentQuestion]) {
             showMessage('warning', ' Please answer this question before submitting', currentQuestion);
             pulseRed(currentQuestion);
@@ -1283,6 +1428,17 @@
     
     // Save MCQ answer
     function saveMcqAnswer(questionId, optionId, questionIndex) {
+        // Check if audio has ended for this question
+        if (!audioEndedForCurrentQuestion && questionIndex === currentQuestion) {
+            showMessage('warning', ' Please listen to the complete audio first', currentQuestion);
+            pulseRed(currentQuestion);
+            
+            // Uncheck the radio button
+            const radio = document.querySelector(`input[data-question-id="${questionId}"]:checked`);
+            if (radio) radio.checked = false;
+            return;
+        }
+        
         fetch('{% url "listening:submit_answer" test.id %}', {
             method: 'POST',
             headers: {
@@ -1315,6 +1471,17 @@
     
     // Save typing answer
     function saveTypingAnswer(questionId, answer, questionIndex) {
+        // Check if audio has ended for this question
+        if (!audioEndedForCurrentQuestion && questionIndex === currentQuestion) {
+            showMessage('warning', ' Please listen to the complete audio first', currentQuestion);
+            pulseRed(currentQuestion);
+            
+            // Clear the textarea
+            const textarea = document.getElementById(`typed_${questionId}`);
+            if (textarea) textarea.value = '';
+            return;
+        }
+        
         fetch('{% url "listening:submit_answer" test.id %}', {
             method: 'POST',
             headers: {
@@ -1360,7 +1527,7 @@
         }
     }
     
-    // Setup replay counter
+    // Setup replay counter with audio end tracking
     function setupReplayCounter() {
         const audio = document.getElementById('mainAudio');
         const replayCountSpan = document.getElementById('replayCount');
@@ -1368,6 +1535,23 @@
         if (audio && replayCountSpan) {
             hasShownReplayWarning = false;
             
+            // Track when audio starts playing
+            audio.addEventListener('play', function() {
+                console.log('Audio started playing');
+            });
+            
+            // Track when audio ends
+            audio.addEventListener('ended', function() {
+                // Mark that audio has ended for current question
+                audioEndedForCurrentQuestion = true;
+                
+                // Show the question
+                showQuestion();
+                
+                console.log('Audio ended - question revealed');
+            });
+            
+            // Handle replay counting
             audio.addEventListener('play', function() {
                 if (replayCount > 0) {
                     replayCount--;
@@ -1401,9 +1585,15 @@
                         hasShownReplayWarning = true;
                         alert('No more replays for this question!');
                     }
-                    this.currentTime = 0;
+                    audio.currentTime = 0;
                 }
             });
+            
+            // If audio is already played (when navigating back), check if it should show question
+            if (audio.ended) {
+                audioEndedForCurrentQuestion = true;
+                showQuestion();
+            }
         }
     }
 </script>
