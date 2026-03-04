@@ -268,31 +268,35 @@ class PronunciationEngine:
         """Score a single Q1 word by comparing with its reference file"""
         try:
             ref_path = os.path.join(settings.BASE_DIR, 'speaking', 'reference_audio', f'word{word_number}.wav')
-            
+
             # Check if files exist
             if not os.path.exists(word_audio_path):
                 print(f"Student word audio not found: {word_audio_path}")
                 return 0
-            
+
             if not os.path.exists(ref_path):
                 print(f"Reference file not found: {ref_path}")
                 return 0
-            
+
             # Extract features
             student_feat = self.extract_mfcc(word_audio_path)
             ref_feat = self.extract_mfcc(ref_path)
-            
+
             if student_feat is None or ref_feat is None:
                 return 0
-            
+
             # Calculate DTW distance
             distance = self.calculate_dtw_distance(student_feat, ref_feat)
-            
+
             # Convert to score
             score = self.normalize_distance(distance)
-            
+
+            # 🔹 Reduce strictness for word 2 (vegetable) and word 4 (engineer)
+            if word_number in [2, 4]:
+                score = max(score, 5)  # Minimum score of 5 even if DTW is strict
+
             return round(score, 2)
-            
+
         except Exception as e:
             print(f"Error scoring Q1 word {word_number}: {e}")
             return 0
