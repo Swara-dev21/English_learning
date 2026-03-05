@@ -930,7 +930,19 @@
     </div> <!-- End test-wrapper -->
 
 <script>
-    // Variables
+    // ===== ANTI-CHEATING SYSTEM =====
+    let tabSwitchCount = 0;
+    let fullscreenExitCount = 0;
+    let blurCount = 0;
+    let rightClickCount = 0;
+    let copyAttemptCount = 0;
+    let devToolsCount = 0;
+    let questionStartTime = Date.now();
+    let lastMouseMove = Date.now();
+    let awayTime = 0;
+    let awayInterval = null;
+    
+    // Variables for existing functionality
     const totalQuestions = {{ questions|length }};
     let currentQuestion = 1;
     let answered = new Array(totalQuestions + 1).fill(false);
@@ -938,6 +950,180 @@
     // Get elements
     const currentDisplay = document.getElementById('currentQuestionDisplay');
     const progressBar = document.getElementById('progressBar');
+    
+    // ===== FULLSCREEN MODE ENFORCEMENT =====
+    function enterFullscreen() {
+        const element = document.documentElement;
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        }
+    }
+
+    // Fullscreen change detection
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+    function handleFullscreenChange() {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            fullscreenExitCount++;
+            logSuspiciousActivity('fullscreen_exit', fullscreenExitCount);
+            showAntiCheatWarning('Please stay in fullscreen mode during the test!');
+            
+            // Force back to fullscreen after warning
+            setTimeout(() => {
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    enterFullscreen();
+                }
+            }, 1000);
+        }
+    }
+
+    // ===== TAB SWITCH DETECTION =====
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            tabSwitchCount++;
+            logSuspiciousActivity('tab_switch', tabSwitchCount);
+        }
+    });
+
+    // ===== WINDOW BLUR DETECTION =====
+    window.addEventListener('blur', function() {
+        blurCount++;
+        logSuspiciousActivity('window_blur', blurCount);
+    });
+
+    // ===== DISABLE RIGHT-CLICK =====
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        rightClickCount++;
+        logSuspiciousActivity('right_click', rightClickCount);
+        showAntiCheatWarning('Right-click is disabled during the test');
+        return false;
+    });
+
+    // ===== DISABLE KEYBOARD SHORTCUTS =====
+    document.addEventListener('keydown', function(e) {
+        // Prevent Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+A
+        if (e.ctrlKey || e.metaKey) {
+            if (['c', 'v', 'x', 'a'].includes(e.key)) {
+                e.preventDefault();
+                copyAttemptCount++;
+                logSuspiciousActivity('copy_attempt', copyAttemptCount);
+                showAntiCheatWarning('Copy/Paste is disabled during the test');
+                return false;
+            }
+        }
+        
+        // Prevent F12 (Developer Tools)
+        if (e.key === 'F12') {
+            e.preventDefault();
+            devToolsCount++;
+            logSuspiciousActivity('dev_tools', devToolsCount);
+            showAntiCheatWarning('Developer tools are disabled');
+            return false;
+        }
+        
+        // Prevent Ctrl+Shift+I (DevTools)
+        if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+            e.preventDefault();
+            devToolsCount++;
+            logSuspiciousActivity('dev_tools', devToolsCount);
+            return false;
+        }
+        
+        // Prevent Ctrl+Shift+J (Console)
+        if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+            e.preventDefault();
+            devToolsCount++;
+            logSuspiciousActivity('dev_tools', devToolsCount);
+            return false;
+        }
+        
+        // Prevent Ctrl+U (View Source)
+        if (e.ctrlKey && e.key === 'u') {
+            e.preventDefault();
+            devToolsCount++;
+            logSuspiciousActivity('dev_tools', devToolsCount);
+            return false;
+        }
+    });
+
+    // ===== MOUSE MOVEMENT DETECTION (Away from keyboard) =====
+    document.addEventListener('mousemove', function() {
+        lastMouseMove = Date.now();
+    });
+
+    // Check for inactivity every 30 seconds
+    awayInterval = setInterval(function() {
+        const now = Date.now();
+        if (now - lastMouseMove > 30000) { // No mouse movement for 30 seconds
+            awayTime += 30;
+            if (awayTime > 60) { // Away for more than 60 seconds
+                logSuspiciousActivity('away_from_keyboard', awayTime);
+            }
+        } else {
+            awayTime = 0;
+        }
+    }, 30000);
+
+    // ===== LOG SUSPICIOUS ACTIVITY TO SERVER =====
+    function logSuspiciousActivity(type, count, timeAway = null) {
+        fetch('{% url "reading:log_activity" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                activity_type: type,
+                count: count,
+                question: currentQuestion,
+                time_away: timeAway
+            })
+        }).catch(err => console.error('Logging failed:', err));
+    }
+
+    // ===== ANTI-CHEAT WARNING MESSAGE =====
+    function showAntiCheatWarning(message) {
+        // Create a temporary warning if message container doesn't exist or is for answers
+        const warningDiv = document.createElement('div');
+        warningDiv.className = 'message-container warning';
+        warningDiv.style.position = 'fixed';
+        warningDiv.style.top = '20px';
+        warningDiv.style.left = '50%';
+        warningDiv.style.transform = 'translateX(-50%)';
+        warningDiv.style.zIndex = '9999';
+        warningDiv.style.minWidth = '300px';
+        warningDiv.style.textAlign = 'center';
+        warningDiv.innerHTML = `
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(warningDiv);
+        
+        setTimeout(() => {
+            warningDiv.remove();
+        }, 3000);
+    }
+
+    // ===== AUTO-ENTER FULLSCREEN ON PAGE LOAD =====
+    if (window.location.pathname.includes('/test/')) {
+        setTimeout(enterFullscreen, 1000);
+    }
+
+    // ===== CLEAN UP INTERVAL ON PAGE UNLOAD =====
+    window.addEventListener('beforeunload', function() {
+        if (awayInterval) {
+            clearInterval(awayInterval);
+        }
+    });
+
+    // ===== EXISTING TEST FUNCTIONALITY =====
     
     // Initialize answered object from existing selections
     document.addEventListener('DOMContentLoaded', function() {
@@ -951,7 +1137,7 @@
         updateProgressBar();
     });
     
-    // Show message function
+    // Show message function (for answer saving)
     function showMessage(type, text, questionNum = null) {
         const qNum = questionNum || currentQuestion;
         const messageDiv = document.getElementById(`message-${qNum}`);
@@ -1012,6 +1198,15 @@
     
     // Show a specific question
     function showQuestion(num) {
+        // Log time spent on previous question
+        const timeSpent = Math.floor((Date.now() - questionStartTime) / 1000);
+        if (timeSpent < 3 && num > 1) { // Less than 3 seconds on a question
+            logSuspiciousActivity('too_fast', timeSpent);
+        }
+        
+        // Reset timer for new question
+        questionStartTime = Date.now();
+        
         // Hide all questions
         for (let i = 1; i <= totalQuestions; i++) {
             const questionDiv = document.getElementById(`question${i}`);

@@ -111,3 +111,32 @@ class ReadingResult(models.Model):
 
     def __str__(self):
         return f"{self.user or 'Anonymous'} - {self.test.title} - {self.score}/{self.total}"
+
+
+# class SuspiciousActivity(models.Model):
+#     ACTIVITY_TYPES = [
+#         ('tab_switch', 'Tab Switch'),
+#         ('fullscreen_exit', 'Fullscreen Exit'),
+#         ('window_blur', 'Window Blur'),
+#         ('too_fast', 'Answered Too Fast'),
+#         ('away_from_keyboard', 'Away from Keyboard'),
+#         ('right_click', 'Right Click Attempt'),
+#         ('copy_attempt', 'Copy Attempt'),
+#         ('dev_tools', 'Developer Tools Attempt'),
+#     ]
+    
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+#     session_key = models.CharField(max_length=100, null=True, blank=True)
+#     activity_type = models.CharField(max_length=50, choices=ACTIVITY_TYPES)
+#     count = models.IntegerField(default=1)
+#     question = models.IntegerField(default=1)
+#     test_type = models.CharField(max_length=20, default='reading')  # reading, writing, etc.
+#     time_away = models.IntegerField(null=True, blank=True)  # in seconds
+#     timestamp = models.DateTimeField(auto_now_add=True)
+    
+#     class Meta:
+#         ordering = ['-timestamp']
+#         verbose_name_plural = "Suspicious Activities"
+    
+#     def __str__(self):
+#         return f"{self.user} - {self.activity_type} - Q{self.question}"

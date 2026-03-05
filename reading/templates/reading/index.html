@@ -5,13 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Reading Comprehension Test</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'reading/css/style.css' %}?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ===== MOBILE RESPONSIVE STYLES FOR READING TEST ===== */
-        
+        /* ===== PURPLE THEME - MATCHING LISTENING TEST ===== */
+        :root {
+            --primary: #5e548e;
+            --primary-dark: #453c6b;
+            --primary-deep: #2d2a4a;
+            --primary-light: #f0edf7;
+            --primary-soft: #f8f5ff;
+            --accent: #9f8bc9;
+            --gradient-primary: linear-gradient(135deg, #5e548e, #453c6b, #2d2a4a);
+            --gradient-hover: linear-gradient(135deg, #6b5e9e, #5e548e);
+            
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            
+            --text-dark: #1e293b;
+            --text-medium: #334155;
+            --text-light: #475569;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --border-light: #e2e8f0;
+            --border-medium: #cbd5e1;
+            
+            --shadow-sm: 0 4px 6px -1px rgba(94, 84, 142, 0.1);
+            --shadow-md: 0 10px 15px -3px rgba(94, 84, 142, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(94, 84, 142, 0.15);
+            --shadow-xl: 0 25px 50px -12px rgba(94, 84, 142, 0.25);
+            
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-xxl: 2rem;
+        }
+
         /* Base responsive adjustments */
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
         
@@ -19,53 +58,78 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         
-        /* Back buttons responsive */
+        /* ===== FIXED BACK BUTTONS - PROPERLY ALIGNED ===== */
+        .page-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+            position: relative;
+        }
+        
         .back-buttons-container {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
+            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 10;
-            width: calc(100% - 40px);
+            margin-bottom: 1rem;
+            padding: 0;
         }
         
         .home-link-top {
-            color: #4a5568;
+            color: var(--text-dark);
             text-decoration: none;
-            font-size: 14px;
-            display: flex;
+            font-size: 0.95rem;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
             background-color: white;
             border-radius: 40px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s;
-            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-light);
         }
         
-        @media (max-width: 480px) {
-            .back-buttons-container {
-                top: 15px;
-                left: 15px;
-                right: 15px;
-                width: calc(100% - 30px);
-            }
-            
+        .home-link-top:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .home-link-top i {
+            font-size: 0.8rem;
+            color: var(--primary);
+        }
+        
+        @media (max-width: 576px) {
             .home-link-top {
-                font-size: 12px;
-                padding: 6px 12px;
-                gap: 4px;
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
             }
             
             .home-link-top i {
-                font-size: 10px;
+                font-size: 0.7rem;
+            }
+        }
+        
+        @media (hover: none) and (pointer: coarse) {
+            .home-link-top:hover {
+                transform: none;
+            }
+            
+            .home-link-top:active {
+                transform: translateY(-2px);
             }
         }
         
@@ -75,78 +139,98 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 80px 20px 40px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #eef2f6 100%);
-        }
-        
-        @media (max-width: 768px) {
-            .index-page {
-                padding: 70px 15px 30px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .index-page {
-                padding: 65px 12px 20px;
-            }
+            padding: 0;
+            width: 100%;
         }
         
         /* Welcome card - fully responsive */
         .welcome-card {
-            background: white;
-            border-radius: 40px;
-            box-shadow: 0 25px 50px -12px rgba(102, 126, 234, 0.3);
+            background: var(--bg-white);
+            border-radius: var(--radius-xxl);
+            box-shadow: var(--shadow-xl);
             width: 100%;
-            max-width: 650px;
+            max-width: 700px;
             overflow: hidden;
-            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        /* Header section */
+        /* Header section with purple gradient and animation */
         .welcome-card .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--gradient-primary);
             color: white;
-            padding: 3rem 2rem;
+            padding: 2.5rem 2rem;
             text-align: center;
             position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-card .header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
         @media (max-width: 768px) {
             .welcome-card .header {
-                padding: 2.5rem 1.5rem;
+                padding: 2rem 1.5rem;
             }
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 576px) {
             .welcome-card .header {
-                padding: 2rem 1rem;
+                padding: 1.5rem 1rem;
             }
         }
         
         .welcome-card .header h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 800;
-            margin: 1rem 0 0.5rem;
+            margin: 0.5rem 0 0.25rem;
             letter-spacing: -0.5px;
             text-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
         }
         
         @media (max-width: 768px) {
             .welcome-card .header h1 {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
             }
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 576px) {
             .welcome-card .header h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
         }
         
         .welcome-card .header p {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             opacity: 0.95;
             margin: 0;
+            position: relative;
+            z-index: 1;
         }
         
         @media (max-width: 768px) {
@@ -157,122 +241,110 @@
         
         /* Content section */
         .welcome-card .content {
-            padding: 2.5rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         @media (max-width: 768px) {
             .welcome-card .content {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem;
             }
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 576px) {
             .welcome-card .content {
-                padding: 1.5rem 1rem;
+                padding: 1.25rem;
             }
         }
         
         /* Large icon */
         .icon-large {
-            font-size: 4rem;
-            color: #667eea;
+            font-size: 3.5rem;
+            color: var(--primary);
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 10px 20px rgba(94, 84, 142, 0.2));
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 576px) {
             .icon-large {
                 font-size: 3rem;
-                margin-bottom: 1.5rem;
+                margin-bottom: 1rem;
             }
         }
         
-        /* Test info container */
+        /* ===== TEST INFO - MATCHING LISTENING TEST EXACTLY ===== */
         .test-info {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 2rem;
+            background: var(--primary-light);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            margin: 1rem 0 2rem;
+            text-align: left;
+            width: 100%;
         }
         
-        /* Info items - fully responsive */
+        @media (max-width: 576px) {
+            .test-info {
+                padding: 1.25rem;
+                margin: 0.5rem 0 1.5rem;
+            }
+        }
+        
         .info-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 1rem;
-            padding: 1rem 1.5rem;
-            background: #f8faff;
-            border-radius: 20px;
-            border-left: 6px solid #667eea;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.1);
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            background: transparent;
+            padding: 0;
+            border: none;
+            text-align: left;
         }
         
-        @media (max-width: 768px) {
-            .info-item {
-                padding: 0.9rem 1.2rem;
-                gap: 0.8rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .info-item {
-                padding: 0.8rem 1rem;
-                gap: 0.6rem;
-                border-left-width: 4px;
-                border-radius: 16px;
-            }
-        }
-        
-        .info-item:hover {
-            transform: translateX(8px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
-            background: white;
+        .info-item:last-child {
+            margin-bottom: 0;
         }
         
         .info-item i {
-            color: #667eea;
-            font-size: 1.8rem;
-            width: 40px;
-            text-align: center;
+            color: var(--primary);
+            width: 24px;
+            font-size: 1.25rem;
+            margin-top: 0.2rem;
             flex-shrink: 0;
         }
         
-        @media (max-width: 768px) {
+        @media (max-width: 576px) {
             .info-item i {
-                font-size: 1.5rem;
-                width: 35px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .info-item i {
-                font-size: 1.3rem;
-                width: 30px;
+                font-size: 1.1rem;
+                width: 20px;
             }
         }
         
         .info-item span {
-            color: #1a2639;
-            font-size: 1.1rem;
             font-weight: 500;
-            line-height: 1.4;
+            color: var(--text-dark);
+            line-height: 1.5;
             flex: 1;
+            word-break: break-word;
+            font-size: 1rem;
         }
         
-        @media (max-width: 768px) {
+        @media (max-width: 576px) {
             .info-item span {
-                font-size: 1rem;
+                font-size: 0.95rem;
             }
         }
         
-        @media (max-width: 480px) {
-            .info-item span {
-                font-size: 0.9rem;
-            }
+        .info-item:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: transparent;
         }
         
-        /* Start button */
+        /* Start button with purple gradient - FIXED */
         .start-btn {
             display: inline-flex;
             align-items: center;
@@ -280,17 +352,18 @@
             gap: 12px;
             width: 100%;
             padding: 1.2rem 2rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--gradient-primary);
             color: white;
             text-decoration: none;
             border-radius: 60px;
             font-size: 1.3rem;
             font-weight: 700;
             transition: all 0.3s ease;
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 15px 30px rgba(94, 84, 142, 0.4);
             border: none;
             cursor: pointer;
             margin-top: 0.5rem;
+            max-width: 100%; /* Removed max-width constraint */
         }
         
         @media (max-width: 768px) {
@@ -300,26 +373,36 @@
             }
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 576px) {
             .start-btn {
                 padding: 0.9rem 1.2rem;
-                font-size: 1rem;
+                font-size: 1.1rem;
                 gap: 8px;
             }
         }
         
         .start-btn:hover {
             transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.5);
+            box-shadow: 0 20px 40px rgba(94, 84, 142, 0.5);
         }
         
         .start-btn i {
             font-size: 1.2rem;
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 576px) {
             .start-btn i {
                 font-size: 1rem;
+            }
+        }
+        
+        @media (hover: none) and (pointer: coarse) {
+            .start-btn:hover {
+                transform: none;
+            }
+            
+            .start-btn:active {
+                transform: translateY(-2px);
             }
         }
         
@@ -327,83 +410,121 @@
         .no-test {
             text-align: center;
             padding: 1.5rem;
-            background: #fee2e2;
-            border-radius: 16px;
-            color: #dc2626;
+            background: var(--danger-light);
+            border-radius: var(--radius-lg);
+            color: var(--danger);
             font-weight: 500;
+            border: 1px solid var(--danger);
+            width: 100%;
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 576px) {
             .no-test {
                 padding: 1rem;
-                font-size: 0.9rem;
+                font-size: 0.95rem;
             }
+        }
+
+        /* Touch-friendly tap targets */
+        .home-link-top,
+        .info-item,
+        .start-btn {
+            min-height: 44px;
+        }
+
+        /* Landscape orientation */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .page-container {
+                padding: 0.5rem;
+            }
+            
+            .welcome-card .header {
+                padding: 1.2rem;
+            }
+            
+            .welcome-card .content {
+                padding: 1.2rem;
+            }
+            
+            .icon-large {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* Ensure no horizontal scrolling */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
         }
     </style>
 </head>
 <body>
-    <div class="back-buttons-container">
-        <a href="{% url 'home_page:home' %}" class="home-link-top">
-           <i class="fas fa-arrow-left"></i> Back to Home 
-        </a>
-        <a href="{% url 'home_page:profile' %}" class="home-link-top">
-            Profile <i class="fas fa-arrow-right"></i>
-        </a>
-    </div>
-    
-    <div class="index-page">
-        <div class="welcome-card">
-            <!-- Header -->
-            <div class="header">
-                <h1>Reading Test</h1>
-                <p>Assess your English reading skills</p>
-            </div>
-
-            <!-- Content -->
-            <div class="content">
-                <div class="icon-large">
-                    <i class="fas fa-book-reader"></i>
+    <div class="page-container">
+        <!-- FIXED BACK BUTTONS - Properly aligned and not overlapping -->
+        <div class="back-buttons-container">
+            <a href="{% url 'home_page:home' %}" class="home-link-top">
+               <i class="fas fa-arrow-left"></i> Back to Home 
+            </a>
+            <a href="{% url 'home_page:profile' %}" class="home-link-top">
+                Profile <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <div class="index-page">
+            <div class="welcome-card">
+                <!-- Header with purple gradient and animation -->
+                <div class="header">
+                    <h1>Reading Test</h1>
+                    <p>Assess your English reading skills</p>
                 </div>
 
-                <!-- ALL 5 INSTRUCTIONS in test-info style -->
-                <div class="test-info">
-                    <div class="info-item">
-                        <i class="fas fa-book-open"></i>
-                        <span>Read passages carefully before answering.</span>
+                <!-- Content -->
+                <div class="content">
+                    <div class="icon-large">
+                        <i class="fas fa-book-reader"></i>
                     </div>
 
-                    <div class="info-item">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Respond only according to the information given in passage.</span>
+                    <!-- INSTRUCTIONS - EXACTLY LIKE LISTENING TEST -->
+                    <div class="test-info">
+                        <div class="info-item">
+                            <i class="fas fa-book-open"></i>
+                            <span>Read passages carefully before answering.</span>
+                        </div>
+
+                        <div class="info-item">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Respond only according to the information given in passage.</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <i class="fas fa-tag"></i>
+                            <span>Every question evaluates a specific competency.</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Ensure every question is answered before submitting.</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <i class="fas fa-trophy"></i>
+                            <span>Performance-based level evaluation.</span>
+                        </div>
                     </div>
-                    
-                    <div class="info-item">
-                        <i class="fas fa-tag"></i>
-                        <span>Every question evaluates a specific competency.</span>
+
+                    <!-- Start Test Button - FIXED -->
+                    {% if test %}
+                    <a href="{% url 'reading:test_page' test.id %}" class="start-btn">
+                        <i class="fas fa-play-circle"></i> Start Test
+                    </a>
+                    {% else %}
+                    <div class="no-test">
+                        <p>⚠️ Test not available yet. Please create a test in admin panel.</p>
                     </div>
-                    
-                    <div class="info-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Ensure every question is answered before submitting.</span>
-                    </div>
-                    
-                    <div class="info-item">
-                        <i class="fas fa-trophy"></i>
-                        <span>Performance-based level evaluation.</span>
-                    </div>
+                    {% endif %}
+
                 </div>
-
-                <!-- Start Test Button -->
-                {% if test %}
-                <a href="{% url 'reading:test_page' test.id %}" class="start-btn">
-                    <i class="fas fa-play"></i> Start Test
-                </a>
-                {% else %}
-                <div class="no-test">
-                    <p>⚠️ Test not available yet. Please create a test in admin panel.</p>
-                </div>
-                {% endif %}
-
             </div>
         </div>
     </div>

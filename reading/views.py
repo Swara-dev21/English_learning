@@ -7,6 +7,39 @@ from home_page.models import StudentProfile
 from .models import Test, Question, ReadingUserResponse, ReadingResult
 from writing.models import WritingTest
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from home_page.models import SuspiciousActivity
+
+@login_required
+@csrf_exempt
+def log_suspicious_activity(request):
+    """Log suspicious activities during the reading test"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            
+            # Get session key for anonymous tracking
+            if not request.session.session_key:
+                request.session.create()
+            
+            # Create log entry
+            SuspiciousActivity.objects.create(
+                 user=request.user if request.user.is_authenticated else None,
+                session_key=request.session.session_key,
+                activity_type=data.get('activity_type'),
+                count=data.get('count', 1),
+                question=data.get('question', 1),
+                test_type='reading',  # Specify it's reading test
+                time_away=data.get('time_away')
+            )
+            
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
 @login_required
 def index(request):
     test = Test.objects.first()

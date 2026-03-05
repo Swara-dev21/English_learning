@@ -14,8 +14,11 @@ import nltk
 import re
 import json
 import string
+from django.views.decorators.csrf import csrf_exempt
 import traceback
 from .models import WritingTest, WritingQuestion, WritingResponse, WritingTestResult
+from home_page.models import SuspiciousActivity  # Add this import
+
 
 # Initialize tools once
 try:
@@ -839,3 +842,34 @@ def writing_results(request, result_id):
     }
     
     return render(request, 'writing/writing_results.html', context)
+
+
+# Add this function at the end
+@login_required
+@csrf_exempt
+def log_suspicious_activity(request):
+    """Log suspicious activities during the writing test"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            
+            # Get session key for anonymous tracking
+            if not request.session.session_key:
+                request.session.create()
+            
+            # Create log entry
+            SuspiciousActivity.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                session_key=request.session.session_key,
+                activity_type=data.get('activity_type'),
+                count=data.get('count', 1),
+                question=data.get('question', 1),
+                test_type='writing',
+                time_away=data.get('time_away')
+            )
+            
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)

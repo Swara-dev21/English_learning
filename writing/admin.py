@@ -1,7 +1,13 @@
 # writing/admin.py
 from django.contrib import admin
-from .models import WritingTest, WritingQuestion, WritingResponse, WritingTestResult
+from .models import WritingTest, WritingQuestion, WritingResponse, WritingTestResult,SuspiciousActivity
 
+@admin.register(SuspiciousActivity)
+class SuspiciousActivityAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'activity_type', 'count', 'question', 'timestamp']
+    list_filter = ['activity_type', 'test_type', 'timestamp']
+    search_fields = ['user__username', 'session_key']
+    readonly_fields = ['timestamp']
 
 @admin.register(WritingTest)
 class WritingTestAdmin(admin.ModelAdmin):

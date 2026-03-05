@@ -10,4 +10,5 @@ urlpatterns = [
     path('test/<int:test_id>/save/<int:question_number>/', views.save_answer, name='save_answer'),
     path('test/<int:test_id>/submit/', views.submit_writing_test, name='submit_writing_test'),
     path('results/<int:result_id>/', views.writing_results, name='writing_results'),
+    path('log-activity/', views.log_suspicious_activity, name='log_activity'),
 ]
