@@ -430,36 +430,67 @@ def result(request):
 @login_required
 def latest_result(request):
     """Redirect to the most recent test result"""
-    session_key = get_session_key(request)
-    
-    # Find the most recent test session for this user
-    test_session = TestSession.objects.filter(
-        user=request.user,
-        completed_at__isnull=False
-    ).order_by('-completed_at').first()
-    
-    if test_session:
-        # Store session data for result display
-        scores = {}
-        for q in range(1, 6):
-            score = getattr(test_session, f'q{q}_score', 0)
-            if score is not None:
-                scores[f'q{q}'] = score
+    try:
+        # Find the most recent COMPLETED test session for this user
+        test_session = TestSession.objects.filter(
+            user=request.user,
+            completed_at__isnull=False  # Only completed tests
+        ).order_by('-completed_at').first()
         
-        # Generate feedback
-        feedback = pronunciation_engine.generate_feedback(scores)
-        
-        # Store in session
-        request.session['scores'] = scores
-        request.session['feedback'] = feedback
-        request.session['test_session_id'] = test_session.session_id
-        
-        return redirect('speaking:result')
-    else:
-        messages.warning(request, "No test results found.")
+        if test_session:
+            print(f"✅ Found test session: {test_session.session_id} completed at {test_session.completed_at}")
+            
+            # Build scores dictionary from database
+            scores = {}
+            for q_num in range(1, 6):
+                score_field = f'q{q_num}_score'
+                score_value = getattr(test_session, score_field)
+                if score_value is not None:
+                    scores[f'q{q_num}'] = float(score_value)
+                    print(f"   Q{q_num} score: {score_value}")
+                else:
+                    scores[f'q{q_num}'] = 0
+                    print(f"   Q{q_num} score: 0 (not found)")
+            
+            # Calculate average
+            valid_scores = [s for s in scores.values() if s is not None]
+            average = sum(valid_scores) / len(valid_scores) if valid_scores else 0
+            
+            # Determine level and message
+            if average >= 80:
+                level = "Advanced"
+                message = "Excellent work! Your speaking skills are very advanced."
+            elif average >= 60:
+                level = "Intermediate"
+                message = "Good job! You have intermediate speaking skills with room for improvement."
+            else:
+                level = "Beginner"
+                message = "Keep practicing! Focus on pronunciation and grammar to improve your speaking skills."
+            
+            # Create feedback dictionary
+            feedback = {
+                'average': average,
+                'level': level,
+                'message': message
+            }
+            
+            # Store in session for the result page to use
+            request.session['scores'] = scores
+            request.session['feedback'] = feedback
+            request.session['test_session_id'] = test_session.session_id
+            
+            print(f"✅ Session data set for user {request.user.username}")
+            print(f"   Average: {average}, Level: {level}")
+            
+            return redirect('speaking:result')
+        else:
+            print(f"❌ No completed test session found for user: {request.user.username}")
+            messages.info(request, "You haven't taken the speaking test yet. Please take the test first.")
+            return redirect('speaking:start')
+            
+    except Exception as e:
+        print(f"❌ Error in latest_result: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        messages.error(request, "An error occurred while loading your results.")
         return redirect('speaking:start')
-
-
-def error_page(request):
-    """Display error page"""
-    return render(request, 'speaking/error.html')

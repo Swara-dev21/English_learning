@@ -2,13 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Your Results - Speaking Assessment</title>
     {% load static %}
-    {% comment %} <link rel="stylesheet" href="{% static 'speaking/css/style.css' %}"> {% endcomment %}
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* ===== PURPLE THEME - MATCHING SPEAKING START PAGE ===== */
+        :root {
+            --primary: #5e548e;
+            --primary-dark: #453c6b;
+            --primary-deep: #2d2a4a;
+            --primary-light: #f0edf7;
+            --primary-soft: #f8f5ff;
+            --accent: #9f8bc9;
+            --gradient-primary: linear-gradient(135deg, #5e548e, #453c6b, #2d2a4a);
+            --gradient-hover: linear-gradient(135deg, #6b5e9e, #5e548e);
+            
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            
+            --text-dark: #1e293b;
+            --text-medium: #334155;
+            --text-light: #475569;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --border-light: #e2e8f0;
+            --border-medium: #cbd5e1;
+            
+            --shadow-sm: 0 4px 6px -1px rgba(94, 84, 142, 0.1);
+            --shadow-md: 0 10px 15px -3px rgba(94, 84, 142, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(94, 84, 142, 0.15);
+            --shadow-xl: 0 25px 50px -12px rgba(94, 84, 142, 0.25);
+            
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-xxl: 2rem;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -16,32 +54,61 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background-color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+                padding-top: 70px; /* Space for fixed buttons */
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 576px) {
+            body {
+                padding: 0.25rem;
+                padding-top: 65px;
+            }
         }
         
         .container {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 30px 20px;
+            max-width: 800px;
+            width: 100%;
+            margin: 2rem auto 1rem;
+            padding: 0 1rem;
         }
 
-                /* Back buttons container - outside the box */
+        @media (max-width: 768px) {
+            .container {
+                margin: 0.5rem auto;
+                padding: 0 0.5rem;
+            }
+        }
+
+        /* ===== BACK BUTTONS CONTAINER - FIXED POSITION ===== */
         .back-buttons-container {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            right: 30px;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             max-width: 1200px;
             margin: 0 auto;
-            width: calc(100% - 60px);
+            width: calc(100% - 40px);
+            z-index: 1000;
         }
 
-        .back-link-top, .home-link-top {
+        .home-link-top {
             color: #4a5568;
             text-decoration: none;
             font-size: 16px;
@@ -53,28 +120,87 @@
             background-color: white;
             border-radius: 30px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            white-space: nowrap;
         }
 
-        .back-link-top:hover, .home-link-top:hover {
+        .home-link-top:hover {
             color: #667eea;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
             transform: translateY(-2px);
         }
 
-        .back-link-top i, .home-link-top i {
+        .home-link-top i {
             font-size: 14px;
         }
 
-        .reset-wrapper {
-            max-width: 480px;
-            width: 100%;
-            animation: fadeInUp 0.5s ease;
+        /* Mobile fixes for back buttons */
+        @media (max-width: 768px) {
+            .back-buttons-container {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                width: calc(100% - 20px);
+                padding: 0;
+            }
+            
+            .home-link-top {
+                padding: 8px 12px !important;
+                font-size: 14px !important;
+                flex: 1;
+                justify-content: center;
+                background-color: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            
+            .home-link-top i {
+                font-size: 12px;
+            }
         }
 
-        @keyframes fadeInUp {
+        /* Extra small devices */
+        @media (max-width: 480px) {
+            .back-buttons-container {
+                top: 5px;
+                left: 5px;
+                right: 5px;
+                width: calc(100% - 10px);
+                gap: 8px;
+            }
+            
+            body {
+                padding-top: 60px;
+            }
+            
+            .home-link-top {
+                padding: 6px 10px !important;
+                font-size: 13px !important;
+                white-space: nowrap;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .home-link-top:hover {
+                transform: none;
+            }
+            
+            .home-link-top:active {
+                transform: translateY(-2px);
+            }
+        }
+
+        /* Main Card */
+        .test-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-xxl);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -82,45 +208,106 @@
             }
         }
 
-        .reset-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(74, 98, 176, 0.15);
-            overflow: hidden;
-            width: 100%;
-        }
-
-        
-        /* Header with gradient from start.html */
+        /* Header with gradient matching question page */
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 25px;
+            background: var(--gradient-primary);
+            padding: 2.5rem;
             text-align: center;
             color: white;
-            box-shadow: 0 15px 30px -10px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header {
+                padding: 1.5rem 1rem;
+            }
         }
         
         .header h1 {
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
         }
         
         .header p {
             font-size: 1rem;
             opacity: 0.95;
             font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 576px) {
+            .header p {
+                font-size: 0.9rem;
+            }
         }
         
-        /* Results Card */
-        .results-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 5px 20px -5px rgba(0, 0, 0, 0.05);
-            border: 1px solid #edf2f7;
+        /* Content Section */
+        .content {
+            padding: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .content {
+                padding: 1.25rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .content {
+                padding: 1rem;
+            }
         }
         
         /* Assessment Complete Section */
@@ -128,28 +315,83 @@
             text-align: center;
             margin-bottom: 30px;
             padding-bottom: 25px;
-            border-bottom: 1px solid #eef2f6;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        @media (max-width: 576px) {
+            .complete-section {
+                margin-bottom: 25px;
+                padding-bottom: 20px;
+            }
         }
         
         .complete-section h2 {
             font-size: 1.8rem;
-            color: #0f172a;
+            color: var(--text-dark);
             margin-bottom: 25px;
-            font-weight: 600;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .complete-section h2 {
+                font-size: 1.6rem;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .complete-section h2 {
+                font-size: 1.4rem;
+                margin-bottom: 18px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .complete-section h2 {
+                font-size: 1.2rem;
+                margin-bottom: 15px;
+            }
         }
         
         .score-circle {
             width: 140px;
             height: 140px;
             margin: 0 auto 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--gradient-primary);
             border-radius: 50%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: white;
-            box-shadow: 0 15px 30px -8px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 15px 30px -8px rgba(94, 84, 142, 0.4);
+            border: 4px solid var(--primary-light);
+        }
+
+        @media (max-width: 768px) {
+            .score-circle {
+                width: 130px;
+                height: 130px;
+                margin: 0 auto 18px;
+                border-width: 4px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .score-circle {
+                width: 120px;
+                height: 120px;
+                margin: 0 auto 15px;
+                border-width: 3px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .score-circle {
+                width: 100px;
+                height: 100px;
+                margin: 0 auto 12px;
+            }
         }
         
         .big-score {
@@ -157,53 +399,156 @@
             font-weight: 700;
             line-height: 1;
         }
+
+        @media (max-width: 768px) {
+            .big-score {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .big-score {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .big-score {
+                font-size: 2.2rem;
+            }
+        }
         
         .score-label {
             font-size: 0.85rem;
             opacity: 0.9;
             letter-spacing: 0.5px;
         }
+
+        @media (max-width: 576px) {
+            .score-label {
+                font-size: 0.8rem;
+            }
+        }
         
         .level-badge {
-            background: #f1f4f9;
+            background: var(--primary-light);
             display: inline-block;
-            padding: 6px 20px;
+            padding: 8px 24px;
             border-radius: 40px;
             font-weight: 600;
-            color: #475569;
+            color: var(--primary-dark);
             margin: 12px 0 8px;
             font-size: 1rem;
+            border: 1px solid var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .level-badge {
+                padding: 7px 22px;
+                font-size: 0.95rem;
+                margin: 10px 0 6px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .level-badge {
+                padding: 6px 20px;
+                font-size: 0.9rem;
+                margin: 8px 0 5px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .level-badge {
+                padding: 5px 16px;
+                font-size: 0.85rem;
+                margin: 6px 0 4px;
+            }
         }
         
         .level-badge span {
-            color: #667eea;
+            color: var(--primary);
             font-weight: 700;
         }
         
         .feedback-text {
-            color: #64748b;
+            color: var(--text-muted);
             font-size: 1rem;
             max-width: 500px;
             margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .feedback-text {
+                font-size: 0.95rem;
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .feedback-text {
+                font-size: 0.9rem;
+                max-width: 100%;
+                padding: 0 0.5rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .feedback-text {
+                font-size: 0.85rem;
+            }
         }
         
         /* Question-wise Performance */
         .performance-section {
             margin-bottom: 30px;
         }
+
+        @media (max-width: 576px) {
+            .performance-section {
+                margin-bottom: 25px;
+            }
+        }
         
         .performance-section h3 {
             font-size: 1.3rem;
-            color: #0f172a;
+            color: var(--text-dark);
             margin-bottom: 20px;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
         }
+
+        @media (max-width: 768px) {
+            .performance-section h3 {
+                font-size: 1.2rem;
+                margin-bottom: 18px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .performance-section h3 {
+                font-size: 1.1rem;
+                margin-bottom: 15px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .performance-section h3 {
+                font-size: 1rem;
+                margin-bottom: 12px;
+                gap: 5px;
+            }
+            
+            .performance-section h3 i {
+                font-size: 0.9rem;
+            }
+        }
         
         .performance-section h3 i {
-            color: #667eea;
+            color: var(--primary);
         }
         
         .scores-grid {
@@ -211,27 +556,135 @@
             flex-direction: column;
             gap: 12px;
         }
+
+        @media (max-width: 576px) {
+            .scores-grid {
+                gap: 10px;
+            }
+        }
         
         .score-row {
             display: flex;
             align-items: center;
             padding: 12px 16px;
-            background: #f8fafc;
-            border-radius: 14px;
-            border: 1px solid #e9eef3;
+            background: var(--bg-light);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
             transition: all 0.2s ease;
         }
         
         .score-row:hover {
-            border-color: #667eea;
+            border-color: var(--primary);
             background: white;
+            transform: translateX(5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .score-row:hover {
+                transform: none;
+            }
+            
+            .score-row:active {
+                transform: translateX(5px);
+                border-color: var(--primary);
+                background: white;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .score-row {
+                flex-wrap: wrap;
+                position: relative;
+                padding: 15px;
+            }
+            
+            .question-icon {
+                margin-right: 12px;
+            }
+            
+            .question-info {
+                flex: 1;
+                min-width: 150px;
+            }
+            
+            .score-value {
+                margin-left: 0;
+                text-align: left;
+                width: 100%;
+                margin-top: 12px;
+                margin-bottom: 5px;
+                font-size: 1.2rem;
+            }
+            
+            .score-bar-container {
+                margin-left: 0;
+                width: 100%;
+                margin-top: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .score-row {
+                padding: 12px;
+            }
+            
+            .question-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+                margin-right: 10px;
+            }
+            
+            .question-info {
+                min-width: 120px;
+            }
+            
+            .question-name {
+                font-size: 0.95rem;
+            }
+            
+            .question-desc {
+                font-size: 0.75rem;
+            }
+            
+            .score-value {
+                font-size: 1.1rem;
+                margin-top: 10px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .score-row {
+                padding: 10px;
+            }
+            
+            .question-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+                margin-right: 8px;
+            }
+            
+            .question-name {
+                font-size: 0.9rem;
+            }
+            
+            .question-desc {
+                font-size: 0.7rem;
+            }
+            
+            .score-value {
+                font-size: 1rem;
+                margin-top: 8px;
+            }
         }
         
         .question-icon {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -239,29 +692,30 @@
             font-size: 1.2rem;
             margin-right: 15px;
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 10px rgba(94, 84, 142, 0.3);
         }
         
         .question-info {
             flex: 1;
+            min-width: 120px;
         }
         
         .question-name {
             font-weight: 600;
-            color: #0f172a;
+            color: var(--text-dark);
             margin-bottom: 2px;
             font-size: 1rem;
         }
         
         .question-desc {
             font-size: 0.8rem;
-            color: #64748b;
+            color: var(--text-muted);
         }
         
         .score-value {
             font-size: 1.3rem;
             font-weight: 700;
-            color: #667eea;
+            color: var(--primary);
             margin-right: 15px;
             min-width: 65px;
             text-align: right;
@@ -270,16 +724,40 @@
         .score-bar-container {
             width: 120px;
             height: 6px;
-            background: #e2e8f0;
+            background: var(--border-light);
             border-radius: 20px;
             overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .score-bar-container {
+                width: 100%;
+            }
         }
         
         .score-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: var(--gradient-primary);
             border-radius: 20px;
             transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
         
         /* Action Buttons */
@@ -287,78 +765,186 @@
             display: flex;
             gap: 12px;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        @media (max-width: 640px) {
+            .actions {
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 25px;
+                padding-top: 18px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .actions {
+                margin-top: 20px;
+                padding-top: 15px;
+                gap: 8px;
+            }
         }
         
         .btn {
             padding: 12px 28px;
             border: none;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             font-weight: 600;
             font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             text-decoration: none;
+            min-height: 44px; /* Better touch target */
+        }
+
+        @media (max-width: 768px) {
+            .btn {
+                padding: 10px 24px;
+                font-size: 0.9rem;
+                min-height: 42px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .btn {
+                width: 100%;
+                padding: 12px 20px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+                min-height: 40px;
+            }
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--gradient-primary);
             color: white;
-            box-shadow: 0 8px 16px -8px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 16px -8px rgba(94, 84, 142, 0.4);
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 20px -8px rgba(102, 126, 234, 0.5);
+            box-shadow: 0 12px 20px -8px rgba(94, 84, 142, 0.5);
         }
         
         .btn-secondary {
             background: white;
-            color: #475569;
-            border: 1px solid #e2e8f0;
+            color: var(--text-light);
+            border: 1px solid var(--border-light);
         }
         
         .btn-secondary:hover {
-            background: #f8fafc;
-            border-color: #cbd5e1;
+            background: var(--bg-light);
+            border-color: var(--border-medium);
             transform: translateY(-2px);
         }
-        
-        /* Responsive */
-        @media (max-width: 640px) {
+
+        @media (hover: none) and (pointer: coarse) {
+            .btn-primary:hover,
+            .btn-secondary:hover {
+                transform: none;
+            }
+            
+            .btn-primary:active,
+            .btn-secondary:active {
+                transform: translateY(-2px);
+            }
+            
+            .btn-primary:active {
+                background: var(--gradient-hover);
+            }
+            
+            .btn-secondary:active {
+                background: var(--bg-light);
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .btn,
+            .score-row,
+            .home-link-top {
+                min-height: 44px;
+                touch-action: manipulation;
+            }
+            
             .score-row {
-                flex-wrap: wrap;
+                cursor: pointer;
             }
-            
-            .score-value {
-                margin-left: 55px;
-                text-align: left;
-                width: 100%;
-            }
-            
-            .score-bar-container {
-                margin-left: 55px;
-                width: 100%;
-            }
-            
-            .actions {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
+        }
+
+        /* Landscape orientation */
+        @media (max-width: 768px) and (orientation: landscape) {
+            body {
+                padding: 0.5rem;
+                padding-top: 70px;
             }
             
             .container {
-                padding: 15px;
+                margin: 0.25rem auto;
             }
             
-            .results-card {
-                padding: 20px;
+            .header {
+                padding: 1.5rem;
+            }
+            
+            .content {
+                padding: 1.25rem;
+            }
+            
+            .score-row {
+                padding: 10px 14px;
+            }
+            
+            .actions {
+                flex-direction: row;
+            }
+            
+            .btn {
+                width: auto;
+                min-width: 200px;
+            }
+        }
+
+        /* Ensure no horizontal scrolling */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Better text wrapping */
+        h1, h2, h3, p, span, div {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Small height devices */
+        @media (max-height: 600px) {
+            .header {
+                padding: 1.2rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .score-circle {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .big-score {
+                font-size: 2.2rem;
             }
         }
     </style>
@@ -374,125 +960,129 @@
     </div>
 
     <div class="container">
-        <!-- Header with gradient matching question page -->
-        <div class="header">
-            <h1>Speaking Assessment Results</h1>
-        
-        </div>
-        
-        <!-- Results Card -->
-        <div class="results-card">
-            <!-- Assessment Complete Section -->
-            <div class="complete-section">
-                <h2>Assessment Complete!</h2>
-                
-                <div class="score-circle">
-                    <span class="big-score">{{ average|floatformat:0 }}</span>
-                    <span class="score-label">Overall</span>
-                </div>
-                
-                <div class="level-badge">
-                    {% if average <= 45 %}
-                        <span>Basic Level</span>
-                    {% elif average <= 75 %}
-                        <span>Intermediate Level</span>
-                    {% else %}
-                        <span>Advanced Level</span>
-                    {% endif %}
-                </div>
-                
-                <p class="feedback-text">{{ message }}</p>
+        <!-- Main Card -->
+        <div class="test-card">
+            <!-- Header with gradient matching question page -->
+            <div class="header">
+                <h1>Speaking Assessment Results</h1>
+                <p>Your performance summary</p>
             </div>
             
-            <!-- Question-wise Performance (What was evaluated section removed) -->
-            <div class="performance-section">
-                <h3>
-                    Question-wise Performance
-                </h3>
+            <!-- Content Section -->
+            <div class="content">
+                <!-- Assessment Complete Section -->
+                <div class="complete-section">
+                    <h2>Assessment Complete!</h2>
+                    
+                    <div class="score-circle">
+                        <span class="big-score">{{ average|floatformat:0 }}</span>
+                        <span class="score-label">Overall</span>
+                    </div>
+                    
+                    <div class="level-badge">
+                        {% if average <= 45 %}
+                            <span>Basic Level</span>
+                        {% elif average <= 75 %}
+                            <span>Intermediate Level</span>
+                        {% else %}
+                            <span>Advanced Level</span>
+                        {% endif %}
+                    </div>
+                    
+                    <p class="feedback-text">{{ message }}</p>
+                </div>
                 
-                <div class="scores-grid">
-                    <!-- Q1: Word Pronunciation -->
-                    <div class="score-row">
-                        <div class="question-icon">
-                            <i class="fas fa-microphone"></i>
-                        </div>
-                        <div class="question-info">
-                            <div class="question-name">Q1: Word Pronunciation</div>
-                            <div class="question-desc">{{ q1_score|floatformat:1 }}% score</div>
-                        </div>
-                        <div class="score-value">{{ q1_score|floatformat:1 }}%</div>
-                        <div class="score-bar-container">
-                            <div class="score-bar-fill" style="width: {{ q1_score }}%"></div>
-                        </div>
-                    </div>
+                <!-- Question-wise Performance -->
+                <div class="performance-section">
+                    <h3>
+                        <i class="fas fa-chart-bar"></i>
+                        Question-wise Performance
+                    </h3>
                     
-                    <!-- Q2: Sentence Rearrangement -->
-                    <div class="score-row">
-                        <div class="question-icon">
-                            <i class="fas fa-random"></i>
+                    <div class="scores-grid">
+                        <!-- Q1: Word Pronunciation -->
+                        <div class="score-row">
+                            <div class="question-icon">
+                                <i class="fas fa-microphone"></i>
+                            </div>
+                            <div class="question-info">
+                                <div class="question-name">Q1: Word Pronunciation</div>
+                                <div class="question-desc">{{ q1_score|floatformat:1 }}% score</div>
+                            </div>
+                            <div class="score-value">{{ q1_score|floatformat:1 }}%</div>
+                            <div class="score-bar-container">
+                                <div class="score-bar-fill" style="width: {{ q1_score }}%"></div>
+                            </div>
                         </div>
-                        <div class="question-info">
-                            <div class="question-name">Q2: Sentence Rearrangement</div>
-                            <div class="question-desc">{{ q2_score|floatformat:1 }}% score</div>
+                        
+                        <!-- Q2: Sentence Rearrangement -->
+                        <div class="score-row">
+                            <div class="question-icon">
+                                <i class="fas fa-random"></i>
+                            </div>
+                            <div class="question-info">
+                                <div class="question-name">Q2: Sentence Rearrangement</div>
+                                <div class="question-desc">{{ q2_score|floatformat:1 }}% score</div>
+                            </div>
+                            <div class="score-value">{{ q2_score|floatformat:1 }}%</div>
+                            <div class="score-bar-container">
+                                <div class="score-bar-fill" style="width: {{ q2_score }}%"></div>
+                            </div>
                         </div>
-                        <div class="score-value">{{ q2_score|floatformat:1 }}%</div>
-                        <div class="score-bar-container">
-                            <div class="score-bar-fill" style="width: {{ q2_score }}%"></div>
+                        
+                        <!-- Q3: Phrase Reading -->
+                        <div class="score-row">
+                            <div class="question-icon">
+                                <i class="fas fa-list"></i>
+                            </div>
+                            <div class="question-info">
+                                <div class="question-name">Q3: Phrase Reading</div>
+                                <div class="question-desc">{{ q3_score|floatformat:1 }}% score</div>
+                            </div>
+                            <div class="score-value">{{ q3_score|floatformat:1 }}%</div>
+                            <div class="score-bar-container">
+                                <div class="score-bar-fill" style="width: {{ q3_score }}%"></div>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- Q3: Phrase Reading -->
-                    <div class="score-row">
-                        <div class="question-icon">
-                            <i class="fas fa-list"></i>
+                        
+                        <!-- Q4: Sentence Reading -->
+                        <div class="score-row">
+                            <div class="question-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <div class="question-info">
+                                <div class="question-name">Q4: Sentence Reading</div>
+                                <div class="question-desc">{{ q4_score|floatformat:1 }}% score</div>
+                            </div>
+                            <div class="score-value">{{ q4_score|floatformat:1 }}%</div>
+                            <div class="score-bar-container">
+                                <div class="score-bar-fill" style="width: {{ q4_score }}%"></div>
+                            </div>
                         </div>
-                        <div class="question-info">
-                            <div class="question-name">Q3: Phrase Reading</div>
-                            <div class="question-desc">{{ q3_score|floatformat:1 }}% score</div>
-                        </div>
-                        <div class="score-value">{{ q3_score|floatformat:1 }}%</div>
-                        <div class="score-bar-container">
-                            <div class="score-bar-fill" style="width: {{ q3_score }}%"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Q4: Sentence Reading -->
-                    <div class="score-row">
-                        <div class="question-icon">
-                            <i class="fas fa-book-open"></i>
-                        </div>
-                        <div class="question-info">
-                            <div class="question-name">Q4: Sentence Reading</div>
-                            <div class="question-desc">{{ q4_score|floatformat:1 }}% score</div>
-                        </div>
-                        <div class="score-value">{{ q4_score|floatformat:1 }}%</div>
-                        <div class="score-bar-container">
-                            <div class="score-bar-fill" style="width: {{ q4_score }}%"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Q5: Grammar Correction -->
-                    <div class="score-row">
-                        <div class="question-icon">
-                            <i class="fas fa-check-double"></i>
-                        </div>
-                        <div class="question-info">
-                            <div class="question-name">Q5: Grammar Correction</div>
-                            <div class="question-desc">{{ q5_score|floatformat:1 }}% score</div>
-                        </div>
-                        <div class="score-value">{{ q5_score|floatformat:1 }}%</div>
-                        <div class="score-bar-container">
-                            <div class="score-bar-fill" style="width: {{ q5_score }}%"></div>
+                        
+                        <!-- Q5: Grammar Correction -->
+                        <div class="score-row">
+                            <div class="question-icon">
+                                <i class="fas fa-check-double"></i>
+                            </div>
+                            <div class="question-info">
+                                <div class="question-name">Q5: Grammar Correction</div>
+                                <div class="question-desc">{{ q5_score|floatformat:1 }}% score</div>
+                            </div>
+                            <div class="score-value">{{ q5_score|floatformat:1 }}%</div>
+                            <div class="score-bar-container">
+                                <div class="score-bar-fill" style="width: {{ q5_score }}%"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Action Buttons -->
-            <div class="actions">
-                <a href="{% url 'reading:index' %}" class="btn btn-primary">
-                    Go to reading <i class="fas fa-arrow-right"></i>
-                </a>
+                <!-- Action Buttons -->
+                <div class="actions">
+                    <a href="{% url 'reading:index' %}" class="btn btn-primary">
+                        Go to reading <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </div>

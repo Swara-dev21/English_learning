@@ -521,9 +521,9 @@ def export_all_results_csv(request):
             overall_percentage = 0
         
         # Determine overall level
-        if overall_percentage < 40:
+        if overall_percentage < 60:
             overall_level = 'Beginner'
-        elif overall_percentage < 75:
+        elif overall_percentage < 80:
             overall_level = 'Intermediate'
         else:
             overall_level = 'Advanced'

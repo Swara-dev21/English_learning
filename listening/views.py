@@ -220,7 +220,7 @@ def submit_test(request, test_id):
     percentage = (correct_count / total_questions * 100) if total_questions > 0 else 0
     
     # Determine level based on percentage
-    if percentage < 40:
+    if percentage < 60:
         level = "Basic"
         feedback = "Start with foundational listening exercises"
     elif percentage < 80:
@@ -240,19 +240,19 @@ def submit_test(request, test_id):
         level=level,
         feedback=feedback,
         pending_manual_grading=needs_manual_grading,
-        user=request.user  # ✅ User is already assigned here
+        user=request.user
     )
     
     # Update existing responses to link to user
-    # This ensures all responses (including older ones) are linked
     updated_count = UserResponse.objects.filter(
         session_key=session_key, 
         question__test=test,
-        user__isnull=True  # Only update those without a user
+        user__isnull=True
     ).update(user=request.user)
     
     # Log for debugging (optional)
     print(f"Updated {updated_count} responses for user {request.user.username}")
+    print(f"Listening test completed with result ID: {test_result.id}")
     
     # Clear session data
     if f'replay_counts_{test_id}' in request.session:
@@ -266,13 +266,21 @@ def submit_test(request, test_id):
     profile.listening_completed = True
     profile.update_pretest_status()
     
-    # Only show test completion messages, no pretest messages
+    # Store the result ID in session if needed for reference
+    request.session['last_listening_result_id'] = test_result.id
+    
+    # Show completion message
     if needs_manual_grading:
         messages.info(request, "Your typing answers will be graded by an instructor.")
     else:
         messages.success(request, "Listening test completed successfully!")
     
-    return redirect('listening:result', result_id=test_result.id)
+    # Add a message about moving to speaking test
+    messages.info(request, "Now let's begin the speaking test.")
+    
+    # Redirect to speaking test page
+    # Adjust this URL based on your speaking app's URL configuration
+    return redirect('speaking:start')  # or whatever your speaking test URL name is
 
 @login_required
 def result(request, result_id):
