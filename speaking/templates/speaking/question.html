@@ -5,19 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Question {{ q_num }} - Speaking Assessment</title>
     {% load static %}
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* ===== PURPLE THEME - MATCHING SPEAKING START PAGE ===== */
+        /* ===== PURPLE THEME - MATCHING LISTENING QUESTIONS PAGE EXACTLY ===== */
         :root {
             --primary: #5e548e;
             --primary-dark: #453c6b;
-            --primary-deep: #2d2a4a;
             --primary-light: #f0edf7;
-            --primary-soft: #f8f5ff;
             --accent: #9f8bc9;
-            --gradient-primary: linear-gradient(135deg, #5e548e, #453c6b, #2d2a4a);
+            --gradient-primary: linear-gradient(135deg, #5e548e, #453c6b);
             --gradient-hover: linear-gradient(135deg, #6b5e9e, #5e548e);
             
             --success: #10b981;
@@ -53,28 +50,19 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark);
             background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
+            margin: 0;
+            padding: 0;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
         }
-        
-        .container {
-            max-width: 800px;
-            width: 100%;
-            margin: 4rem auto 1rem;
-            padding: 0 1rem;
-        }
-        
-        /* Back buttons container */
+
+        /* ===== BACK BUTTONS CONTAINER - EXACT MATCH ===== */
         .back-buttons-container {
             position: absolute;
             top: 30px;
@@ -86,28 +74,10 @@
             max-width: 1200px;
             margin: 0 auto;
             width: calc(100% - 60px);
-            z-index: 10;
+            z-index: 1000;
         }
 
-        @media (max-width: 768px) {
-            .back-buttons-container {
-                top: 20px;
-                left: 20px;
-                right: 20px;
-                width: calc(100% - 40px);
-            }
-        }
-
-        @media (max-width: 576px) {
-            .back-buttons-container {
-                top: 15px;
-                left: 15px;
-                right: 15px;
-                width: calc(100% - 30px);
-            }
-        }
-
-        .back-link-top, .home-link-top {
+        .home-link-top {
             color: #4a5568;
             text-decoration: none;
             font-size: 16px;
@@ -119,42 +89,30 @@
             background-color: white;
             border-radius: 30px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            white-space: nowrap;
         }
 
-        @media (max-width: 576px) {
-            .back-link-top, .home-link-top {
-                padding: 8px 12px;
-                font-size: 14px;
-                gap: 5px;
-            }
-            
-            .back-link-top i, .home-link-top i {
-                font-size: 12px;
-            }
-        }
-
-        .back-link-top:hover, .home-link-top:hover {
+        .home-link-top:hover {
             color: #667eea;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
             transform: translateY(-2px);
         }
 
-        @media (hover: none) and (pointer: coarse) {
-            .back-link-top:hover, .home-link-top:hover {
-                transform: none;
-            }
-            
-            .back-link-top:active, .home-link-top:active {
-                transform: translateY(-2px);
-            }
+        .home-link-top i {
+            font-size: 14px;
         }
 
-        /* Main Card */
+        /* ===== TEST WRAPPER - EXACT MATCH ===== */
+        .test-wrapper {
+            max-width: 800px;
+            width: 90%;
+            margin: 2rem auto;
+        }
+
+        /* ===== UNIFIED MAIN CARD - EXACT MATCH ===== */
         .test-card {
-            background: var(--bg-white);
-            border-radius: var(--radius-xxl);
-            box-shadow: var(--shadow-xl);
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(94, 84, 142, 0.25);
             overflow: hidden;
             animation: slideUp 0.6s ease;
         }
@@ -170,19 +128,20 @@
             }
         }
 
-        /* Header with gradient from start.html */
-        .header {
-            background: var(--gradient-primary);
-            padding: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* ===== HEADER SECTION - EXACT MATCH ===== */
+        .test-header {
+            background: linear-gradient(135deg, #5e548e, #453c6b);
             color: white;
+            padding: 2rem;
             position: relative;
             overflow: hidden;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .header::after {
+        .test-header::after {
             content: '';
             position: absolute;
             top: -50%;
@@ -198,103 +157,56 @@
             to { transform: rotate(360deg); }
         }
 
-        @media (max-width: 640px) {
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-                padding: 1.5rem;
-            }
-        }
-        
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
+        .test-header h1 {
             display: flex;
             align-items: center;
-            gap: 10px;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .header h1 i {
-            font-size: 1.5rem;
-            color: var(--accent);
-        }
-        
-        .question-number {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .question-number span {
+            gap: 1rem;
+            font-size: 2.2rem;
+            justify-content: center;
             font-weight: 700;
-            margin-left: 4px;
-        }
-        
-        /* Progress Bar */
-        .progress-container {
-            padding: 1.5rem 1.5rem 0;
-        }
-        
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        
-        .progress-info h3 {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .progress-info h3 i {
-            color: var(--primary);
-        }
-        
-        .progress-percentage {
-            font-weight: 600;
-            color: var(--primary);
-            font-size: 0.95rem;
-            background: var(--primary-light);
-            padding: 5px 14px;
-            border-radius: 30px;
-        }
-        
-        .progress-bar-bg {
-            width: 100%;
-            height: 8px;
-            background: var(--border-light);
-            border-radius: 20px;
-            overflow: hidden;
+            margin: 0;
             position: relative;
+            z-index: 1;
+            width: 100%;
         }
-        
-        .progress-fill {
+
+        .test-header h1 i {
+            color: #9f8bc9;
+            font-size: 2.5rem;
+        }
+
+        /* ===== CONTENT SECTION - EXACT MATCH ===== */
+        .test-content {
+            padding: 2rem;
+        }
+
+        /* ===== PROGRESS SECTION - EXACT MATCH ===== */
+        .question-indicator {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            height: 0.5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar-fill {
             height: 100%;
-            background: var(--gradient-primary);
-            border-radius: 20px;
+            background: linear-gradient(90deg, #5e548e, #453c6b);
+            border-radius: 1rem;
             transition: width 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .progress-fill::after {
+        .progress-bar-fill::after {
             content: '';
             position: absolute;
             top: 0;
@@ -309,33 +221,44 @@
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
         }
-        
-        /* Content Section */
-        .content {
-            padding: 1.5rem;
+
+        /* ===== QUESTION SECTION ===== */
+        .question-section {
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease;
         }
-        
-        /* Question Card */
-        .question-card {
-            background: var(--bg-white);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            border: 1px solid var(--border-light);
-            box-shadow: var(--shadow-md);
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
-        .question-title {
-            font-size: 1.6rem;
+
+        .question-number-badge {
+            display: inline-block;
+            background: #5e548e;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 2.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--primary-dark);
+            box-shadow: 0 4px 10px rgba(94, 84, 142, 0.2);
         }
-        
-        .question-title i {
-            color: var(--primary);
-            margin-right: 12px;
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
         }
-        
+
         .question-instruction {
             font-size: 1rem;
             color: var(--text-light);
@@ -343,390 +266,755 @@
             padding-bottom: 20px;
             border-bottom: 1px solid var(--border-light);
         }
-        
+
         .question-instruction i {
             color: var(--primary);
+            margin-right: 0.5rem;
         }
-        
-        /* Q1 - Word Cards */
+
+        /* ===== WORD CARDS FOR Q1 - STYLED LIKE MCQ OPTIONS ===== */
         .words-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 0.75rem;
             margin: 20px 0 25px;
         }
-        
+
         .word-card {
             background: var(--bg-light);
-            border-radius: var(--radius-lg);
-            padding: 16px 20px;
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid var(--border-light);
+            border: 2px solid var(--border-light);
             transition: all 0.2s ease;
         }
-        
+
         .word-card:hover {
             border-color: var(--primary);
-            background: var(--primary-soft);
+            background: var(--primary-light);
+            transform: translateX(5px);
         }
-        
+
         @media (max-width: 640px) {
             .word-card {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 12px;
+                padding: 0.875rem 1rem;
             }
             
             .word-actions {
                 width: 100%;
-                justify-content: flex-end;
+                display: flex;
+                gap: 8px;
             }
         }
-        
+
         .word-info {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 1rem;
         }
-        
+
         .word-number {
-            width: 32px;
-            height: 32px;
-            background: var(--gradient-primary);
-            border-radius: 50%;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: #f1f5f9;
+            border-radius: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            color: white;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 10px rgba(94, 84, 142, 0.3);
+            font-weight: 700;
+            color: #5e548e;
+            border: 2px solid #e2e8f0;
         }
-        
+
         .word-text {
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--text-dark);
         }
-        
+
         .word-status {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            padding: 4px 12px;
-            border-radius: 30px;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
             background: white;
             border: 1px solid var(--border-light);
         }
-        
+
         .word-status.not-recorded {
             color: var(--danger);
         }
-        
+
         .word-status.recorded {
             color: var(--success);
         }
-        
+
         .word-status i {
             font-size: 0.6rem;
             margin-right: 4px;
         }
-        
+
         .word-actions {
             display: flex;
             gap: 8px;
         }
-        
-        /* Button Styles - Matching start.html */
+
+        /* ===== BUTTON STYLES - MATCHING LISTENING TEST ===== */
         .btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: var(--radius-md);
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             cursor: pointer;
+            border: none;
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 44px;
+        }
+
+        .btn-record {
+            background: #5e548e;
+            color: white;
+            box-shadow: 0 4px 10px rgba(94, 84, 142, 0.2);
+        }
+
+        .btn-record:hover:not(:disabled) {
+            background: #453c6b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(94, 84, 142, 0.3);
+        }
+
+        .btn-stop {
             background: white;
-            border: 1px solid var(--border-light);
-            color: var(--text-light);
+            border: 2px solid var(--danger);
+            color: var(--danger);
         }
-        
-        .btn:hover:not(:disabled) {
-            background: var(--bg-light);
-            border-color: var(--border-medium);
-            transform: translateY(-1px);
+
+        .btn-stop:hover:not(:disabled) {
+            background: var(--danger-light);
         }
-        
+
+        .btn-submit {
+            background: linear-gradient(135deg, #5e548e, #453c6b);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(94, 84, 142, 0.3);
+            width: 100%;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: linear-gradient(135deg, #453c6b, #2d2a4a);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(94, 84, 142, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #5e548e, #453c6b);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            width: 100%;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(94, 84, 142, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #453c6b, #2d2a4a);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(94, 84, 142, 0.4);
+        }
+
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
-        .btn-record {
-            background: var(--gradient-primary);
-            border-color: transparent;
-            color: white;
-            box-shadow: 0 4px 12px rgba(94, 84, 142, 0.3);
-        }
-        
-        .btn-record:hover:not(:disabled) {
-            background: var(--gradient-hover);
-            box-shadow: 0 6px 15px rgba(94, 84, 142, 0.4);
-        }
-        
-        .btn-stop {
-            background: white;
-            border-color: var(--danger);
-            color: var(--danger);
-        }
-        
-        .btn-stop:hover:not(:disabled) {
-            background: var(--danger-light);
-        }
-        
-        .btn-submit {
-            background: var(--gradient-primary);
-            border-color: transparent;
-            color: white;
-            font-size: 1rem;
-            padding: 14px 24px;
-            width: 100%;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(94, 84, 142, 0.3);
-        }
-        
-        .btn-primary {
-            background: var(--gradient-primary);
-            border-color: transparent;
-            color: white;
-            padding: 14px 24px;
-            font-size: 1rem;
-            width: 100%;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(94, 84, 142, 0.3);
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-            background: var(--gradient-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(94, 84, 142, 0.4);
-        }
-        
-        /* Word Bank for Q2 */
+
+        /* ===== WORD BANK FOR Q2 - STYLED LIKE OPTIONS ===== */
         .word-bank {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 0.75rem;
             justify-content: center;
             margin: 20px 0;
-            padding: 20px;
+            padding: 1.5rem;
             background: var(--primary-light);
-            border-radius: var(--radius-lg);
+            border-radius: 1rem;
             border: 1px solid var(--border-light);
         }
-        
+
         .word-tile {
             background: white;
-            padding: 10px 22px;
-            border-radius: 40px;
-            border: 1px solid var(--border-light);
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            border: 2px solid var(--border-light);
             font-size: 1.1rem;
             font-weight: 500;
             color: var(--text-dark);
             transition: all 0.2s ease;
         }
-        
+
         .word-tile:hover {
             border-color: var(--primary);
             color: var(--primary);
             transform: translateY(-2px);
             box-shadow: var(--shadow-sm);
         }
-        
-        /* Phrases for Q3 */
+
+        /* ===== PHRASES FOR Q3 ===== */
         .phrases-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 0.75rem;
             margin: 20px 0;
         }
-        
+
         .phrase-item {
             background: var(--bg-light);
-            padding: 16px 22px;
-            border-radius: var(--radius-md);
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
             font-size: 1.1rem;
+            border: 2px solid var(--border-light);
             border-left: 4px solid var(--primary);
             color: var(--text-dark);
-            border: 1px solid var(--border-light);
-            border-left-width: 4px;
-            border-left-color: var(--primary);
         }
-        
+
         .phrase-item i {
             color: var(--primary);
             margin-right: 10px;
         }
-        
-        /* Sentence for Q4 */
+
+        /* ===== SENTENCE FOR Q4 ===== */
         .sentence-box {
             background: var(--primary-light);
-            padding: 30px;
-            border-radius: var(--radius-lg);
-            font-size: 1.4rem;
+            padding: 2rem;
+            border-radius: 1rem;
+            font-size: 1.3rem;
             text-align: center;
             margin: 20px 0;
             color: var(--text-dark);
             font-weight: 500;
-            border: 1px solid var(--border-light);
+            border: 2px solid var(--border-light);
             border-left: 4px solid var(--primary);
         }
-        
+
         .sentence-box i {
             color: var(--primary);
             margin: 0 8px;
-            font-size: 1rem;
         }
-        
-        /* Incorrect Sentence for Q5 */
+
+        /* ===== INCORRECT SENTENCE FOR Q5 ===== */
         .incorrect-box {
             background: var(--danger-light);
-            padding: 25px;
-            border-radius: var(--radius-lg);
+            padding: 2rem;
+            border-radius: 1rem;
             font-size: 1.3rem;
             text-align: center;
             margin: 20px 0;
             color: var(--danger);
-            border: 1px solid var(--danger);
+            border: 2px solid var(--danger);
             border-left: 4px solid var(--danger);
         }
-        
+
         .incorrect-box i {
             color: var(--danger);
             margin-right: 10px;
         }
-        
-        /* Recording Section */
+
+        /* ===== RECORDING SECTION ===== */
         .recording-section {
-            margin-top: 30px;
-            padding-top: 25px;
+            margin-top: 2rem;
+            padding-top: 2rem;
             border-top: 1px solid var(--border-light);
             text-align: center;
         }
-        
+
         .mic-circle {
-            width: 70px;
-            height: 70px;
-            background: var(--gradient-primary);
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #5e548e, #453c6b);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 15px;
+            margin: 0 auto 1rem;
             box-shadow: 0 8px 20px rgba(94, 84, 142, 0.3);
             transition: all 0.3s ease;
         }
-        
+
         .mic-circle.recording {
             animation: pulse 1.2s infinite;
         }
-        
+
         .mic-circle i {
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: white;
         }
-        
+
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 8px 20px rgba(94, 84, 142, 0.3); }
             50% { transform: scale(1.05); box-shadow: 0 15px 30px rgba(94, 84, 142, 0.5); }
             100% { transform: scale(1); box-shadow: 0 8px 20px rgba(94, 84, 142, 0.3); }
         }
-        
+
         .status-text {
             font-weight: 500;
             color: var(--text-muted);
-            margin: 10px 0;
+            margin: 1rem 0;
         }
-        
+
         .status-text.recording {
             color: var(--primary);
         }
-        
+
         .timer {
             font-size: 2rem;
             font-weight: 700;
             color: var(--text-dark);
-            margin: 15px 0;
+            margin: 1rem 0;
             font-family: 'Courier New', monospace;
             letter-spacing: 2px;
         }
-        
+
         .recording-actions {
             display: flex;
-            gap: 12px;
+            gap: 1rem;
             justify-content: center;
-            margin: 20px 0;
+            margin: 1.5rem 0;
         }
-        
-        @media (max-width: 640px) {
-            .recording-actions {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-        
+
         .success-message {
             color: var(--success);
             font-weight: 500;
-            margin: 15px 0;
-            padding: 10px;
+            margin: 1rem 0;
+            padding: 0.75rem;
             background: var(--success-light);
-            border-radius: var(--radius-md);
+            border-radius: 1rem;
             border: 1px solid var(--success);
         }
-        
+
         .hidden {
             display: none;
         }
 
-        /* Touch device optimizations */
-        @media (hover: none) and (pointer: coarse) {
-            .btn:hover,
-            .word-card:hover,
-            .word-tile:hover {
-                transform: none;
+        /* ===== QUESTION STATUS DOTS - EXACT MATCH ===== */
+        .question-status {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .status-dot {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #64748b;
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+
+        .status-dot.active {
+            background: #5e548e;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(94, 84, 142, 0.3);
+        }
+
+        .status-dot.answered {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-dot.answered.active {
+            background: #5e548e;
+        }
+
+        /* ===== MOBILE RESPONSIVE - EXACT MATCH FROM LISTENING TEST ===== */
+
+        /* Base mobile improvements */
+        @media (max-width: 768px) {
+            .test-wrapper {
+                width: 95%;
+                margin: 0.5rem auto;
             }
-            
-            .btn:active {
-                transform: translateY(-1px);
+
+            .test-header h1 {
+                font-size: 1.5rem;
+                gap: 0.5rem;
             }
-            
-            .word-card:active {
-                border-color: var(--primary);
-                background: var(--primary-soft);
+
+            .test-header h1 i {
+                font-size: 1.8rem;
+            }
+
+            .test-content {
+                padding: 1.25rem;
+            }
+
+            .question-indicator {
+                font-size: 1rem;
+            }
+
+            .progress-bar-container {
+                height: 0.4rem;
+                margin-bottom: 1.25rem;
+            }
+
+            .question-number-badge {
+                font-size: 1rem;
+                padding: 0.4rem 1.2rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .question-text {
+                font-size: 1.2rem;
+                margin-bottom: 1.25rem;
+                line-height: 1.5;
+            }
+
+            .question-instruction {
+                font-size: 0.95rem;
+                margin-bottom: 1.25rem;
+                padding-bottom: 1rem;
+            }
+
+            .words-container {
+                gap: 0.6rem;
+            }
+
+            .word-card {
+                padding: 0.875rem 1rem;
+            }
+
+            .word-number {
+                width: 2.2rem;
+                height: 2.2rem;
+                font-size: 0.95rem;
+            }
+
+            .word-text {
+                font-size: 1.1rem;
+            }
+
+            .word-status {
+                font-size: 0.85rem;
+                padding: 0.2rem 0.75rem;
+            }
+
+            .word-bank {
+                padding: 1rem;
+                gap: 0.5rem;
+            }
+
+            .word-tile {
+                padding: 0.5rem 1rem;
+                font-size: 1rem;
+            }
+
+            .phrase-item {
+                padding: 0.875rem 1.2rem;
+                font-size: 1rem;
+            }
+
+            .sentence-box {
+                padding: 1.5rem;
+                font-size: 1.2rem;
+            }
+
+            .incorrect-box {
+                padding: 1.5rem;
+                font-size: 1.2rem;
+            }
+
+            .recording-section {
+                margin-top: 1.5rem;
+                padding-top: 1.5rem;
+            }
+
+            .mic-circle {
+                width: 70px;
+                height: 70px;
+            }
+
+            .mic-circle i {
+                font-size: 2rem;
+            }
+
+            .timer {
+                font-size: 1.8rem;
+            }
+
+            .recording-actions {
+                flex-direction: column;
+                gap: 0.75rem;
+                margin: 1rem 0;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 0.7rem 1rem;
+                font-size: 0.95rem;
+            }
+
+            .btn-submit, .btn-primary {
+                padding: 0.875rem 1.5rem;
+                font-size: 1.1rem;
+            }
+
+            .question-status {
+                gap: 0.5rem;
+                margin-top: 1.5rem;
+                justify-content: center;
+            }
+
+            .status-dot {
+                width: 2.2rem;
+                height: 2.2rem;
+                font-size: 0.85rem;
             }
         }
 
-        /* Landscape orientation */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .container {
-                margin: 3rem auto 1rem;
+        /* Small mobile devices */
+        @media (max-width: 576px) {
+            .test-header h1 {
+                font-size: 1.3rem;
             }
-            
-            .header {
-                padding: 1.5rem;
+
+            .test-header h1 i {
+                font-size: 1.5rem;
             }
-            
-            .content {
+
+            .test-content {
                 padding: 1rem;
+            }
+
+            .question-number-badge {
+                font-size: 0.95rem;
+                padding: 0.35rem 1rem;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .question-instruction {
+                font-size: 0.9rem;
+            }
+
+            .word-card {
+                padding: 0.75rem;
+            }
+
+            .word-info {
+                gap: 0.75rem;
+            }
+
+            .word-number {
+                width: 2rem;
+                height: 2rem;
+                font-size: 0.9rem;
+            }
+
+            .word-text {
+                font-size: 1rem;
+            }
+
+            .word-status {
+                font-size: 0.8rem;
+                padding: 0.15rem 0.6rem;
+            }
+
+            .word-tile {
+                padding: 0.4rem 0.875rem;
+                font-size: 0.95rem;
+            }
+
+            .phrase-item {
+                padding: 0.75rem 1rem;
+                font-size: 0.95rem;
+            }
+
+            .sentence-box {
+                padding: 1.25rem;
+                font-size: 1.1rem;
+            }
+
+            .incorrect-box {
+                padding: 1.25rem;
+                font-size: 1.1rem;
+            }
+
+            .timer {
+                font-size: 1.5rem;
+            }
+
+            .status-dot {
+                width: 2rem;
+                height: 2rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 360px) {
+            .test-header h1 {
+                font-size: 1.2rem;
+            }
+
+            .test-header h1 i {
+                font-size: 1.3rem;
+            }
+
+            .question-indicator {
+                font-size: 0.9rem;
+            }
+
+            .question-number-badge {
+                font-size: 0.9rem;
+                padding: 0.3rem 0.875rem;
+            }
+
+            .question-text {
+                font-size: 1rem;
+            }
+
+            .word-number {
+                width: 1.8rem;
+                height: 1.8rem;
+                font-size: 0.85rem;
+            }
+
+            .word-text {
+                font-size: 0.95rem;
+            }
+
+            .status-dot {
+                width: 1.8rem;
+                height: 1.8rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Landscape orientation on mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .test-wrapper {
+                margin: 0.25rem auto;
+            }
+
+            .test-content {
+                padding: 1rem;
+            }
+
+            .words-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+
+            .word-card {
+                padding: 0.7rem;
+            }
+
+            .recording-actions {
+                flex-direction: row;
+            }
+
+            .btn {
+                width: auto;
+                min-width: 150px;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .word-card:hover,
+            .word-tile:hover,
+            .btn:hover {
+                transform: none;
+            }
+
+            .word-card:active {
+                border-color: var(--primary);
+                background: var(--primary-light);
+                transform: translateX(5px);
+            }
+
+            .word-tile:active {
+                border-color: var(--primary);
+                color: var(--primary);
+                transform: translateY(-2px);
+            }
+
+            .btn:active,
+            .btn-record:active,
+            .btn-submit:active {
+                transform: translateY(-2px);
+            }
+        }
+
+        /* Mobile fixes for back buttons */
+        @media (max-width: 768px) {
+            .back-buttons-container {
+                position: relative !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                padding: 15px 15px 5px 15px !important;
+                margin: 0 auto !important;
+                box-sizing: border-box !important;
+                z-index: 10;
+            }
+            
+            body {
+                padding-top: 0 !important;
+                display: block !important;
+            }
+            
+            .test-wrapper {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+            }
+        }
+
+        /* Extra small devices for back buttons */
+        @media (max-width: 480px) {
+            .back-buttons-container {
+                padding: 10px 10px 5px 10px !important;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .home-link-top {
+                padding: 8px 12px !important;
+                font-size: 14px !important;
+                flex: 1;
+                justify-content: center;
             }
         }
 
@@ -734,6 +1022,17 @@
         html, body {
             max-width: 100%;
             overflow-x: hidden;
+        }
+
+        /* Better touch targets */
+        button, .btn, .word-tile, .home-link-top {
+            touch-action: manipulation;
+        }
+
+        /* Prevent text overflow */
+        h1, h2, h3, p, span, div {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
     </style>
 </head>
@@ -752,45 +1051,48 @@
      data-submit-url="{% url 'speaking:submit_recording' %}"
      data-process-url="{% url 'speaking:process_results' %}"
      data-result-url="{% url 'speaking:result' %}"
+     data-reading-url="{% url 'reading:index' %}"
      style="display: none;"></div>   
 
-    <div class="container">
-        <!-- Main Card -->
+    <div class="test-wrapper">
+        <!-- UNIFIED MAIN CARD -->
         <div class="test-card">
-            <!-- Header with gradient -->
-            <div class="header">
+            
+            <!-- Header Section - Centered -->
+            <div class="test-header">
                 <h1>
                     <i class="fas fa-microphone-alt"></i>
                     Speaking Assessment
                 </h1>
-                <div class="question-number">
-                    Question <span>{{ q_num }}</span> of 5
-                </div>
-            </div>
-            
-            <!-- Progress Bar -->
-            <div class="progress-container">
-                <div class="progress-info">
-                    <h3><i class="far fa-clock"></i> Progress</h3>
-                    <span class="progress-percentage">
-                        {% if q_num == 1 %}0%{% elif q_num == 2 %}20%{% elif q_num == 3 %}40%{% elif q_num == 4 %}60%{% elif q_num == 5 %}80%{% endif %}
-                    </span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-fill" style="width: 
-                        {% if q_num == 1 %}0%{% elif q_num == 2 %}20%{% elif q_num == 3 %}40%{% elif q_num == 4 %}60%{% elif q_num == 5 %}80%{% endif %};">
-                    </div>
-                </div>
             </div>
             
             <!-- Content Section -->
-            <div class="content">
-                <!-- Question Card -->
-                <div class="question-card">
-                    <h2 class="question-title">
-                        <i class="fas fa-{% if q_num == 1 %}microphone{% elif q_num == 2 %}random{% elif q_num == 3 %}list{% elif q_num == 4 %}book-open{% else %}check-double{% endif %}"></i>
-                        {{ question.title }}
-                    </h2>
+            <div class="test-content">
+                
+                <!-- Question Indicator Above Progress Bar -->
+                <div class="question-indicator">
+                    Question {{ q_num }} of 5
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" style="width: 
+                        {% if q_num == 1 %}0%{% elif q_num == 2 %}20%{% elif q_num == 3 %}40%{% elif q_num == 4 %}60%{% elif q_num == 5 %}80%{% endif %};">
+                    </div>
+                </div>
+                
+                <!-- Question Section -->
+                <div class="question-section">
+                    
+                    <!-- Question Number Badge -->
+                    <div class="question-number-badge">
+                        Q{{ q_num }}
+                    </div>
+                    
+                    <!-- Question Title -->
+                    <h3 class="question-text">{{ question.title }}</h3>
+                    
+                    <!-- Question Instruction -->
                     <div class="question-instruction">
                         <i class="fas fa-info-circle"></i>
                         {{ question.instruction }}
@@ -806,7 +1108,7 @@
                                 <span class="word-text">{{ word }}</span>
                             </div>
                             <div class="word-status not-recorded" id="status-{{ forloop.counter }}">
-                                 Not recorded
+                                <i class="fas fa-circle"></i> Not recorded
                             </div>
                             <div class="word-actions">
                                 <button class="btn btn-record" onclick="startWordRecording({{ forloop.counter }})" 
@@ -821,7 +1123,7 @@
                         </div>
                         {% endfor %}
                     </div>
-                    <button class="btn btn-submit" onclick="submitAllWords()" id="submitAllBtn" disabled>
+                    <button class="btn-submit" onclick="submitAllWords()" id="submitAllBtn" disabled>
                         <i class="fas fa-check-circle"></i> Submit All Words
                     </button>
                     {% endif %}
@@ -887,16 +1189,30 @@
                             <div class="success-message">
                                 <i class="fas fa-check-circle"></i> Recording complete!
                             </div>
-                            <button class="btn btn-primary" onclick="submitRecording()" id="submitBtn">
+                            <button class="btn-primary" onclick="submitRecording()" id="submitBtn">
                                 <i class="fas fa-arrow-right"></i> Submit & Continue
                             </button>
                         </div>
                     </div>
                     {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
+                    
+                    <!-- Question Status Dots -->
+                    <div class="question-status">
+                        {% for i in "12345"|make_list %}
+                        <div class="status-dot 
+                            {% if forloop.counter == q_num %}active{% endif %}
+                            {% if forloop.counter < q_num %}answered{% endif %}
+                            " data-dot="{{ forloop.counter }}" title="Question {{ forloop.counter }}">
+                            {{ forloop.counter }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                </div> <!-- End question-section -->
+                
+            </div> <!-- End test-content -->
+        </div> <!-- End test-card -->
+    </div> <!-- End test-wrapper -->
 
     <script>
         // Get URLs from hidden div
@@ -905,6 +1221,7 @@
         const submitUrl = urls ? urls.dataset.submitUrl : 'NOT FOUND';
         const processUrl = urls ? urls.dataset.processUrl : 'NOT FOUND';
         const resultUrl = urls ? urls.dataset.resultUrl : 'NOT FOUND';
+        const readingUrl = urls ? urls.dataset.readingUrl : '/reading/';
         
         // Global variables
         let mediaRecorder;
@@ -1140,9 +1457,9 @@
             .then(data => {
                 if (data.success) {
                     if (data.next_question) {
-                        window.location.href =  '/speaking/question/' + data.next_question + '/';
+                        window.location.href = '/speaking/question/' + data.next_question + '/';
                     } else {
-                        processResults();
+                        processResultsAndRedirect();
                     }
                 } else {
                     alert('Error: ' + data.error);
@@ -1157,8 +1474,8 @@
             });
         }
         
-        function processResults() {
-           fetch(processUrl, {
+        function processResultsAndRedirect() {
+            fetch(processUrl, {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}'
@@ -1167,14 +1484,23 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                   window.location.href = '{% url "speaking:result" %}';
+                    document.getElementById('submitBtn').innerHTML = '<i class="fas fa-check-circle"></i> Test Complete!';
+                    setTimeout(() => {
+                        window.location.href = readingUrl;
+                    }, 1500);
                 } else {
                     alert('Error processing results: ' + data.error);
+                    window.location.href = readingUrl;
                 }
             })
             .catch(error => {
                 alert('Failed to process results: ' + error.message);
+                window.location.href = readingUrl;
             });
+        }
+        
+        function processResults() {
+            processResultsAndRedirect();
         }
     </script>
 </body>

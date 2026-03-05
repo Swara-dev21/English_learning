@@ -622,11 +622,11 @@ def grade_paragraph_writing(user_answer, question):
         error_feedback = ["❌ Your answer contains too many spelling errors. Please write using proper English words."]
     
     # ===== DETERMINE LEVEL =====
-    if total_score >= 90:
+    if total_score >= 80:
         level = "Advanced"
-    elif total_score >= 75:
+    elif total_score >= 60:
         level = "Intermediate"
-    elif total_score >= 50:
+    elif total_score >= 40:
         level = "Basic"
     else:
         level = "Beginner"
@@ -768,9 +768,17 @@ def submit_writing_test(request, test_id):
         pass
     
     # REMOVED: All success messages
-    # messages.success(request, "Writing test completed successfully!")
     
-    return redirect('writing:writing_results', result_id=test_result.id)
+    # ===== CHANGED: Redirect to pretest results page instead of writing results =====
+    # Store the writing result ID in session if needed for reference
+    request.session['last_writing_result_id'] = test_result.id
+    request.session['writing_score'] = total_score
+    
+    # Add a completion message
+    messages.success(request, "🎉 Congratulations! You have completed all pretest sections!")
+    
+    # Redirect to the pretest results page
+    return redirect('home_page:pretest_results')
 
 @login_required
 def writing_results(request, result_id):

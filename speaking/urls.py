@@ -11,5 +11,5 @@ urlpatterns = [
     path('submit-recording/', views.submit_recording, name='submit_recording'),
     path('process-results/', views.process_results, name='process_results'),
     path('result/', views.result, name='result'),
-    path('error/', views.error_page, name='error_page'),
+    path('latest-result/', views.latest_result, name='latest_result'),
 ]

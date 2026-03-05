@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'english_learning.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',  # This is your old database file
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 

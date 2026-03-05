@@ -494,7 +494,7 @@ class PronunciationEngine:
         elif avg_score >= 70:
             level = "Good"
             message = "Good job! Minor improvements needed."
-        elif avg_score >= 50:
+        elif avg_score >= 60:
             level = "Fair"
             message = "You're doing well. Focus on problem areas."
         else:
