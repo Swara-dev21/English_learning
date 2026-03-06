@@ -217,6 +217,8 @@ def continue_pretest(request):
     return start_pretest(request)
 
 
+# home_page/views.py (updated pretest_results function)
+
 @login_required
 def pretest_results(request):
     """Show combined pretest results"""
@@ -227,36 +229,57 @@ def pretest_results(request):
     
     profile = get_object_or_404(StudentProfile, user=request.user)
     
+    # Debug: Print profile status
+    print(f"\n{'='*50}")
+    print(f"USER: {request.user.username}")
+    print(f"Profile reading_completed: {profile.reading_completed}")
+    print(f"Profile pretest_completed: {profile.pretest_completed}")
+    
     if not profile.pretest_completed:
         if all([profile.listening_completed, profile.reading_completed, 
                 profile.speaking_completed, profile.writing_completed]):
             profile.pretest_completed = True
             profile.pretest_completed_at = timezone.now()
             profile.save()
+            print("✅ Profile marked as pretest_completed")
         else:
-            messages.warning(request, "Please complete all pretest sections first.")
-            return redirect('home_page:start_pretest')
+            # Don't redirect - show what's completed and what's not
+            messages.warning(request, "Complete all sections to see full results.")
+            # Continue to show partial results
     
-    # Get latest results
+    # Get latest results with debugging
+    print("\n--- FETCHING RESULTS ---")
+    
     listening_result = ListeningResult.objects.filter(user=request.user).first()
-    reading_result = ReadingResult.objects.filter(user=request.user).first()
+    print(f"Listening result: {'✅ Found' if listening_result else '❌ Not found'}")
     
-    # FIXED: Get the most recent COMPLETED speaking test (with scores)
+    # FIXED: Better reading result fetching
+    reading_result = ReadingResult.objects.filter(user=request.user).first()
+    if not reading_result:
+        # Try to find by session key as fallback
+        session_key = request.session.session_key
+        if session_key:
+            reading_result = ReadingResult.objects.filter(
+                session_key=session_key
+            ).order_by('-created_at').first()
+            print(f"Reading result (by session): {'✅ Found' if reading_result else '❌ Not found'}")
+    print(f"Reading result: {'✅ Found' if reading_result else '❌ Not found'}")
+    
     speaking_result = TestSession.objects.filter(
         user=request.user,
-        completed_at__isnull=False  # Only completed tests
-    ).order_by('-completed_at').first()  # Get the latest one
-    
-    # If no completed test found, try to get any test with non-zero scores
-    if not speaking_result:
-        speaking_result = TestSession.objects.filter(
-            user=request.user
-        ).exclude(
-            q1_score=0, q2_score=0, q3_score=0, q4_score=0, q5_score=0
-        ).order_by('-created_at').first()
+        completed_at__isnull=False
+    ).order_by('-completed_at').first()
+    print(f"Speaking result: {'✅ Found' if speaking_result else '❌ Not found'}")
     
     writing_result = WritingResult.objects.filter(user=request.user).first()
-
+    print(f"Writing result: {'✅ Found' if writing_result else '❌ Not found'}")
+    
+    # If reading_result exists, print its details
+    if reading_result:
+        print(f"Reading Result ID: {reading_result.id}")
+        print(f"Reading Score: {reading_result.score}/{reading_result.total}")
+        print(f"Reading Percentage: {reading_result.percentage}")
+    
     completion_date = None
     if writing_result:
         completion_date = writing_result.created_at
@@ -272,11 +295,9 @@ def pretest_results(request):
     if reading_result:
         reading_percentage = reading_result.percentage or ((reading_result.score / reading_result.total) * 100)
     
-    # FIXED: Get speaking percentage from the result
     speaking_percentage = 0
     if speaking_result:
-        speaking_percentage = speaking_result.get_average_score()  # This returns the percentage
-        print(f"Speaking score found: {speaking_percentage}% for user {request.user.username}")
+        speaking_percentage = speaking_result.get_average_score()
     
     writing_percentage = 0
     if writing_result:
@@ -307,22 +328,11 @@ def pretest_results(request):
     else:
         overall_percentage = 0
     
-    total_raw_score = 0
-    if listening_result:
-        total_raw_score += listening_result.score
-    if reading_result:
-        total_raw_score += reading_result.score
-    if speaking_result:
-        total_raw_score += speaking_percentage / 20
-    if writing_result:
-        total_raw_score += writing_result.total_score
-    
-    overall_raw_score = round(total_raw_score, 1)
-    
-    # Debug print
-    print(f"User: {request.user.username}")
-    print(f"Speaking result found: {speaking_result is not None}")
-    print(f"Speaking percentage: {speaking_percentage}")
+    print(f"\n{'='*50}")
+    print(f"FINAL CONTEXT:")
+    print(f"reading_result: {'✅ Present' if reading_result else '❌ None'}")
+    print(f"reading_percentage: {reading_percentage}%")
+    print(f"{'='*50}\n")
     
     context = {
         'profile': profile,
@@ -330,13 +340,13 @@ def pretest_results(request):
         'reading_result': reading_result,
         'speaking_result': speaking_result,
         'writing_result': writing_result,
-        'overall_score': overall_raw_score,
+        'overall_score': overall_percentage,  # Using percentage for overall
         'overall_percentage': round(overall_percentage, 1),
         'listening_percentage': round(listening_percentage, 1),
         'reading_percentage': round(reading_percentage, 1),
         'speaking_percentage': round(speaking_percentage, 1),
         'writing_percentage': round(writing_percentage, 1),
-        'completion_date': completion_date, 
+        'completion_date': completion_date,
     }
     
     return render(request, 'home_page/pretest_results.html', context)

@@ -3,46 +3,54 @@ from .models import Test, Paragraph, Question, ReadingUserResponse, ReadingResul
 
 
 # ----------------------------
-# Paragraph Admin
-# ----------------------------
-@admin.register(Paragraph)
-class ParagraphAdmin(admin.ModelAdmin):
-    list_display = ['id', 'test', 'order', 'short_content']
-    list_filter = ['test']
-    search_fields = ['content']
-
-    def short_content(self, obj):
-        return obj.content[:80] + "..." if len(obj.content) > 80 else obj.content
-    short_content.short_description = "Paragraph Preview"
-
-
-# ----------------------------
-# Question Inline (inside Test)
+# Question Inline (inside Paragraph)
 # ----------------------------
 class QuestionInline(admin.TabularInline):
+    """Show questions directly under their paragraph"""
     model = Question
-    extra = 1
+    extra = 0  # Don't show extra empty forms by default
     fields = [
         'order',
-        'paragraph',
-        'parameter_type',
         'question_text',
+        'parameter_type',
         'option1',
         'option2',
         'option3',
         'option4',
         'correct_option'
     ]
+    ordering = ['order']
+    min_num = 1  # At least one question per paragraph
+
+
+# ----------------------------
+# Paragraph Admin
+# ----------------------------
+@admin.register(Paragraph)
+class ParagraphAdmin(admin.ModelAdmin):
+    list_display = ['id', 'test', 'order', 'question_count', 'short_content']
+    list_filter = ['test']
+    search_fields = ['content']
+    inlines = [QuestionInline]  # Show questions inline
+    ordering = ['test', 'order']
+
+    def short_content(self, obj):
+        return obj.content[:80] + "..." if len(obj.content) > 80 else obj.content
+    short_content.short_description = "Paragraph Preview"
+    
+    def question_count(self, obj):
+        return obj.questions.count()
+    question_count.short_description = 'Questions'
+
 
 # ----------------------------
 # Test Admin
 # ----------------------------
 @admin.register(Test)
 class TestAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'created_at', 'question_count']
+    list_display = ['id', 'title', 'created_at', 'paragraph_count', 'total_questions']
     list_display_links = ['id', 'title']
     search_fields = ['title', 'description']
-    inlines = [QuestionInline]
     readonly_fields = ['created_at']  
 
     fieldsets = (
@@ -55,9 +63,16 @@ class TestAdmin(admin.ModelAdmin):
         }),
     )
 
-    def question_count(self, obj):
-        return obj.question_set.count()
-    question_count.short_description = 'Questions'
+    def paragraph_count(self, obj):
+        return obj.paragraphs.count()
+    paragraph_count.short_description = 'Paragraphs'
+    
+    def total_questions(self, obj):
+        total = 0
+        for paragraph in obj.paragraphs.all():
+            total += paragraph.questions.count()
+        return total
+    total_questions.short_description = 'Total Questions'
 
 
 # ----------------------------
@@ -69,7 +84,7 @@ class QuestionAdmin(admin.ModelAdmin):
         'id',
         'order',
         'test',
-        'paragraph',
+        'paragraph_info',
         'parameter_type',
         'short_question',
         'correct_option'
@@ -78,6 +93,7 @@ class QuestionAdmin(admin.ModelAdmin):
     list_filter = ['test', 'paragraph', 'parameter_type', 'correct_option']
     search_fields = ['question_text']
     list_editable = ['order', 'parameter_type']
+    ordering = ['test', 'paragraph__order', 'order']
 
     fieldsets = (
         ('Question Information', {
@@ -94,6 +110,11 @@ class QuestionAdmin(admin.ModelAdmin):
     def short_question(self, obj):
         return obj.question_text[:50] + "..." if len(obj.question_text) > 50 else obj.question_text
     short_question.short_description = "Question"
+    
+    def paragraph_info(self, obj):
+        return f"P{obj.paragraph.order}" if obj.paragraph else "-"
+    paragraph_info.short_description = "Para"
+
 
 # ----------------------------
 # User Response Admin
@@ -113,7 +134,7 @@ class ReadingUserResponseAdmin(admin.ModelAdmin):
         'id',
         'user',
         'session_key',
-        'question',
+        'question_info',
         'selected_option',
         'response_status',
         'created_at'
@@ -122,6 +143,7 @@ class ReadingUserResponseAdmin(admin.ModelAdmin):
     list_filter = ['question__test', 'question__parameter_type', 'created_at']
     search_fields = ['user__username', 'session_key']
     readonly_fields = ['created_at']
+    ordering = ['-created_at']
 
     fieldsets = (
         ('User Information', {
@@ -135,6 +157,11 @@ class ReadingUserResponseAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    def question_info(self, obj):
+        return f"Q{obj.question.order} (P{obj.question.paragraph.order})"
+    question_info.short_description = "Question"
+
 
 # ----------------------------
 # Reading Result Admin
@@ -145,10 +172,10 @@ class ReadingResultAdmin(admin.ModelAdmin):
         'id',
         'user',
         'test',
-        'score',
-        'total',
+        'score_display',
         'percentage_display',
         'level',
+        'questions_correct',
         'rubric_summary',
         'created_at'
     ]
@@ -164,9 +191,10 @@ class ReadingResultAdmin(admin.ModelAdmin):
         ('Score Details', {
             'fields': ('score', 'total', 'percentage', 'level', 'feedback')
         }),
-        ('Rubric Scores', {
+        ('Rubric Scores (for 8 questions)', {
             'fields': ('main_idea_score', 'lexical_score', 'specific_score', 'organisation_score'),
-            'classes': ('wide',)
+            'classes': ('wide',),
+            'description': 'These scores track correct answers per skill type'
         }),
         ('Metadata', {
             'fields': ('created_at',),
@@ -177,20 +205,30 @@ class ReadingResultAdmin(admin.ModelAdmin):
     def percentage_display(self, obj):
         return f"{obj.percentage:.1f}%"
     percentage_display.short_description = "Percentage"
+    
+    def score_display(self, obj):
+        return f"{obj.score}/{obj.total}"
+    score_display.short_description = "Score"
+    
+    def questions_correct(self, obj):
+        """Display number of correct questions out of 8"""
+        # Sum up all rubric scores (each represents 1 correct question)
+        total_correct = (obj.main_idea_score + 
+                        obj.lexical_score + 
+                        obj.specific_score + 
+                        obj.organisation_score)
+        return f"{total_correct}/8"
+    questions_correct.short_description = "Correct"
 
     def rubric_summary(self, obj):
         summary = []
         if obj.main_idea_score:
-            summary.append("📖M")
+            summary.append(f"📖M:{obj.main_idea_score}")
         if obj.lexical_score:
-            summary.append("🔤L")
+            summary.append(f"🔤L:{obj.lexical_score}")
         if obj.specific_score:
-            summary.append("🔍D")
-        if obj.organisation_score == 2:
-            summary.append("🧩O(2)")
-        elif obj.organisation_score == 1:
-            summary.append("🧩O(1)")
-        else:
-            summary.append("🧩O(0)")
+            summary.append(f"🔍D:{obj.specific_score}")
+        if obj.organisation_score:
+            summary.append(f"🧩O:{obj.organisation_score}")
         return " | ".join(summary) if summary else "No data"
     rubric_summary.short_description = "Rubric"

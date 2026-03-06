@@ -640,18 +640,18 @@ body {
                 <div class="skill-card">
                     <div class="skill-info">
                         <h4>READING</h4>
-                        <div class="skill-percentage">{{ reading|floatformat:1 }}%</div>
+                        <div class="skill-percentage">{{ reading_percentage|floatformat:1 }}%</div>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-fill reading" style="width: {{ reading }}%"></div>
+                        <div class="progress-fill reading" style="width: {{ reading_percentage }}%"></div>
                     </div>
                     <div class="skill-footer">
                         <span class="level-badge 
-                            {% if reading >= 75 %}advanced
-                            {% elif reading >= 40 %}intermediate
+                            {% if reading_percentage >= 75 %}advanced
+                            {% elif reading_percentage >= 40 %}intermediate
                             {% else %}beginner{% endif %}">
-                            {% if reading >= 80 %}Advanced
-                            {% elif reading >= 60 %}Intermediate
+                            {% if reading_percentage >= 80 %}Advanced
+                            {% elif reading_percentage >= 60 %}Intermediate
                             {% else %}Beginner{% endif %}
                         </span>
                     </div>
@@ -661,9 +661,25 @@ body {
                         <span>Date</span>
                         <span>{{ reading_result.created_at|date:"M d, Y" }}</span>
                     </div>
-                    <a href="{% url 'reading:latest_result' %}" class="skill-view-btn">
+                    <a href="{% url 'reading:results' reading_result.id %}" class="skill-view-btn">
                         View Details <i class="fas fa-arrow-right"></i>
                     </a>
+                    {% elif profile.reading_completed %}
+                    <div class="skill-meta">
+                        <span>Status</span>
+                        <span style="color: var(--warning);">Processing</span>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 0.85rem; padding: 10px 0; text-align: center;">
+                        Results being calculated
+                    </div>
+                    {% else %}
+                    <div class="skill-meta">
+                        <span>Status</span>
+                        <span style="color: var(--text-muted);">Not Started</span>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 0.85rem; padding: 10px 0; text-align: center;">
+                        <i class="fas fa-hourglass-half"></i> Not completed yet
+                    </div>
                     {% endif %}
                 </div>
 
