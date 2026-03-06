@@ -136,33 +136,6 @@
         }
     }
 
-    /* ===== ANTI-CHEAT WARNING MESSAGE ===== */
-    .anti-cheat-message {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--danger-light);
-        color: var(--danger);
-        padding: 1rem 2rem;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        display: none;
-        align-items: center;
-        gap: 0.75rem;
-        box-shadow: var(--shadow-lg);
-        z-index: 9999;
-        border: 2px solid var(--danger);
-        animation: slideDown 0.3s ease;
-        max-width: 90%;
-        text-align: center;
-    }
-
-    .anti-cheat-message i {
-        font-size: 1.2rem;
-    }
-
     @keyframes slideDown {
         from {
             opacity: 0;
@@ -1510,12 +1483,6 @@
         </a>
     </div>
 
-    <!-- Anti-cheat warning message -->
-    <div id="antiCheatMessage" class="anti-cheat-message">
-        <i class="fas fa-exclamation-triangle"></i>
-        <span></span>
-    </div>
-
     <div class="test-wrapper">
         <!-- UNIFIED MAIN CARD -->
         <div class="test-card">
@@ -1617,7 +1584,7 @@
                     
                     <!-- Instruction Box for Tap Order -->
                     <div class="instruction-box">
-                        <i class="fas fa-hand-pointer"></i>
+                       
                         <span><strong>How to arrange:</strong> Tap sentences in the correct order (1st, 2nd, 3rd). Selected sentences will show their position number.</span>
                     </div>
                     
@@ -1640,7 +1607,7 @@
                     <!-- Current order display -->
                     <div class="current-order-display">
                         <span class="current-order-label">
-                            <i class="fas fa-arrow-right"></i> Your order:
+                             Your order:
                             <span class="current-order-value" id="currentOrderValue">Not arranged yet</span>
                         </span>
                     </div>
@@ -1753,15 +1720,21 @@
                         {% elif question.question_type == 'spelling_mcq' and question_number == 4 %}
                             <!-- Hidden input for Q4 is already in the question display -->
                         {% else %}
-                            <!-- Regular textarea for other questions -->
+                            <!-- Regular textarea for other questions with enhanced paste prevention attributes -->
                             <textarea id="userAnswer" 
                                     class="answer-textarea {% if question_number == 5 %}q5-textarea{% endif %}" 
                                     placeholder="Type your answer here..." 
                                     oninput="updateWordCount()"
+                                    onpaste="return false;"
+                                    ondrop="return false;"
+                                    oncopy="return false;"
+                                    oncut="return false;"
+                                    oncontextmenu="return false;"
                                     spellcheck="false"
                                     autocorrect="off"
                                     autocapitalize="off"
-                                    autocomplete="off">{{ previous_answer }}</textarea>
+                                    autocomplete="off"
+                                    style="-webkit-user-select: text !important; -moz-user-select: text !important; -ms-user-select: text !important; user-select: text !important;">{{ previous_answer }}</textarea>
                             
                             <div class="word-counter">
                                 <i class="fas fa-pencil-alt"></i>
@@ -1825,7 +1798,6 @@
     // Get elements
     const progressBar = document.getElementById('progressBar');
     const messageContainer = document.getElementById('messageContainer');
-    const antiCheatMessage = document.getElementById('antiCheatMessage');
     
     // ===== ANTI-CHEATING SYSTEM =====
     let tabSwitchCount = 0;
@@ -1840,13 +1812,95 @@
     let awayInterval = null;
     let isTestActive = true;
 
+    // ===== COMPREHENSIVE PASTE PREVENTION FOR MOBILE =====
+    
+    // Method 1: Capture paste at document level (capture phase)
+    document.addEventListener('paste', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }, true); // true = capture phase - catches event before it reaches textarea
+
+    // Method 2: Also block on textarea directly
+    document.querySelectorAll('.answer-textarea').forEach(textarea => {
+        // Multiple event types for maximum coverage
+        textarea.addEventListener('paste', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        });
+        
+        textarea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        });
+        
+        textarea.addEventListener('input', function(e) {
+            // Check if input is too fast (likely paste)
+            const currentLength = this.value.length;
+            const previousLength = this.dataset.previousLength || 0;
+            
+            // If more than 10 characters added at once, likely a paste
+            if (currentLength > previousLength + 10) {
+                // Revert to previous value
+                this.value = this.value.substring(0, previousLength);
+            }
+            
+            // Update stored length
+            this.dataset.previousLength = this.value.length;
+        });
+        
+        // Store initial length
+        textarea.dataset.previousLength = textarea.value.length;
+    });
+
+    // Method 3: Block on form level
+    document.getElementById('answerForm')?.addEventListener('paste', function(e) {
+        e.preventDefault();
+        return false;
+    }, true);
+
+    // Method 4: Handle mobile-specific events
+    document.addEventListener('touchstart', function(e) {
+        // Store touch start for long press detection
+        if (e.target.closest('.answer-textarea')) {
+            e.target.dataset.touchStart = Date.now();
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', function(e) {
+        const textarea = e.target.closest('.answer-textarea');
+        if (textarea && textarea.dataset.touchStart) {
+            const touchDuration = Date.now() - parseInt(textarea.dataset.touchStart);
+            
+            // Long press (likely trying to paste)
+            if (touchDuration > 500) {
+                // Clear any potential paste by resetting to previous value
+                setTimeout(() => {
+                    if (textarea.value.length > (textarea.dataset.previousLength || 0)) {
+                        textarea.value = textarea.value.substring(0, parseInt(textarea.dataset.previousLength || 0));
+                    }
+                }, 10);
+            }
+            delete textarea.dataset.touchStart;
+        }
+    });
+
+    // Method 5: Block beforeinput events (modern browsers)
+    document.addEventListener('beforeinput', function(e) {
+        if (e.inputType && e.inputType.includes('insertFromPaste') && e.target.closest('.answer-textarea')) {
+            e.preventDefault();
+            return false;
+        }
+    }, true);
+
     // ===== COPY PREVENTION =====
     document.addEventListener('copy', function(e) {
         // Prevent copying from any element except the textarea
         const selection = window.getSelection().toString();
         if (selection && !e.target.closest('.answer-textarea')) {
             e.preventDefault();
-            showAntiCheatWarning('Copying text is not allowed during the test');
             return false;
         }
     });
@@ -1854,37 +1908,11 @@
     document.addEventListener('cut', function(e) {
         if (!e.target.closest('.answer-textarea')) {
             e.preventDefault();
-            showAntiCheatWarning('Cutting text is not allowed during the test');
-            return false;
-        }
-    });
-
-    // ===== PASTE PREVENTION =====
-    // Block paste on textarea
-    document.querySelectorAll('.answer-textarea').forEach(textarea => {
-        textarea.addEventListener('paste', function(e) {
-            e.preventDefault();
-            showAntiCheatWarning('Pasting is not allowed! Please type your answer.');
-            return false;
-        });
-        
-        textarea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            showAntiCheatWarning('Drag & drop is not allowed!');
-            return false;
-        });
-    });
-
-    // Block paste on all other elements
-    document.addEventListener('paste', function(e) {
-        if (!e.target.closest('.answer-textarea')) {
-            e.preventDefault();
             return false;
         }
     });
 
     // ===== TEXT SELECTION PREVENTION =====
-    // This is handled by CSS, but also add JavaScript prevention
     document.addEventListener('selectstart', function(e) {
         if (!e.target.closest('.answer-textarea')) {
             e.preventDefault();
@@ -1912,7 +1940,6 @@
         if (!document.fullscreenElement && !document.webkitFullscreenElement) {
             fullscreenExitCount++;
             logSuspiciousActivity('fullscreen_exit', fullscreenExitCount);
-            showAntiCheatWarning('Please stay in fullscreen mode during the test!');
             
             // Force back to fullscreen after warning
             setTimeout(() => {
@@ -1942,7 +1969,6 @@
         e.preventDefault();
         rightClickCount++;
         logSuspiciousActivity('right_click', rightClickCount);
-        showAntiCheatWarning('Right-click is disabled during the test');
         return false;
     });
 
@@ -1954,7 +1980,6 @@
                 e.preventDefault();
                 copyAttemptCount++;
                 logSuspiciousActivity('copy_attempt', copyAttemptCount);
-                showAntiCheatWarning('Copy/Paste is disabled during the test');
                 return false;
             }
         }
@@ -1964,7 +1989,6 @@
             e.preventDefault();
             devToolsCount++;
             logSuspiciousActivity('dev_tools', devToolsCount);
-            showAntiCheatWarning('Developer tools are disabled');
             return false;
         }
         
@@ -2026,16 +2050,6 @@
                 time_away: timeAway
             })
         }).catch(err => console.error('Logging failed:', err));
-    }
-
-    // ===== ANTI-CHEAT WARNING MESSAGE =====
-    function showAntiCheatWarning(message) {
-        antiCheatMessage.querySelector('span').textContent = message;
-        antiCheatMessage.style.display = 'flex';
-        
-        setTimeout(() => {
-            antiCheatMessage.style.display = 'none';
-        }, 3000);
     }
 
     // ===== AUTO-ENTER FULLSCREEN ON PAGE LOAD =====

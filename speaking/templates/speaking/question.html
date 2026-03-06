@@ -62,6 +62,78 @@
             justify-content: center;
         }
 
+        /* ===== TEXT SELECTION PREVENTION ===== */
+        .no-select, 
+        .question-section,
+        .question-text,
+        .question-instruction,
+        .word-card,
+        .word-info,
+        .word-text,
+        .word-bank,
+        .word-tile,
+        .phrase-item,
+        .sentence-box,
+        .incorrect-box,
+        .status-text,
+        .timer,
+        .question-status,
+        .status-dot,
+        .home-link-top,
+        .back-buttons-container * {
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            -webkit-touch-callout: none !important;
+        }
+
+        /* Allow selection only in textarea/inputs (though speaking test has no textareas) */
+        textarea, input {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+        }
+
+        /* Anti-cheat warning message (only shows when copy/paste attempted) */
+        {% comment %} .anti-cheat-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--danger-light);
+            color: var(--danger);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 9999;
+            border: 2px solid var(--danger);
+            animation: slideDown 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+        } {% endcomment %}
+
+        {% comment %} .anti-cheat-message i {
+            font-size: 1.2rem;
+        } {% endcomment %}
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
         /* ===== BACK BUTTONS CONTAINER - EXACT MATCH ===== */
         .back-buttons-container {
             position: absolute;
@@ -1046,6 +1118,12 @@
         </a>
     </div>
 
+    <!-- Anti-cheat warning message (only shows when copy/paste attempted) -->
+    {% comment %} <div id="antiCheatMessage" class="anti-cheat-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span></span>
+    </div> {% endcomment %}
+
     <div id="urls" 
      data-question-url="{% url 'speaking:question' 0 %}"
      data-submit-url="{% url 'speaking:submit_recording' %}"
@@ -1231,6 +1309,52 @@
         let seconds = 0;
         const qNum = {{ q_num }};
         
+        // Anti-cheat message element
+        const antiCheatMessage = document.getElementById('antiCheatMessage');
+
+        // ===== SHOW ANTI-CHEAT WARNING MESSAGE =====
+        {% comment %} function showAntiCheatWarning(message) {
+            antiCheatMessage.querySelector('span').textContent = message;
+            antiCheatMessage.style.display = 'flex';
+            
+            setTimeout(() => {
+                antiCheatMessage.style.display = 'none';
+            }, 2000);
+        } {% endcomment %}
+
+        // ===== COPY PREVENTION =====
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            
+            return false;
+        });
+
+        document.addEventListener('cut', function(e) {
+            e.preventDefault();
+            
+            return false;
+        });
+
+        // ===== PASTE PREVENTION =====
+        document.addEventListener('paste', function(e) {
+            e.preventDefault();
+           
+            return false;
+        });
+
+        // ===== TEXT SELECTION PREVENTION (JavaScript fallback) =====
+        document.addEventListener('selectstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // ===== DISABLE RIGHT-CLICK / LONG-PRESS MENU =====
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showAntiCheatWarning('Menu is disabled during the test');
+            return false;
+        });
+
         // Q1 specific variables
         let currentWord = null;
         let wordRecordings = {1: null, 2: null, 3: null, 4: null, 5: null};

@@ -13,9 +13,10 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from home_page.models import StudentProfile
 from home_page.decorators import pretest_access_required
-from .models import TestSession
+from .models import TestSession, SuspiciousActivity  # Add SuspiciousActivity here
 from .pronunciation_engine import pronunciation_engine, QUESTIONS
 import traceback
+import json
 
 
 def get_session_key(request):
@@ -140,6 +141,7 @@ def question(request, q_num):
     
     return render(request, 'speaking/question.html', context)
 
+
 @login_required
 @require_POST
 @csrf_exempt
@@ -249,6 +251,7 @@ def submit_recording(request):
         print(f"❌ Error in submit_recording: {str(e)}")
         traceback.print_exc()
         return JsonResponse({'error': str(e)}, status=500)
+
 
 @login_required
 @require_POST
@@ -494,3 +497,34 @@ def latest_result(request):
         traceback.print_exc()
         messages.error(request, "An error occurred while loading your results.")
         return redirect('speaking:start')
+
+
+# Add this new view for logging suspicious activities
+@login_required
+@csrf_exempt
+def log_suspicious_activity(request):
+    """Log suspicious activities during the speaking test"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            
+            # Get session key for anonymous tracking
+            if not request.session.session_key:
+                request.session.create()
+            
+            # Create log entry
+            SuspiciousActivity.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                session_key=request.session.session_key,
+                activity_type=data.get('activity_type'),
+                count=data.get('count', 1),
+                question=data.get('question', 1),
+                test_type='speaking',
+                time_away=data.get('time_away')
+            )
+            
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)

@@ -12,4 +12,5 @@ urlpatterns = [
     path('process-results/', views.process_results, name='process_results'),
     path('result/', views.result, name='result'),
     path('latest-result/', views.latest_result, name='latest_result'),
+    path('log-activity/', views.log_suspicious_activity, name='log_activity'),
 ]
