@@ -10,7 +10,7 @@
 {% block content %}
 <div class="profile-container">
     <div class="container">
-        <!-- Back to Home & Logout Links - POSITIONED LIKE EARLIER PAGES -->
+        <!-- Back to Home & Logout Links - FIXED POSITIONING -->
         <div class="back-buttons-container">
             <a href="{% url 'home_page:home' %}" class="home-link-top">
                 <i class="fas fa-arrow-left"></i> Back to Home
@@ -262,7 +262,10 @@
                                 <i class="fas {% if 'old' in field.name %}fa-key{% else %}fa-lock{% endif %}"></i>
                                 {{ field.label }}
                             </label>
-                            {{ field }}
+                            <div class="password-field-container">
+                                {{ field }}
+                                <i class="fas fa-eye-slash password-toggle-icon" onclick="togglePasswordVisibility('{{ field.id_for_label }}', this)"></i>
+                            </div>
                             {% if field.errors %}
                             <div class="error-message">
                                 <i class="fas fa-exclamation-circle"></i>
@@ -285,6 +288,22 @@
 </div>
 
 <script>
+    // Function to toggle password visibility
+    function togglePasswordVisibility(fieldId, iconElement) {
+        const passwordField = document.getElementById(fieldId);
+        if (passwordField) {
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                iconElement.classList.remove('fa-eye-slash');
+                iconElement.classList.add('fa-eye');
+            } else {
+                passwordField.type = "password";
+                iconElement.classList.remove('fa-eye');
+                iconElement.classList.add('fa-eye-slash');
+            }
+        }
+    }
+
     // Toggle dropdown function
     function toggleDropdown(dropdownId) {
         const dropdown = document.getElementById(dropdownId);
@@ -342,6 +361,43 @@
         background: #e4e4ffe4;
     }
 
+    /* Password field container for eye icon */
+    .password-field-container {
+        position: relative;
+        width: 100%;
+    }
+    
+    .password-field-container input {
+        width: 100%;
+        padding: 12px 40px 12px 15px !important;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+    
+    .password-field-container input:focus {
+        border-color: #667eea;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .password-toggle-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #999;
+        font-size: 16px;
+        transition: color 0.2s;
+        z-index: 10;
+    }
+    
+    .password-toggle-icon:hover {
+        color: #667eea;
+    }
+
     .profile-container {
         max-width: 1200px;
         margin: 0 auto;
@@ -349,18 +405,15 @@
         position: relative;
     }
 
-    /* ===== BACK BUTTONS CONTAINER - EXACT MATCH FROM EARLIER PAGES ===== */
+    /* ===== FIXED BACK BUTTONS CONTAINER - NOW PROPERLY POSITIONED ===== */
     .back-buttons-container {
-        position: absolute;
-        top: 0;
-        left: 20px;
-        right: 20px;
+        position: relative; /* Changed from absolute */
         display: flex;
         justify-content: space-between;
         align-items: center;
         max-width: 1200px;
-        margin: 0 auto;
-        width: calc(100% - 40px);
+        margin: 0 auto 20px auto; /* Added bottom margin */
+        width: 100%;
         z-index: 100;
     }
 
@@ -388,12 +441,12 @@
         font-size: 14px;
     }
 
-    /* Profile Card - Add margin-top to account for absolute buttons */
+    /* Profile Card - Updated margin */
     .profile-card {
         background: white;
         border-radius: 20px;
         padding: 25px;
-        margin-top: 60px;
+        margin-top: 0; /* Removed the 60px margin */
         margin-bottom: 30px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
         border: 1px solid #e9ecef;
@@ -797,16 +850,13 @@
         box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
     }
 
-    /* ===== MOBILE RESPONSIVE - EXACT MATCH FROM EARLIER PAGES ===== */
+    /* ===== UPDATED MOBILE RESPONSIVE STYLES ===== */
     @media (max-width: 768px) {
         .back-buttons-container {
             position: relative !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
+            margin: 0 auto 15px auto !important;
             width: 100% !important;
-            padding: 0 0 15px 0 !important;
-            margin: 0 auto !important;
+            padding: 0 !important;
         }
         
         .profile-card {
@@ -843,6 +893,10 @@
         .dropdown-content {
             padding: 0 20px 20px 20px;
         }
+        
+        .password-field-container input {
+            padding: 12px 40px 12px 15px !important;
+        }
     }
 
     @media (max-width: 576px) {
@@ -851,7 +905,7 @@
         }
 
         .back-buttons-container {
-            padding: 0 0 12px 0 !important;
+            margin: 0 auto 12px auto !important;
             gap: 8px;
         }
 
@@ -1014,11 +1068,21 @@
             font-size: 13px;
             min-width: 160px;
         }
+        
+        .password-field-container input {
+            padding: 10px 38px 10px 12px !important;
+            font-size: 13px;
+        }
+        
+        .password-toggle-icon {
+            right: 12px;
+            font-size: 14px;
+        }
     }
 
     @media (max-width: 480px) {
         .back-buttons-container {
-            padding: 0 0 10px 0 !important;
+            margin: 0 auto 10px auto !important;
             flex-wrap: wrap;
             gap: 8px;
         }
@@ -1075,6 +1139,10 @@
             padding: 10px 25px;
             font-size: 12px;
             min-width: 140px;
+        }
+        
+        .password-field-container input {
+            padding: 10px 36px 10px 12px !important;
         }
     }
 

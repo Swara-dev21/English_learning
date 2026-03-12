@@ -17,4 +17,5 @@ urlpatterns = [
     path('results/<int:result_id>/', views.reading_results, name='results'),
     path('log-activity/', views.log_suspicious_activity, name='log_activity'),
     path('latest-result/', views.latest_result, name='latest_result'),
+    path('log-activity/', views.log_suspicious_activity, name='log_activity'),
 ]

@@ -1084,6 +1084,9 @@
         </a>
     </div>
 
+    {% include 'home_page/includes/global_timer.html' %}
+
+
     <div class="test-wrapper">
         <!-- UNIFIED MAIN CARD -->
         <div class="test-card">
@@ -1587,40 +1590,54 @@
     }
     
     // Setup replay counter with audio end tracking
-    function setupReplayCounter() {
-        const audio = document.getElementById('mainAudio');
-        const replayCountSpan = document.getElementById('replayCount');
+// Setup replay counter with audio end tracking
+function setupReplayCounter() {
+    const audio = document.getElementById('mainAudio');
+    const replayCountSpan = document.getElementById('replayCount');
+    
+    if (audio && replayCountSpan) {
+        hasShownReplayWarning = false;
+        hasAudioBeenCounted = false;
         
-        if (audio && replayCountSpan) {
-            hasShownReplayWarning = false;
-            hasAudioBeenCounted = false;
+        // Track when audio starts playing
+        audio.addEventListener('play', function() {
+            audioPlayStarted = true;
+            console.log('Audio started playing');
             
-            // Track when audio starts playing
-            audio.addEventListener('play', function() {
-                audioPlayStarted = true;
-                console.log('Audio started playing');
-            });
+            // Check if no replays left
+            if (replayCount <= 0) {
+                audio.pause();
+                if (!hasShownReplayWarning) {
+                    hasShownReplayWarning = true;
+                    // Make sure question is visible even with 0 replays
+                    audioEndedForCurrentQuestion = true;
+                    showQuestion();
+                    alert('No more replays for this question!');
+                }
+                audio.currentTime = 0;
+            }
+        });
+        
+        // Track when audio ends - THIS SHOWS THE QUESTION AFTER FIRST LISTEN
+        audio.addEventListener('ended', function() {
+            // Mark that audio has ended for current question
+            audioEndedForCurrentQuestion = true;
             
-            // Track when audio ends
-            audio.addEventListener('ended', function() {
-                // Mark that audio has ended for current question
-                audioEndedForCurrentQuestion = true;
-                
-                // Show the question
-                showQuestion();
-                
-                console.log('Audio ended - question revealed');
-            });
+            // Show the question (this happens after first listen)
+            showQuestion();
             
-            // Handle replay counting - only when audio plays COMPLETELY
-            audio.addEventListener('ended', function() {
-                // Only count if we haven't counted this play yet AND audio played to the end
-                if (!hasAudioBeenCounted && audioPlayStarted) {
+            console.log('Audio ended - question revealed');
+            
+            // Only count replay if it's NOT the first play
+            // We want to count replays (plays 2, 3, 4) but not the first play
+            if (!hasAudioBeenCounted && audioPlayStarted) {
+                // Check if this is NOT the first time showing the question
+                // If question is already visible, then this is a replay
+                const waitingOverlay = document.getElementById('waitingOverlay');
+                if (waitingOverlay && waitingOverlay.style.display === 'none') {
+                    // This is a replay (question already visible)
                     if (replayCount > 0) {
                         replayCount--;
-                        
-                        // Mark that we've counted this play
-                        hasAudioBeenCounted = true;
                         
                         fetch('{% url "listening:update_replay" %}', {
                             method: 'POST',
@@ -1646,49 +1663,43 @@
                             setTimeout(() => alert('No more replays for this question!'), 100);
                         }
                     }
+                } else {
+                    // This is the FIRST play - don't count it as a replay
+                    console.log('First play - not counting as replay');
                 }
-            });
-            
-            // Reset flags when audio starts playing
-            audio.addEventListener('play', function() {
-                // Reset the counted flag for this play session
-                hasAudioBeenCounted = false;
-                audioPlayStarted = true;
                 
-                // Check if no replays left
-                if (replayCount <= 0) {
-                    audio.pause();
-                    if (!hasShownReplayWarning) {
-                        hasShownReplayWarning = true;
-                        alert('No more replays for this question!');
-                    }
-                    audio.currentTime = 0;
-                }
-            });
-            
-            // Handle pause event - if user pauses before end, don't count
-            audio.addEventListener('pause', function() {
-                // If they pause before the end, don't count it as a complete play
-                if (!audio.ended) {
-                    console.log('Audio paused before completion - not counting');
-                }
-            });
-            
-            // Handle seeking - if user skips to end, still count as complete play
-            audio.addEventListener('seeked', function() {
-                // If they seek near the end (within 1 second), consider it as complete
-                if (audio.currentTime >= audio.duration - 1) {
-                    // This will be handled by the ended event
-                }
-            });
-            
-            // If audio is already played (when navigating back), check if it should show question
-            if (audio.ended) {
-                audioEndedForCurrentQuestion = true;
-                showQuestion();
+                // Mark that we've processed this play
+                hasAudioBeenCounted = true;
             }
+        });
+        
+        // Reset flags when audio starts playing
+        audio.addEventListener('play', function() {
+            // Reset the counted flag for this play session
+            hasAudioBeenCounted = false;
+            audioPlayStarted = true;
+        });
+        
+        // Handle pause event
+        audio.addEventListener('pause', function() {
+            if (!audio.ended) {
+                console.log('Audio paused before completion');
+            }
+        });
+        
+        // If audio is already played (when navigating back)
+        if (audio.ended) {
+            audioEndedForCurrentQuestion = true;
+            showQuestion();
+        }
+        
+        // Check if replay count is already 0 on page load
+        if (replayCount <= 0) {
+            audioEndedForCurrentQuestion = true;
+            showQuestion();
         }
     }
+}
 </script>
 </body>
 </html>

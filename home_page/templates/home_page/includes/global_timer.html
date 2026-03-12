@@ -1,0 +1,158 @@
+{% if global_timer.timer_active and not global_timer.is_expired %}
+<!-- Pure Visual Timer - No JavaScript interference with recording -->
+<div id="globalTimer" class="global-timer" 
+     data-time-left="{{ global_timer.time_remaining }}"
+     data-initial-time="{{ global_timer.time_remaining }}">
+    <div class="timer-content">
+        <i class="fas fa-hourglass-half"></i>
+        <span class="timer-display">{{ global_timer.formatted_time }}</span>
+        
+    </div>
+</div>
+
+<style>
+.global-timer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 40px;
+    box-shadow: 0 4px 15px rgba(94, 84, 142, 0.2);
+    z-index: 9999;
+    border: 2px solid var(--primary, #5e548e);
+    font-family: 'Inter', sans-serif;
+    pointer-events: none; /* CRITICAL: Prevents timer from blocking clicks */
+    user-select: none;
+}
+
+.timer-content {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.timer-content i {
+    color: var(--primary, #5e548e);
+    font-size: 1.1rem;
+}
+
+.timer-display {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    color: var(--primary-dark, #453c6b);
+    font-size: 1.3rem;
+    min-width: 60px;
+    text-align: center;
+}
+
+.timer-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Warning states */
+.global-timer.warning {
+    border-color: #f59e0b;
+}
+
+.global-timer.warning .timer-display {
+    color: #f59e0b;
+}
+
+.global-timer.warning i {
+    color: #f59e0b;
+}
+
+.global-timer.critical {
+    border-color: #ef4444;
+}
+
+.global-timer.critical .timer-display {
+    color: #ef4444;
+}
+
+.global-timer.critical i {
+    color: #ef4444;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .global-timer {
+        top: 10px;
+        right: 10px;
+        padding: 0.4rem 1rem;
+    }
+    
+    .timer-display {
+        font-size: 1.1rem;
+        min-width: 50px;
+    }
+    
+    .timer-label {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .global-timer {
+        top: 5px;
+        right: 5px;
+        padding: 0.3rem 0.8rem;
+    }
+    
+    .timer-display {
+        font-size: 1rem;
+    }
+    
+    .timer-content {
+        gap: 0.4rem;
+    }
+    
+    .timer-content i {
+        font-size: 0.9rem;
+    }
+}
+</style>
+
+<!-- Simple timer update - completely isolated -->
+<script>
+(function() {
+    // Get timer element
+    const timerDiv = document.getElementById('globalTimer');
+    if (!timerDiv) return;
+    
+    const displaySpan = timerDiv.querySelector('.timer-display');
+    let timeLeft = parseInt(timerDiv.dataset.timeLeft || '1800');
+    const totalSeconds = 1800;
+    
+    // Update timer display
+    function updateTimerDisplay() {
+        if (timeLeft <= 0) {
+            // Time's up - redirect to results
+            window.location.href = "{% url 'home_page:pretest_results' %}?timeout=true";
+            return;
+        }
+        
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        displaySpan.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Update warning classes
+        timerDiv.classList.remove('warning', 'critical');
+        if (timeLeft < 60) {
+            timerDiv.classList.add('critical');
+        } else if (timeLeft < 300) {
+            timerDiv.classList.add('warning');
+        }
+        
+        timeLeft--;
+    }
+    
+    // Update every second
+    setInterval(updateTimerDisplay, 1000);
+})();
+</script>
+{% endif %}

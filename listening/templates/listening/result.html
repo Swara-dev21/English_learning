@@ -3,13 +3,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Listening Test Results</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'listening/css/style.css' %}?v=8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-            /* Back buttons container - outside the box */
+        /* ===== PURPLE THEME - MATCHING READING ===== */
+        :root {
+            --primary: #5e548e;
+            --primary-dark: #453c6b;
+            --primary-light: #f0edf7;
+            --primary-very-light: #f8f5ff;
+            --primary-gradient: linear-gradient(135deg, #5e548e, #453c6b);
+            --border: #e2e8f0;
+            --text-dark: #1e293b;
+            --text-light: #475569;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --accent: #9f8bc9;
+            
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            
+            --shadow-sm: 0 4px 6px -1px rgba(94, 84, 142, 0.1);
+            --shadow-md: 0 10px 15px -3px rgba(94, 84, 142, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(94, 84, 142, 0.15);
+            --shadow-xl: 0 25px 50px -12px rgba(94, 84, 142, 0.25);
+            
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-xxl: 2rem;
+        }
+
+        /* Back buttons container */
         .back-buttons-container {
             position: absolute;
             top: 30px;
@@ -21,6 +54,7 @@
             max-width: 1200px;
             margin: 0 auto;
             width: calc(100% - 60px);
+            z-index: 10;
         }
 
         .back-link-top, .home-link-top {
@@ -47,29 +81,27 @@
             font-size: 14px;
         }
 
-        .reset-wrapper {
-            max-width: 480px;
-            width: 100%;
-            animation: fadeInUp 0.5s ease;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+        @media (max-width: 768px) {
+            .back-buttons-container {
+                top: 20px;
+                left: 20px;
+                right: 20px;
+                width: calc(100% - 40px);
             }
         }
 
-        .reset-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(74, 98, 176, 0.15);
-            overflow: hidden;
-            width: 100%;
+        @media (max-width: 576px) {
+            .back-buttons-container {
+                top: 15px;
+                left: 15px;
+                right: 15px;
+                width: calc(100% - 30px);
+            }
+            
+            .back-link-top, .home-link-top {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
         }
 
         .results-page {
@@ -77,64 +109,117 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
-            background: linear-gradient(135deg, #f4f3f8 0%, #f5f4f8 100%);
+            padding: 5rem 2rem 2rem;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
+            font-family: 'Inter', sans-serif;
         }
         
         .results-card {
             max-width: 800px;
             width: 100%;
             background: white;
-            border-radius: 1.5rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            border-radius: var(--radius-xxl);
+            box-shadow: var(--shadow-xl);
             overflow: hidden;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .results-header {
-            background: linear-gradient(135deg, #5e548e, #453c6b);
+            background: var(--primary-gradient);
             color: white;
             padding: 2.5rem;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
         .results-header h1 {
-            font-size: 2rem;
+            font-size: 2.2rem;
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            position: relative;
+            z-index: 1;
         }
         
-        .score-circle {
-        width: 180px;
-        height: 180px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #5e548e, #453c6b);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        border: 8px solid #e0e7ff;
-    }
-
-    .score-value {
-        font-size: 3.5rem;
-        font-weight: 800;
-        color: white;
-        line-height: 1;
-    }
-
-    .score-total {
-        font-size: 1.5rem;
-        color: white;
-        opacity: 0.9;
-    }
-
+        .results-header h1 i {
+            color: var(--accent);
+            font-size: 2.2rem;
+        }
+        
+        .results-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
         
         /* Center alignment for content */
         .results-content {
             padding: 2rem;
-            text-align: center;  /* Center all text by default */
+            text-align: center;
         }
         
+        /* Score Circle - Purple theme */
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            border: 8px solid var(--primary-light);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .score-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+        
+        .score-total {
+            font-size: 1.5rem;
+            color: white;
+            opacity: 0.9;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+        
+        /* Level Badge - Matching reading style */
         .level-badge {
             display: inline-block;
             padding: 0.75rem 2rem;
@@ -144,777 +229,328 @@
             margin: 1rem 0 0.5rem;
         }
         
-        .level-beginner {
-            background: #ffe4e4;     /* Light pink */
-            color: #b91c1c;          /* Soft red */
-            border: 2px solid #fecaca;
+        .level-basic {
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 2px solid var(--danger-light);
         }
-
-        .level-intermediate {
-            background: #fef9c3;     /* Light yellow */
-            color: #854d0e;          /* Soft brown */
-            border: 2px solid #fde68a;
-        }
-
-        .level-advanced {
-            background: #dcfce7;     /* Light green */
-            color: #166534;          /* Soft green */
-            border: 2px solid #bbf7d0;
-        }
-
-
         
-        /* Center and style percentage text - MOVED DOWN */
+        .level-intermediate {
+            background: var(--warning-light);
+            color: var(--warning);
+            border: 2px solid var(--warning-light);
+        }
+        
+        .level-advanced {
+            background: var(--success-light);
+            color: var(--success);
+            border: 2px solid var(--success-light);
+        }
+        
+        /* Score breakdown text */
+        .score-breakdown {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+        
+        .score-breakdown span {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        /* Percentage Text */
         .percentage-text {
             font-size: 1.5rem;
             font-weight: 800;
-            color: #1e293b;
-            margin: 1.5rem 0 0.5rem;  /* Increased top margin from 0.5rem to 1.5rem */
+            color: var(--text-dark);
+            margin: 1.5rem 0 0.5rem;
         }
         
-        /* Center and style feedback text - MOVED DOWN */
+        /* Feedback Text */
         .feedback-text {
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             font-weight: 600;
-            color: #475569;
-            margin: 2.5rem auto 2rem !important; /* Increased top margin from 1rem to 1.5rem */
+            color: var(--primary);
+            padding: 1rem 2rem;
+            margin: 1.5rem auto;
             max-width: 80%;
             line-height: 1.6;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background: var(--primary-light);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(94, 84, 142, 0.2);
         }
         
         .pending-badge {
-            background: #fef3c7;
-            color: #92400e;
+            background: var(--warning-light);
+            color: var(--warning);
             padding: 0.5rem 1rem;
             border-radius: 2rem;
             display: inline-block;
             margin: 1rem 0;
-        }
-        
-        /* Score Breakdown by Question Type - MOVED DOWN */
-        /* Score Breakdown by Question Type - IN SEPARATE LIGHT PURPLE BOXES */
-            .score-breakdown {
-                display: flex;
-                justify-content: center;
-                gap: 1.5rem;
-                margin: 2rem auto 1rem;
-                max-width: 500px;
-            }
-
-            .breakdown-item {
-                text-align: center;
-                background: #f0edf7;  /* Very light purple background */
-                padding: 1.5rem 2rem;
-                border-radius: 1rem;
-                flex: 1;  /* Make both boxes equal width */
-                box-shadow: 0 2px 8px rgba(94, 84, 142, 0.08);  /* Very subtle shadow */
-                border: 1px solid rgba(94, 84, 142, 0.1);  /* Very subtle border */
-                transition: all 0.2s ease;
-            }
-
-            .breakdown-item:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(94, 84, 142, 0.15);
-                border-color: rgba(94, 84, 142, 0.2);
-            }
-
-            .breakdown-label {
-                font-size: 1.1rem;
-                font-weight: 600;
-                color: #5e548e;  /* Purple color for text */
-                margin-bottom: 0.5rem;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-
-            .breakdown-value {
-                font-size: 2rem;
-                font-weight: 700;
-            }
-
-            .breakdown-value.mcq {
-                color: #5e548e;  /* Darker purple for MCQ */
-            }
-
-            .breakdown-value.typing {
-                color: #7c6aa3;  /* Slightly lighter purple for typing */
-            }
-        /* Summary Grid - MOVED UP (reduced top padding) */
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0.75rem;
-            padding: 0.1rem 2rem 2rem;  /* Reduced top padding from 0 to 0.5rem */
-            margin-top: 0;  /* Ensure no extra margin */
-        }
-        
-        .summary-item {
-            text-align: center;
-            padding: 1rem 0.5rem;
-            border-radius: 0.75rem;
-            background: #f3f4f6;
-        }
-        
-        .summary-item.correct {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        
-        .summary-item.incorrect {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        
-        .summary-item.pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        
-        .summary-q {
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .question-type-icon {
-            font-size: 0.8rem;
-            margin-left: 0.25rem;
-        }
-        
-        .detailed-review {
-            padding: 0 2rem 2rem;
-        }
-        
-        .review-item {
-            background: #f8fafc;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            border-left: 4px solid;
-        }
-        
-        .review-item.correct {
-            border-left-color: #10b981;
-        }
-        
-        .review-item.incorrect {
-            border-left-color: #ef4444;
-        }
-        
-        .review-item.pending {
-            border-left-color: #f59e0b;
-        }
-        
-        .review-question {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-        
-        .review-transcript {
-            background: white;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin: 0.5rem 0;
-            font-style: italic;
-            color: #4b5563;
-            border: 1px solid #e2e8f0;
-        }
-        
-        .review-answer {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .your-answer, .correct-answer {
-            flex: 1;
-            padding: 1rem;
-            border-radius: 0.5rem;
-        }
-        
-        .your-answer {
-            background: #fee2e2;
-            border: 1px solid #fecaca;
-        }
-        
-        .correct-answer {
-            background: #d1fae5;
-            border: 1px solid #a7f3d0;
-        }
-        
-        .answer-label {
-            font-size: 0.85rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .answer-text {
-            font-size: 1rem;
-            line-height: 1.5;
-            word-break: break-word;
-        }
-        
-        .keyword-hint {
-            margin-top: 0.5rem;
-            font-size: 0.85rem;
-            color: #6b7280;
-            background: #f3f4f6;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-        }
-        
-        .keyword-hint i {
-            color: #9f8bc9;
-            margin-right: 0.25rem;
-        }
-        
-        .explanation-box {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: #f1f5f9;
-            border-radius: 0.5rem;
             font-size: 0.95rem;
-            border-left: 3px solid #5e548e;
         }
         
-        .explanation-box strong {
-            color: #5e548e;
-            display: block;
-            margin-bottom: 0.25rem;
+        .pending-badge i {
+            margin-right: 0.5rem;
         }
         
         /* Action Buttons Section */
         .actions {
-        padding: 2rem;
-        display: flex;
-        gap: 1rem;
-        justify-content: center;  /* This centers the button */
-        align-items: center;
-        border-top: 2px solid #e2e8f0;
-        background: #f8fafc;
-    }
-
-    .action-btn {
-        display: inline-flex;  /* Keep as inline-flex */
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        padding: 0.9rem 2rem;
-        border-radius: 2rem;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        font-size: 0.95rem;  /* Slightly larger for better readability */
-        min-width: 180px;
-        /* Remove max-width and width:100% */
-        width: auto;  /* Auto width based on content */
-        white-space: nowrap;
-    }
-            
-        .home-btn {
-            background: white;
-            border: 2px solid #5e548e;
-            color: #5e548e;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            border-top: 2px solid var(--border);
+            background: var(--bg-light);
+            flex-wrap: wrap;
         }
         
-        .home-btn:hover {
-            background: #f0edf7;
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            min-width: 180px;
+            white-space: nowrap;
+        }
+
+        .speaking-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .speaking-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(94, 84, 142, 0.2);
+            box-shadow: var(--shadow-lg);
         }
         
         .retry-btn {
-            background: linear-gradient(135deg, #5e548e, #453c6b);
-            color: white;
-            border: 2px solid transparent;
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
         }
         
         .retry-btn:hover {
+            background: var(--primary-light);
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(94, 84, 142, 0.3);
         }
         
-        .speaking-btn {
-            background: linear-gradient(135deg, #0ea5e9, #0284c7);
-            color: white;
-            border: 2px solid transparent;
-            min-width: 180px;  /* Match the reduced width */
+        /* ===== RESPONSIVE STYLES - MATCHING READING EXACTLY ===== */
+
+        @media (max-width: 768px) {
+            .results-page {
+                padding: 4rem 1rem 1rem;
+            }
+
+            .results-header {
+                padding: 1.5rem;
+            }
+
+            .results-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .results-header h1 i {
+                font-size: 1.8rem;
+            }
+
+            .results-header p {
+                font-size: 0.95rem;
+            }
+
+            .results-content {
+                padding: 1.5rem;
+            }
+
+            .score-circle {
+                width: 150px;
+                height: 150px;
+                border-width: 6px;
+            }
+
+            .score-value {
+                font-size: 3rem;
+            }
+
+            .score-total {
+                font-size: 1.3rem;
+            }
+
+            .level-badge {
+                font-size: 1.1rem;
+                padding: 0.5rem 1.5rem;
+            }
+
+            .percentage-text {
+                font-size: 1.3rem;
+            }
+
+            .feedback-text {
+                font-size: 1.1rem;
+                max-width: 90%;
+                padding: 0.75rem 1.5rem;
+            }
         }
-        
-        .speaking-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
-        }
-        
-     .feedback-text {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #5e548e;
-    padding: 1rem 2rem;
-    margin: 1.5rem auto;
-    max-width: 80%;
-    line-height: 1.6;
-    text-align: center;
-    display: flex;
-    align-items: center;      /* Vertically centers text and emoji */
-    justify-content: center;  /* Centers horizontally */
-    gap: 0.75rem;             /* Adds space between text and emoji */
-}
-        @media (max-width: 640px) {
-            .summary-grid {
-                grid-template-columns: repeat(2, 1fr);
+
+        @media (max-width: 576px) {
+            .results-header h1 {
+                font-size: 1.5rem;
             }
-            
-            .score-breakdown {
-                flex-direction: column;
-                gap: 1rem;
+
+            .results-header h1 i {
+                font-size: 1.5rem;
             }
-            
-            .review-answer {
-                flex-direction: column;
+
+            .score-circle {
+                width: 130px;
+                height: 130px;
             }
-            
+
+            .score-value {
+                font-size: 2.5rem;
+            }
+
+            .score-total {
+                font-size: 1.1rem;
+            }
+
+            .level-badge {
+                font-size: 1rem;
+                padding: 0.4rem 1.2rem;
+            }
+
+            .percentage-text {
+                font-size: 1.2rem;
+            }
+
+            .feedback-text {
+                font-size: 1rem;
+                max-width: 100%;
+                padding: 0.75rem 1rem;
+            }
+
             .actions {
+                padding: 1.5rem;
                 flex-direction: column;
-                align-items: stretch;
             }
-            
+
             .action-btn {
                 width: 100%;
                 min-width: auto;
             }
-            
+        }
+
+        @media (max-width: 360px) {
+            .results-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .score-value {
+                font-size: 2.2rem;
+            }
+
+            .score-total {
+                font-size: 1rem;
+            }
+
+            .level-badge {
+                font-size: 0.95rem;
+                padding: 0.35rem 1rem;
+            }
+
+            .percentage-text {
+                font-size: 1.1rem;
+            }
+
             .feedback-text {
-                max-width: 100%;
+                font-size: 0.95rem;
+                padding: 0.6rem 1rem;
             }
         }
 
-        /* ===== MOBILE RESPONSIVE STYLES FOR RESULTS PAGE ===== */
-
-@media (max-width: 768px) {
-    .results-page {
-        padding: 1rem;
-    }
-
-    .results-card {
-        max-width: 100%;
-    }
-
-    .results-header {
-        padding: 1.5rem;
-    }
-
-    .results-header h1 {
-        font-size: 1.6rem;
-    }
-
-    .results-header h1 i {
-        font-size: 1.8rem;
-    }
-
-    .results-header p {
-        font-size: 0.95rem;
-    }
-
-    .score-circle {
-        width: 150px;
-        height: 150px;
-        border-width: 6px;
-    }
-
-    .score-value {
-        font-size: 3rem;
-    }
-
-    .score-total {
-        font-size: 1.3rem;
-    }
-
-    .level-badge {
-        font-size: 1.1rem;
-        padding: 0.5rem 1.5rem;
-        margin: 0.5rem 0;
-    }
-
-    .percentage-text {
-        font-size: 1.3rem;
-        margin: 1rem 0;
-    }
-
-    .feedback-text {
-        font-size: 1.1rem;
-        max-width: 90%;
-        padding: 0 1rem;
-        margin: 1rem auto;
-    }
-
-    .feedback-text span {
-        font-size: 1.4rem !important;
-    }
-
-    .score-breakdown {
-        flex-direction: column;
-        gap: 1rem;
-        max-width: 300px;
-        margin: 1.5rem auto;
-    }
-
-    .breakdown-item {
-        padding: 1rem 1.5rem;
-    }
-
-    .breakdown-label {
-        font-size: 1rem;
-    }
-
-    .breakdown-value {
-        font-size: 1.8rem;
-    }
-
-    .summary-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.5rem;
-        padding: 0.5rem 1rem 1.5rem;
-    }
-
-    .summary-item {
-        padding: 0.875rem 0.5rem;
-    }
-
-    .summary-q {
-        font-size: 1rem;
-    }
-
-    .summary-q i {
-        font-size: 0.8rem;
-    }
-
-    .pending-badge {
-        font-size: 0.9rem;
-        padding: 0.4rem 0.875rem;
-        margin: 0.75rem 0;
-    }
-
-    .actions {
-        padding: 1.5rem;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .action-btn {
-        width: 100%;
-        min-width: auto;
-        padding: 0.875rem 1.5rem;
-        font-size: 0.95rem;
-    }
-
-    .action-btn i {
-        font-size: 1rem;
-    }
-
-    /* Detailed review section */
-    .detailed-review {
-        margin-top: 1.5rem;
-    }
-
-    .detailed-review h4 {
-        font-size: 1.3rem;
-        margin-bottom: 1rem;
-        padding: 0 1rem;
-    }
-
-    .review-card {
-        padding: 1.25rem;
-        margin-bottom: 1rem;
-    }
-
-    .review-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
-    }
-
-    .review-question {
-        font-size: 1rem;
-    }
-
-    .badge-incorrect,
-    .badge-correct {
-        font-size: 0.8rem;
-        padding: 0.25rem 0.75rem;
-        align-self: flex-start;
-    }
-
-    .audio-mini {
-        width: 100%;
-    }
-
-    .audio-mini audio {
-        width: 100%;
-        height: 40px;
-    }
-
-    .review-passage {
-        font-size: 0.9rem;
-        padding: 0.875rem;
-        margin: 0.75rem 0;
-    }
-
-    .answer-comparison {
-        gap: 0.75rem;
-    }
-
-    .your-answer,
-    .correct-answer {
-        padding: 0.875rem;
-    }
-
-    .answer-label {
-        font-size: 0.85rem;
-        min-width: 80px;
-    }
-
-    .answer-text {
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .results-header h1 {
-        font-size: 1.4rem;
-    }
-
-    .score-circle {
-        width: 130px;
-        height: 130px;
-    }
-
-    .score-value {
-        font-size: 2.5rem;
-    }
-
-    .score-total {
-        font-size: 1.1rem;
-    }
-
-    .level-badge {
-        font-size: 1rem;
-        padding: 0.4rem 1.2rem;
-    }
-
-    .percentage-text {
-        font-size: 1.2rem;
-    }
-
-    .feedback-text {
-        font-size: 1rem;
-        max-width: 100%;
-    }
-
-    .feedback-text span {
-        font-size: 1.3rem !important;
-    }
-
-    .breakdown-item {
-        padding: 0.875rem 1.25rem;
-    }
-
-    .breakdown-label {
-        font-size: 0.95rem;
-    }
-
-    .breakdown-value {
-        font-size: 1.6rem;
-    }
-
-    .summary-grid {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-    }
-
-    .summary-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.75rem 1rem;
-    }
-
-    .summary-q {
-        margin-bottom: 0;
-    }
-
-    .review-card {
-        padding: 1rem;
-    }
-
-    .review-question {
-        font-size: 0.95rem;
-    }
-
-    .your-answer,
-    .correct-answer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.25rem;
-    }
-
-    .answer-label {
-        min-width: auto;
-    }
-}
-
-@media (max-width: 360px) {
-    .results-header h1 {
-        font-size: 1.3rem;
-    }
-
-    .score-circle {
-        width: 120px;
-        height: 120px;
-    }
-
-    .score-value {
-        font-size: 2.2rem;
-    }
-
-    .score-total {
-        font-size: 1rem;
-    }
-
-    .level-badge {
-        font-size: 0.95rem;
-        padding: 0.35rem 1rem;
-    }
-
-    .percentage-text {
-        font-size: 1.1rem;
-    }
-
-    .feedback-text {
-        font-size: 0.95rem;
-    }
-
-    .breakdown-item {
-        padding: 0.75rem 1rem;
-    }
-
-    .breakdown-value {
-        font-size: 1.5rem;
-    }
-
-    .action-btn {
-        padding: 0.75rem 1.25rem;
-        font-size: 0.9rem;
-    }
-}
-
-/* Landscape orientation */
-@media (max-width: 768px) and (orientation: landscape) {
-    .results-page {
-        padding: 0.5rem;
-    }
-
-    .score-circle {
-        width: 120px;
-        height: 120px;
-    }
-
-    .score-value {
-        font-size: 2.5rem;
-    }
-
-    .summary-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .actions {
-        flex-direction: row;
-    }
-
-    .action-btn {
-        width: auto;
-        min-width: 150px;
-    }
-}
-/* Mobile fixes for back buttons */
-@media (max-width: 768px) {
-    .back-buttons-container {
-        position: relative !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 100% !important;
-        padding: 15px 15px 5px 15px !important;
-        margin: 0 auto !important;
-        box-sizing: border-box !important;
-        z-index: 10;
-    }
-    
-    body {
-        padding-top: 0 !important;
-        display: block !important;
-    }
-    
-    .test-wrapper, 
-    .results-page,
-    .index-page {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-    }
-    
-    .reset-wrapper {
-        margin-top: 10px !important;
-    }
-}
-
-/* Extra small devices */
-@media (max-width: 480px) {
-    .back-buttons-container {
-        padding: 10px 10px 5px 10px !important;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    
-    .home-link-top {
-        padding: 8px 12px !important;
-        font-size: 14px !important;
-        flex: 1;
-        justify-content: center;
-    }
-}
-
-/* For the questions page specifically */
-.test-wrapper {
-    position: relative;
-    z-index: 1;
-    margin-top: 0;
-}
-
-/* For the index page */
-.index-page {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-/* Print styles */
-@media print {
-    .action-btn,
-    .actions {
-        display: none;
-    }
-}
-
+        /* Landscape orientation */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .results-page {
+                padding: 3rem 1rem 1rem;
+            }
+
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .score-value {
+                font-size: 2.5rem;
+            }
+
+            .actions {
+                flex-direction: row;
+                padding: 1rem;
+            }
+
+            .action-btn {
+                width: auto;
+                min-width: 150px;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .action-btn:hover {
+                transform: none;
+            }
+
+            .action-btn:active {
+                transform: translateY(-2px);
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .action-btn,
+            .actions,
+            .back-buttons-container {
+                display: none;
+            }
+            
+            .results-header {
+                background: var(--primary) !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .score-circle {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        /* Ensure no horizontal scrolling */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
     </style>
 </head>
 <body>
@@ -926,118 +562,63 @@
             Profile <i class="fas fa-arrow-right"></i>
         </a>
     </div>
+
     <div class="results-page">
         <div class="results-card">
             <!-- Header -->
             <div class="results-header">
-                <h1><i class="fas fa-trophy"></i> Test Results</h1>
+                <h1>
+                    <i class="fas fa-headphones"></i> 
+                    Test Results
+                </h1>
                 <p>Your listening level assessment</p>
             </div>
             
-            <!-- Score Display - All content now centered -->
+            <!-- Score Display - All content centered -->
             <div class="results-content">
                 <div class="score-circle">
                     <div class="score-value">{{ score }}</div>
                     <div class="score-total">/ {{ total }}</div>
                 </div>
                 
-                <!-- Level badge - centered with circle -->
+                <!-- Level badge -->
                 <div class="level-badge 
-                {% if level|lower == 'basic' %}level-beginner
-                {% elif level|lower == 'intermediate' %}level-intermediate
-                {% elif level|lower == 'advanced' %}level-advanced
-                {% endif %}">
-                {{ level }}
-            </div>
+                    {% if level|lower == 'basic' %}level-basic
+                    {% elif level|lower == 'beginner' %}level-basic
+                    {% elif level|lower == 'intermediate' %}level-intermediate
+                    {% elif level|lower == 'advanced' %}level-advanced
+                    {% endif %}">
+                    {{ level }}
+                </div>
                 
-                <!-- Percentage text - MOVED DOWN (more top margin) -->
-                <div class="percentage-text">{{ percentage|floatformat:1 }}% Correct</div>
+                <!-- Score breakdown -->
+                <div class="score-breakdown">
+                    <span>{{ score }}</span> out of <span>{{ total }}</span> questions correct
+                </div>
                 
-                <!-- Feedback text - MOVED DOWN (more top margin) -->
+                <!-- Percentage text -->
+                <div class="percentage-text">{{ percentage|floatformat:1 }}%</div>
+                
+                <!-- Feedback text with emoji -->
                 <div class="feedback-text">
-                {{ feedback }}
-                {% if level == 'Advanced' %}
-                    <span style="font-size: 1.6rem; margin-left: 0.5rem;">✨</span>
-                {% elif level == 'Intermediate' %}
-                    <span style="font-size: 1.6rem; margin-left: 0.5rem;">📈</span>
-                {% else %}
-                    <span style="font-size: 1.6rem; margin-left: 0.5rem;">🎯</span>  <!-- Changed to goal/target -->
-                {% endif %}
-            </div>
-                            
+                    {{ feedback }}
+                    {% if level == 'Advanced' %}
+                        <span style="font-size: 1.6rem; margin-left: 0.5rem;">✨</span>
+                    {% elif level == 'Intermediate' %}
+                        <span style="font-size: 1.6rem; margin-left: 0.5rem;">📈</span>
+                    {% else %}
+                        <span style="font-size: 1.6rem; margin-left: 0.5rem;">🎯</span>
+                    {% endif %}
+                </div>
+                
                 {% if needs_manual_grading %}
                 <div class="pending-badge">
                     <i class="fas fa-clock"></i> Some typing answers pending manual grading
                 </div>
                 {% endif %}
-                
-                {% comment %} <!-- Score Breakdown by Question Type - MOVED DOWN -->
-                <div class="score-breakdown">
-                    <div class="breakdown-item">
-                        <div class="breakdown-label">Multiple Choice</div>
-                        <div class="breakdown-value mcq">{{ mcq_correct }}/{{ mcq_total }}</div>
-                    </div>
-                    <div class="breakdown-item">
-                        <div class="breakdown-label">Typing Questions</div>
-                        <div class="breakdown-value typing">{{ typing_correct }}/{{ typing_total }}</div>
-                    </div>
-                </div>
-            </div> {% endcomment %}
-            
-            <!-- Questions Summary - MOVED UP (closer to breakdown above) -->
-            {% comment %} <div class="summary-grid">
-                {% for item in question_data %}
-                <div class="summary-item 
-                    {% if item.needs_grading %}pending
-                    {% elif item.is_correct %}correct
-                    {% else %}incorrect{% endif %}">
-                    <div class="summary-q">
-                        Q{{ forloop.counter }}
-                        {% if item.question.is_mcq %}
-                            <i class="fas fa-list-ul question-type-icon" title="Multiple Choice"></i>
-                        {% else %}
-                            <i class="fas fa-keyboard question-type-icon" title="Typing Answer"></i>
-                        {% endif %}
-                    </div>
-                    <div>
-                        {% if item.needs_grading %}
-                            <i class="fas fa-clock"></i> Pending
-                        {% elif item.is_correct %}
-                            <i class="fas fa-check"></i> Correct
-                        {% else %}
-                            <i class="fas fa-times"></i> Incorrect
-                        {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div> {% endcomment %}
-            
-            <!-- Detailed Review Section (if you want to show it) -->
-            {% if question_data and False %}  <!-- Set to True if you want to show detailed review -->
-            <div class="detailed-review">
-                <h4 style="margin-bottom: 1rem; color: #1e293b; padding: 0 1rem;">Detailed Review</h4>
-                {% for item in question_data %}
-                    {% if not item.is_correct %}
-                    <div class="review-item {% if item.needs_grading %}pending{% else %}incorrect{% endif %}">
-                        <div class="review-question">Question {{ forloop.counter }}</div>
-                        <div class="review-transcript">{{ item.question.transcript }}</div>
-                        <div class="review-answer">
-                            <div class="your-answer">
-                                <div class="answer-label">Your Answer:</div>
-                                <div class="answer-text">{{ item.user_answer|default:"Not answered" }}</div>
-                            </div>
-                            <div class="correct-answer">
-                                <div class="answer-label">Correct Answer:</div>
-                                <div class="answer-text">{{ item.correct_answer }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                {% endfor %}
             </div>
-            {% endif %}
             
-            <!-- Action Buttons - Reduced width button -->
+            <!-- Action Buttons -->
             <div class="actions">
                 <a href="{% url 'speaking:start' %}" class="action-btn speaking-btn">
                     <i class="fas fa-microphone"></i> Go to Speaking Test

@@ -96,33 +96,6 @@
             -ms-user-select: text !important;
         }
 
-        /* Anti-cheat warning message (only shows when copy/paste attempted) */
-        {% comment %} .anti-cheat-message {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--danger-light);
-            color: var(--danger);
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: none;
-            align-items: center;
-            gap: 0.75rem;
-            box-shadow: var(--shadow-lg);
-            z-index: 9999;
-            border: 2px solid var(--danger);
-            animation: slideDown 0.3s ease;
-            max-width: 90%;
-            text-align: center;
-        } {% endcomment %}
-
-        {% comment %} .anti-cheat-message i {
-            font-size: 1.2rem;
-        } {% endcomment %}
-
         @keyframes slideDown {
             from {
                 opacity: 0;
@@ -629,10 +602,12 @@
             margin: 0 auto 1rem;
             box-shadow: 0 8px 20px rgba(94, 84, 142, 0.3);
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .mic-circle.recording {
             animation: pulse 1.2s infinite;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
         }
 
         .mic-circle i {
@@ -1106,6 +1081,36 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
+
+        /* Ensure all interactive elements are above the timer */
+.btn, 
+.btn-record, 
+.btn-stop, 
+.btn-submit, 
+.btn-primary,
+.word-tile,
+.word-card,
+.word-actions button,
+.recording-actions button,
+.submit-section button,
+.home-link-top {
+    position: relative;
+    z-index: 10000;
+    pointer-events: auto !important;
+}
+
+/* Fix for mobile touch */
+@media (max-width: 768px) {
+    .btn, 
+    .btn-record, 
+    .btn-stop, 
+    .btn-submit, 
+    .btn-primary {
+        min-height: 48px;
+        touch-action: manipulation;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -1118,11 +1123,7 @@
         </a>
     </div>
 
-    <!-- Anti-cheat warning message (only shows when copy/paste attempted) -->
-    {% comment %} <div id="antiCheatMessage" class="anti-cheat-message">
-        <i class="fas fa-exclamation-triangle"></i>
-        <span></span>
-    </div> {% endcomment %}
+     {% include 'home_page/includes/global_timer.html' %}
 
     <div id="urls" 
      data-question-url="{% url 'speaking:question' 0 %}"
@@ -1247,14 +1248,15 @@
                     <!-- Recording Section for Q2-Q5 -->
                     {% if q_num != 1 %}
                     <div class="recording-section">
-                        <div class="mic-circle" id="micCircle">
+                        <div class="mic-circle" id="micCircle" onclick="toggleRecording()">
                             <i class="fas fa-microphone" id="micIcon"></i>
                         </div>
                         <div class="status-text" id="statusText">Ready to record</div>
                         
                         <div class="timer" id="timer">00:00</div>
                         
-                        <div class="recording-actions">
+                        <!-- Hidden buttons (kept for functionality but hidden) -->
+                        <div style="display: none;">
                             <button class="btn btn-record" onclick="startRecording()" id="recordBtn">
                                 <i class="fas fa-microphone"></i> Start Recording
                             </button>
@@ -1309,52 +1311,9 @@
         let seconds = 0;
         const qNum = {{ q_num }};
         
-        // Anti-cheat message element
-        const antiCheatMessage = document.getElementById('antiCheatMessage');
-
-        // ===== SHOW ANTI-CHEAT WARNING MESSAGE =====
-        {% comment %} function showAntiCheatWarning(message) {
-            antiCheatMessage.querySelector('span').textContent = message;
-            antiCheatMessage.style.display = 'flex';
-            
-            setTimeout(() => {
-                antiCheatMessage.style.display = 'none';
-            }, 2000);
-        } {% endcomment %}
-
-        // ===== COPY PREVENTION =====
-        document.addEventListener('copy', function(e) {
-            e.preventDefault();
-            
-            return false;
-        });
-
-        document.addEventListener('cut', function(e) {
-            e.preventDefault();
-            
-            return false;
-        });
-
-        // ===== PASTE PREVENTION =====
-        document.addEventListener('paste', function(e) {
-            e.preventDefault();
-           
-            return false;
-        });
-
-        // ===== TEXT SELECTION PREVENTION (JavaScript fallback) =====
-        document.addEventListener('selectstart', function(e) {
-            e.preventDefault();
-            return false;
-        });
-
-        // ===== DISABLE RIGHT-CLICK / LONG-PRESS MENU =====
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            showAntiCheatWarning('Menu is disabled during the test');
-            return false;
-        });
-
+        // New variable for mic toggle
+        let isRecording = false;
+        
         // Q1 specific variables
         let currentWord = null;
         let wordRecordings = {1: null, 2: null, 3: null, 4: null, 5: null};
@@ -1515,11 +1474,9 @@
                     
                     mediaRecorder.start();
                     
-                    document.getElementById('recordBtn').disabled = true;
-                    document.getElementById('stopBtn').disabled = false;
-                    
+                    // Update UI for recording state
                     document.getElementById('micCircle').classList.add('recording');
-                    document.getElementById('statusText').innerHTML = '<i class="fas fa-circle"></i> Recording...';
+                    document.getElementById('statusText').innerHTML = '<i class="fas fa-circle"></i> Recording... Click mic to stop';
                     document.getElementById('statusText').classList.add('recording');
                     
                     startTimer();
@@ -1533,14 +1490,25 @@
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 mediaRecorder.stop();
                 
-                document.getElementById('recordBtn').disabled = false;
-                document.getElementById('stopBtn').disabled = true;
-                
+                // Update UI for stopped state
                 document.getElementById('micCircle').classList.remove('recording');
                 document.getElementById('statusText').innerHTML = '<i class="fas fa-check"></i> Recording complete';
                 document.getElementById('statusText').classList.remove('recording');
                 
                 stopTimer();
+            }
+        }
+        
+        // New toggle function for mic
+        function toggleRecording() {
+            if (qNum !== 1) {
+                if (!isRecording) {
+                    startRecording();
+                    isRecording = true;
+                } else {
+                    stopRecording();
+                    isRecording = false;
+                }
             }
         }
         

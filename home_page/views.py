@@ -43,9 +43,125 @@ def student_login(request):
     return render(request, 'home_page/login.html', {'form': form, 'next': next_url})
 
 
+from django.db.models import Count, Q, Avg, Case, When, IntegerField, Sum
+from listening.models import TestResult as ListeningResult
+from reading.models import ReadingResult
+from speaking.models import TestSession
+from writing.models import WritingTestResult as WritingResult
+from speaking.models import Student  # For speaking results
+
 def home(request):
-    """Home page view"""
-    return render(request, 'home_page/home.html')
+    """Home page view with dynamic stats - FIXED VERSION"""
+    
+    # 1. Total Students Registered (only users with profiles)
+    total_students = User.objects.filter(profile__isnull=False).count()
+    
+    # 2. Students who have completed at least one test (only those with profiles)
+    # Get users with profiles who have test results
+    users_with_results = set()
+    
+    # Listening - only users with profiles
+    listening_users = set(ListeningResult.objects.filter(
+        user__profile__isnull=False,
+        score__isnull=False
+    ).values_list('user_id', flat=True).distinct())
+    users_with_results.update(listening_users)
+    
+    # Reading - only users with profiles
+    reading_users = set(ReadingResult.objects.filter(
+        user__profile__isnull=False,
+        score__isnull=False
+    ).values_list('user_id', flat=True).distinct())
+    users_with_results.update(reading_users)
+    
+    # Writing - only users with profiles
+    writing_users = set(WritingResult.objects.filter(
+        user__profile__isnull=False,
+        total_score__isnull=False
+    ).values_list('user_id', flat=True).distinct())
+    users_with_results.update(writing_users)
+    
+    # Speaking - map emails to users with profiles
+    speaking_emails = set(TestSession.objects.filter(
+        completed_at__isnull=False
+    ).values_list('student__email', flat=True).distinct())
+    
+    speaking_users = set(User.objects.filter(
+        email__in=speaking_emails,
+        profile__isnull=False
+    ).values_list('id', flat=True))
+    users_with_results.update(speaking_users)
+    
+    students_completed = len(users_with_results)
+    
+    # 3. Calculate levels only for users with profiles
+    beginner_count = 0
+    intermediate_count = 0
+    advanced_count = 0
+    
+    for user_id in users_with_results:
+        try:
+            user = User.objects.get(id=user_id)
+            user_scores = []
+            
+            # Listening
+            listening = ListeningResult.objects.filter(user=user).order_by('-created_at').first()
+            if listening and listening.score and listening.total_questions:
+                user_scores.append((listening.score / listening.total_questions) * 100)
+            
+            # Reading
+            reading = ReadingResult.objects.filter(user=user).order_by('-created_at').first()
+            if reading and reading.score and reading.total:
+                user_scores.append(reading.percentage or ((reading.score / reading.total) * 100))
+            
+            # Writing
+            writing = WritingResult.objects.filter(user=user).order_by('-created_at').first()
+            if writing and writing.total_score:
+                user_scores.append((writing.total_score / 500) * 100)
+            
+            # Speaking
+            try:
+                student = Student.objects.get(email=user.email)
+                speaking = TestSession.objects.filter(
+                    student=student, 
+                    completed_at__isnull=False
+                ).order_by('-completed_at').first()
+                if speaking:
+                    user_scores.append(speaking.get_average_score())
+            except Student.DoesNotExist:
+                pass
+            
+            # Determine level
+            if user_scores:
+                avg_score = sum(user_scores) / len(user_scores)
+                if avg_score < 60:
+                    beginner_count += 1
+                elif avg_score < 80:
+                    intermediate_count += 1
+                else:
+                    advanced_count += 1
+            else:
+                # Has test records but no scores? Count as beginner
+                beginner_count += 1
+                
+        except User.DoesNotExist:
+            continue
+    
+    # Ensure counts don't exceed total
+    total_levels = beginner_count + intermediate_count + advanced_count
+    if total_levels > students_completed:
+        # Adjust if there's a discrepancy
+        print(f"Warning: Level count ({total_levels}) > students completed ({students_completed})")
+    
+    context = {
+        'total_students': total_students,
+        'students_completed': students_completed,
+        'beginner_count': beginner_count,
+        'intermediate_count': intermediate_count,
+        'advanced_count': advanced_count,
+    }
+    
+    return render(request, 'home_page/home.html', context)
 
 
 def register(request):
@@ -180,12 +296,17 @@ def test_introduction(request):
 
 @login_required
 def start_pretest(request):
-    """Redirect to the first incomplete test"""
+    """Redirect to the first incomplete test - with timer start"""
     profile = get_object_or_404(StudentProfile, user=request.user)
     
     if profile.pretest_completed:
         messages.info(request, "You've already completed the pretest. View your results below.")
         return redirect('home_page:pretest_results')
+    
+    # ===== ADDED: Start the 20-minute timer =====
+    if 'test_start_time' not in request.session:
+        request.session['test_start_time'] = timezone.now().isoformat()
+        print(f"⏰ Timer started at: {request.session['test_start_time']}")
     
     # CORRECT ORDER: Listening → Speaking → Reading → Writing
     if not profile.listening_completed:
@@ -208,6 +329,10 @@ def start_pretest(request):
         profile.pretest_completed = True
         profile.pretest_completed_at = timezone.now()
         profile.save()
+        # Clear timer session when all tests are done
+        if 'test_start_time' in request.session:
+            del request.session['test_start_time']
+            print("⏰ Timer cleared - all tests completed")
         return redirect('home_page:pretest_results')
 
 
@@ -217,17 +342,22 @@ def continue_pretest(request):
     return start_pretest(request)
 
 
-# home_page/views.py (updated pretest_results function)
-
 @login_required
 def pretest_results(request):
-    """Show combined pretest results"""
+    """Show combined pretest results - with timeout handling"""
     from listening.models import TestResult as ListeningResult
     from reading.models import ReadingResult
     from speaking.models import TestSession
     from writing.models import WritingTestResult as WritingResult
     
     profile = get_object_or_404(StudentProfile, user=request.user)
+    
+    # ===== ADDED: Check if this is a timeout redirect =====
+    is_timeout = request.GET.get('timeout') == 'true'
+    if is_timeout and 'test_start_time' in request.session:
+        del request.session['test_start_time']
+        messages.info(request, "Your time has expired. Results show completed sections only.")
+        print("⏰ Timeout occurred - timer cleared")
     
     # Debug: Print profile status
     print(f"\n{'='*50}")
@@ -332,6 +462,7 @@ def pretest_results(request):
     print(f"FINAL CONTEXT:")
     print(f"reading_result: {'✅ Present' if reading_result else '❌ None'}")
     print(f"reading_percentage: {reading_percentage}%")
+    print(f"is_timeout: {is_timeout}")
     print(f"{'='*50}\n")
     
     context = {
@@ -347,9 +478,11 @@ def pretest_results(request):
         'speaking_percentage': round(speaking_percentage, 1),
         'writing_percentage': round(writing_percentage, 1),
         'completion_date': completion_date,
+        'is_timeout': is_timeout,  # ADDED: Pass to template
     }
     
     return render(request, 'home_page/pretest_results.html', context)
+
 
 def password_reset_request(request):
     """View for requesting password reset"""
@@ -442,6 +575,7 @@ def password_reset_confirm(request, token):
         'token': token,
         'email': reset_token.user.email
     })
+
 
 @staff_member_required
 def export_all_results_csv(request):

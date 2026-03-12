@@ -11,7 +11,9 @@ from .models import Test, Question, ReadingUserResponse, ReadingResult
 from writing.models import WritingTest
 import logging
 import json
+from django.views.decorators.csrf import csrf_exempt
 import random
+from home_page.models import SuspiciousActivity
 
 logger = logging.getLogger(__name__)
 
@@ -623,3 +625,32 @@ def retry_test(request, test_id):
     
     messages.info(request, "You can now retake the reading test.")
     return redirect('reading:start_test', test_id=test_id)
+
+@login_required
+@csrf_exempt
+def log_suspicious_activity(request):
+    """Log suspicious activities during the writing test"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            
+            # Get session key for anonymous tracking
+            if not request.session.session_key:
+                request.session.create()
+            
+            # Create log entry
+            SuspiciousActivity.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                session_key=request.session.session_key,
+                activity_type=data.get('activity_type'),
+                count=data.get('count', 1),
+                question=data.get('question', 1),
+                test_type='writing',
+                time_away=data.get('time_away')
+            )
+            
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)

@@ -551,7 +551,7 @@
 .why-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 50px;
+    gap: 40px;
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
@@ -583,13 +583,13 @@
 .why-features {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;  /* Reduced from 16px to 12px for tighter spacing */
 }
 
 .feature {
     background: white;
     border-radius: 16px;
-    padding: 25px;
+    padding: 18px 20px;
     border: 1px solid #e9ecef;
     transition: all 0.3s ease;
 }
@@ -625,6 +625,99 @@
     color: #4a5568;
     line-height: 1.6;
     margin: 0;
+}
+
+/* Stats styling with card design */
+.stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 0;
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+}
+
+.stats-row {
+    display: grid;
+    gap: 15px;
+}
+
+.stats-row:first-child {
+    grid-template-columns: repeat(2, 1fr);  /* 2 columns for first row */
+}
+
+.stats-row:last-child {
+    grid-template-columns: repeat(3, 1fr);  /* 3 columns for second row */
+}
+
+.stat {
+    text-align: center;
+    padding: 5px 0;
+}
+
+.stat h3 {
+    color: #667eea;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+
+.stat p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .stats {
+        padding: 15px;
+    }
+    
+    .stats-row:first-child,
+    .stats-row:last-child {
+        grid-template-columns: 1fr;  /* Stack all on mobile */
+        gap: 10px;
+    }
+    
+    .stat h3 {
+        font-size: 1.8rem;
+    }
+    
+    .stat p {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats {
+        padding: 15px;
+    }
+    
+    .stat h3 {
+        font-size: 1.6rem;
+    }
+}
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .why-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .why-img-small {
+        display: none;
+    }
+    
+    .why-images {
+        max-width: 600px;
+        margin: 0 auto;
+    }
 }
 
 /* How We Work Section */
@@ -784,6 +877,33 @@
     opacity: 0.9;
 }
 
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .stats {
+        gap: 15px;
+        padding: 20px 15px;
+    }
+    
+    .stat h3 {
+        font-size: 1.8rem;
+    }
+    
+    .stat p {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .stat h3 {
+        font-size: 2rem;
+    }
+}
+
 /* Responsive */
 @media (max-width: 1100px) {
     .features-grid {
@@ -890,18 +1010,18 @@
             </p>
             
             <div class="hero-buttons">
-                <a href="#skills" class="btn-primary">
-                    Start Your Journey →
-                </a>
-                
                 {% if not user.is_authenticated %}
+                    <a href="{% url 'home_page:register' %}" class="btn-secondary">
+                        Register →
+                    </a>
                     <a href="{% url 'home_page:login' %}" class="btn-secondary">
                         Login →
                     </a>
-                    <a href="{% url 'home_page:register' %}" class="btn-secondary">
-                        Join Now →
-                    </a>
+
                 {% endif %}
+                <a href="{% url 'home_page:test_introduction' %}" class="btn-primary">
+                    Start Your Journey →
+               </a>                
             </div>
             
             <div class="hero-footer">
@@ -1191,6 +1311,35 @@
                         <p>Every learner is unique. We create personalized lessons and exercises that match your level and learning objectives.</p>
                     </div>
                 </div>
+
+                <!-- Stats with dynamic values from database -->
+                <div class="stats">
+                    <div class="stats-row">
+                        <div class="stat">
+                            <h3 data-count="{{ total_students }}">{{ total_students }}+</h3>
+                            <p>Students Registered</p>
+                        </div>
+                        <div class="stat">
+                            <h3 data-count="{{ students_completed }}">{{ students_completed }}</h3>
+                            <p>Students Completed Test</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat">
+                            <h3 data-count="{{ beginner_count }}">{{ beginner_count }}</h3>
+                            <p>Beginner Level</p>
+                        </div>
+                        <div class="stat">
+                            <h3 data-count="{{ intermediate_count }}">{{ intermediate_count }}</h3>
+                            <p>Intermediate Level</p>
+                        </div>
+                        <div class="stat">
+                            <h3 data-count="{{ advanced_count }}">{{ advanced_count }}</h3>
+                            <p>Advanced Level</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1297,7 +1446,7 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Slider functionality
+        // ===== SLIDER FUNCTIONALITY =====
         const sliderTrack = document.getElementById('sliderTrack');
         const prevBtn = document.querySelector('.prev-btn');
         const nextBtn = document.querySelector('.next-btn');
@@ -1368,6 +1517,49 @@
             }
             
             startAutoSlide();
+        }
+
+        // ===== COUNTER ANIMATION FOR STATS =====
+        const stats = document.querySelectorAll('.stat h3');
+        
+        if (stats.length > 0) {
+            const startCounting = (element) => {
+                const target = parseInt(element.getAttribute('data-count'));
+                // Handle special case for 24/7 (just show 24 in counter)
+                const displayTarget = target === 24 ? 24 : target;
+                const increment = displayTarget / 100;
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= displayTarget) {
+                        // Add + for numbers, but handle 24/7 specially
+                        if (target === 24) {
+                            element.textContent = '24/7';
+                        } else {
+                            element.textContent = displayTarget + '+';
+                        }
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(current) + '+';
+                    }
+                }, 20);
+            };
+            
+            // Start counting when stats section is visible
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        stats.forEach(startCounting);
+                        statsObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            const statsSection = document.querySelector('.why-us');
+            if (statsSection) {
+                statsObserver.observe(statsSection);
+            }
         }
     });
 </script>

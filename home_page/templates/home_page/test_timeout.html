@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Timeout</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #5e548e;
+            --primary-light: #f0edf7;
+            --primary-dark: #453c6b;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --text-dark: #1e293b;
+            --text-light: #475569;
+            --white: #ffffff;
+            --shadow-xl: 0 25px 50px -12px rgba(94, 84, 142, 0.25);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 1rem;
+        }
+        
+        .timeout-card {
+            background: var(--white);
+            border-radius: 2rem;
+            box-shadow: var(--shadow-xl);
+            padding: 3rem;
+            max-width: 500px;
+            text-align: center;
+            animation: slideUp 0.6s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .timeout-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--danger-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+        }
+        
+        .timeout-icon i {
+            font-size: 3rem;
+            color: var(--danger);
+        }
+        
+        h1 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        
+        p {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .completed-section {
+            background: var(--primary-light);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .completed-title {
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .test-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .test-badge {
+            background: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid var(--primary);
+        }
+        
+        .test-badge i {
+            color: var(--primary);
+        }
+        
+        .test-badge.completed {
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        .test-badge.completed i {
+            color: var(--white);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(94, 84, 142, 0.3);
+        }
+        
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="timeout-card">
+        <div class="timeout-icon">
+            <i class="fas fa-hourglass-end"></i>
+        </div>
+        <h1>Time's Up!</h1>
+        <p>The 20-minute test duration has expired. You can view your completed sections below.</p>
+        
+        {% if completed_tests %}
+        <div class="completed-section">
+            <div class="completed-title">Completed Sections</div>
+            <div class="test-badges">
+                {% if 'listening' in completed_tests %}
+                <span class="test-badge completed"><i class="fas fa-headphones-alt"></i> Listening</span>
+                {% else %}
+                <span class="test-badge"><i class="fas fa-headphones-alt"></i> Listening</span>
+                {% endif %}
+                
+                {% if 'speaking' in completed_tests %}
+                <span class="test-badge completed"><i class="fas fa-microphone-alt"></i> Speaking</span>
+                {% else %}
+                <span class="test-badge"><i class="fas fa-microphone-alt"></i> Speaking</span>
+                {% endif %}
+                
+                {% if 'reading' in completed_tests %}
+                <span class="test-badge completed"><i class="fas fa-book-reader"></i> Reading</span>
+                {% else %}
+                <span class="test-badge"><i class="fas fa-book-reader"></i> Reading</span>
+                {% endif %}
+                
+                {% if 'writing' in completed_tests %}
+                <span class="test-badge completed"><i class="fas fa-pen-fancy"></i> Writing</span>
+                {% else %}
+                <span class="test-badge"><i class="fas fa-pen-fancy"></i> Writing</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="action-buttons">
+            <a href="{% url 'home_page:pretest_results' %}" class="btn btn-primary">
+                <i class="fas fa-chart-bar"></i> View Results
+            </a>
+            <a href="{% url 'home_page:home' %}" class="btn btn-outline">
+                <i class="fas fa-home"></i> Go Home
+            </a>
+        </div>
+    </div>
+</body>
+</html>
