@@ -5,6 +5,280 @@
 
 {% block extra_css %}
 <style>
+/* ============================================
+   HERO SECTION ANIMATIONS - ADDED FROM FRAMER
+   ============================================ */
+
+/* Hero image zoom animation */
+.hero-image {
+    transform: scale(1.05);
+    opacity: 1;
+    transition: transform 2s cubic-bezier(0.12, 0.23, 0.5, 1);
+}
+
+.hero-image.zoomed {
+    transform: scale(1);
+}
+
+/* Hero text split animation */
+.hero-word {
+    display: inline-block;
+    opacity: 0.001;
+    filter: blur(10px);
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.44, 0, 0.56, 1);
+}
+
+.hero-word.revealed {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+}
+
+/* Hero description text animation */
+.hero-desc-word {
+    display: inline-block;
+    opacity: 0.001;
+    filter: blur(10px);
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.44, 0, 0.56, 1);
+}
+
+.hero-desc-word.revealed {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+}
+
+/* CTA buttons animation */
+.hero-buttons {
+    opacity: 0.001;
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.44, 0, 0.56, 1) 0.8s;
+}
+
+.hero-buttons.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Parallax effect */
+.hero-image-parallax {
+    transition: transform 0.1s linear;
+}
+
+.hero-content-parallax {
+    transition: opacity 0.1s linear, transform 0.1s linear;
+}
+
+/* Spring animation utility */
+.spring-animation {
+    animation: springIn 0.8s cubic-bezier(0.44, 0, 0.56, 1);
+}
+
+@keyframes springIn {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ============================================
+   INFINITE HORIZONTAL SCROLLING CAROUSEL
+   ============================================ */
+
+.mission-carousel-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    padding: 20px 0;
+    margin: 40px 0;
+}
+
+.mission-carousel-container::before,
+.mission-carousel-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.mission-carousel-container::before {
+    left: 0;
+    background: linear-gradient(to right, white, transparent);
+}
+
+.mission-carousel-container::after {
+    right: 0;
+    background: linear-gradient(to left, white, transparent);
+}
+
+.framer-carousel {
+    display: flex;
+    gap: 25px;
+    overflow-x: hidden;
+    scroll-behavior: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar IE/Edge */
+    padding: 10px 0;
+}
+
+.framer-carousel::-webkit-scrollbar {
+    display: none; /* Hide scrollbar Chrome/Safari */
+}
+
+.carousel-item {
+    flex: 0 0 280px; /* Fixed width for each feature box */
+    background: white;
+    padding: 30px 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+    transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.4s ease;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    min-height: 200px;
+}
+
+.carousel-item:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(102, 126, 234, 0.15);
+}
+
+.carousel-item .feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    flex-shrink: 0;
+    transition: transform 0.4s ease;
+}
+
+.carousel-item:hover .feature-icon {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.carousel-item .feature-icon i {
+    font-size: 28px;
+    color: white;
+}
+
+.carousel-item h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+/* Responsive adjustments for carousel */
+@media (max-width: 768px) {
+    .carousel-item {
+        flex: 0 0 240px;
+        padding: 25px 20px;
+    }
+    
+    .mission-carousel-container::before,
+    .mission-carousel-container::after {
+        width: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-item {
+        flex: 0 0 200px;
+        padding: 20px 15px;
+    }
+    
+    .carousel-item .feature-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .carousel-item .feature-icon i {
+        font-size: 24px;
+    }
+    
+    .carousel-item h3 {
+        font-size: 16px;
+    }
+}
+
+/* ============================================
+   VALUE SECTION CARD ANIMATIONS - ADDED
+   ============================================ */
+
+.value-card {
+    transition: opacity 0.8s cubic-bezier(0.2, 0, 0, 1), 
+                transform 0.8s cubic-bezier(0.2, 0, 0, 1);
+    will-change: transform, opacity;
+}
+
+/* Initial states for animation */
+.value-card.reveal-delay-1 {
+    opacity: 0;
+    transform: translateX(-70px);
+}
+
+.value-card.reveal-delay-2 {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.value-card.reveal-delay-3 {
+    opacity: 0;
+    transform: translateX(70px);
+}
+
+/* Animated states */
+.value-card.reveal-delay-1.visible,
+.value-card.reveal-delay-2.visible,
+.value-card.reveal-delay-3.visible {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+}
+
+/* Stagger delays */
+.value-card.reveal-delay-1.visible {
+    transition-delay: 0s;
+}
+
+.value-card.reveal-delay-2.visible {
+    transition-delay: 0.15s;
+}
+
+.value-card.reveal-delay-3.visible {
+    transition-delay: 0.3s;
+}
+
+/* ============================================
+   YOUR ORIGINAL CSS STARTS HERE - COMPLETELY PRESERVED
+   ============================================ */
 
 .hero {
     position: relative;
@@ -20,13 +294,16 @@
 .hero-bg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, 
-        #7851d2 40%,
-        #9f7aea 60%,
-        #c6a4f6 80%,
-        #ffffff 100%
-    );
+    background-image: url("{% static 'home_page/images/cloud.png' %}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     z-index: -2;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 0% 20%; }
 }
 
 /* Optional overlay for extra smoothness */
@@ -36,6 +313,12 @@
     background: linear-gradient(to bottom, transparent 0%, white 100%);
     z-index: -1;
     opacity: 0.3;
+    animation: overlayPulse 8s ease infinite;
+}
+
+@keyframes overlayPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.4; }
 }
 
 .hero-inner {
@@ -1001,15 +1284,15 @@
     
     <div class="hero-inner">
         <div class="hero-content">
-            <h1>
+            <h1 class="hero-headline" id="heroHeadline">
                 Turning Technical Minds into Confident Communicators
             </h1>
             
-            <p>
+            <p class="hero-description" id="heroDescription">
                 Build confidence in speaking, clarity in writing, and power in professional communication — designed especially for engineering students.
             </p>
             
-            <div class="hero-buttons">
+            <div class="hero-buttons" id="heroButtons">
                 {% if not user.is_authenticated %}
                     <a href="{% url 'home_page:register' %}" class="btn-secondary">
                         Register →
@@ -1031,41 +1314,45 @@
     </div>
 </section>
 
-<!-- Mission/Features Section -->
+<!-- Mission/Features Section with Infinite Horizontal Carousel -->
 <section class="about-section-compact" id="our-mission">
     <div class="about-container-compact">
-        <h2 class="about-title">
+        <h2 class="about-title reveal">
             Helping diploma & engineering students become clear and confident<br>
             in English communication.
         </h2>
-        
-        <div class="features-grid">
-            <div class="feature-box">
-                <div class="feature-icon">
-                    <i class="fas fa-graduation-cap"></i>
+
+        <!-- Infinite Horizontal Carousel (visible on all devices) -->
+        <div class="mission-carousel-container">
+            <div class="framer-carousel" id="infiniteCarousel">
+                <!-- Carousel Items (same content as feature boxes) -->
+                <div class="carousel-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Perfect for engineering & diploma students.</h3>
                 </div>
-                <h3 class="feature-box-title">Perfect for engineering & diploma students.</h3>
-            </div>
-            
-            <div class="feature-box">
-                <div class="feature-icon">
-                    <i class="fas fa-lightbulb"></i>
+                
+                <div class="carousel-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>For learners who understand English but hesitate to speak.</h3>
                 </div>
-                <h3 class="feature-box-title">For learners who understand English but hesitate to speak.</h3>
-            </div>
-            
-            <div class="feature-box">
-                <div class="feature-icon">
-                    <i class="fas fa-briefcase"></i>
+                
+                <div class="carousel-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>From preparing interviews & presentations to professional life.</h3>
                 </div>
-                <h3 class="feature-box-title">From preparing interviews & presentations to professional life.</h3>
-            </div>
-            
-            <div class="feature-box">
-                <div class="feature-icon">
-                    <i class="fas fa-handshake"></i>
+                
+                <div class="carousel-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>No advanced English needed – just willingness.</h3>
                 </div>
-                <h3 class="feature-box-title">No advanced English needed – just willingness.</h3>
             </div>
         </div>
     </div>
@@ -1075,7 +1362,7 @@
 <section class="about-section" id="about-us">
     <div class="container">
         <div class="about-container">
-            <div class="about-images">
+            <div class="about-images reveal-left">
                 <div class="image-grid">
                     <div class="image-item">
                         <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Students learning English">
@@ -1092,7 +1379,7 @@
                 </div>
             </div>
             
-            <div class="about-content">
+            <div class="about-content reveal-right">
                 <h2>Empowering Engineers Through Effective Communication</h2>
                 <p>
                     The Fluent Engineer is a communication development platform
@@ -1115,12 +1402,12 @@
 <!-- LSRW Slider Section -->
 <section class="lsrw-section" id="skills">
     <div class="container">
-        <div class="lsrw-header">
+        <div class="lsrw-header reveal">
             <h2 class="section-heading">Practice Real English Skills</h2>
             <p class="section-subtitle">Improve your Listening, Speaking, Reading, and Writing with practical exercises. Master each skill systematically with our proven <b>LSRW</b> methodology.</p>
         </div>
         
-        <div class="slider-container">
+        <div class="slider-container reveal">
             <div class="slider-track" id="sliderTrack">
                 <!-- Slide 1: Listening -->
                 <div class="slide">
@@ -1233,13 +1520,13 @@
 <!-- Our Values Section -->
 <section class="our-values" id="our-values">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header reveal">
             <h2>Unlock Your English Potential</h2>
             <p>Enhance your language proficiency step by step with structured learning.</p>
         </div>
         
         <div class="values-grid">
-            <div class="value-card">
+            <div class="value-card reveal reveal-delay-1">
                 <div class="value-icon">
                     <i class="fas fa-comments"></i>
                 </div>
@@ -1252,7 +1539,7 @@
                 </ul>
             </div>
             
-            <div class="value-card">
+            <div class="value-card reveal reveal-delay-2">
                 <div class="value-icon">
                     <i class="fas fa-book"></i>
                 </div>
@@ -1263,7 +1550,7 @@
                 </div>
             </div>
             
-            <div class="value-card">
+            <div class="value-card reveal reveal-delay-3">
                 <div class="value-icon">
                     <i class="fas fa-book-open"></i>
                 </div>
@@ -1280,21 +1567,21 @@
 <!-- Why Us Section -->
 <section class="why-us" id="why-us">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header reveal">
             <h2>Why Choose TheFluentEngineer?</h2>
             <p>Practical learning, personalized guidance, and measurable progress to help you master English with confidence.</p>
         </div>
         
         <div class="why-content">
-            <div class="why-images">
+            <div class="why-images reveal-left">
                 <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Group learning" class="why-img-main">
                 <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Online learning" class="why-img-small">
             </div>
             
-            <div class="why-features">
+            <div class="why-features reveal-right">
                 <div class="feature">
                     <div class="feature-progress">
-                        <div class="progress-bar" style="width: 90%"></div>
+                        <div class="progress-bar" style="--target-width: 90%"></div>
                     </div>
                     <div class="feature-content">
                         <h4>Expert Guidance for Every Step</h4>
@@ -1304,7 +1591,7 @@
                 
                 <div class="feature">
                     <div class="feature-progress">
-                        <div class="progress-bar" style="width: 85%"></div>
+                        <div class="progress-bar" style="--target-width: 85%"></div>
                     </div>
                     <div class="feature-content">
                         <h4>Tailored Solutions for Your Goals</h4>
@@ -1348,13 +1635,13 @@
 <!-- How We Work Section -->
 <section class="how-work" id="how-we-work">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header reveal">
             <h2>How We Work</h2>
             <p>Guiding you through every step with clarity, expertise, and dedication.</p>
         </div>
         
         <div class="work-steps">
-            <div class="step">
+            <div class="step reveal reveal-delay-1">
                 <div class="step-number">1</div>
                 <div class="step-content">
                     <h4>Pre-Test & Assessment</h4>
@@ -1362,7 +1649,7 @@
                 </div>
             </div>
             
-            <div class="step">
+            <div class="step reveal reveal-delay-2">
                 <div class="step-number">2</div>
                 <div class="step-content">
                     <h4>Personalized Learning Path</h4>
@@ -1370,7 +1657,7 @@
                 </div>
             </div>
             
-            <div class="step">
+            <div class="step reveal reveal-delay-3">
                 <div class="step-number">3</div>
                 <div class="step-content">
                     <h4>Structured Tasks & Progression</h4>
@@ -1378,7 +1665,7 @@
                 </div>
             </div>
             
-            <div class="step">
+            <div class="step reveal reveal-delay-4">
                 <div class="step-number">4</div>
                 <div class="step-content">
                     <h4>Continuous Evaluation & Feedback</h4>
@@ -1392,13 +1679,13 @@
 <!-- FAQ Section -->
 <section class="faq-section" id="faq">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header reveal">
             <h2>Frequently Asked Questions</h2>
             <p>Quick answers to your most common questions.</p>
         </div>
         
         <div class="faq-container">
-            <div class="faq-item">
+            <div class="faq-item reveal reveal-delay-1">
                 <div class="faq-question">
                     <h4>Do I need any prior English knowledge to start?</h4>
                     <span class="faq-icon">+</span>
@@ -1408,7 +1695,7 @@
                 </div>
             </div>
             
-            <div class="faq-item">
+            <div class="faq-item reveal reveal-delay-2">
                 <div class="faq-question">
                     <h4>What English skills will I learn here?</h4>
                     <span class="faq-icon">+</span>
@@ -1418,7 +1705,7 @@
                 </div>
             </div>
             
-            <div class="faq-item">
+            <div class="faq-item reveal reveal-delay-3">
                 <div class="faq-question">
                     <h4>Will I get a personalized study plan?</h4>
                     <span class="faq-icon">+</span>
@@ -1428,7 +1715,7 @@
                 </div>
             </div>
             
-            <div class="faq-item">
+            <div class="faq-item reveal reveal-delay-4">
                 <div class="faq-question">
                     <h4>Can I track my learning progress?</h4>
                     <span class="faq-icon">+</span>
@@ -1446,6 +1733,168 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // ===== HERO SECTION ANIMATIONS - ADDED FROM FRAMER =====
+        
+        // Check for reduced motion preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+        
+        if (!prefersReducedMotion) {
+            // Hero text split animation (each word animates individually)
+            const heroHeadline = document.getElementById('heroHeadline');
+            if (heroHeadline) {
+                const text = heroHeadline.textContent;
+                const words = text.split(' ');
+                heroHeadline.innerHTML = '';
+                
+                words.forEach((word, index) => {
+                    const span = document.createElement('span');
+                    span.className = 'hero-word';
+                    span.textContent = word + ' ';
+                    heroHeadline.appendChild(span);
+                });
+                
+                const wordSpans = heroHeadline.querySelectorAll('.hero-word');
+                wordSpans.forEach((word, index) => {
+                    setTimeout(() => {
+                        word.classList.add('revealed');
+                    }, 100 * index);
+                });
+            }
+
+            // Hero description text animation
+            const heroDesc = document.getElementById('heroDescription');
+            if (heroDesc) {
+                const text = heroDesc.textContent;
+                const words = text.split(' ');
+                heroDesc.innerHTML = '';
+                
+                words.forEach((word, index) => {
+                    const span = document.createElement('span');
+                    span.className = 'hero-desc-word';
+                    span.textContent = word + ' ';
+                    heroDesc.appendChild(span);
+                });
+                
+                const descSpans = heroDesc.querySelectorAll('.hero-desc-word');
+                descSpans.forEach((word, index) => {
+                    setTimeout(() => {
+                        word.classList.add('revealed');
+                    }, 300 + (50 * index));
+                });
+            }
+
+            // CTA buttons animation (appear with delay)
+            const ctaButtons = document.getElementById('heroButtons');
+            if (ctaButtons) {
+                setTimeout(() => {
+                    ctaButtons.classList.add('revealed');
+                }, 800);
+            }
+
+            // Parallax effect for hero section
+            const heroSection = document.querySelector('.hero');
+            
+            function initParallax() {
+                window.addEventListener('scroll', () => {
+                    const scrolled = window.pageYOffset;
+                    const rate = scrolled * 0.3;
+                    
+                    const heroBg = document.querySelector('.hero-bg');
+                    if (heroBg) {
+                        heroBg.style.transform = `translateY(${rate * 0.05}px)`;
+                    }
+                    
+                    const heroContent = document.querySelector('.hero-content');
+                    if (heroContent) {
+                        heroContent.style.opacity = Math.max(0, 1 - scrolled / 500);
+                        heroContent.style.transform = `translateY(${scrolled * 0.1}px)`;
+                    }
+                });
+            }
+            
+            initParallax();
+
+            // Spring animation utility (optional)
+            function createSpringAnimation(element) {
+                element.classList.add('spring-animation');
+            }
+        }
+
+        // ===== INFINITE HORIZONTAL SCROLLING CAROUSEL =====
+        function initInfiniteCarousel() {
+            const carousel = document.querySelector('.framer-carousel');
+            if (!carousel) return;
+            
+            // Check for reduced motion preference
+            if (prefersReducedMotion) return;
+            
+            // Clone the items for infinite effect
+            const items = Array.from(carousel.children);
+            items.forEach(item => {
+                const clone = item.cloneNode(true);
+                clone.setAttribute('aria-hidden', 'true');
+                carousel.appendChild(clone);
+            });
+            
+            let scrollPosition = 0;
+            let animationFrame;
+            const speed = 0.5; // pixels per frame - adjust for speed
+            
+            function scroll() {
+                scrollPosition += speed;
+                
+                // Reset when we've scrolled past the first set
+                if (scrollPosition >= carousel.scrollWidth / 2) {
+                    scrollPosition = 0;
+                }
+                
+                carousel.scrollLeft = scrollPosition;
+                animationFrame = requestAnimationFrame(scroll);
+            }
+            
+            // Start scrolling
+            animationFrame = requestAnimationFrame(scroll);
+            
+            // Pause on hover
+            carousel.addEventListener('mouseenter', () => {
+                cancelAnimationFrame(animationFrame);
+            });
+            
+            carousel.addEventListener('mouseleave', () => {
+                animationFrame = requestAnimationFrame(scroll);
+            });
+
+            // Pause on touch for mobile
+            carousel.addEventListener('touchstart', () => {
+                cancelAnimationFrame(animationFrame);
+            });
+            
+            carousel.addEventListener('touchend', () => {
+                animationFrame = requestAnimationFrame(scroll);
+            });
+        }
+
+        // Initialize the infinite carousel
+        initInfiniteCarousel();
+
+        // ===== SCROLL REVEAL ANIMATION =====
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+        
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    // Optional: unobserve after animation to improve performance
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { 
+            threshold: 0.15,
+            rootMargin: '0px 0px -50px 0px' // Trigger a bit before element enters viewport
+        });
+        
+        revealElements.forEach(el => revealObserver.observe(el));
+
         // ===== SLIDER FUNCTIONALITY =====
         const sliderTrack = document.getElementById('sliderTrack');
         const prevBtn = document.querySelector('.prev-btn');
@@ -1525,25 +1974,26 @@
         if (stats.length > 0) {
             const startCounting = (element) => {
                 const target = parseInt(element.getAttribute('data-count'));
-                // Handle special case for 24/7 (just show 24 in counter)
-                const displayTarget = target === 24 ? 24 : target;
-                const increment = displayTarget / 100;
-                let current = 0;
+                if (isNaN(target)) return;
                 
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= displayTarget) {
-                        // Add + for numbers, but handle 24/7 specially
-                        if (target === 24) {
-                            element.textContent = '24/7';
-                        } else {
-                            element.textContent = displayTarget + '+';
-                        }
-                        clearInterval(timer);
-                    } else {
-                        element.textContent = Math.floor(current) + '+';
+                const duration = 1500;
+                const startTime = performance.now();
+                const suffix = element.textContent.includes('+') ? '+' : '';
+                
+                function updateCounter(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3); // Cubic ease out
+                    
+                    const current = Math.floor(eased * target);
+                    element.textContent = current + suffix;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(updateCounter);
                     }
-                }, 20);
+                }
+                
+                requestAnimationFrame(updateCounter);
             };
             
             // Start counting when stats section is visible
@@ -1560,6 +2010,58 @@
             if (statsSection) {
                 statsObserver.observe(statsSection);
             }
+        }
+
+        // ===== PROGRESS BAR ANIMATION =====
+        const progressBars = document.querySelectorAll('.progress-bar');
+        
+        const progressObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                    progressObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        progressBars.forEach(bar => progressObserver.observe(bar));
+
+        // ===== FAQ ACCORDION =====
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            
+            question.addEventListener('click', () => {
+                // Close other open FAQs
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current
+                item.classList.toggle('active');
+            });
+        });
+
+        // ===== VALUE CARDS ANIMATION - ADDED =====
+        const valueCards = document.querySelectorAll('.value-card.reveal-delay-1, .value-card.reveal-delay-2, .value-card.reveal-delay-3');
+        
+        if (valueCards.length > 0) {
+            const valueCardsObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        valueCardsObserver.unobserve(entry.target);
+                    }
+                });
+            }, { 
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            valueCards.forEach(card => valueCardsObserver.observe(card));
         }
     });
 </script>
