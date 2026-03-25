@@ -1,0 +1,621 @@
+<!-- learning/templates/learning/beginner_levels.html -->
+{% extends 'home_page/base.html' %}
+{% load static %}
+
+{% block title %}Beginner Path - 30 Day Journey{% endblock %}
+
+{% block content %}
+<style>
+    /* --- Base & Container --- */
+    .journey-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* --- Header Card - Clean Design --- */
+    .journey-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 24px;
+        padding: 2rem;
+        color: white;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        margin-bottom: 2rem;
+    }
+
+    .header-content h1 {
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .header-content p {
+        font-size: 1rem;
+        opacity: 0.95;
+        margin-top: 0.25rem;
+    }
+
+    .header-stats {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-box {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+    }
+
+    /* --- Progress Section --- */
+    .progress-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .progress-top {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        color: #4a5568;
+        font-weight: 600;
+    }
+
+    .progress-track {
+        background: #edf2f7;
+        height: 10px;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #84fab0 0%, #8fd3f4 100%);
+        width: 0%;
+        transition: width 1s ease-in-out;
+        border-radius: 10px;
+    }
+
+    /* --- Timeline Layout - Clean without circles --- */
+    .timeline {
+        position: relative;
+        padding: 1rem 0;
+    }
+
+    /* Simple vertical connecting line */
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 30px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e0 100%);
+        border-radius: 2px;
+    }
+
+    .day-item {
+        position: relative;
+        margin-bottom: 1.5rem;
+        padding-left: 70px;
+        transition: transform 0.2s;
+    }
+
+    /* Simple connector dot */
+    .day-item::before {
+        content: '';
+        position: absolute;
+        left: 27px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 10px;
+        height: 10px;
+        background: #cbd5e0;
+        border-radius: 50%;
+        z-index: 2;
+        transition: all 0.3s;
+    }
+
+    /* The Card - Clean and Simple */
+    .day-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.25rem 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        border: 1px solid #e9ecef;
+        transition: all 0.3s;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .day-card:hover {
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        transform: translateY(-2px);
+        border-color: #d0d5dd;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .day-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #2d3748;
+    }
+
+    /* Status Tags & Buttons */
+    .status-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.875rem;
+        border-radius: 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    
+    .status-badge.completed {
+        background: #e6fffa;
+        color: #2c7a7b;
+    }
+    
+    .status-badge.locked {
+        background: #edf2f7;
+        color: #a0aec0;
+    }
+    
+    .start-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.45rem 1.2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .start-btn:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .day-meta {
+        font-size: 0.85rem;
+        color: #718096;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Warning Message Style */
+    .warning-msg {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        right: 0;
+        margin-bottom: 12px;
+        background: #fff5f5;
+        border: 1px solid #fed7d7;
+        color: #c53030;
+        text-align: center;
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        z-index: 10;
+        animation: slideDown 0.25s ease-out;
+        pointer-events: none;
+    }
+    
+    .warning-msg::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 7px solid transparent;
+        border-top-color: #fed7d7;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Stars */
+    .stars-display {
+        display: flex;
+        gap: 4px;
+    }
+    .star-icon { 
+        color: #cbd5e1; 
+        font-size: 0.85rem; 
+    }
+    .star-icon.active { 
+        color: #fbbf24; 
+    }
+
+    /* --- State: Completed --- */
+    .day-item.completed::before {
+        background: #48bb78;
+        box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.2);
+    }
+    .day-item.completed .day-card {
+        background: #fafef5;
+        border-left: 3px solid #48bb78;
+    }
+
+    /* --- State: Current --- */
+    .day-item.current::before {
+        background: #f6ad55;
+        width: 12px;
+        height: 12px;
+        box-shadow: 0 0 0 3px rgba(246, 173, 85, 0.3);
+        animation: pulse 2s infinite;
+    }
+    .day-item.current .day-card {
+        border: 2px solid #f6ad55;
+        box-shadow: 0 8px 20px rgba(246, 173, 85, 0.15);
+        background: #fffef7;
+    }
+    .day-item.current .start-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    /* --- State: Locked --- */
+    .day-item.locked::before {
+        background: #cbd5e0;
+    }
+    .day-item.locked .day-card {
+        opacity: 0.65;
+        background: #fafbfc;
+        cursor: pointer;
+    }
+    .day-item.locked .day-title { 
+        color: #94a3b8; 
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(246, 173, 85, 0.4);
+        }
+        70% {
+            box-shadow: 0 0 0 8px rgba(246, 173, 85, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(246, 173, 85, 0);
+        }
+    }
+
+    /* --- Responsive (Desktop Zig-Zag) --- */
+    @media (min-width: 768px) {
+        .timeline::before {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .day-item {
+            width: 45%;
+            padding-left: 0;
+            margin-bottom: 2rem;
+        }
+        
+        .day-item::before {
+            left: auto;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        /* Alternate sides */
+        .day-item:nth-child(odd) {
+            margin-left: 0;
+            margin-right: auto;
+        }
+        
+        .day-item:nth-child(even) {
+            margin-left: auto;
+            margin-right: 0;
+        }
+        
+        /* Position connector dots correctly */
+        .day-item:nth-child(odd)::before {
+            right: -6px;
+            left: auto;
+        }
+        
+        .day-item:nth-child(even)::before {
+            left: -6px;
+            right: auto;
+        }
+        
+        /* Warning positioning */
+        .warning-msg {
+            left: 0;
+            right: 0;
+            width: auto;
+            white-space: nowrap;
+        }
+        
+        .day-item:nth-child(odd) .warning-msg {
+            left: 0;
+            right: auto;
+        }
+        
+        .day-item:nth-child(even) .warning-msg {
+            right: 0;
+            left: auto;
+        }
+    }
+    
+    @media (max-width: 767px) {
+        .day-item {
+            padding-left: 55px;
+        }
+        
+        .day-item::before {
+            left: 22px;
+        }
+        
+        .timeline::before {
+            left: 25px;
+        }
+        
+        .warning-msg {
+            font-size: 0.75rem;
+            padding: 8px 12px;
+            white-space: normal;
+        }
+    }
+
+    /* Action Buttons */
+    .action-footer {
+        text-align: center;
+        margin-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 2rem;
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    
+    .btn-back:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+</style>
+
+<div class="journey-container">
+    <!-- Clean Header -->
+    <div class="journey-header">
+        <div class="header-content">
+            <h1>Beginner Learning Path</h1>
+            <p>Complete each day to unlock the next lesson</p>
+            
+            <div class="header-stats">
+                <div class="stat-box">
+                    <i class="fas fa-star"></i>
+                    <span id="totalStars">0</span> Stars
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="completedCount">0</span> / 30 Days
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-card">
+        <div class="progress-top">
+            <span>Your Journey Progress</span>
+            <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-bar" id="progressFill"></div>
+        </div>
+    </div>
+
+    <!-- Timeline Container -->
+    <div class="timeline" id="timelineContainer">
+        <!-- Levels generated via JS -->
+    </div>
+
+    <div class="action-footer">
+        <a href="{% url 'learning:beginner_instructions' %}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Instructions
+        </a>
+    </div>
+</div>
+
+<script>
+    // Get data from Django backend
+    const levelsData = {{ levels_data|safe }};
+    let currentLevel = {{ current_level }};
+    
+    // CORRECT APPROACH: Build URL properly using the template tag
+    // Method 1: Get the URL pattern and replace the placeholder correctly
+    const dayUrlPattern = "{% url 'learning:beginner_day' 999 %}";
+    function getDayUrl(day) {
+        // Replace the number 999 with the actual day number
+        return dayUrlPattern.replace('999', day);
+    }
+    
+    // Helper: Generate Stars HTML
+    function renderStars(count) {
+        let html = '<div class="stars-display">';
+        for(let i=1; i<=3; i++) {
+            const cls = i <= count ? 'active' : '';
+            html += `<i class="fas fa-star star-icon ${cls}"></i>`;
+        }
+        html += '</div>';
+        return html;
+    }
+    
+    // Helper: Get Title
+    function getTitle(day) {
+        const titles = {
+            1: "Kickoff", 
+            5: "Milestone 1", 
+            10: "Milestone 2", 
+            15: "Halfway There!", 
+            20: "Milestone 3", 
+            25: "Milestone 4", 
+            30: "Graduation Day"
+        };
+        return titles[day] || `Challenge Day`;
+    }
+
+    // Main Render Function
+    function renderTimeline() {
+        const container = document.getElementById('timelineContainer');
+        container.innerHTML = '';
+        
+        let completedCount = 0;
+        let totalStars = 0;
+
+        levelsData.forEach((level, index) => {
+            const day = level.day;
+            const isCompleted = level.completed;
+            const isCurrent = (!isCompleted && day === currentLevel);
+            const isLocked = (!isCompleted && day > currentLevel);
+
+            if (isCompleted) {
+                completedCount++;
+                totalStars += level.stars;
+            }
+
+            const item = document.createElement('div');
+            item.className = 'day-item';
+            if(isCompleted) item.classList.add('completed');
+            if(isCurrent) item.classList.add('current');
+            if(isLocked) item.classList.add('locked');
+
+            let statusHtml = '';
+            let metaHtml = '';
+
+            if (isCompleted) {
+                statusHtml = '<span class="status-badge completed">Completed</span>';
+                metaHtml = renderStars(level.stars);
+            } else if (isCurrent) {
+                statusHtml = '<button class="start-btn">Start Now</button>';
+                metaHtml = 'Ready for your next lesson?';
+            } else if (isLocked) {
+                statusHtml = '<span class="status-badge locked">Locked</span>';
+                metaHtml = '';
+            }
+
+            item.innerHTML = `
+                <div class="day-card">
+                    <div class="card-header">
+                        <div class="day-title">Day ${day}: ${getTitle(day)}</div>
+                        ${statusHtml}
+                    </div>
+                    <div class="day-meta">
+                        <span>${metaHtml}</span>
+                    </div>
+                </div>
+            `;
+
+            const card = item.querySelector('.day-card');
+            const btn = item.querySelector('.start-btn');
+
+            if (isLocked) {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    
+                    if (item.querySelector('.warning-msg')) return;
+
+                    const warning = document.createElement('div');
+                    warning.className = 'warning-msg';
+                    warning.innerText = "Complete the previous day before moving to next";
+                    
+                    item.appendChild(warning);
+
+                    setTimeout(() => {
+                        if(warning) warning.remove();
+                    }, 3000);
+                });
+            } else if (isCurrent && btn) {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Use the proper URL function
+                    window.location.href = getDayUrl(day);
+                });
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', () => {
+                    // Use the proper URL function
+                    window.location.href = getDayUrl(day);
+                });
+            } else if (isCompleted) {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', () => {
+                    if(confirm(`Review Day ${day}?`)) {
+                        // Use the proper URL function
+                        window.location.href = getDayUrl(day);
+                    }
+                });
+            }
+
+            container.appendChild(item);
+        });
+
+        document.getElementById('completedCount').innerText = completedCount;
+        document.getElementById('totalStars').innerText = totalStars;
+        const percent = Math.floor((completedCount / 30) * 100);
+        document.getElementById('progressPercent').innerText = `${percent}%`;
+        document.getElementById('progressFill').style.width = `${percent}%`;
+
+        setTimeout(() => {
+            const currentEl = document.querySelector('.day-item.current');
+            if (currentEl) {
+                currentEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 100);
+    }
+
+    renderTimeline();
+</script>
+{% endblock %}

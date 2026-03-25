@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'reading',
     'home_page',
     'captcha',
+    'learning',
 ]
 
 MIDDLEWARE = [
@@ -88,11 +89,17 @@ WSGI_APPLICATION = 'english_learning.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.pbxufsucwjrstltgwziv',  # ✅ important
+        'PASSWORD': '5exvzfpyC9VKRWWp',
+        'HOST': 'aws-1-ap-south-1.pooler.supabase.com',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

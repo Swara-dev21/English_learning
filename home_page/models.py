@@ -48,19 +48,21 @@ class StudentProfile(models.Model):
     
     # Pretest tracking fields
     listening_completed = models.BooleanField(default=False)
-    reading_completed = models.BooleanField(default=False)
     speaking_completed = models.BooleanField(default=False)
+    reading_completed = models.BooleanField(default=False)
     writing_completed = models.BooleanField(default=False)
     pretest_completed = models.BooleanField(default=False)
     pretest_completed_at = models.DateTimeField(null=True, blank=True)
+
+    level = models.CharField(max_length=20, default='Beginner')
     
     def __str__(self):
         return self.user.username
     
     def update_pretest_status(self):
         """Check if all tests are completed"""
-        if all([self.listening_completed, self.reading_completed, 
-                self.speaking_completed, self.writing_completed]):
+        if all([self.listening_completed, self.speaking_completed,
+                self.reading_completed, self.writing_completed]):
             self.pretest_completed = True
             self.pretest_completed_at = timezone.now()
         else:
@@ -85,8 +87,8 @@ class StudentProfile(models.Model):
         """Return number of completed tests"""
         return sum([
             self.listening_completed,
-            self.reading_completed,
             self.speaking_completed,
+            self.reading_completed,
             self.writing_completed
         ])
 

@@ -1,0 +1,153 @@
+{% extends 'home_page/base.html' %}
+{% load static %}
+
+{% block title %}Quiz Result - Day {{ day_number }}{% endblock %}
+
+{% block content %}
+<style>
+    .result-container {
+        max-width: 600px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+        text-align: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .result-card {
+        background: white;
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .result-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .result-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 1rem;
+    }
+
+    .score-display {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #667eea;
+        margin: 1rem 0;
+    }
+
+    .stars-display {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .star {
+        font-size: 2rem;
+        color: #fbbf24;
+    }
+
+    .message {
+        color: #4a5568;
+        margin: 1rem 0;
+        line-height: 1.6;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-outline {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+
+    .btn-outline:hover {
+        background: #667eea;
+        color: white;
+    }
+</style>
+
+<div class="result-container">
+    <div class="result-card">
+        <div class="result-icon">
+            {% if stars == 3 %}
+                🎉🏆🎉
+            {% elif stars >= 2 %}
+                🌟🌟🌟
+            {% elif stars >= 1 %}
+                🌟⭐
+            {% else %}
+                📚
+            {% endif %}
+        </div>
+        
+        <h1 class="result-title">Day {{ day_number }} Complete!</h1>
+        
+        <div class="score-display">
+            {{ score }}%
+        </div>
+        
+        <div class="stars-display">
+            {% for i in "123"|make_list %}
+                {% if forloop.counter <= stars %}
+                    <i class="fas fa-star star"></i>
+                {% else %}
+                    <i class="far fa-star star"></i>
+                {% endif %}
+            {% endfor %}
+        </div>
+        
+        <div class="message">
+            {% if stars == 3 %}
+                <p>🌟 Perfect! Excellent work! You've mastered this lesson completely!</p>
+            {% elif stars == 2 %}
+                <p>👍 Great job! You're on the right track!</p>
+            {% elif stars == 1 %}
+                <p>📖 Good effort! Review the material and try again to improve your score.</p>
+            {% else %}
+                <p>💪 Keep practicing! Review the lesson and try the quiz again to unlock the next day.</p>
+            {% endif %}
+        </div>
+        
+        <div class="message">
+            <p>You got <strong>{{ correct_answers }}</strong> out of <strong>{{ total_questions }}</strong> questions correct.</p>
+        </div>
+        
+        <div class="btn-group">
+            <a href="{% url 'learning:beginner_levels' %}" class="btn btn-primary">
+                Continue Your Journey <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

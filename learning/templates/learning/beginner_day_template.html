@@ -1,0 +1,738 @@
+{% extends 'home_page/base.html' %}
+{% load static %}
+
+{% block title %}Day {{ day_number }}: {{ lesson.title }} - Beginner Path{% endblock %}
+
+{% block content %}
+<style>
+    .lesson-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .lesson-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 1.5rem;
+        color: white;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .lesson-header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .day-badge {
+        display: inline-block;
+        background: rgba(255,255,255,0.2);
+        padding: 0.25rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Activity Cards */
+    .activity-card {
+        background: white;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    .activity-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        padding: 1rem 1.5rem;
+        border-bottom: 2px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .activity-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .activity-subtitle {
+        font-size: 0.8rem;
+        color: #64748b;
+    }
+
+    .activity-content {
+        padding: 1.5rem;
+    }
+
+    /* Audio Player */
+    .audio-player {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 1rem;
+        margin: 1rem 0;
+        text-align: center;
+    }
+
+    audio {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    /* Sentence Display */
+    .sentence-box {
+        background: #fef9e8;
+        border-left: 4px solid #f59e0b;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #2d3748;
+    }
+
+    .meaning-box {
+        background: #e0f2fe;
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+        color: #075985;
+    }
+
+    /* Vocabulary Highlight */
+    .vocab-word {
+        display: inline-block;
+        background: #fef3c7;
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        margin: 0.2rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .vocab-word:hover {
+        background: #fde047;
+        transform: scale(1.05);
+    }
+
+    .vocab-tooltip {
+        position: absolute;
+        background: #1e293b;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        z-index: 100;
+        white-space: nowrap;
+    }
+
+    /* Quiz Options */
+    .quiz-question {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .quiz-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+    }
+
+    .quiz-option {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .quiz-option:hover {
+        background: #f1f5f9;
+    }
+
+    .quiz-option input {
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Writing Input */
+    .writing-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        resize: vertical;
+    }
+
+    .writing-input:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    .suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0.75rem 0;
+    }
+
+    .suggestion-chip {
+        background: #e2e8f0;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .suggestion-chip:hover {
+        background: #cbd5e1;
+        transform: translateY(-1px);
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 1rem;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+        padding: 0.6rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    .feedback {
+        margin-top: 0.75rem;
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+
+    .feedback.success {
+        background: #e6fffa;
+        color: #2c7a7b;
+        border-left: 3px solid #48bb78;
+    }
+
+    .feedback.error {
+        background: #fff5f5;
+        color: #c53030;
+        border-left: 3px solid #fc8181;
+    }
+
+    .record-btn {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        cursor: pointer;
+        margin: 0.5rem;
+    }
+
+    .record-btn.recording {
+        background: #dc2626;
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+        .lesson-container {
+            padding: 0 0.5rem;
+        }
+        .activity-content {
+            padding: 1rem;
+        }
+    }
+</style>
+
+<div class="lesson-container">
+    <div class="lesson-header">
+        <div class="day-badge">Day {{ day_number }}</div>
+        <h1>{{ lesson.title }}</h1>
+        <p>Complete all activities to unlock the next day</p>
+    </div>
+
+    {% if is_completed %}
+    <div class="activity-card" style="background: #e6fffa; text-align: center; padding: 2rem;">
+        <h2>✅ Congratulations! You've completed Day {{ day_number }}!</h2>
+        <div class="stars-earned" style="display: flex; justify-content: center; gap: 0.5rem; margin: 1rem 0;">
+            {% for i in "123"|make_list %}
+                {% if forloop.counter <= stars %}
+                    <i class="fas fa-star" style="color: #fbbf24; font-size: 2rem;"></i>
+                {% else %}
+                    <i class="far fa-star" style="color: #cbd5e1; font-size: 2rem;"></i>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <p>Your Score: {{ score }}%</p>
+        <a href="{% url 'learning:beginner_levels' %}" class="btn-primary" style="display: inline-block; text-decoration: none;">
+            <i class="fas fa-arrow-left"></i> Back to Learning Path
+        </a>
+    </div>
+    {% else %}
+
+    <!-- Listening Activity -->
+    {% if listening_activity %}
+    <div class="activity-card" id="listening-activity">
+        <div class="activity-header">
+            <div class="activity-icon" style="background: #e0f2fe;">🎧</div>
+            <div>
+                <div class="activity-title">Listening Activity</div>
+                <div class="activity-subtitle">Learn + Test</div>
+            </div>
+        </div>
+        <div class="activity-content">
+            <div class="sentence-box">
+                "{{ listening_activity.sentence }}"
+            </div>
+            <div class="meaning-box">
+                <strong>📖 Meaning:</strong> {{ listening_activity.meaning }}
+            </div>
+            {% if listening_activity.audio_file %}
+            <div class="audio-player">
+                <audio controls>
+                    <source src="{{ listening_activity.audio_file.url }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <p class="practice-tip">🎯 Practice Tip: Listen 2-3 times and focus on words like "wake up", "brush", "prepare"</p>
+            </div>
+            {% endif %}
+            
+            <h4>📝 Test Your Understanding</h4>
+            <div class="quiz-question">
+                <p><strong>{{ listening_activity.test_question }}</strong></p>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="listening_answer" value="A">
+                        <span>A) {{ listening_activity.test_option_a }}</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="listening_answer" value="B">
+                        <span>B) {{ listening_activity.test_option_b }}</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="listening_answer" value="C">
+                        <span>C) {{ listening_activity.test_option_c }}</span>
+                    </label>
+                </div>
+                <button class="btn-secondary" onclick="checkListeningAnswer()">Check Answer</button>
+                <div id="listening-feedback"></div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Speaking Activity -->
+    {% if speaking_activity %}
+    <div class="activity-card" id="speaking-activity">
+        <div class="activity-header">
+            <div class="activity-icon" style="background: #fef3c7;">🗣️</div>
+            <div>
+                <div class="activity-title">Speaking Activity</div>
+                <div class="activity-subtitle">Learn + Practice + Test</div>
+            </div>
+        </div>
+        <div class="activity-content">
+            <div class="sentence-box">
+                "{{ speaking_activity.sentence }}"
+            </div>
+            {% if speaking_activity.normal_audio %}
+            <div class="audio-player">
+                <p><strong>🔊 Listen to pronunciation:</strong></p>
+                <audio controls>
+                    <source src="{{ speaking_activity.normal_audio.url }}" type="audio/mpeg">
+                </audio>
+                {% if speaking_activity.slow_audio %}
+                <p><strong>🐢 Slow version:</strong></p>
+                <audio controls>
+                    <source src="{{ speaking_activity.slow_audio.url }}" type="audio/mpeg">
+                </audio>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <p><strong>Break into parts:</strong></p>
+            <div class="sentence-parts">
+                {% for part in speaking_activity.sentence_parts.split|slice:":10" %}
+                    <div class="sentence-box" style="margin: 0.5rem 0; font-size: 0.95rem;">• {{ part|cut:"," }}</div>
+                {% endfor %}
+            </div>
+            
+            <h4>🎤 Record Your Practice</h4>
+            <button id="recordBtn" class="record-btn" onclick="startRecording()">🎙️ Start Recording</button>
+            <button id="stopBtn" class="btn-secondary" onclick="stopRecording()" disabled>⏹️ Stop</button>
+            <div id="recordingStatus"></div>
+            
+            <h4>📝 Test Task</h4>
+            <p>{{ speaking_activity.test_task }}</p>
+            <button class="btn-primary" onclick="evaluateRecording()">Submit Recording for Evaluation</button>
+            <div id="speaking-feedback"></div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Reading Activity -->
+    {% if reading_activity %}
+    <div class="activity-card" id="reading-activity">
+        <div class="activity-header">
+            <div class="activity-icon" style="background: #d9f99d;">📖</div>
+            <div>
+                <div class="activity-title">Reading Activity</div>
+                <div class="activity-subtitle">Learn + Test</div>
+            </div>
+        </div>
+        <div class="activity-content">
+            <div class="sentence-box" style="background: #fef9e8;">
+                {{ reading_activity.paragraph }}
+            </div>
+            
+            {% if reading_activity.audio_file %}
+            <div class="audio-player">
+                <audio controls>
+                    <source src="{{ reading_activity.audio_file.url }}" type="audio/mpeg">
+                </audio>
+            </div>
+            {% endif %}
+            
+            <p><strong>📚 Vocabulary (tap to see meaning):</strong></p>
+            <div id="vocabulary">
+                {% for item in reading_activity.vocabulary.split|slice:":10" %}
+                    {% if item %}
+                        {% with word_meaning=item|cut:"," %}
+                            <span class="vocab-word" data-meaning="">{{ word_meaning }}</span>
+                        {% endwith %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
+            <div class="meaning-box">
+                <strong>💡 Explanation:</strong> {{ reading_activity.explanation }}
+            </div>
+            
+            <h4>📝 Reading Comprehension</h4>
+            <div class="quiz-question">
+                <p><strong>{{ reading_activity.test_question }}</strong></p>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="reading_answer" value="A">
+                        <span>A) {{ reading_activity.test_option_a }}</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="reading_answer" value="B">
+                        <span>B) {{ reading_activity.test_option_b }}</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="reading_answer" value="C">
+                        <span>C) {{ reading_activity.test_option_c }}</span>
+                    </label>
+                </div>
+                <button class="btn-secondary" onclick="checkReadingAnswer()">Check Answer</button>
+                <div id="reading-feedback"></div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Writing Activity -->
+    {% if writing_activity %}
+    <div class="activity-card" id="writing-activity">
+        <div class="activity-header">
+            <div class="activity-icon" style="background: #fed7aa;">✍️</div>
+            <div>
+                <div class="activity-title">Writing Activity</div>
+                <div class="activity-subtitle">Learn + Practice + Test</div>
+            </div>
+        </div>
+        <div class="activity-content">
+            <p><strong>📝 Structure:</strong></p>
+            <div class="sentence-box">
+                "{{ writing_activity.structure }}"
+            </div>
+            
+            <p><strong>💡 Suggestions:</strong></p>
+            <div class="suggestions">
+                {% for suggestion in writing_activity.suggestions.split|slice:":10" %}
+                    {% if suggestion %}
+                        <span class="suggestion-chip" onclick="insertSuggestion('{{ suggestion|cut:"," }}')">{{ suggestion|cut:"," }}</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
+            <div class="meaning-box">
+                <strong>📖 Example:</strong> "{{ writing_activity.example }}"
+            </div>
+            
+            <h4>✍️ Your Turn</h4>
+            <p><strong>{{ writing_activity.test_task }}</strong></p>
+            <textarea id="writing-input" class="writing-input" rows="3" placeholder="Write your sentence here..."></textarea>
+            <button class="btn-primary" onclick="evaluateWriting()">Submit Writing</button>
+            <div id="writing-feedback"></div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Final Quiz -->
+    {% if quiz_questions %}
+    <div class="activity-card" id="final-quiz">
+        <div class="activity-header">
+            <div class="activity-icon" style="background: #c7d2fe;">📋</div>
+            <div>
+                <div class="activity-title">Final Quiz</div>
+                <div class="activity-subtitle">Complete to finish the day</div>
+            </div>
+        </div>
+        <div class="activity-content">
+            <form method="POST" action="{% url 'learning:submit_quiz' day_number=day_number %}">
+                {% csrf_token %}
+                {% for question in quiz_questions %}
+                <div class="quiz-question">
+                    <p><strong>Question {{ forloop.counter }}:</strong> {{ question.question_text }}</p>
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="question_{{ question.id }}" value="A" required>
+                            <span>A) {{ question.option_a }}</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="question_{{ question.id }}" value="B">
+                            <span>B) {{ question.option_b }}</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="question_{{ question.id }}" value="C">
+                            <span>C) {{ question.option_c }}</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="question_{{ question.id }}" value="D">
+                            <span>D) {{ question.option_d }}</span>
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn-primary">Submit Final Quiz</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% endif %}
+</div>
+
+<script>
+    // Listening Activity Check
+    function checkListeningAnswer() {
+        const selected = document.querySelector('input[name="listening_answer"]:checked');
+        if (!selected) {
+            document.getElementById('listening-feedback').innerHTML = '<div class="feedback error">Please select an answer first!</div>';
+            return;
+        }
+        
+        const correctAnswer = "{{ listening_activity.correct_answer }}";
+        if (selected.value === correctAnswer) {
+            document.getElementById('listening-feedback').innerHTML = '<div class="feedback success">✅ Correct! Great job! The speaker brushes their teeth after waking up.</div>';
+            markActivityComplete('listening');
+        } else {
+            document.getElementById('listening-feedback').innerHTML = '<div class="feedback error">❌ Not quite right. Listen again and focus on the words after "wake up early".</div>';
+        }
+    }
+    
+    // Reading Activity Check
+    function checkReadingAnswer() {
+        const selected = document.querySelector('input[name="reading_answer"]:checked');
+        if (!selected) {
+            document.getElementById('reading-feedback').innerHTML = '<div class="feedback error">Please select an answer first!</div>';
+            return;
+        }
+        
+        const correctAnswer = "{{ reading_activity.correct_answer }}";
+        if (selected.value === correctAnswer) {
+            document.getElementById('reading-feedback').innerHTML = '<div class="feedback success">✅ Correct! The person takes rest after returning home.</div>';
+            markActivityComplete('reading');
+        } else {
+            document.getElementById('reading-feedback').innerHTML = '<div class="feedback error">❌ Try again! Look for the part about what happens "after returning home".</div>';
+        }
+    }
+    
+    // Writing Evaluation (simple evaluation)
+    function evaluateWriting() {
+        const writing = document.getElementById('writing-input').value;
+        if (!writing.trim()) {
+            document.getElementById('writing-feedback').innerHTML = '<div class="feedback error">Please write a sentence first!</div>';
+            return;
+        }
+        
+        // Simple evaluation logic
+        let feedback = '';
+        if (writing.includes('and then')) {
+            feedback += '✅ Good use of "and then"! ';
+        } else {
+            feedback += '⚠️ Try using "and then" to connect your ideas. ';
+        }
+        
+        if (writing.length > 20) {
+            feedback += '✅ Nice sentence length! ';
+        } else {
+            feedback += '💡 Try adding more details to your sentence. ';
+        }
+        
+        document.getElementById('writing-feedback').innerHTML = `<div class="feedback success">${feedback}<br>✍️ Your sentence: "${writing}"</div>`;
+        markActivityComplete('writing');
+    }
+    
+    // Speaking Recording (Web Audio API)
+    let mediaRecorder;
+    let audioChunks = [];
+    
+    function startRecording() {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    // Here you would send to server for evaluation
+                    document.getElementById('speaking-feedback').innerHTML = '<div class="feedback success">✅ Recording submitted! Practice saying words like "usually" and "complete" clearly.</div>';
+                    markActivityComplete('speaking');
+                };
+                
+                mediaRecorder.start();
+                document.getElementById('recordBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                document.getElementById('recordingStatus').innerHTML = '<p class="feedback success">🔴 Recording in progress...</p>';
+            })
+            .catch(error => {
+                console.error('Error accessing microphone:', error);
+                document.getElementById('recordingStatus').innerHTML = '<p class="feedback error">❌ Could not access microphone. Please check permissions.</p>';
+            });
+    }
+    
+    function stopRecording() {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+            document.getElementById('recordBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('recordingStatus').innerHTML = '<p class="feedback success">✅ Recording completed!</p>';
+            
+            // Stop all tracks
+            mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        }
+    }
+    
+    function evaluateRecording() {
+        // Simulate evaluation
+        document.getElementById('speaking-feedback').innerHTML = '<div class="feedback success">🎤 Your pronunciation sounds good! Try to emphasize the word "usually" more clearly.</div>';
+        markActivityComplete('speaking');
+    }
+    
+    // Helper to insert suggestion in writing
+    function insertSuggestion(word) {
+        const textarea = document.getElementById('writing-input');
+        textarea.value += word;
+        textarea.focus();
+    }
+    
+    // Track completed activities
+    let completedActivities = {
+        listening: false,
+        speaking: false,
+        reading: false,
+        writing: false
+    };
+    
+    function markActivityComplete(activity) {
+        completedActivities[activity] = true;
+        const activityCard = document.getElementById(`${activity}-activity`);
+        if (activityCard) {
+            activityCard.style.borderLeft = '4px solid #48bb78';
+            activityCard.style.opacity = '0.9';
+        }
+        
+        // Check if all activities are complete
+        const allComplete = Object.values(completedActivities).every(v => v === true);
+        if (allComplete && document.getElementById('final-quiz')) {
+            document.getElementById('final-quiz').style.borderLeft = '4px solid #f59e0b';
+            document.getElementById('final-quiz').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+    
+    // Vocabulary tooltips
+    document.querySelectorAll('.vocab-word').forEach(word => {
+        word.addEventListener('click', function(e) {
+            const meaning = this.getAttribute('data-meaning');
+            if (meaning) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'vocab-tooltip';
+                tooltip.textContent = meaning;
+                tooltip.style.position = 'absolute';
+                tooltip.style.left = e.pageX + 'px';
+                tooltip.style.top = (e.pageY - 30) + 'px';
+                document.body.appendChild(tooltip);
+                setTimeout(() => tooltip.remove(), 2000);
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -34,6 +34,7 @@ urlpatterns = [
     path('speaking/', include('speaking.urls')),
     path('writing/', include('writing.urls')),
     path('captcha/', include('captcha.urls')), 
+    path('learning/', include('learning.urls')),
       # If you're using captcha
 ]
 

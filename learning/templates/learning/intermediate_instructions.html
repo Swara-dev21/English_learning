@@ -1,0 +1,871 @@
+<!-- learning/templates/learning/intermediate_instructions.html -->
+{% extends 'home_page/base.html' %}
+{% load static %}
+
+{% block title %}Intermediate Path | 30-Day Fluency Journey{% endblock %}
+
+{% block content %}
+<style>
+    .intermediate-container {
+        max-width: 850px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    /* Header - Clean Blue Theme */
+    .path-header {
+        background: #4a62b0;
+        color: white;
+        padding: 2rem 2.5rem;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .path-header h1 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.01em;
+    }
+
+    .level-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 0.5rem 1.2rem;
+        border-radius: 40px;
+        font-size: 0.9rem;
+    }
+
+    .level-indicator i {
+        font-size: 0.8rem;
+    }
+
+    .level-indicator span {
+        opacity: 0.8;
+    }
+
+    /* Main Card */
+    .content-card {
+        background: white;
+        border-radius: 0 0 20px 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+        border: 1px solid #eef2f6;
+        border-top: none;
+    }
+
+    /* Welcome Row */
+    .welcome-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: #f8fafc;
+        padding: 1.2rem 1.5rem;
+        border-radius: 14px;
+        margin-bottom: 2rem;
+        border: 1px solid #e2e8f0;
+    }
+
+    .welcome-icon {
+        width: 48px;
+        height: 48px;
+        background: #4a62b0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.3rem;
+    }
+
+    .welcome-row h2 {
+        font-size: 1.3rem;
+        color: #1e293b;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .welcome-row h2 span {
+        font-weight: 600;
+        color: #4a62b0;
+    }
+
+    /* Stats Row */
+    .stats-row {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+        flex: 1;
+        background: #f8fafc;
+        border-radius: 14px;
+        padding: 1.2rem;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #4a62b0;
+        line-height: 1.2;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #475569;
+    }
+
+    /* Section Title */
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-title i {
+        color: #4a62b0;
+        font-size: 1.1rem;
+    }
+
+    /* Instructions Grid - 4 items only */
+    .instructions-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .instruction-item {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .item-icon {
+        width: 44px;
+        height: 44px;
+        background: #e0e7ff;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4a62b0;
+        font-size: 1.2rem;
+    }
+
+    .item-content h4 {
+        font-size: 1rem;
+        color: #1e293b;
+        margin-bottom: 0.2rem;
+        font-weight: 600;
+    }
+
+    .item-content p {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    /* Days Grid */
+    .days-section {
+        margin-bottom: 2rem;
+    }
+
+    .days-grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 0.6rem;
+        margin: 1rem 0;
+    }
+
+    .day-tile {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.8rem 0.2rem;
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+
+    .day-tile.current {
+        border: 2px solid #4a62b0;
+        background: #f5f7ff;
+    }
+
+    .day-tile.locked {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+    }
+
+    .day-number {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.2rem;
+    }
+
+    .day-status {
+        font-size: 0.7rem;
+        color: #64748b;
+    }
+
+    .day-tile.current .day-status {
+        color: #4a62b0;
+        font-weight: 500;
+    }
+
+    .day-tile.locked .day-status i {
+        color: #94a3b8;
+    }
+
+    /* Milestone Box */
+    .milestone-box {
+        background: #e0e7ff;
+        border-radius: 14px;
+        padding: 1.2rem 1.5rem;
+        margin: 2rem 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border: 1px solid #4a62b0;
+    }
+
+    .milestone-icon {
+        width: 48px;
+        height: 48px;
+        background: #4a62b0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.3rem;
+    }
+
+    .milestone-content {
+        flex: 1;
+    }
+
+    .milestone-content p {
+        color: #1e293b;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 0.2rem;
+    }
+
+    .milestone-content small {
+        color: #4a62b0;
+        font-size: 0.85rem;
+    }
+
+    /* Action Buttons */
+    .action-row {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.8rem 2rem;
+        border-radius: 40px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #4a62b0;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #3a4f8c;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #4a62b0;
+        border: 1px solid #4a62b0;
+    }
+
+    .btn-secondary:hover {
+        background: #f5f7ff;
+    }
+
+    /* ===== ENHANCED RESPONSIVE STYLES ===== */
+    
+    /* Tablets and small desktops */
+    @media (max-width: 768px) {
+        .intermediate-container {
+            padding: 0 1.2rem;
+            margin: 1.5rem auto;
+        }
+
+        .path-header {
+            padding: 1.5rem;
+        }
+
+        .path-header h1 {
+            font-size: 1.6rem;
+        }
+
+        .content-card {
+            padding: 1.5rem;
+        }
+
+        .welcome-row {
+            padding: 1rem;
+        }
+
+        .welcome-row h2 {
+            font-size: 1.1rem;
+        }
+
+        .welcome-icon {
+            width: 42px;
+            height: 42px;
+            font-size: 1.1rem;
+        }
+
+        .stats-row {
+            gap: 1rem;
+        }
+
+        .stat-card {
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 1.6rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+        }
+
+        .instructions-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+        }
+
+        .instruction-item {
+            padding: 1rem;
+        }
+
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1.1rem;
+        }
+
+        .item-content h4 {
+            font-size: 0.9rem;
+        }
+
+        .item-content p {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Large phones */
+    @media (max-width: 640px) {
+        .intermediate-container {
+            padding: 0 1rem;
+        }
+
+        .path-header {
+            padding: 1.2rem;
+        }
+
+        .path-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .level-indicator {
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+            gap: 0.5rem;
+        }
+
+        .content-card {
+            padding: 1.2rem;
+        }
+
+        .welcome-row {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.2rem;
+        }
+
+        .welcome-icon {
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-row h2 {
+            font-size: 1.1rem;
+        }
+
+        .stats-row {
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .stat-card {
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+        }
+
+        .instructions-grid {
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
+        }
+
+        .instruction-item {
+            padding: 1rem;
+        }
+
+        .days-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+
+        .day-tile {
+            padding: 0.6rem 0.1rem;
+        }
+
+        .day-number {
+            font-size: 0.75rem;
+        }
+
+        .day-status {
+            font-size: 0.65rem;
+        }
+
+        .milestone-box {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.2rem;
+        }
+
+        .milestone-icon {
+            margin-bottom: 0.5rem;
+        }
+
+        .milestone-content p {
+            font-size: 0.95rem;
+        }
+
+        .milestone-content small {
+            font-size: 0.8rem;
+        }
+
+        .action-row {
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+        }
+    }
+
+    /* Small phones */
+    @media (max-width: 480px) {
+        .path-header h1 {
+            font-size: 1.3rem;
+        }
+
+        .level-indicator {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.8rem;
+        }
+
+        .content-card {
+            padding: 1rem;
+        }
+
+        .welcome-row {
+            padding: 1rem;
+        }
+
+        .welcome-row h2 {
+            font-size: 1rem;
+        }
+
+        .welcome-icon {
+            width: 38px;
+            height: 38px;
+            font-size: 1rem;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-title i {
+            font-size: 1rem;
+        }
+
+        .instruction-item {
+            padding: 0.8rem;
+        }
+
+        .item-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 1rem;
+        }
+
+        .item-content h4 {
+            font-size: 0.85rem;
+        }
+
+        .item-content p {
+            font-size: 0.75rem;
+        }
+
+        .days-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.4rem;
+        }
+
+        .day-tile {
+            padding: 0.5rem 0.1rem;
+        }
+
+        .day-number {
+            font-size: 0.7rem;
+        }
+
+        .day-status {
+            font-size: 0.6rem;
+        }
+
+        .milestone-box {
+            padding: 1rem;
+        }
+
+        .milestone-icon {
+            width: 42px;
+            height: 42px;
+            font-size: 1.1rem;
+        }
+
+        .milestone-content p {
+            font-size: 0.9rem;
+        }
+
+        .milestone-content small {
+            font-size: 0.75rem;
+        }
+
+        .btn {
+            font-size: 0.9rem;
+            padding: 0.7rem 1.2rem;
+        }
+    }
+
+    /* Very small phones */
+    @media (max-width: 360px) {
+        .path-header h1 {
+            font-size: 1.2rem;
+        }
+
+        .days-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .stat-card {
+            padding: 0.8rem;
+        }
+
+        .stat-number {
+            font-size: 1.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+        }
+
+        .instruction-item {
+            padding: 0.7rem;
+        }
+
+        .item-icon {
+            width: 32px;
+            height: 32px;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Landscape mode on phones */
+    @media (max-width: 850px) and (orientation: landscape) {
+        .intermediate-container {
+            padding: 0 1rem;
+        }
+
+        .welcome-row {
+            flex-direction: row;
+            text-align: left;
+        }
+
+        .stats-row {
+            flex-direction: row;
+        }
+
+        .instructions-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .action-row {
+            flex-direction: row;
+        }
+
+        .btn {
+            width: auto;
+        }
+    }
+
+    /* Handle very small height devices */
+    @media (max-height: 600px) {
+        .intermediate-container {
+            margin: 1rem auto;
+        }
+
+        .path-header {
+            padding: 1rem 1.5rem;
+        }
+
+        .content-card {
+            padding: 1.2rem;
+        }
+
+        .stats-row {
+            margin-bottom: 1.5rem;
+        }
+
+        .instructions-grid {
+            margin-bottom: 1.5rem;
+        }
+
+        .milestone-box {
+            margin: 1.5rem 0;
+        }
+    }
+
+    /* Ensure text doesn't overflow */
+    .path-header h1,
+    .welcome-row h2,
+    .item-content h4,
+    .milestone-content p {
+        word-break: break-word;
+    }
+
+    /* Improve touch targets on mobile */
+    @media (max-width: 768px) {
+        .btn,
+        .day-tile,
+        .instruction-item {
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(74, 98, 176, 0.1);
+        }
+    }
+</style>
+
+<div class="intermediate-container">
+    <!-- Header -->
+    <div class="path-header">
+        <h1>30-Day Intermediate Path</h1>
+        <div class="level-indicator">
+            <i class="fas fa-circle"></i> Intermediate
+            <i class="fas fa-arrow-right"></i>
+            <span>Advanced</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-card">
+        <!-- Welcome Row -->
+        <div class="welcome-row">
+            <div class="welcome-icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <h2>Welcome back, <span>{{ user.username }}</span>! Ready to build fluency?</h2>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number">30</div>
+                <div class="stat-label">Total Days</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">20</div>
+                <div class="stat-label">Minutes/Day</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">75%</div>
+                <div class="stat-label">Passing Score</div>
+            </div>
+        </div>
+
+        <!-- How It Works - 4 Key Instructions -->
+        <div class="section-title">
+            <i class="fas fa-tasks"></i>
+            <span>How It Works</span>
+        </div>
+
+        <div class="instructions-grid">
+            <div class="instruction-item">
+                <div class="item-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="item-content">
+                    <h4>Complete Daily Tasks</h4>
+                    <p>Finish each day's lesson and conversation practice</p>
+                </div>
+            </div>
+
+            <div class="instruction-item">
+                <div class="item-icon"><i class="fas fa-unlock-alt"></i></div>
+                <div class="item-content">
+                    <h4>Unlock Next Day</h4>
+                    <p>Automatically after completing current day</p>
+                </div>
+            </div>
+
+            <div class="instruction-item">
+                <div class="item-icon"><i class="fas fa-fire"></i></div>
+                <div class="item-content">
+                    <h4>Maintain Your Streak</h4>
+                    <p>Daily practice builds lasting fluency</p>
+                </div>
+            </div>
+
+            <div class="instruction-item">
+                <div class="item-icon"><i class="fas fa-microphone"></i></div>
+                <div class="item-content">
+                    <h4>Speaking Practice</h4>
+                    <p>Record and improve your pronunciation</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journey Preview -->
+        <div class="section-title">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Your 30-Day Journey</span>
+        </div>
+
+        <div class="days-section">
+            <div class="days-grid">
+                <!-- Day 1 - Current -->
+                <div class="day-tile current">
+                    <div class="day-number">Day 1</div>
+                    <div class="day-status">Start</div>
+                </div>
+
+                <!-- Days 2-5 - Locked -->
+                <div class="day-tile locked">
+                    <div class="day-number">Day 2</div>
+                    <div class="day-status"><i class="fas fa-lock"></i></div>
+                </div>
+                <div class="day-tile locked">
+                    <div class="day-number">Day 3</div>
+                    <div class="day-status"><i class="fas fa-lock"></i></div>
+                </div>
+                <div class="day-tile locked">
+                    <div class="day-number">Day 4</div>
+                    <div class="day-status"><i class="fas fa-lock"></i></div>
+                </div>
+                <div class="day-tile locked">
+                    <div class="day-number">Day 5</div>
+                    <div class="day-status"><i class="fas fa-lock"></i></div>
+                </div>
+                <div class="day-tile locked">
+                    <div class="day-number">Day 6</div>
+                    <div class="day-status"><i class="fas fa-lock"></i></div>
+                </div>
+                <div class="day-tile locked">
+                    <div class="day-number">Day 7</div>
+                    <div class="day-status"><i class="fas fa-lock"></i></div>
+                </div>
+                <div class="day-tile locked">
+                    <div class="day-number">Day 8</div>
+                    <div class="day-status"><i class="fas fa-lock"></i></div>
+                </div>
+
+                <!-- Pattern -->
+                <div class="day-tile locked">
+                    <div class="day-number">...</div>
+                    <div class="day-status"></div>
+                </div>
+                <div class="day-tile locked">
+                    <div class="day-number">Day 29</div>
+                    <div class="day-status"><i class="fas fa-lock"></i></div>
+                </div>
+                <div class="day-tile locked">
+                    <div class="day-number">Day 30</div>
+                    <div class="day-status"><i class="fas fa-lock"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Milestone -->
+        <div class="milestone-box">
+            <div class="milestone-icon">
+                <i class="fas fa-flag-checkered"></i>
+            </div>
+            <div class="milestone-content">
+                <p>Complete all 30 days to unlock Advanced level</p>
+                <small>0 of 30 days completed</small>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="action-row">
+            <a href="{% url 'learning:level_selection' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+            <a href="{% url 'learning:intermediate_day1' %}" class="btn btn-primary">
+                Start Day 1 <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

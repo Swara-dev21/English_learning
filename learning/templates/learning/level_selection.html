@@ -1,0 +1,847 @@
+<!-- learning/templates/learning/level_selection.html -->
+{% extends 'home_page/base.html' %}
+{% load static %}
+
+{% block title %}Your Learning Path{% endblock %}
+
+{% block content %}
+<style>
+    .learning-path-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    /* Header Section */
+    .path-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .path-header h1 {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+        letter-spacing: -0.02em;
+    }
+
+    .quote-card {
+        background: linear-gradient(135deg, #e0e7ff 0%, #f5f7ff 100%);
+        border-radius: 16px;
+        padding: 1.2rem 2rem;
+        margin: 1.2rem auto;
+        position: relative;
+        box-shadow: 0 4px 12px rgba(74, 98, 176, 0.1);
+    }
+
+    .quote-card i {
+        color: #4a62b0;
+        font-size: 1.3rem;
+        opacity: 0.5;
+        position: absolute;
+    }
+
+    .quote-card i.fa-quote-left {
+        top: 8px;
+        left: 12px;
+    }
+
+    .quote-card i.fa-quote-right {
+        bottom: 8px;
+        right: 12px;
+    }
+
+    .quote-card p {
+        font-size: 1.3rem;
+        color: #1e293b;
+        font-style: italic;
+        font-weight: 500;
+        margin: 0 2rem;
+        line-height: 1.5;
+    }
+
+    .level-badge-current {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #4a62b0;
+        color: white;
+        padding: 0.7rem 1.8rem;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 1rem;
+        box-shadow: 0 4px 12px rgba(74, 98, 176, 0.3);
+    }
+
+    .level-badge-current i {
+        font-size: 1.1rem;
+    }
+
+    /* Compact Progress Bar */
+    .progress-tracker {
+        background: white;
+        border-radius: 16px;
+        padding: 1.2rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        border: 1px solid #eef2f6;
+    }
+
+    .progress-steps {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    .progress-steps::before {
+        content: '';
+        position: absolute;
+        top: 18px;
+        left: 60px;
+        right: 60px;
+        height: 3px;
+        background: #e2e8f0;
+        z-index: 1;
+    }
+
+    .step {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+    }
+
+    .step-marker {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: white;
+        border: 3px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1rem;
+        color: #94a3b8;
+        margin-bottom: 0.4rem;
+        transition: all 0.3s ease;
+    }
+
+    .step.active .step-marker {
+        background: #4a62b0;
+        border-color: #4a62b0;
+        color: white;
+        box-shadow: 0 0 0 3px rgba(74, 98, 176, 0.2);
+    }
+
+    .step.completed .step-marker {
+        background: #4a62b0;
+        border-color: #4a62b0;
+        color: white;
+    }
+
+    .step-label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.1rem;
+    }
+
+    .step-status {
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+
+    /* Level Cards - One after another */
+    .levels-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        margin: 2rem 0;
+    }
+
+    .level-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem 1.8rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.03);
+        border: 1px solid #eef2f6;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .level-card.unlocked {
+        background: linear-gradient(135deg, #ffffff 0%, #f5f7ff 100%);
+        border-left: 5px solid #4a62b0;
+    }
+
+    .level-card.unlocked:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(74, 98, 176, 0.12);
+        border-color: #4a62b0;
+    }
+
+    .level-card.locked {
+        opacity: 0.75;
+        background: #f8fafc;
+        filter: grayscale(20%);
+    }
+
+    .level-card.completed {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-left: 5px solid #94a3b8;
+    }
+
+    .level-card.completed:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(74, 98, 176, 0.08);
+        border-color: #4a62b0;
+    }
+
+    .level-icon {
+        width: 70px;
+        height: 70px;
+        background: #e0e7ff;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4a62b0;
+        font-size: 2.2rem;
+        flex-shrink: 0;
+    }
+
+    .level-content {
+        flex: 1;
+    }
+
+    .level-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .level-name {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .level-tag {
+        background: #4a62b0;
+        color: white;
+        padding: 0.3rem 1.2rem;
+        border-radius: 40px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .level-tag.current {
+        background: #4a62b0;
+    }
+
+    .level-description {
+        color: #475569;
+        font-size: 1.1rem;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .level-action {
+        min-width: 140px;
+    }
+
+    .btn-level {
+        padding: 0.9rem 1.8rem;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .btn-unlocked {
+        background: #4a62b0;
+        color: white;
+        box-shadow: 0 4px 12px rgba(74, 98, 176, 0.25);
+    }
+
+    .btn-unlocked:hover {
+        background: #3a4f8c;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(74, 98, 176, 0.35);
+    }
+
+    .btn-review {
+        background: #64748b;
+        color: white;
+        box-shadow: 0 4px 12px rgba(100, 116, 139, 0.25);
+    }
+
+    .btn-review:hover {
+        background: #475569;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(100, 116, 139, 0.35);
+    }
+
+    .btn-locked {
+        background: #e2e8f0;
+        color: #94a3b8;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    /* Info Message */
+    .info-message {
+        background: #e0e7ff;
+        border-radius: 14px;
+        padding: 1.2rem 1.8rem;
+        margin: 2rem 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border: 1px solid rgba(74, 98, 176, 0.2);
+    }
+
+    .info-icon {
+        width: 44px;
+        height: 44px;
+        background: #4a62b0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .info-text {
+        color: #1e293b;
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    /* Back Button */
+    .back-section {
+        text-align: center;
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px dashed #e2e8f0;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 2.5rem;
+        background: white;
+        color: #4a62b0;
+        text-decoration: none;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border: 2px solid #4a62b0;
+        transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background: #4a62b0;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(74, 98, 176, 0.2);
+    }
+
+    .btn-back:hover i {
+        transform: translateX(-4px);
+    }
+
+    /* ===== RESPONSIVE STYLES ===== */
+    
+    /* Tablets and small desktops */
+    @media (max-width: 768px) {
+        .learning-path-container {
+            padding: 0 1.2rem;
+            margin: 1.5rem auto;
+        }
+
+        .path-header h1 {
+            font-size: 2.4rem;
+        }
+
+        .quote-card {
+            padding: 1rem 1.5rem;
+        }
+
+        .quote-card p {
+            font-size: 1.2rem;
+            margin: 0 1.5rem;
+        }
+
+        .level-name {
+            font-size: 1.4rem;
+        }
+
+        .level-description {
+            font-size: 1rem;
+        }
+
+        .level-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.8rem;
+        }
+    }
+
+    /* Large phones */
+    @media (max-width: 640px) {
+        .path-header h1 {
+            font-size: 2.2rem;
+        }
+
+        .quote-card p {
+            font-size: 1.1rem;
+            margin: 0 1.2rem;
+        }
+
+        .quote-card i.fa-quote-left {
+            top: 5px;
+            left: 8px;
+            font-size: 1.1rem;
+        }
+
+        .quote-card i.fa-quote-right {
+            bottom: 5px;
+            right: 8px;
+            font-size: 1.1rem;
+        }
+
+        .progress-tracker {
+            padding: 1rem;
+        }
+
+        .progress-steps::before {
+            left: 40px;
+            right: 40px;
+            top: 16px;
+        }
+
+        .step-marker {
+            width: 32px;
+            height: 32px;
+            font-size: 0.9rem;
+            border-width: 2px;
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+        }
+
+        .step-status {
+            font-size: 0.75rem;
+        }
+
+        .level-card {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.8rem 1.2rem;
+            gap: 1rem;
+        }
+
+        .level-header {
+            justify-content: center;
+        }
+
+        .level-name {
+            font-size: 1.5rem;
+        }
+
+        .level-description {
+            font-size: 0.95rem;
+        }
+
+        .level-action {
+            width: 100%;
+            min-width: auto;
+            margin-top: 0.5rem;
+        }
+
+        .btn-level {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 250px;
+            margin: 0 auto;
+        }
+
+        .info-message {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .info-icon {
+            margin-bottom: 0.5rem;
+        }
+
+        .info-text {
+            font-size: 1rem;
+        }
+
+        .btn-back {
+            padding: 0.9rem 2rem;
+            font-size: 1rem;
+        }
+    }
+
+    /* Small phones */
+    @media (max-width: 480px) {
+        .learning-path-container {
+            padding: 0 1rem;
+            margin: 1rem auto;
+        }
+
+        .path-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .quote-card {
+            padding: 0.8rem 1rem;
+        }
+
+        .quote-card p {
+            font-size: 1rem;
+            margin: 0 1rem;
+        }
+
+        .quote-card i {
+            font-size: 1rem;
+        }
+
+        .progress-tracker {
+            padding: 0.8rem;
+        }
+
+        .progress-steps::before {
+            left: 30px;
+            right: 30px;
+            top: 14px;
+        }
+
+        .step-marker {
+            width: 28px;
+            height: 28px;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .step-label {
+            font-size: 0.8rem;
+        }
+
+        .step-status {
+            font-size: 0.7rem;
+        }
+
+        .level-card {
+            padding: 1.5rem 1rem;
+        }
+
+        .level-icon {
+            width: 55px;
+            height: 55px;
+            font-size: 1.6rem;
+        }
+
+        .level-name {
+            font-size: 1.3rem;
+        }
+
+        .level-tag {
+            padding: 0.2rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .level-description {
+            font-size: 0.9rem;
+        }
+
+        .btn-level {
+            padding: 0.7rem 1.2rem;
+            font-size: 0.95rem;
+            max-width: 200px;
+        }
+
+        .info-message {
+            padding: 1.2rem;
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+
+        .info-text {
+            font-size: 0.95rem;
+        }
+
+        .btn-back {
+            padding: 0.8rem 1.8rem;
+            font-size: 0.95rem;
+        }
+    }
+
+    /* Very small phones */
+    @media (max-width: 360px) {
+        .path-header h1 {
+            font-size: 1.6rem;
+        }
+
+        .quote-card p {
+            font-size: 0.9rem;
+        }
+
+        .progress-steps::before {
+            left: 25px;
+            right: 25px;
+        }
+
+        .step-marker {
+            width: 24px;
+            height: 24px;
+            font-size: 0.7rem;
+        }
+
+        .step-label {
+            font-size: 0.7rem;
+        }
+
+        .step-status {
+            font-size: 0.6rem;
+        }
+
+        .level-name {
+            font-size: 1.2rem;
+        }
+
+        .level-description {
+            font-size: 0.85rem;
+        }
+
+        .btn-level {
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Landscape mode on phones */
+    @media (max-width: 850px) and (orientation: landscape) {
+        .level-card {
+            flex-direction: row;
+            text-align: left;
+            padding: 1.2rem;
+        }
+
+        .level-header {
+            justify-content: flex-start;
+        }
+
+        .level-action {
+            width: auto;
+            min-width: 140px;
+        }
+
+        .btn-level {
+            width: auto;
+        }
+    }
+</style>
+
+<div class="learning-path-container">
+    <!-- Header with Quote -->
+    <div class="path-header">
+        <h1>Your Learning Journey</h1>
+        <div class="quote-card">
+            <i class="fas fa-quote-left"></i>
+            <p>Every expert was once a beginner. Keep going!</p>
+            <i class="fas fa-quote-right"></i>
+        </div>
+    </div>
+
+    <!-- Compact Progress Tracker -->
+    <div class="progress-tracker">
+        <div class="progress-steps">
+            <div class="step {% if user_level == 'Beginner' %}active{% endif %} {% if user_level != 'Beginner' %}completed{% endif %}">
+                <div class="step-marker">
+                    {% if user_level != 'Beginner' %}<i class="fas fa-check"></i>{% else %}1{% endif %}
+                </div>
+                <div class="step-label">Beginner</div>
+                <div class="step-status">
+                    {% if user_level == 'Beginner' %}Current{% else %}Completed{% endif %}
+                </div>
+            </div>
+            <div class="step {% if user_level == 'Intermediate' %}active{% endif %} {% if user_level == 'Advanced' %}completed{% endif %}">
+                <div class="step-marker">
+                    {% if user_level == 'Advanced' %}<i class="fas fa-check"></i>{% else %}2{% endif %}
+                </div>
+                <div class="step-label">Intermediate</div>
+                <div class="step-status">
+                    {% if user_level == 'Intermediate' %}Current
+                    {% elif user_level == 'Advanced' %}Completed
+                    {% else %}Locked{% endif %}
+                </div>
+            </div>
+            <div class="step {% if user_level == 'Advanced' %}active{% endif %}">
+                <div class="step-marker">3</div>
+                <div class="step-label">Advanced</div>
+                <div class="step-status">
+                    {% if user_level == 'Advanced' %}Current
+                    {% else %}Locked{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Cards - One after another -->
+    <div class="levels-list">
+        <!-- BEGINNER LEVEL -->
+        <div class="level-card 
+            {% if user_level == 'Beginner' %}unlocked
+            {% elif user_level == 'Intermediate' or user_level == 'Advanced' %}completed
+            {% else %}locked{% endif %}">
+            <div class="level-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <div class="level-content">
+                <div class="level-header">
+                    <h2 class="level-name">Beginner</h2>
+                </div>
+                <p class="level-description">Master the basics of English communication with foundational vocabulary and simple conversations.</p>
+            </div>
+            <div class="level-action">
+                {% if user_level == 'Beginner' %}
+                    <a href="{% url 'learning:beginner_instructions' %}" class="btn-level btn-unlocked">
+                        Start <i class="fas fa-arrow-right"></i>
+                    </a>
+                {% elif user_level == 'Intermediate' or user_level == 'Advanced' %}
+                    <a href="{% url 'learning:beginner_instructions' %}" class="btn-level btn-review">
+                        <i class="fas fa-rotate-right"></i> Practice
+                    </a>
+                {% else %}
+                    <span class="btn-level btn-locked">
+                        <i class="fas fa-lock"></i> Locked
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- INTERMEDIATE LEVEL -->
+        <div class="level-card 
+            {% if user_level == 'Intermediate' %}unlocked
+            {% elif user_level == 'Advanced' %}completed
+            {% else %}locked{% endif %}">
+            <div class="level-icon" style="{% if user_level == 'Beginner' %}background: #f1f5f9; color: #94a3b8;{% endif %}">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="level-content">
+                <div class="level-header">
+                    <h2 class="level-name">Intermediate</h2>
+                </div>
+                <p class="level-description">Build fluency and confidence in conversations with more complex topics and expressions.</p>
+            </div>
+            <div class="level-action">
+                {% if user_level == 'Intermediate' %}
+                    <a href="{% url 'learning:intermediate_instructions' %}" class="btn-level btn-unlocked">
+                        Start <i class="fas fa-arrow-right"></i>
+                    </a>
+                {% elif user_level == 'Advanced' %}
+                    <a href="{% url 'learning:intermediate_instructions' %}" class="btn-level btn-review">
+                        <i class="fas fa-rotate-right"></i> Practice
+                    </a>
+                {% else %}
+                    <span class="btn-level btn-locked">
+                        <i class="fas fa-lock"></i> Locked
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ADVANCED LEVEL -->
+        <div class="level-card 
+            {% if user_level == 'Advanced' %}unlocked
+            {% else %}locked{% endif %}">
+            <div class="level-icon" style="{% if user_level != 'Advanced' %}background: #f1f5f9; color: #94a3b8;{% endif %}">
+                <i class="fas fa-crown"></i>
+            </div>
+            <div class="level-content">
+                <div class="level-header">
+                    <h2 class="level-name">Advanced</h2>
+                </div>
+                <p class="level-description">Achieve mastery and fluency with sophisticated language and nuanced communication.</p>
+            </div>
+            <div class="level-action">
+                {% if user_level == 'Advanced' %}
+                    <a href="{% url 'learning:advanced_instructions' %}" class="btn-level btn-unlocked">
+                        Start <i class="fas fa-arrow-right"></i>
+                    </a>
+                {% else %}
+                    <span class="btn-level btn-locked">
+                        <i class="fas fa-lock"></i> Locked
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Message -->
+    <div class="info-message">
+        <div class="info-icon">
+            {% if user_level == 'Advanced' %}
+                <i class="fas fa-crown"></i>
+            {% else %}
+                <i class="fas fa-lock"></i>
+            {% endif %}
+        </div>
+        <p class="info-text">
+            {% if user_level == 'Beginner' %}
+                Complete all 30 Beginner tasks to unlock the Intermediate level and advance your learning journey.
+            {% elif user_level == 'Intermediate' %}
+                Complete all 30 Intermediate tasks to unlock the Advanced level and achieve mastery.
+            {% elif user_level == 'Advanced' %}
+                You've reached the highest level! Keep practicing daily to maintain your excellence.
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- Back Button -->
+    <div class="back-section">
+        <a href="{% url 'home_page:pretest_results' %}" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+            Back to Results
+        </a>
+    </div>
+</div>
+{% endblock %}
