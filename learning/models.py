@@ -1,138 +1,147 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+from datetime import date
 
-class UserProgress(models.Model):
-    """Track user progress for different levels"""
-    
+class UserLearningProgress(models.Model):
     LEVEL_CHOICES = [
         ('beginner', 'Beginner'),
         ('intermediate', 'Intermediate'),
         ('advanced', 'Advanced'),
     ]
     
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='progress')
-    level_type = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='beginner')
-    day = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='learning_progress')
+    level = models.CharField(max_length=20, choices=LEVEL_CHOICES)
+    completed_days = models.JSONField(default=list)  # List of completed day numbers
+    current_day = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(30)])
+    streak_days = models.IntegerField(default=0)
+    last_completed_date = models.DateField(null=True, blank=True)
+    started_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    # Certificate related
+    certificate_issued = models.BooleanField(default=False)
+    certificate_issued_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        unique_together = ['user', 'level']
+        ordering = ['-updated_at']
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.level} - Day {self.current_day}"
+    
+    def completion_percentage(self):
+        return (len(self.completed_days) / 30) * 100
+    
+    def is_completed(self):
+        return len(self.completed_days) >= 30
+    
+    def get_next_day(self):
+        """Get next uncompleted day number"""
+        for day in range(1, 31):
+            if day not in self.completed_days:
+                return day
+        return None
+    
+    def can_access_day(self, day_number):
+        """Check if user can access a specific day"""
+        # Day 1 is always accessible
+        if day_number == 1:
+            return True
+        # Can only access if previous day is completed
+        return (day_number - 1) in self.completed_days
+    
+    def complete_day(self, day_number):
+        """Mark a day as complete and update progress"""
+        if day_number not in self.completed_days:
+            self.completed_days.append(day_number)
+            self.completed_days.sort()
+            
+            # Update current day to next uncompleted day
+            next_day = self.get_next_day()
+            if next_day:
+                self.current_day = next_day
+            
+            # Update streak
+            today = date.today()
+            if self.last_completed_date:
+                days_diff = (today - self.last_completed_date).days
+                if days_diff == 1:
+                    self.streak_days += 1
+                elif days_diff > 1:
+                    self.streak_days = 1
+            else:
+                self.streak_days = 1
+            
+            self.last_completed_date = today
+            
+            # Check if all days completed
+            if self.is_completed() and not self.completed_at:
+                self.completed_at = timezone.now()
+            
+            self.save()
+            return True
+        return False
+
+
+class DailyActivity(models.Model):
+    """Track detailed activity completion per day"""
+    ACTIVITY_TYPES = [
+        ('listening', 'Listening'),
+        ('speaking', 'Speaking'),
+        ('reading', 'Reading'),
+        ('writing', 'Writing'),
+        ('vocabulary', 'Vocabulary'),
+        ('grammar', 'Grammar'),
+        ('game', 'Game'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    level = models.CharField(max_length=20)
+    day_number = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(30)])
+    activity_type = models.CharField(max_length=20, choices=ACTIVITY_TYPES)
     completed = models.BooleanField(default=False)
-    score = models.IntegerField(default=0)
-    stars = models.IntegerField(default=0)
     completed_at = models.DateTimeField(null=True, blank=True)
     
-    class Meta:
-        unique_together = ['user', 'level_type', 'day']
-        ordering = ['day']
-    
-    def __str__(self):
-        return f"{self.user.username} - {self.level_type} Day {self.day} - {'Completed' if self.completed else 'Not Completed'}"
-
-class Lesson(models.Model):
-    """Store lesson content for each day"""
-    
-    LEVEL_CHOICES = [
-        ('beginner', 'Beginner'),
-        ('intermediate', 'Intermediate'),
-        ('advanced', 'Advanced'),
-    ]
-    
-    level_type = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='beginner')
-    day = models.IntegerField()
-    title = models.CharField(max_length=200)
-    content = models.TextField()
-    learning_objectives = models.TextField(blank=True)
-    key_points = models.TextField(blank=True)
-    examples = models.TextField(blank=True)
+    # For storing recordings or responses
+    recording_url = models.URLField(null=True, blank=True)
+    response_data = models.JSONField(null=True, blank=True)
     
     class Meta:
-        unique_together = ['level_type', 'day']
-        ordering = ['level_type', 'day']
-    
-    def __str__(self):
-        return f"{self.level_type.title()} Day {self.day}: {self.title}"
+        unique_together = ['user', 'level', 'day_number', 'activity_type']
+        ordering = ['day_number', 'activity_type']
 
-class ListeningActivity(models.Model):
-    """Store listening activities for each day"""
-    
-    level_type = models.CharField(max_length=20, choices=Lesson.LEVEL_CHOICES, default='beginner')
-    day = models.IntegerField()
-    sentence = models.TextField()
-    meaning = models.TextField(blank=True)
-    audio_file = models.FileField(upload_to='audio/listening/', blank=True, null=True)
-    test_question = models.TextField()
-    test_option_a = models.CharField(max_length=500)
-    test_option_b = models.CharField(max_length=500)
-    test_option_c = models.CharField(max_length=500)
-    correct_answer = models.CharField(max_length=1, choices=[('A', 'A'), ('B', 'B'), ('C', 'C')])
-    
-    def __str__(self):
-        return f"Listening - {self.level_type} Day {self.day}"
 
-class SpeakingActivity(models.Model):
-    """Store speaking activities for each day"""
-    
-    level_type = models.CharField(max_length=20, choices=Lesson.LEVEL_CHOICES, default='beginner')
-    day = models.IntegerField()
-    sentence = models.TextField()
-    slow_audio = models.FileField(upload_to='audio/speaking/slow/', blank=True, null=True)
-    normal_audio = models.FileField(upload_to='audio/speaking/normal/', blank=True, null=True)
-    sentence_parts = models.TextField(help_text="Comma-separated parts of the sentence")
-    test_task = models.TextField()
-    
-    def __str__(self):
-        return f"Speaking - {self.level_type} Day {self.day}"
-
-class ReadingActivity(models.Model):
-    """Store reading activities for each day"""
-    
-    level_type = models.CharField(max_length=20, choices=Lesson.LEVEL_CHOICES, default='beginner')
-    day = models.IntegerField()
-    paragraph = models.TextField()
-    audio_file = models.FileField(upload_to='audio/reading/', blank=True, null=True)
-    vocabulary = models.TextField(help_text="Word:Meaning,Word:Meaning format")
-    explanation = models.TextField()
-    test_question = models.TextField()
-    test_option_a = models.CharField(max_length=500)
-    test_option_b = models.CharField(max_length=500)
-    test_option_c = models.CharField(max_length=500)
-    correct_answer = models.CharField(max_length=1, choices=[('A', 'A'), ('B', 'B'), ('C', 'C')])
-    
-    def __str__(self):
-        return f"Reading - {self.level_type} Day {self.day}"
-
-class WritingActivity(models.Model):
-    """Store writing activities for each day"""
-    
-    level_type = models.CharField(max_length=20, choices=Lesson.LEVEL_CHOICES, default='beginner')
-    day = models.IntegerField()
-    structure = models.TextField()
-    suggestions = models.TextField(help_text="Comma-separated suggestions")
-    example = models.TextField()
-    test_task = models.TextField()
-    
-    def __str__(self):
-        return f"Writing - {self.level_type} Day {self.day}"
-
-class QuizQuestion(models.Model):
-    """Store quiz questions for each day"""
-    
-    LEVEL_CHOICES = [
-        ('beginner', 'Beginner'),
-        ('intermediate', 'Intermediate'),
-        ('advanced', 'Advanced'),
-    ]
-    
-    level_type = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='beginner')
-    day = models.IntegerField()
-    question_text = models.TextField()
-    option_a = models.CharField(max_length=500)
-    option_b = models.CharField(max_length=500)
-    option_c = models.CharField(max_length=500)
-    option_d = models.CharField(max_length=500)
-    correct_answer = models.CharField(max_length=1, choices=[('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')])
-    explanation = models.TextField(blank=True)
+class SavedVocabulary(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='saved_vocabulary')
+    word = models.CharField(max_length=100)
+    saved_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        ordering = ['level_type', 'day', 'id']
+        unique_together = ['user', 'word']
+        ordering = ['-saved_at']
     
     def __str__(self):
-        return f"{self.level_type} Day {self.day} - Q{self.id}"
+        return f"{self.user.username} - {self.word}"
+
+
+class UserCertificate(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='certificates')
+    level = models.CharField(max_length=20, choices=UserLearningProgress.LEVEL_CHOICES)
+    certificate_code = models.CharField(max_length=100, unique=True)
+    issued_at = models.DateTimeField(auto_now_add=True)
+    downloaded = models.BooleanField(default=False)
+    shared = models.BooleanField(default=False)
+    
+    # PNG certificate storage
+    certificate_image = models.BinaryField(null=True, blank=True)
+    download_count = models.IntegerField(default=0)
+    share_count = models.IntegerField(default=0)
+    
+    class Meta:
+        unique_together = ['user', 'level']
+    
+    def __str__(self):
+        return f"Certificate for {self.user.username} - {self.level}"

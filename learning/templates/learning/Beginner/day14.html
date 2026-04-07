@@ -1,0 +1,1436 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 14: The Week 2 Review & Recovery | English for Engineers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .lesson-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 1.5rem 2rem 1.5rem;
+        position: relative;
+        width: 100%;
+    }
+    .activity-card, .grammar-section, .game-section, .extra-mile, .appreciation-note, .congrats-banner {
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+    }
+    .card-body { padding: 1.5rem; width: 100%; box-sizing: border-box; }
+    
+    .lesson-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 0;
+        padding: 1.2rem 0;
+        color: white;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        width: 100vw;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+    .lesson-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        animation: shimmer 4s infinite;
+        z-index: 0;
+    }
+    @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding: 0 1.5rem; }
+    .day-badge {
+        display: inline-block;
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(10px);
+        padding: 0.35rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+    .hero-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 0.4rem;
+        background: linear-gradient(135deg, #ffffff, #f3e8ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .power-line {
+        font-size: 0.9rem;
+        font-style: italic;
+        margin-top: 0.4rem;
+        background: rgba(255,255,255,0.15);
+        padding: 0.5rem 1.2rem;
+        border-radius: 50px;
+        backdrop-filter: blur(8px);
+        display: inline-block;
+    }
+    
+    @media (max-width: 768px) {
+        .lesson-container { padding: 0 1rem 1rem 1rem; }
+        .hero-title { font-size: 1.4rem; }
+        .card-body { padding: 1rem; }
+    }
+    
+    .mission-box {
+        background: #f0fdf4;
+        border-radius: 20px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        border-left: 4px solid #22c55e;
+    }
+    
+    .activities-grid { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
+    .activity-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #eef2f6; }
+    .card-header { padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .card-header.listening { background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); border-bottom: 2px solid #a5b4fc; }
+    .card-header.speaking { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-bottom: 2px solid #c084fc; }
+    .card-header.reading { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-bottom: 2px solid #38bdf8; }
+    .card-header.writing { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); border-bottom: 2px solid #8b5cf6; }
+    .card-header.vocabulary { background: linear-gradient(135deg, #fae8ff 0%, #f3e8ff 100%); border-bottom: 2px solid #d946ef; }
+    .card-header.game { background: linear-gradient(135deg, #d9f99d 0%, #bef264 100%); border-bottom: 2px solid #84cc16; }
+    .card-header h2 { font-size: 1.25rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem; color: #1e293b; }
+    
+    .complete-activity-btn {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 40px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    .complete-activity-btn.completed { background: #94a3b8; cursor: default; }
+    .complete-activity-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .day-complete-btn {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .day-complete-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+    }
+    .day-complete-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: linear-gradient(135deg, #94a3b8, #64748b);
+    }
+    
+    .audio-player { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 0.5rem 0; text-align: center; width: 100%; box-sizing: border-box; }
+    audio { width: 100%; outline: none; }
+    
+    .quiz-section { background: #fefce8; border-radius: 12px; padding: 1rem; margin-top: 1rem; border-left: 4px solid #eab308; }
+    .quiz-option { margin: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-radius: 8px; cursor: pointer; }
+    .quiz-option:hover { background: #fef9e3; }
+    .quiz-feedback { margin-top: 0.75rem; padding: 0.75rem; border-radius: 8px; font-weight: 500; display: none; }
+    .quiz-feedback.correct { background: #d1fae5; color: #065f46; display: block; }
+    .quiz-feedback.incorrect { background: #fee2e2; color: #991b1b; display: block; }
+    .quiz-feedback.warning { background: #fef9e3; color: #92400e; display: block; }
+    
+    .task-box { background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; margin: 0.75rem 0; width: 100%; box-sizing: border-box; }
+    .task-header { background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 0.75rem 1rem; border-bottom: 2px solid #e2e8f0; }
+    .task-header .title { font-size: 1rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; }
+    .task-content { padding: 0.75rem 1rem; font-size: 0.9rem; color: #334155; line-height: 1.6; }
+    
+    .recording-controls { display: flex; gap: 1rem; margin: 0.8rem 0; flex-wrap: wrap; align-items: center; }
+    .record-btn {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 40px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+    .record-btn:hover { transform: scale(1.02); }
+    .record-btn.recording { animation: pulse 1.5s infinite; }
+    
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+        70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    
+    .combined-recording-section { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0; }
+    .comparison-message { background: #eef2ff; padding: 0.75rem; border-radius: 8px; margin: 0.75rem 0; border-left: 3px solid #8b5cf6; }
+    .yes-btn, .no-btn { padding: 0.4rem 1rem; border-radius: 40px; cursor: pointer; font-weight: 600; font-size: 0.85rem; border: none; }
+    .yes-btn { background: #22c55e; color: white; }
+    .no-btn { background: #ef4444; color: white; }
+    
+    .modern-record-btn {
+        background: #8b5cf6;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 40px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+    }
+    .modern-record-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+    .modern-record-btn.recording { animation: pulse 1.5s infinite; }
+    .modern-record-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .reading-passage { background: #f8fafc; border-radius: 12px; padding: 1.5rem; margin: 0.5rem 0; line-height: 1.8; font-size: 1rem; }
+    .interactive-passage { background: white; border-radius: 12px; padding: 1.5rem; margin: 1rem 0; border: 2px solid #e2e8f0; line-height: 1.8; font-size: 1rem; }
+    .clickable-word { display: inline-block; padding: 0.1rem 0.2rem; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+    .clickable-word:hover { background: #e0e7ff; transform: scale(1.02); }
+    
+    .analysis-instruction { background: #fef9e3; padding: 1rem; border-radius: 12px; margin: 1rem 0; border-left: 4px solid #eab308; }
+    
+    .writing-prompt { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 0.5rem 0; }
+    .habit-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; margin: 0.5rem 0; font-size: 0.9rem; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    .habit-input:focus { outline: none; border-color: #8b5cf6; }
+    .writing-textarea { width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Inter', sans-serif; resize: vertical; }
+    .writing-textarea:focus { outline: none; border-color: #8b5cf6; }
+    
+    .vocab-table-container { overflow-x: auto; margin: 0.5rem 0; border-radius: 12px; border: 1px solid #e2e8f0; background: white; }
+    .vocab-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .vocab-table thead { background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); }
+    .vocab-table th { padding: 0.85rem 0.75rem; text-align: left; font-weight: 600; color: white; font-size: 0.85rem; }
+    .vocab-table td { padding: 0.75rem; border-bottom: 1px solid #e2e8f0; vertical-align: middle; color: #334155; }
+    .vocab-table .audio-cell { width: 50px; text-align: center; }
+    .vocab-audio-btn { background: none; border: none; cursor: pointer; font-size: 1rem; padding: 0.3rem; border-radius: 50%; transition: all 0.2s; color: #8b5cf6; }
+    .vocab-audio-btn:hover { background: #ede9fe; transform: scale(1.1); }
+    
+    .grammar-section { background: linear-gradient(135deg, #ede9fe 0%, #e0e7ff 100%); border-radius: 20px; padding: 1.5rem; margin: 1.5rem 0; }
+    .grammar-rule { background: white; border-radius: 12px; padding: 1rem; margin: 0.75rem 0; }
+    .grammar-rule .wrong { color: #dc2626; }
+    .grammar-rule .correct { color: #16a34a; font-weight: 600; }
+    .grammar-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; margin: 0.5rem 0; font-size: 0.9rem; font-family: 'Inter', sans-serif; }
+    .grammar-input:focus { outline: none; border-color: #8b5cf6; }
+    .fix-feedback { margin-top: 0.5rem; padding: 0.5rem; border-radius: 8px; font-size: 0.85rem; display: none; }
+    .fix-feedback.correct { background: #d4edda; color: #155724; display: block; }
+    .fix-feedback.incorrect { background: #f8d7da; color: #721c24; display: block; }
+    .fix-feedback.warning { background: #fef9e3; color: #92400e; display: block; }
+    
+    .game-section { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 20px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #bbf7d0; }
+    .game-word { background: white; border-radius: 12px; padding: 1rem; margin: 1rem 0; border: 1px solid #e2e8f0; }
+    .game-question { font-weight: 600; margin-bottom: 0.5rem; color: #1e293b; }
+    .game-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; font-family: 'Inter', sans-serif; }
+    .game-input:focus { outline: none; border-color: #8b5cf6; }
+    .game-select { padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.9rem; background: white; }
+    
+    .btn-outline { background: none; border: 2px solid #8b5cf6; padding: 0.6rem 1.2rem; border-radius: 40px; font-weight: 600; color: #8b5cf6; cursor: pointer; transition: 0.2s; margin-top: 0.6rem; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-outline:hover { background: #8b5cf6; color: white; }
+    
+    .checklist { list-style: none; padding: 0; }
+    .checklist li { margin: 0.75rem 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: #f8fafc; border-radius: 10px; }
+    .checklist input[type="checkbox"] { pointer-events: none; opacity: 0.6; cursor: not-allowed; }
+    .badge { background: #8b5cf620; border-radius: 30px; padding: 0.2rem 0.8rem; font-size: 0.7rem; font-weight: bold; color: #6d28d9; }
+    
+    .power-word-section { background: linear-gradient(135deg, #fefce8 0%, #fef9e3 100%); border-left: 4px solid #eab308; padding: 1rem; border-radius: 12px; margin: 1rem 0; }
+    .power-word-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 12px; margin: 0.5rem 0; font-size: 0.95rem; font-family: 'Inter', sans-serif; background: white; }
+    .power-word-input:focus { outline: none; border-color: #eab308; box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.1); }
+    
+    .completion-banner { background: linear-gradient(135deg, #22c55e, #16a34a); border-radius: 20px; padding: 1.5rem; text-align: center; color: white; margin-top: 1.5rem; display: none; }
+    .next-day-btn { background: white; color: #16a34a; padding: 0.6rem 1.5rem; border-radius: 50px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; }
+    
+    .task-instruction { background: #f8fafc; padding: 0.75rem 1rem; border-radius: 12px; margin-bottom: 1rem; border-left: 4px solid #8b5cf6; }
+    .inline-hint { font-size: 0.75rem; color: #f59e0b; margin-top: 0.2rem; }
+    .habit-line { margin-bottom: 0.6rem; }
+    
+    .grammar-table { width: 100%; border-collapse: collapse; margin: 1rem 0; background: white; border-radius: 12px; overflow: hidden; }
+    .grammar-table th, .grammar-table td { padding: 0.75rem; border: 1px solid #e2e8f0; text-align: left; vertical-align: top; }
+    .grammar-table th { background: #f1f5f9; font-weight: 700; }
+    
+    .temp-underlined { text-decoration: underline !important; text-decoration-thickness: 3px !important; text-decoration-color: #3b82f6 !important; background: #eff6ff !important; display: inline-block; }
+    .temp-circled { border: 3px solid #3b82f6 !important; border-radius: 50% !important; padding: 0.1rem 0.3rem !important; background: #eff6ff !important; display: inline-block; }
+    .underline-correct { text-decoration: underline !important; text-decoration-thickness: 3px !important; text-decoration-color: #22c55e !important; background: #f0fdf4 !important; display: inline-block; }
+    .circle-correct { border: 3px solid #22c55e !important; border-radius: 50% !important; padding: 0.1rem 0.3rem !important; background: #f0fdf4 !important; display: inline-block; }
+    .underline-incorrect { text-decoration: underline !important; text-decoration-thickness: 3px !important; text-decoration-color: #dc2626 !important; background: #fee2e2 !important; display: inline-block; }
+    .circle-incorrect { border: 3px solid #dc2626 !important; border-radius: 50% !important; padding: 0.1rem 0.3rem !important; background: #fee2e2 !important; display: inline-block; }
+  </style>
+</head>
+<body>
+<div class="lesson-container">
+    
+    <div class="lesson-hero">
+        <div class="hero-content">
+            <div class="day-badge">Day 14 • Week 2</div>
+            <h1 class="hero-title">🏗️  THE NETWORKING MASTERY </h1>
+            <div class="power-line">💬 "Reviewing what you have learned is like sharpening a saw; it makes the next cut much easier."</div>
+        </div>
+    </div>
+    
+    {% comment %} <div class="mission-box">
+        <p style="margin: 0;"><strong>📢 Today's Mission: Performance Audit</strong></p>
+        <p style="margin: 0.5rem 0 0 0; color: #64748b;">Today is your "Performance Audit." We will not just learn new things; we will test how much you have truly transformed. You'll review and practice everything you've learned in Week 2!</p>
+    </div> {% endcomment %}
+    
+    <div class="activities-grid">
+        
+        <!-- ==================== 1. LISTENING ACTIVITY ==================== -->
+        <div class="activity-card" id="listening-card">
+            <div class="card-header listening">
+                <h2>🎧 1. Listening Activity · Vocal Enthusiasm & Fluidity</h2>
+            </div>
+            <div class="card-body">
+                <div class="task-box">
+                    <div class="task-header"><div class="title"><span>🎯</span><span>The Task</span></div></div>
+                    <div class="task-content">Listen to the "Master Audio" and focus on the pauses (...).</div>
+                </div>
+                
+                <div class="audio-player">
+                    <audio id="listeningAudio" controls>
+                        <source src="{% static 'learning/lis_audio/Day 14.aac' %}" type="audio/mpeg">
+                    </audio>
+                </div>
+                
+                <div class="task-box">
+                    <div class="task-header"><div class="title"><span>🎤</span><span>The Shadow Test</span></div></div>
+                    <div class="task-content">Speak with the audio. Your voice should sound lighter and happier than Day 1.</div>
+                </div>
+                
+                <div class="combined-recording-section">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">🎙️ The Record & Compare</div>
+                    <div class="recording-controls">
+                        <button id="listeningRecordBtn" class="record-btn"> Start Recording</button>
+                        <button id="listeningStopBtn" class="record-btn" style="background: #64748b; display: none;"> Stop Recording</button>
+                    </div>
+                    <div id="listeningPlaybackCard" style="display: none;"><audio id="listeningPlayback" controls style="width: 100%;"></audio></div>
+                    <div id="comparisonSection" style="display: none;">
+                        <div class="comparison-message">Do you sound like you are "struggling," or do you sound like you are "playing"?</div>
+                        <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                            <button id="yesComparisonBtn" class="yes-btn">✓ Sound like Playing (Good!)</button>
+                            <button id="noComparisonBtn" class="no-btn">✗ Sound like Struggling</button>
+                        </div>
+                        <div id="comparisonFeedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+                </div>
+                
+                <div class="quiz-section">
+                    <p><strong>🧠 Quick Listening Check</strong></p>
+                    <div><p><strong>1. Learning is not a:</strong></p>
+                        <label class="quiz-option"><input type="radio" name="q1" value="Skill"> Skill</label>
+                        <label class="quiz-option"><input type="radio" name="q1" value="Burden"> Burden</label>
+                    </div>
+                    <div><p><strong>2. What makes learning easy?</strong></p>
+                        <label class="quiz-option"><input type="radio" name="q2" value="Exams"> Exams</label>
+                        <label class="quiz-option"><input type="radio" name="q2" value="Enjoyment"> Enjoyment</label>
+                    </div>
+                    <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                </div>
+                
+                <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answer</button>
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                    <button class="complete-activity-btn" id="completeListeningBtn">✓ Mark Listening as Complete</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==================== 2. SPEAKING ACTIVITY ==================== -->
+        <div class="activity-card" id="speaking-card">
+            <div class="card-header speaking">
+                <h2>🗣️ 2. Speaking Activity · The "Comprehensive Challenge"</h2>
+            </div>
+            <div class="card-body">
+                <div class="task-box">
+                    <div class="task-header"><div class="title"><span>🎯</span><span>The Task</span></div></div>
+                    <div class="task-content">Imagine you are in a Group Discussion (GD) with your peers and a Teacher. You must review your progress and plan the next project.</div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border-radius: 20px; overflow: hidden; border: 1px solid #e9d5ff; margin-top: 1rem;">
+                    <div style="background: linear-gradient(135deg, #f5f0ff 0%, #ede9fe 100%); padding: 1rem 1.5rem; border-bottom: 2px solid #c4b5fd;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.3rem;">🗣️</span>
+                            <div><div style="font-weight: 800; font-size: 1rem; color: #5b21b6;">The Exercise</div>
+                            <div style="font-size: 0.85rem; color: #6d28d9;">Read both parts out loud to practice different flows:</div></div>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: white;">
+                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">1</div>
+                        <div><div style="font-weight: 700;">You: "Last week, I was struggling with the technical terms. I had neglected my reading."</div></div></div>
+                        <div style="margin-top: 1rem;">
+                            <button id="speakingRecordBtn1" class="modern-record-btn"> Record</button>
+                            <button id="speakingStopBtn1" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button>
+                            <div id="speakingPlaybackCard1" style="display:none;"><audio id="speakingPlayback1" controls style="width:100%;"></audio></div>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: #fef9ff;">
+                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">2</div>
+                        <div><div style="font-weight: 700;">Peer: "I encountered the same issue. What will you do differently now?"</div></div></div>
+                        <div style="margin-top: 1rem;">
+                            <button id="speakingRecordBtn2" class="modern-record-btn"> Record</button>
+                            <button id="speakingStopBtn2" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button>
+                            <div id="speakingPlaybackCard2" style="display:none;"><audio id="speakingPlayback2" controls style="width:100%;"></audio></div>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: white;">
+                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">3</div>
+                        <div><div style="font-weight: 700;">You: "Next week, I will be implementing a new study schedule. I will be striving for better clarity."</div></div></div>
+                        <div style="margin-top: 1rem;">
+                            <button id="speakingRecordBtn3" class="modern-record-btn"> Record</button>
+                            <button id="speakingStopBtn3" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button>
+                            <div id="speakingPlaybackCard3" style="display:none;"><audio id="speakingPlayback3" controls style="width:100%;"></audio></div>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: #fef9ff;">
+                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">4</div>
+                        <div><div style="font-weight: 700;">Teacher: "Could you elaborate on your plan?"</div></div></div>
+                        <div style="margin-top: 1rem;">
+                            <button id="speakingRecordBtn4" class="modern-record-btn"> Record</button>
+                            <button id="speakingStopBtn4" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button>
+                            <div id="speakingPlaybackCard4" style="display:none;"><audio id="speakingPlayback4" controls style="width:100%;"></audio></div>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 1.2rem 1.5rem; background: #fef9ff;">
+                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">5</div>
+                        <div><div style="font-weight: 700;">You: "Certainly. I will be focusing on substantial engineering articles to enhance my vocabulary."</div></div></div>
+                        <div style="margin-top: 1rem;">
+                            <button id="speakingRecordBtn5" class="modern-record-btn"> Record</button>
+                            <button id="speakingStopBtn5" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button>
+                            <div id="speakingPlaybackCard5" style="display:none;"><audio id="speakingPlayback5" controls style="width:100%;"></audio></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                    <button class="complete-activity-btn" id="completeSpeakingBtn" disabled>✓ Mark Speaking as Complete</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==================== 3. READING ACTIVITY ==================== -->
+        <div class="activity-card" id="reading-card">
+            <div class="card-header reading">
+                <h2>📖 3. Reading Activity · The Milestone</h2>
+            </div>
+            <div class="card-body">
+                <div class="reading-passage"><strong>📖 Test your grammar eye! This passage uses Simple Past, Past Continuous, Past Perfect, and Simple Future.</strong></div>
+                <div id="interactivePassage" class="interactive-passage"></div>
+                
+                <div class="analysis-instruction">
+                    <strong>🔍 Analysis Task:</strong><br><br>
+                    • <span style="color: #1e293b;">Underline the Past Perfect phrase "had assumed" (click on both words)</span><br>
+                    • <span style="color: #1e293b;">Circle the Future Continuous phrase "will be commencing" (click on all three words)</span><br><br>
+                    <em style="font-size: 0.85rem;">Step 1: Click "Underline Mode" → Click words to underline → Click "Check Underlines"<br>
+                    Step 2: Click "Circle Mode" → Click words to circle → Click "Check Circles"</em>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap;">
+                    <button id="underlineModeBtn" class="btn-outline" style="background: #f59e0b; color: white; border: none; opacity: 0.5;">📝 Underline Mode</button>
+                    <button id="circleModeBtn" class="btn-outline" style="background: #3b82f6; color: white; border: none;">⭕ Circle Mode</button>
+                </div>
+                
+                <div id="underlineSection" style="display: block;">
+                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                        <button class="btn-outline" id="checkUnderlinesBtn">✓ Check Underlines</button>
+                        <button class="btn-outline" id="resetUnderlinesBtn">⟳ Reset Underlines</button>
+                    </div>
+                    <div id="underlineFeedback" style="margin-top: 0.8rem;"></div>
+                </div>
+                
+                <div id="circleSection" style="display: none; margin-top: 1rem;">
+                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                        <button class="btn-outline" id="checkCirclesBtn">✓ Check Circles</button>
+                        <button class="btn-outline" id="resetCirclesBtn">⟳ Reset Circles</button>
+                    </div>
+                    <div id="circleFeedback" style="margin-top: 0.8rem;"></div>
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                    <button class="complete-activity-btn" id="completeReadingBtn" disabled>✓ Mark Reading as Complete</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==================== 4. WRITING ACTIVITY ==================== -->
+        <div class="activity-card" id="writing-card">
+            <div class="card-header writing">
+                <h2>✍️ 4. Writing Activity · The Week 2 Audit</h2>
+            </div>
+            <div class="card-body">
+                <div class="writing-prompt">
+                    <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">✨ Part A: The "Substitute"</h3>
+                    <p>Instead of "I will study," write: <strong>"I will be engaging in deep study."</strong></p>
+                    <p>Instead of "I understood," write: <strong>"I comprehended the substantial details."</strong></p>
+                </div>
+                
+                <div class="writing-prompt">
+                    <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">✍️ Main Task: Write a 4-sentence paragraph about your Week 2 journey</h3>
+                    <div class="inline-hint" style="margin-bottom: 0.5rem;">
+                        ✨ Tip:<br>
+                        • Use <strong>one Past Perfect sentence</strong> (I had + past participle)<br>
+                        • Use <strong>one Future Continuous sentence</strong> (I will be + -ing)<br>
+                    </div>
+                    <div class="habit-line">
+                        <textarea id="week2Paragraph" class="writing-textarea" rows="6" placeholder="Write your 4-sentence paragraph here..."></textarea>
+                    </div>
+                </div>
+                
+                <div id="writingFeedback" class="quiz-feedback"></div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="btn-outline" id="checkWritingBtn">✓ Check My Paragraph</button>
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                    <button class="complete-activity-btn" id="completeWritingBtn" disabled>✓ Mark Writing as Complete</button>
+                </div>
+            </div>
+        </div>
+        
+                <!-- ==================== 5. VOCABULARY TABLE ==================== -->
+        <div class="activity-card" id="vocabulary-card">
+            <div class="card-header vocabulary">
+                <h2>📘 Vocabulary Review · The "Master" Upgrade</h2>
+            </div>
+            <div class="card-body">
+                <div class="vocab-table-container">
+                    <table class="vocab-table">
+                        <thead>
+                            <tr>
+                                <th>Simple Expression</th>
+                                <th>Smart Substitute</th>
+                                <th>Usage Context</th>
+                            </thead>
+                        <tbody>
+                            <tr>
+                                <td class="word-cell">"I'm sorry, what?"</span>
+                                <td class="word-cell"><strong>I beg your pardon, could you clarify?</strong></span>
+                                <td class="word-cell">Professional Correction</span>
+                            </tr>
+                            <tr>
+                                <td class="word-cell">"It was very hard."</span>
+                                <td class="word-cell"><strong>It was a strenuous undertaking.</strong></span>
+                                <td class="word-cell">Describing a Project</span>
+                            </tr>
+                            <tr>
+                                <td class="word-cell">"I am doing it now."</span>
+                                <td class="word-cell"><strong>I am currently implementing the solution.</strong></span>
+                                <td class="word-cell">Status Update</span>
+                            </tr>
+                            <tr>
+                                <td class="word-cell">"I'll do it later."</span>
+                                <td class="word-cell"><strong>I will be finalizing that shortly.</strong></span>
+                                <td class="word-cell">Future Commitment</span>
+                            </tr>
+                            <tr>
+                                <td class="word-cell">"Thanks for help."</span>
+                                <td class="word-cell"><strong>I am appreciative of your collaboration.</strong></span>
+                                <td class="word-cell">Team Gratitude</span>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="power-word-section">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
+                        <span>🔥</span><span>POWER WORD OF THE WEEK: "RESILIENT"</span>
+                    </div>
+                    <p><strong>Pronunciation:</strong> /rɪˈzɪliənt/ (Re-ZIL-yent)</p>
+                    <p><strong>Meaning:</strong> Able to withstand or recover quickly from difficult conditions.</p>
+                    <p><strong>Usage:</strong> "The Week 2 students are resilient; they never let a difficult word stop them."</p>
+                </div>
+                
+
+            </div>
+        </div>
+        <!-- ==================== 6. GRAMMAR SECTION ==================== -->
+        <div class="grammar-section" id="grammar-card">
+            <h3 style="margin: 0 0 1rem 0;">🧠 6. Grammar Hack: Future Continuous (The "Ongoing Future")</h3>
+            <p>Use this to talk about an action that will be in progress at a certain time in the future. It sounds more "active" and "polite" than Simple Future.</p>
+            <div class="grammar-rule">
+                <p><strong>Formula:</strong> Subject + Will Be + Verb-ing</p>
+                <p><strong>Example:</strong> "At 10 AM tomorrow, I will be attending my lecture."</p>
+            </div>
+            
+            <table class="grammar-table">
+                <thead><tr><th>Simple Future (Result)</th><th>Future Continuous (Process)</th></tr></thead>
+                <tbody>
+                    <tr><td>I will finish the work.</span><td>I will be finishing the work tomorrow.</span></tr>
+                    <tr><td>We will meet.</span><td>We will be meeting in the cafeteria.</span></tr>
+                </tbody>
+            </table>
+            
+            <div class="grammar-rule">
+                <p><strong>⚠️ Activity:</strong> Turn these into Future Continuous:</p>
+                <p>1. I (practice) __________ English at 6 PM.</p>
+                <p>2. They (utilize) __________ the new tools in the lab next week.</p>
+                <p>3. We (strive) __________ for excellence in the next semester.</p>
+            </div>
+            
+            <div class="habit-line">
+                <input type="text" id="grammar1" class="grammar-input" placeholder="Answer 1: will be practicing">
+                <div id="grammar1Feedback" class="fix-feedback"></div>
+            </div>
+            <div class="habit-line">
+                <input type="text" id="grammar2" class="grammar-input" placeholder="Answer 2: will be utilizing">
+                <div id="grammar2Feedback" class="fix-feedback"></div>
+            </div>
+            <div class="habit-line">
+                <input type="text" id="grammar3" class="grammar-input" placeholder="Answer 3: will be striving">
+                <div id="grammar3Feedback" class="fix-feedback"></div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button class="btn-outline" id="checkGrammarBtn">✓ Check Answers</button>
+            </div>
+            <div id="grammarFeedback" class="quiz-feedback"></div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                <button class="complete-activity-btn" id="completeGrammarBtn" disabled>✓ Mark Grammar as Complete</button>
+            </div>
+        </div>
+        
+        <!-- ==================== 7. GAME SECTION ==================== -->
+        <div class="game-section" id="game-card">
+            <h3 style="margin: 0 0 1rem 0;">🎲 7. Solo Game: "The Week 2 Boss Level" 🧩</h3>
+            
+            <div class="game-word">
+                <div class="game-question"><strong>🔤 Part A: Tense Mastery</strong></div>
+                <div><p>1. "By the time I arrived, he (leave) __________." (Past Perfect)</p>
+                    <input type="text" id="game1" class="game-input" placeholder="Write the complete sentence...">
+                    <div id="game1Feedback" class="fix-feedback"></div>
+                </div>
+                <div><p>2. "This time next week, I (start) __________ Week 3." (Future Continuous)</p>
+                    <input type="text" id="game2" class="game-input" placeholder="Write the complete sentence...">
+                    <div id="game2Feedback" class="fix-feedback"></div>
+                </div>
+                <div><p>3. "Yesterday, I (work) __________ when the power cut out." (Past Continuous)</p>
+                    <input type="text" id="game3" class="game-input" placeholder="Write the complete sentence...">
+                    <div id="game3Feedback" class="fix-feedback"></div>
+                </div>
+            </div>
+            
+            <div class="game-word">
+                <div class="game-question"><strong>🔍 Part B: Logic Match</strong></div>
+                <div><p>1. Formidable → 
+                    <select id="game4" class="game-select">
+                        <option value="">Select...</option>
+                        <option value="A">A. To imagine the future</option>
+                        <option value="B">B. Inspiring respect through size/strength</option>
+                        <option value="C">C. Short and clear</option>
+                    </select>
+                </p>
+                <div id="game4Feedback" class="fix-feedback"></div></div>
+                <div><p>2. Envisage → 
+                    <select id="game5" class="game-select">
+                        <option value="">Select...</option>
+                        <option value="A">A. To imagine the future</option>
+                        <option value="B">B. Inspiring respect through size/strength</option>
+                        <option value="C">C. Short and clear</option>
+                    </select>
+                </p>
+                <div id="game5Feedback" class="fix-feedback"></div></div>
+                <div><p>3. Concise → 
+                    <select id="game6" class="game-select">
+                        <option value="">Select...</option>
+                        <option value="A">A. To imagine the future</option>
+                        <option value="B">B. Inspiring respect through size/strength</option>
+                        <option value="C">C. Short and clear</option>
+                    </select>
+                </p>
+                <div id="game6Feedback" class="fix-feedback"></div></div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button class="btn-outline" id="checkGameBtn">✓ Check All Answers</button>
+            </div>
+            <div id="gameResult" style="margin-top: 1rem;"></div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                <button class="complete-activity-btn" id="completeGameBtn" disabled>✓ Mark Game as Complete</button>
+            </div>
+        </div>
+        
+        <!-- ==================== COMPLETION CHECKLIST ==================== -->
+        <div class="activity-card">
+            <div class="card-header vocabulary">
+                <h2>✅ DAY 14 COMPLETION CHECKLIST</h2>
+            </div>
+            <div class="card-body">
+                <ul class="checklist">
+                    <li><input type="checkbox" id="chk1" disabled> <label> I passed the "Comprehensive Challenge" speaking task.</label></li>
+                    <li><input type="checkbox" id="chk2" disabled> <label> I identified the Past Perfect and Future Continuous phrases.</label></li>
+                    <li><input type="checkbox" id="chk3" disabled> <label> I correctly formed the Will Be + -ing sentences.</label></li>
+                    <li><input type="checkbox" id="chk5" disabled> <label> I have protected my 14-day streak.</label></li>
+                    <li><input type="checkbox" id="chk6" disabled> <label> I completed the listening activity with enthusiasm.</label></li>
+                    <li><input type="checkbox" id="chk7" disabled> <label> I completed the "Week 2 Boss Level" game correctly.</label></li>
+                </ul>
+                <div style="text-align: right; margin-bottom: 1rem;"><span class="badge" id="progressCounter">0/7 completed</span></div>
+                <div style="display: flex; justify-content: center;">
+                    <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 14 </button>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+    // ==================== Global Variables ====================
+    let completedActivities = 0;
+    let activityCompleted = {
+        listening: false, speaking: false, reading: false,
+        writing: false, vocabulary: false, game: false, grammar: false
+    };
+    
+    let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+    let writingValid = false;
+    
+    // Speaking recordings tracking (5 lines)
+    let speakingRecorded = { 1: false, 2: false, 3: false, 4: false, 5: false };
+    let speakingBlobs = { 1: null, 2: null, 3: null, 4: null, 5: null };
+    
+    // Reading variables
+    let currentMode = 'underline';
+    let tempUnderlined = new Set();
+    let tempCircled = new Set();
+    let permanentUnderlined = new Set();
+    let permanentCircled = new Set();
+    let underlineCheckDone = false;
+    let circleCheckDone = false;
+    let readingAllSpans = [];
+    let underlineTargetWords = ['had', 'assumed'];
+    let circleTargetWords = ['will', 'be', 'commencing'];
+    
+    // Grammar variables
+    let grammarAllCorrect = false;
+    
+    // Game variables
+    let gameAllCorrect = false;
+    
+    // ==================== Helper Functions ====================
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    csrftoken = getCookie('csrftoken');
+    
+    function updateChecklistProgress() {
+        const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6', 'chk7'];
+        let completedCount = 0;
+        checkboxes.forEach(id => { if (document.getElementById(id)?.checked) completedCount++; });
+        const progressSpan = document.getElementById('progressCounter');
+        if (progressSpan) progressSpan.innerText = `${completedCount}/7 completed`;
+        
+        const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+        if (dayCompleteBtn) {
+            if (completedCount === 7) {
+                dayCompleteBtn.disabled = false;
+                dayCompleteBtn.style.opacity = '1';
+                dayCompleteBtn.style.cursor = 'pointer';
+            } else {
+                dayCompleteBtn.disabled = true;
+                dayCompleteBtn.style.opacity = '0.5';
+                dayCompleteBtn.style.cursor = 'not-allowed';
+            }
+        }
+    }
+    
+    function markActivityComplete(activityId, checklistId) {
+        if (activityCompleted[activityId]) return;
+        activityCompleted[activityId] = true;
+        completedActivities++;
+        const checkbox = document.getElementById(checklistId);
+        if (checkbox) checkbox.checked = true;
+        const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+        if (btn) { btn.classList.add('completed'); btn.textContent = '✓ Completed'; btn.disabled = true; }
+        updateChecklistProgress();
+        
+        fetch(`/learning/day/14/complete/${activityId}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ completed: true })
+        }).catch(err => console.error('Error:', err));
+    }
+    
+    async function completeDay() {
+        const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+        if (dayCompleteBtn.disabled) {
+            alert('Please complete all 7 activities before completing the day!');
+            return;
+        }
+        dayCompleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving progress...';
+        dayCompleteBtn.disabled = true;
+        try {
+            if (typeof confetti !== 'undefined') {
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#4a62b0', '#10b981', '#f59e0b', '#ef4444'] });
+                setTimeout(() => { confetti({ particleCount: 100, spread: 70, origin: { y: 0.4 } }); }, 200);
+            }
+            dayCompleteBtn.innerHTML = '✓ Day Completed! 🎉';
+            setTimeout(() => { window.location.href = `/learning/level/beginner/?celebrate=true&completed=14`; }, 2000);
+        } catch (error) {
+            dayCompleteBtn.innerHTML = '🎉 Complete Day 14 🎉';
+            dayCompleteBtn.disabled = false;
+            alert('Error. Please try again.');
+        }
+    }
+    
+    // ==================== Vocabulary Audio ====================
+    function playAudio(word) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = 'en-IN';
+        utterance.rate = 0.85;
+        utterance.pitch = 1.0;
+        function setVoiceAndSpeak() {
+            const voices = window.speechSynthesis.getVoices();
+            let selectedVoice = voices.find(voice => voice.lang === 'en-IN' || voice.lang.includes('IN') || voice.name.includes('Indian'));
+            if (!selectedVoice) selectedVoice = voices.find(voice => voice.lang === 'en-GB');
+            if (!selectedVoice) selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
+            if (selectedVoice) utterance.voice = selectedVoice;
+            window.speechSynthesis.speak(utterance);
+        }
+        if (window.speechSynthesis.getVoices().length === 0) window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
+        else setVoiceAndSpeak();
+    }
+    
+    async function saveWord(word) {
+        const response = await fetch('/learning/vocabulary/save/', {
+            method: 'POST', headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ word: word })
+        });
+        const data = await response.json();
+        alert(data.message);
+    }
+    
+    // ==================== Listening Activity ====================
+    let listeningMediaRecorder, listeningAudioChunks = [], listeningStream = null;
+    let hasListeningRecording = false, listeningQuizAnswers = { q1: null, q2: null };
+    let listeningQuizCorrect = false;
+    let listeningVoiceConfirmed = false;
+    const listeningCompleteBtn = document.getElementById('completeListeningBtn');
+
+    function updateListeningCompleteButton() {
+        if (listeningCompleteBtn) {
+            if (hasListeningRecording && listeningVoiceConfirmed && listeningQuizCorrect) {
+                listeningCompleteBtn.disabled = false;
+                listeningCompleteBtn.style.opacity = '1';
+            } else {
+                listeningCompleteBtn.disabled = true;
+                listeningCompleteBtn.style.opacity = '0.5';
+            }
+        }
+    }
+
+    const listeningRecordBtn = document.getElementById('listeningRecordBtn');
+    const listeningStopBtn = document.getElementById('listeningStopBtn');
+    const listeningPlayback = document.getElementById('listeningPlayback');
+    const listeningPlaybackCard = document.getElementById('listeningPlaybackCard');
+    const comparisonSection = document.getElementById('comparisonSection');
+    const yesComparisonBtn = document.getElementById('yesComparisonBtn');
+    const noComparisonBtn = document.getElementById('noComparisonBtn');
+    const comparisonFeedback = document.getElementById('comparisonFeedback');
+    const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
+    const listeningQuizFeedback = document.getElementById('listeningQuizFeedback');
+
+    if (listeningRecordBtn) {
+        listeningRecordBtn.addEventListener('click', async () => {
+            try {
+                listeningStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                listeningMediaRecorder = new MediaRecorder(listeningStream);
+                listeningAudioChunks = [];
+                listeningMediaRecorder.ondataavailable = (event) => listeningAudioChunks.push(event.data);
+                listeningMediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(listeningAudioChunks, { type: 'audio/webm' });
+                    listeningPlayback.src = URL.createObjectURL(audioBlob);
+                    listeningPlaybackCard.style.display = 'block';
+                    if (listeningStream) listeningStream.getTracks().forEach(t => t.stop());
+                    hasListeningRecording = true;
+                    comparisonSection.style.display = 'block';
+                    updateListeningCompleteButton();
+                };
+                listeningMediaRecorder.start();
+                listeningRecordBtn.style.display = 'none';
+                listeningStopBtn.style.display = 'inline-flex';
+                listeningRecordBtn.classList.add('recording');
+            } catch (err) { alert('Unable to access microphone.'); }
+        });
+    }
+    if (listeningStopBtn) {
+        listeningStopBtn.addEventListener('click', () => {
+            if (listeningMediaRecorder?.state === 'recording') {
+                listeningMediaRecorder.stop();
+                listeningStopBtn.style.display = 'none';
+                listeningRecordBtn.style.display = 'inline-flex';
+                listeningRecordBtn.classList.remove('recording');
+            }
+        });
+    }
+
+    if (yesComparisonBtn) {
+        yesComparisonBtn.addEventListener('click', () => {
+            listeningVoiceConfirmed = true;
+            comparisonFeedback.innerHTML = '✅ Great! Your voice sounds like you are "playing" - enthusiastic and fluid!';
+            updateListeningCompleteButton();
+        });
+    }
+    if (noComparisonBtn) {
+        noComparisonBtn.addEventListener('click', () => {
+            listeningPlaybackCard.style.display = 'none';
+            listeningPlayback.src = '';
+            comparisonSection.style.display = 'none';
+            listeningRecordBtn.style.display = 'inline-flex';
+            listeningStopBtn.style.display = 'none';
+            listeningRecordBtn.classList.remove('recording');
+            hasListeningRecording = false;
+            listeningVoiceConfirmed = false;
+            listeningQuizCorrect = false;
+            comparisonFeedback.innerHTML = '';
+            if (listeningStream) listeningStream.getTracks().forEach(t => t.stop());
+            updateListeningCompleteButton();
+        });
+    }
+
+    document.querySelectorAll('input[name="q1"]').forEach(radio => radio.addEventListener('change', e => { listeningQuizAnswers.q1 = e.target.value; listeningQuizCorrect = false; updateListeningCompleteButton(); }));
+    document.querySelectorAll('input[name="q2"]').forEach(radio => radio.addEventListener('change', e => { listeningQuizAnswers.q2 = e.target.value; listeningQuizCorrect = false; updateListeningCompleteButton(); }));
+
+    if (checkListeningWorkBtn) {
+        checkListeningWorkBtn.addEventListener('click', () => {
+            if (!hasListeningRecording) {
+                listeningQuizFeedback.innerHTML = '⚠️ Please record your voice first.';
+                listeningQuizFeedback.className = 'quiz-feedback warning';
+                listeningQuizFeedback.style.display = 'block';
+                return;
+            }
+            if (!listeningQuizAnswers.q1 || !listeningQuizAnswers.q2) {
+                listeningQuizFeedback.innerHTML = '⚠️ Please answer both questions.';
+                listeningQuizFeedback.className = 'quiz-feedback warning';
+                listeningQuizFeedback.style.display = 'block';
+                return;
+            }
+            if (listeningQuizAnswers.q1 === 'Burden' && listeningQuizAnswers.q2 === 'Enjoyment') {
+                listeningQuizFeedback.innerHTML = '✅ Correct! Great job!';
+                listeningQuizFeedback.className = 'quiz-feedback correct';
+                listeningQuizCorrect = true;
+            } else {
+                listeningQuizFeedback.innerHTML = '❌ Incorrect. Listen again.';
+                listeningQuizFeedback.className = 'quiz-feedback incorrect';
+                listeningQuizCorrect = false;
+            }
+            listeningQuizFeedback.style.display = 'block';
+            updateListeningCompleteButton();
+        });
+    }
+
+    if (listeningCompleteBtn) {
+        listeningCompleteBtn.addEventListener('click', () => {
+            if (!hasListeningRecording) { alert('Please record your voice first.'); return; }
+            if (!listeningVoiceConfirmed) { alert('Please confirm your voice sounds like "playing".'); return; }
+            if (!listeningQuizCorrect) { alert('Please answer both quiz questions correctly.'); return; }
+            markActivityComplete('listening', 'chk6');
+        });
+        listeningCompleteBtn.disabled = true;
+        listeningCompleteBtn.style.opacity = '0.5';
+    }
+    
+    // ==================== Speaking Activity ====================
+    function setupSpeakingRecording(sentenceNum) {
+        const recordBtn = document.getElementById(`speakingRecordBtn${sentenceNum}`);
+        const stopBtn = document.getElementById(`speakingStopBtn${sentenceNum}`);
+        const playbackCard = document.getElementById(`speakingPlaybackCard${sentenceNum}`);
+        const playback = document.getElementById(`speakingPlayback${sentenceNum}`);
+        let mediaRecorder, audioChunks = [];
+        
+        recordBtn.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    playback.src = URL.createObjectURL(audioBlob);
+                    playbackCard.style.display = 'block';
+                    speakingBlobs[sentenceNum] = audioBlob;
+                    speakingRecorded[sentenceNum] = true;
+                    stream.getTracks().forEach(t => t.stop());
+                    recordBtn.style.display = 'inline-flex';
+                    stopBtn.style.display = 'none';
+                    recordBtn.classList.remove('recording');
+                    
+                    const allRecorded = [1,2,3,4,5].every(num => speakingRecorded[num]);
+                    const completeBtn = document.getElementById('completeSpeakingBtn');
+                    if (completeBtn) completeBtn.disabled = !allRecorded;
+                };
+                mediaRecorder.start();
+                recordBtn.style.display = 'none';
+                stopBtn.style.display = 'inline-flex';
+                recordBtn.classList.add('recording');
+            } catch (err) { alert('Unable to access microphone.'); }
+        });
+        stopBtn.addEventListener('click', () => { if (mediaRecorder?.state === 'recording') mediaRecorder.stop(); });
+    }
+    
+    for (let i = 1; i <= 5; i++) setupSpeakingRecording(i);
+    
+    document.getElementById('completeSpeakingBtn')?.addEventListener('click', () => {
+        const allRecorded = [1,2,3,4,5].every(num => speakingRecorded[num]);
+        if (!allRecorded) { alert('Please record all 5 sentences before submitting.'); return; }
+        markActivityComplete('speaking', 'chk1');
+    });
+    
+    // ==================== Reading Activity ====================
+    const readingPassageText = "Before I started Week 2, I had assumed that networking was difficult. While I was practicing Day 8, I realized that asking for help is a strength. I encountered many new words like 'synergy' and 'lucid.' Because I have remained diligent, I will attain my goals. Tomorrow, I will be commencing Week 3, and I am certain it will yield even better results.";
+    
+    function buildReading() {
+        const container = document.getElementById('interactivePassage');
+        const words = readingPassageText.split(/\s+/);
+        container.innerHTML = '';
+        readingAllSpans = [];
+        words.forEach((word, idx) => {
+            const cleanWord = word.toLowerCase().replace(/[.,!?;]/g, '');
+            const span = document.createElement('span');
+            span.className = 'clickable-word';
+            span.textContent = word + ' ';
+            span.dataset.value = cleanWord;
+            span.dataset.index = idx;
+            span.onclick = () => toggleWordSelection(span);
+            container.appendChild(span);
+            readingAllSpans.push(span);
+        });
+        updateAllVisuals();
+    }
+    
+    function toggleWordSelection(span) {
+        const val = span.dataset.value;
+        if (currentMode === 'underline') {
+            if (tempUnderlined.has(val)) tempUnderlined.delete(val);
+            else tempUnderlined.add(val);
+            if (underlineCheckDone) { underlineCheckDone = false; document.getElementById('underlineFeedback').innerHTML = ''; }
+        } else {
+            if (tempCircled.has(val)) tempCircled.delete(val);
+            else tempCircled.add(val);
+            if (circleCheckDone) { circleCheckDone = false; document.getElementById('circleFeedback').innerHTML = ''; }
+        }
+        updateAllVisuals();
+    }
+    
+    function updateAllVisuals() {
+        readingAllSpans.forEach(span => {
+            const val = span.dataset.value;
+            span.classList.remove('temp-underlined', 'temp-circled', 'underline-correct', 'circle-correct', 'underline-incorrect', 'circle-incorrect');
+            if (permanentUnderlined.has(val)) span.classList.add('underline-correct');
+            if (permanentCircled.has(val)) span.classList.add('circle-correct');
+            if (!underlineCheckDone && tempUnderlined.has(val)) span.classList.add('temp-underlined');
+            if (!circleCheckDone && tempCircled.has(val)) span.classList.add('temp-circled');
+            if (underlineCheckDone && tempUnderlined.has(val) && !permanentUnderlined.has(val)) span.classList.add('underline-incorrect');
+            if (circleCheckDone && tempCircled.has(val) && !permanentCircled.has(val)) span.classList.add('circle-incorrect');
+        });
+    }
+    
+    function checkUnderlines() {
+        // Check if any words are selected
+        if (tempUnderlined.size === 0) {
+            document.getElementById('underlineFeedback').innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ Please select some words first. Click on words in Underline Mode to select them.</p></div>';
+            return;
+        }
+        
+        const expectedWords = underlineTargetWords;
+        let correct = 0, missing = [], wrong = [];
+        tempUnderlined.forEach(val => {
+            if (expectedWords.includes(val)) { if (!permanentUnderlined.has(val)) permanentUnderlined.add(val); correct++; }
+            else wrong.push(val);
+        });
+        expectedWords.forEach(e => { if (!tempUnderlined.has(e) && !permanentUnderlined.has(e)) missing.push(e); });
+        underlineCheckDone = true;
+        let fb = `<div><div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">✅ Correct: ${correct}/${expectedWords.length}</p>`;
+        if (missing.length) fb += `<p style="color:#dc2626;">❌ Missing: ${missing.join(', ')}</p>`;
+        if (wrong.length) fb += `<p style="color:#dc2626;">⚠️ Incorrect: ${wrong.join(', ')}</p>`;
+        fb += `</div></div>`;
+        document.getElementById('underlineFeedback').innerHTML = fb;
+        updateAllVisuals();
+    }
+    
+    function checkCircles() {
+        // Check if any words are selected
+        if (tempCircled.size === 0) {
+            document.getElementById('circleFeedback').innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ Please select some words first. Click on words in Circle Mode to select them.</p></div>';
+            return;
+        }
+        
+        const expectedWords = circleTargetWords;
+        let correct = 0, missing = [], wrong = [];
+        tempCircled.forEach(val => {
+            if (expectedWords.includes(val)) { if (!permanentCircled.has(val)) permanentCircled.add(val); correct++; }
+            else wrong.push(val);
+        });
+        expectedWords.forEach(e => { if (!tempCircled.has(e) && !permanentCircled.has(e)) missing.push(e); });
+        circleCheckDone = true;
+        let fb = `<div><div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">✅ Correct: ${correct}/${expectedWords.length}</p>`;
+        if (missing.length) fb += `<p style="color:#dc2626;">❌ Missing: ${missing.join(', ')}</p>`;
+        if (wrong.length) fb += `<p style="color:#dc2626;">⚠️ Incorrect: ${wrong.join(', ')}</p>`;
+        fb += `</div></div>`;
+        document.getElementById('circleFeedback').innerHTML = fb;
+        updateAllVisuals();
+    }
+    
+    function resetUnderlines() { tempUnderlined.clear(); permanentUnderlined.clear(); underlineCheckDone = false; document.getElementById('underlineFeedback').innerHTML = ''; updateAllVisuals(); }
+    function resetCircles() { tempCircled.clear(); permanentCircled.clear(); circleCheckDone = false; document.getElementById('circleFeedback').innerHTML = ''; updateAllVisuals(); }
+    
+    function initReading() {
+        buildReading();
+        const underlineModeBtn = document.getElementById('underlineModeBtn');
+        const circleModeBtn = document.getElementById('circleModeBtn');
+        const underlineSection = document.getElementById('underlineSection');
+        const circleSection = document.getElementById('circleSection');
+        
+        if (underlineModeBtn) {
+            underlineModeBtn.addEventListener('click', () => {
+                currentMode = 'underline';
+                underlineModeBtn.style.background = '#f59e0b';
+                underlineModeBtn.style.opacity = '1';
+                circleModeBtn.style.background = '#3b82f6';
+                circleModeBtn.style.opacity = '0.5';
+                underlineSection.style.display = 'block';
+                circleSection.style.display = 'none';
+                tempCircled.clear();
+                document.getElementById('circleFeedback').innerHTML = '';
+                updateAllVisuals();
+            });
+        }
+        if (circleModeBtn) {
+            circleModeBtn.addEventListener('click', () => {
+                currentMode = 'circle';
+                circleModeBtn.style.background = '#3b82f6';
+                circleModeBtn.style.opacity = '1';
+                underlineModeBtn.style.background = '#f59e0b';
+                underlineModeBtn.style.opacity = '0.5';
+                circleSection.style.display = 'block';
+                underlineSection.style.display = 'none';
+                tempUnderlined.clear();
+                document.getElementById('underlineFeedback').innerHTML = '';
+                updateAllVisuals();
+            });
+        }
+        document.getElementById('checkUnderlinesBtn')?.addEventListener('click', checkUnderlines);
+        document.getElementById('checkCirclesBtn')?.addEventListener('click', checkCircles);
+        document.getElementById('resetUnderlinesBtn')?.addEventListener('click', resetUnderlines);
+        document.getElementById('resetCirclesBtn')?.addEventListener('click', resetCircles);
+        document.getElementById('completeReadingBtn')?.addEventListener('click', () => {
+            if (!underlineCheckDone) { alert('Complete the Underline activity first (click "Check Underlines").'); return; }
+            if (!circleCheckDone) { alert('Complete the Circle activity first (click "Check Circles").'); return; }
+            markActivityComplete('reading', 'chk2');
+        });
+    }
+    
+    // ==================== Writing Activity ====================
+    function checkWriting() {
+        const paragraph = document.getElementById('week2Paragraph')?.value.trim();
+        const feedback = document.getElementById('writingFeedback');
+        if (!paragraph) {
+            feedback.innerHTML = '⚠️ Please write your paragraph.';
+            feedback.className = 'quiz-feedback warning';
+            feedback.style.display = 'block';
+            writingValid = false;
+            document.getElementById('completeWritingBtn').disabled = true;
+            return;
+        }
+        const sentences = paragraph.split(/[.!?]+/).filter(s => s.trim().length > 0);
+        if (sentences.length < 4) {
+            feedback.innerHTML = '⚠️ Please write at least 4 sentences.';
+            feedback.className = 'quiz-feedback warning';
+            feedback.style.display = 'block';
+            writingValid = false;
+            document.getElementById('completeWritingBtn').disabled = true;
+            return;
+        }
+        const pastPerfectPattern = /\b(?:i|he|she|it|we|they|you)\s+had\s+(?:\w+ed|\b(?:been|gone|done|seen|written|spoken|taken|given|made|come|known|thought|said|told|become|begun|broken|brought|built|chosen|drunk|eaten|fallen|felt|found|flown|forgotten|grown|heard|kept|left|lost|met|paid|put|read|ridden|rung|run|sat|sung|sunk|spent|stood|swum|taught|thrown|understood|woken)\b)/i;
+        const futureContinuousPattern = /\b(?:i|he|she|it|we|they|you)\s+will\s+be\s+\w+ing\b/i;
+        const hasPastPerfect = pastPerfectPattern.test(paragraph);
+        const hasFutureContinuous = futureContinuousPattern.test(paragraph);
+        
+        if (!hasPastPerfect) {
+            feedback.innerHTML = '⚠️ Your paragraph must include a Past Perfect sentence (I had + past participle). Example: I had struggled with vocabulary before.';
+            feedback.className = 'quiz-feedback warning';
+            feedback.style.display = 'block';
+            writingValid = false;
+            document.getElementById('completeWritingBtn').disabled = true;
+            return;
+        }
+        if (!hasFutureContinuous) {
+            feedback.innerHTML = '⚠️ Your paragraph must include a Future Continuous sentence (I will be + -ing). Example: I will be practicing daily to improve.';
+            feedback.className = 'quiz-feedback warning';
+            feedback.style.display = 'block';
+            writingValid = false;
+            document.getElementById('completeWritingBtn').disabled = true;
+            return;
+        }
+        feedback.innerHTML = '✅ Great paragraph! You used Past Perfect and Future Continuous correctly!';
+        feedback.className = 'quiz-feedback correct';
+        feedback.style.display = 'block';
+        writingValid = true;
+        document.getElementById('completeWritingBtn').disabled = false;
+    }
+    
+    document.getElementById('checkWritingBtn')?.addEventListener('click', checkWriting);
+    document.getElementById('completeWritingBtn')?.addEventListener('click', () => {
+        if (!writingValid) {
+            alert('Please check your paragraph first using "Check My Paragraph" button.');
+            return;
+        }
+        markActivityComplete('writing', 'chk5');
+    });
+    
+    // ==================== Grammar ====================
+    const grammarBtn = document.getElementById('completeGrammarBtn');
+
+    function updateGrammarCompleteButton() {
+        if (grammarBtn) {
+            if (grammarAllCorrect) {
+                grammarBtn.disabled = false;
+                grammarBtn.style.opacity = '1';
+            } else {
+                grammarBtn.disabled = true;
+                grammarBtn.style.opacity = '0.5';
+            }
+        }
+    }
+
+    function checkGrammarAnswers() {
+        const answer1 = document.getElementById('grammar1')?.value.trim().toLowerCase();
+        const answer2 = document.getElementById('grammar2')?.value.trim().toLowerCase();
+        const answer3 = document.getElementById('grammar3')?.value.trim().toLowerCase();
+        
+        // Check for empty answers
+        if (!answer1 || !answer2 || !answer3) {
+            const feedback = document.getElementById('grammarFeedback');
+            feedback.innerHTML = '⚠️ Please write your answers in all fields before checking.';
+            feedback.className = 'quiz-feedback warning';
+            feedback.style.display = 'block';
+            grammarAllCorrect = false;
+            updateGrammarCompleteButton();
+            return;
+        }
+        
+        const correct1 = answer1 === 'will be practicing';
+        const correct2 = answer2 === 'will be utilizing';
+        const correct3 = answer3 === 'will be striving';
+        
+        grammarAllCorrect = correct1 && correct2 && correct3;
+        
+        const feedback = document.getElementById('grammarFeedback');
+        if (grammarAllCorrect) {
+            feedback.innerHTML = '✅ Correct! All grammar answers are right!';
+            feedback.className = 'quiz-feedback correct';
+            feedback.style.display = 'block';
+        } else {
+            let message = '❌ Some answers are incorrect.<br>';
+            if (!correct1) message += '• Answer 1: "will be practicing"<br>';
+            if (!correct2) message += '• Answer 2: "will be utilizing"<br>';
+            if (!correct3) message += '• Answer 3: "will be striving"';
+            feedback.innerHTML = message;
+            feedback.className = 'quiz-feedback incorrect';
+            feedback.style.display = 'block';
+        }
+        updateGrammarCompleteButton();
+    }
+
+    document.getElementById('checkGrammarBtn')?.addEventListener('click', checkGrammarAnswers);
+
+    if (grammarBtn) {
+        grammarBtn.addEventListener('click', () => {
+            if (!grammarAllCorrect) {
+                alert('Please correct all grammar answers first. Click "Check Answers" to see which are wrong.');
+                return;
+            }
+            markActivityComplete('grammar', 'chk3');
+        });
+        grammarBtn.disabled = true;
+        grammarBtn.style.opacity = '0.5';
+    }
+    
+    // ==================== Game Section ====================
+    const gameBtn = document.getElementById('completeGameBtn');
+    const validAnswersQ1 = [
+        "by the time i arrived, he had left",
+        "by the time i arrived he had left",
+        "he had left by the time i arrived"
+    ];
+    const validAnswersQ2 = [
+        "this time next week, i will be starting week 3",
+        "this time next week i will be starting week 3",
+        "i will be starting week 3 this time next week"
+    ];
+    const validAnswersQ3 = [
+        "yesterday, i was working when the power cut out",
+        "yesterday i was working when the power cut out",
+        "i was working when the power cut out yesterday"
+    ];
+
+    function updateGameCompleteButton() {
+        if (gameBtn) {
+            if (gameAllCorrect) {
+                gameBtn.disabled = false;
+                gameBtn.style.opacity = '1';
+            } else {
+                gameBtn.disabled = true;
+                gameBtn.style.opacity = '0.5';
+            }
+        }
+    }
+
+    function checkGameSentenceFlexible(inputId, validAnswersList) {
+        const input = document.getElementById(inputId);
+        if (!input) return false;
+        let userAnswer = input.value.trim().toLowerCase().replace(/\s+/g, ' ').replace(/[.!?;]$/, '');
+        if (!userAnswer) return false;
+        const isValid = validAnswersList.some(correct => userAnswer === correct);
+        const feedback = document.getElementById(`${inputId}Feedback`);
+        if (isValid) {
+            if (feedback) { feedback.innerHTML = '✅ Correct!'; feedback.className = 'fix-feedback correct'; feedback.style.display = 'block'; }
+            input.style.borderColor = '#22c55e';
+            return true;
+        } else {
+            if (feedback) { feedback.innerHTML = `✗ Incorrect.`; feedback.className = 'fix-feedback incorrect'; feedback.style.display = 'block'; }
+            input.style.borderColor = '#dc2626';
+            return false;
+        }
+    }
+
+    function checkSelectAnswer(selectId, correctValue) {
+        const select = document.getElementById(selectId);
+        if (!select) return false;
+        const isValid = select.value === correctValue;
+        const feedback = document.getElementById(`${selectId}Feedback`);
+        if (isValid) {
+            if (feedback) { feedback.innerHTML = '✅ Correct!'; feedback.className = 'fix-feedback correct'; feedback.style.display = 'block'; }
+            select.style.borderColor = '#22c55e';
+            return true;
+        } else {
+            if (feedback) { feedback.innerHTML = '✗ Incorrect. Try again!'; feedback.className = 'fix-feedback incorrect'; feedback.style.display = 'block'; }
+            select.style.borderColor = '#dc2626';
+            return false;
+        }
+    }
+
+    function checkAllGameAnswers() {
+        const game1Val = document.getElementById('game1').value.trim();
+        const game2Val = document.getElementById('game2').value.trim();
+        const game3Val = document.getElementById('game3').value.trim();
+        
+        // Check for empty answers in Part A
+        if (!game1Val || !game2Val || !game3Val) {
+            const resultDiv = document.getElementById('gameResult');
+            resultDiv.innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;">⚠️ Please fill in all the blank spaces in Part A before checking.</div>';
+            gameAllCorrect = false;
+            updateGameCompleteButton();
+            return;
+        }
+        
+        const q1 = checkGameSentenceFlexible('game1', validAnswersQ1);
+        const q2 = checkGameSentenceFlexible('game2', validAnswersQ2);
+        const q3 = checkGameSentenceFlexible('game3', validAnswersQ3);
+        const q4 = checkSelectAnswer('game4', 'B');
+        const q5 = checkSelectAnswer('game5', 'A');
+        const q6 = checkSelectAnswer('game6', 'C');
+        
+        gameAllCorrect = q1 && q2 && q3 && q4 && q5 && q6;
+        
+        const resultDiv = document.getElementById('gameResult');
+        if (gameAllCorrect) {
+            resultDiv.innerHTML = '<div style="background: #d1fae5; padding: 0.75rem; border-radius: 10px;"><p style="color: #065f46;">🎉 Perfect! All answers are correct!</p></div>';
+        } else {
+            let message = '<div style="background: #fef9e3; padding: 0.75rem 1rem; border-radius: 12px;"><p style="color: #92400e;">❌ Some answers need correction:</p>';
+            if (!q1) message += '<p>• Question 1: Use Past Perfect. Example: "By the time I arrived, he had left"</p>';
+            if (!q2) message += '<p>• Question 2: Use Future Continuous. Example: "This time next week, I will be starting Week 3"</p>';
+            if (!q3) message += '<p>• Question 3: Use Past Continuous. Example: "Yesterday, I was working when the power cut out"</p>';
+            if (!q4) message += '<p>• Question 4: Formidable means inspiring respect through size/strength</p>';
+            if (!q5) message += '<p>• Question 5: Envisage means to imagine the future</p>';
+            if (!q6) message += '<p>• Question 6: Concise means short and clear</p>';
+            message += '</div>';
+            resultDiv.innerHTML = message;
+        }
+        updateGameCompleteButton();
+    }
+
+    document.getElementById('checkGameBtn')?.addEventListener('click', checkAllGameAnswers);
+
+    if (gameBtn) {
+        gameBtn.addEventListener('click', () => {
+            if (!gameAllCorrect) {
+                alert('Please correct all game answers first. Click "Check All Answers" to see which are wrong.');
+                return;
+            }
+            markActivityComplete('game', 'chk7');
+        });
+        gameBtn.disabled = true;
+        gameBtn.style.opacity = '0.5';
+    }
+        
+    // ==================== Initialize ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        initReading();
+        updateChecklistProgress();
+        
+        document.getElementById('completeWritingBtn').disabled = true;
+        document.getElementById('completeReadingBtn').disabled = true;
+        document.getElementById('completeSpeakingBtn').disabled = true;
+        
+        const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+        if (dayCompleteBtn) dayCompleteBtn.addEventListener('click', completeDay);
+    });
+</script>
+</body>
+</html>

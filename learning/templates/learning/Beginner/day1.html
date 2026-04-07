@@ -1,0 +1,1016 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 1: Power ON · The Foundation | English for Engineers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .lesson-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 1.5rem 2rem 1.5rem;
+        position: relative;
+        width: 100%;
+    }
+    .activity-card, .grammar-section, .game-section { width: 100%; box-sizing: border-box; }
+    .card-body { padding: 1.5rem; width: 100%; box-sizing: border-box; }
+    
+    .lesson-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 0;
+        padding: 1.2rem 0;
+        color: white;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        width: 100vw;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+    .lesson-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        animation: shimmer 4s infinite;
+        z-index: 0;
+    }
+    @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding: 0 1.5rem; }
+    .day-badge {
+        display: inline-block;
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(10px);
+        padding: 0.35rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+    .hero-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 0.4rem;
+        background: linear-gradient(135deg, #ffffff, #f3e8ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .power-line {
+        font-size: 0.9rem;
+        font-style: italic;
+        margin-top: 0.4rem;
+        background: rgba(255,255,255,0.15);
+        padding: 0.5rem 1.2rem;
+        border-radius: 50px;
+        backdrop-filter: blur(8px);
+        display: inline-block;
+    }
+    @media (max-width: 768px) {
+        .lesson-container { padding: 0 1rem 1rem 1rem; }
+        .hero-title { font-size: 1.4rem; }
+        .card-body { padding: 1rem; }
+    }
+    
+    .activities-grid { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
+    .activity-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #eef2f6; }
+    .card-header { padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .card-header.listening { background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); border-bottom: 2px solid #a5b4fc; }
+    .card-header.speaking { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-bottom: 2px solid #c084fc; }
+    .card-header.reading { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-bottom: 2px solid #38bdf8; }
+    .card-header.writing { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); border-bottom: 2px solid #8b5cf6; }
+    .card-header.vocabulary { background: linear-gradient(135deg, #fae8ff 0%, #f3e8ff 100%); border-bottom: 2px solid #d946ef; }
+    .card-header.game { background: linear-gradient(135deg, #d9f99d 0%, #bef264 100%); border-bottom: 2px solid #84cc16; }
+    .card-header h2 { font-size: 1.25rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem; color: #1e293b; }
+    
+    .complete-activity-btn {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 40px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    .complete-activity-btn.completed { background: #94a3b8; cursor: default; }
+    .complete-activity-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .day-complete-btn {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .day-complete-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4); }
+    .day-complete-btn:disabled { opacity: 0.5; cursor: not-allowed; background: linear-gradient(135deg, #94a3b8, #64748b); }
+    
+    .audio-player { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 0.5rem 0; text-align: center; }
+    audio { width: 100%; outline: none; }
+    
+    .quiz-section { background: #fefce8; border-radius: 12px; padding: 1rem; margin-top: 1rem; border-left: 4px solid #eab308; }
+    .quiz-option { margin: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-radius: 8px; cursor: pointer; }
+    .quiz-option:hover { background: #fef9e3; }
+    .quiz-feedback { margin-top: 0.75rem; padding: 0.75rem; border-radius: 8px; font-weight: 500; display: none; }
+    .quiz-feedback.correct { background: #d1fae5; color: #065f46; display: block; }
+    .quiz-feedback.incorrect { background: #fee2e2; color: #991b1b; display: block; }
+    .quiz-feedback.warning { background: #fef9e3; color: #92400e; display: block; }
+    
+    .task-box { background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; margin: 0.75rem 0; }
+    .task-header { background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 0.75rem 1rem; border-bottom: 2px solid #e2e8f0; }
+    .task-header .title { font-size: 1rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; }
+    .task-content { padding: 0.75rem 1rem; font-size: 0.9rem; color: #334155; line-height: 1.6; }
+    
+    .recording-controls { display: flex; gap: 1rem; margin: 0.8rem 0; flex-wrap: wrap; }
+    .record-btn { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 40px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+    .record-btn.recording { animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.7); } 70% { box-shadow: 0 0 0 8px rgba(239,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); } }
+    
+    .combined-recording-section { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0; }
+    .comparison-message { background: #eef2ff; padding: 0.75rem; border-radius: 8px; margin: 0.75rem 0; border-left: 3px solid #8b5cf6; }
+    .yes-btn, .no-btn { padding: 0.4rem 1rem; border-radius: 40px; cursor: pointer; font-weight: 600; font-size: 0.85rem; border: none; }
+    .yes-btn { background: #22c55e; color: white; }
+    .no-btn { background: #ef4444; color: white; }
+    
+    .modern-record-btn { background: #8b5cf6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 40px; cursor: pointer; font-weight: 600; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .modern-record-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .reading-passage { background: #f8fafc; border-radius: 12px; padding: 1.5rem; margin: 0.5rem 0; line-height: 1.8; font-size: 1rem; }
+    .interactive-passage { background: white; border-radius: 12px; padding: 1.5rem; margin: 1rem 0; border: 2px solid #e2e8f0; line-height: 1.8; font-size: 1rem; }
+    .clickable-word { display: inline-block; padding: 0.1rem 0.2rem; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+    .clickable-word.selected-correct { background-color: #d1fae5; border: 2px solid #22c55e; border-radius: 8px; }
+    .clickable-word.selected-incorrect { background-color: #fee2e2; border: 2px solid #dc2626; border-radius: 8px; }
+    .clickable-word.selected-temp { background-color: #e0e7ff; border: 2px solid #667eea; border-radius: 8px; }
+    
+    .analysis-instruction { background: #fef9e3; padding: 1rem; border-radius: 12px; margin: 1rem 0; border-left: 4px solid #eab308; }
+    .reading-stats { display: flex; gap: 1rem; margin: 0.8rem 0; padding: 0.8rem; background: #f8fafc; border-radius: 12px; }
+    .stat { text-align: center; flex: 1; }
+    .stat-number { font-size: 1.3rem; font-weight: 700; color: #667eea; }
+    .stat-label { font-size: 0.75rem; color: #64748b; }
+    
+    .writing-prompt { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 0.5rem 0; }
+    .habit-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; margin: 0.5rem 0; font-size: 0.9rem; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    .habit-input:focus { outline: none; border-color: #8b5cf6; }
+    
+    .vocab-table-container { overflow-x: auto; margin: 0.5rem 0; border-radius: 12px; border: 1px solid #e2e8f0; background: white; }
+    .vocab-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .vocab-table thead { background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); }
+    .vocab-table th { padding: 0.85rem 0.75rem; text-align: left; font-weight: 600; color: white; }
+    .vocab-table td { padding: 0.75rem; border-bottom: 1px solid #e2e8f0; vertical-align: middle; color: #334155; }
+    .vocab-table .audio-cell { width: 50px; text-align: center; }
+    .vocab-audio-btn { background: none; border: none; cursor: pointer; font-size: 1rem; padding: 0.3rem; border-radius: 50%; transition: all 0.2s; color: #8b5cf6; }
+    .vocab-audio-btn:hover { background: #ede9fe; transform: scale(1.1); }
+    
+    .grammar-section { background: linear-gradient(135deg, #ede9fe 0%, #e0e7ff 100%); border-radius: 20px; padding: 1.5rem; margin: 1.5rem 0; }
+    .grammar-rule { background: white; border-radius: 12px; padding: 1rem; margin: 0.75rem 0; }
+    .grammar-rule .wrong { color: #dc2626; }
+    .grammar-rule .correct { color: #16a34a; font-weight: 600; }
+    .grammar-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; margin: 0.5rem 0; font-size: 0.9rem; }
+    .grammar-input:focus { outline: none; border-color: #8b5cf6; }
+    .fix-feedback { margin-top: 0.5rem; padding: 0.5rem; border-radius: 8px; font-size: 0.85rem; display: none; }
+    .fix-feedback.correct { background: #d4edda; color: #155724; display: block; }
+    .fix-feedback.incorrect { background: #f8d7da; color: #721c24; display: block; }
+    .fix-feedback.warning { background: #fef9e3; color: #92400e; display: block; }
+    
+    .game-section { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 20px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #bbf7d0; }
+    .game-word { background: white; border-radius: 12px; padding: 1rem; margin: 1rem 0; border: 1px solid #e2e8f0; }
+    .game-question { font-weight: 600; margin-bottom: 0.5rem; color: #1e293b; }
+    .inline-game-input { width: 200px; padding: 0.6rem; border: 2px solid #e2e8f0; border-radius: 10px; font-family: 'Inter', sans-serif; margin-left: 0.5rem; }
+    .inline-game-input:focus { outline: none; border-color: #8b5cf6; }
+    
+    .btn-outline { background: none; border: 2px solid #8b5cf6; padding: 0.6rem 1.2rem; border-radius: 40px; font-weight: 600; color: #8b5cf6; cursor: pointer; transition: 0.2s; margin-top: 0.6rem; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-outline:hover { background: #8b5cf6; color: white; }
+    
+    .checklist { list-style: none; padding: 0; }
+    .checklist li { margin: 0.75rem 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: #f8fafc; border-radius: 10px; }
+    .checklist input { pointer-events: none; opacity: 0.6; cursor: not-allowed; }
+    .badge { background: #8b5cf620; border-radius: 30px; padding: 0.2rem 0.8rem; font-size: 0.7rem; font-weight: bold; color: #6d28d9; }
+    
+    .power-word-section { background: linear-gradient(135deg, #fefce8 0%, #fef9e3 100%); border-left: 4px solid #eab308; padding: 1rem; border-radius: 12px; margin: 1rem 0; }
+    
+    .underline-style { text-decoration: underline; text-decoration-thickness: 3px; }
+    .underline-green { text-decoration-color: #22c55e !important; background-color: #f0fdf4; }
+    .underline-red { text-decoration-color: #dc2626 !important; background-color: #fee2e2; }
+    .circle-style { display: inline-block; border-radius: 50%; padding: 0.1rem 0.3rem; }
+    .circle-green { border: 3px solid #22c55e; background-color: #f0fdf4; }
+    .circle-red { border: 3px solid #dc2626; background-color: #fee2e2; }
+    .temp-underline { text-decoration: underline; text-decoration-thickness: 3px; text-decoration-color: #3b82f6; background-color: #eff6ff; }
+    .temp-circle { border: 3px solid #3b82f6; border-radius: 50%; padding: 0.1rem 0.3rem; background-color: #eff6ff; }
+    
+    .guided-support-box {
+        background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid #e9d5ff;
+        margin-top: 1.5rem;
+    }
+    .guided-support-header {
+        background: linear-gradient(135deg, #f5f0ff 0%, #ede9fe 100%);
+        padding: 1rem 1.5rem;
+        border-bottom: 2px solid #c4b5fd;
+    }
+    .guided-support-header .title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 800;
+        font-size: 1rem;
+        color: #5b21b6;
+    }
+    .guided-support-content {
+        padding: 1.2rem 1.5rem;
+        background: white;
+    }
+    .guided-support-item {
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+        color: #1e293b;
+    }
+    .guided-support-item strong {
+        color: #6d28d9;
+    }
+    .guided-support-input {
+        width: auto;
+        min-width: 160px;
+        padding: 0.4rem 0.8rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.2s ease;
+        background: white;
+        margin: 0 0.25rem;
+    }
+    .guided-support-input:focus {
+        outline: none;
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+  </style>
+</head>
+<body>
+<div class="lesson-container">
+    <div class="lesson-hero">
+        <div class="hero-content">
+            <div class="day-badge">Day 1 • Week 1</div>
+            <h1 class="hero-title">⚡ POWER ON: THE FOUNDATION</h1>
+            <div class="power-line">💡 "You don't have to be a master to start, but you have to start to become a master."</div>
+        </div>
+    </div>
+    
+    <div class="activities-grid">
+        <!-- 1. LISTENING ACTIVITY -->
+        <div class="activity-card" id="listening-card">
+            <div class="card-header listening"><h2>🎧 1. Listening Activity · Active Monitoring</h2></div>
+            <div class="card-body">
+                <div class="task-box"><div class="task-header"><div class="title"><span>🎯</span><span>The Task</span></div></div>
+                <div class="task-content">Listen to the audio, focus on pauses, then shadow and record.</div></div>
+                <audio id="listeningAudio" controls><source src="{% static 'learning/audio/day1.mp3' %}" type="audio/mpeg"></audio>                <div class="combined-recording-section"><div style="font-weight:600;">🎙️ Record & Compare</div>
+                <div class="recording-controls"><button id="listeningRecordBtn" class="record-btn"> Start Recording</button><button id="listeningStopBtn" class="record-btn" style="background:#64748b; display:none;">⏹️ Stop</button></div>
+                <div id="listeningPlaybackCard" style="display:none;"><audio id="listeningPlayback" controls style="width:100%;"></audio></div>
+                <div id="comparisonSection" style="display:none;"><div class="comparison-message">Does your voice follow the pauses and show excitement?</div>
+                <div style="display:flex; gap:0.75rem;"><button id="yesComparisonBtn" class="yes-btn">✓ Yes, sounds good</button><button id="noComparisonBtn" class="no-btn">✗ No, record again</button></div></div></div>
+                <div class="quiz-section"><p><strong>🧠 Quick Listening Check</strong></p><br>
+                <div><p>1. What is the feeling?</p><label class="quiz-option"><input type="radio" name="q1" value="Excited"> Excited</label><label class="quiz-option"><input type="radio" name="q1" value="Angry"> Angry</label><label class="quiz-option"><input type="radio" name="q1" value="Bored"> Bored</label></div>
+                <div><p>2. What is the goal?</p><label class="quiz-option"><input type="radio" name="q2" value="Improve English"> Improve English</label><label class="quiz-option"><input type="radio" name="q2" value="Stop learning"> Stop learning</label></div>
+                <div id="listeningQuizFeedback" class="quiz-feedback"></div></div>
+                <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answer</button>
+                <div style="display:flex; justify-content:flex-end;"><button class="complete-activity-btn" id="completeListeningBtn" disabled>✓ Mark Listening as Complete</button></div>
+            </div>
+        </div>
+        
+        <!-- 2. SPEAKING ACTIVITY -->
+        <div class="activity-card" id="speaking-card">
+            <div class="card-header speaking"><h2>🗣️ 2. Speaking Activity · Technical Translator</h2></div>
+            <div class="card-body">
+                <p>In Engineering, we describe how things work. Let's start with your tools.</p>
+                <div class="task-box">
+                    <div class="task-header"><div class="title"><span>🔧</span><span>The Task</span></div></div>
+                    <div class="task-content">Pick any tool near you (Pen / Phone / Calculator / Wrench).</div>
+                </div>
+                <div class="task-box">
+                    <div class="task-header"><div class="title"><span>🗣️</span><span>The Exercise</span></div></div>
+                    <div class="task-content">Speak these sentences out loud:</div>
+                </div>
+                <div style="background:#faf5ff; border-radius:20px; border:1px solid #e9d5ff; padding:1rem;">
+                    <div style="font-weight:800; margin-bottom:1rem;">📢 Complete and Speak these sentences:</div>
+                    <div style="margin:1rem 0;"><div style="margin-bottom:0.5rem;">1. "This is my <input type="text" id="speakObject" placeholder="object name" style="width:150px; padding:0.3rem 0.5rem; border:2px solid #e2e8f0; border-radius:8px;"> ."</div>
+                    <button id="speakingRecordBtn1" class="modern-record-btn" disabled>Record</button><button id="speakingStopBtn1" class="modern-record-btn" style="display:none;">Stop</button><div id="speakingPlaybackCard1" style="display:none; margin-top:0.5rem;"><audio id="speakingPlayback1" controls></audio></div></div>
+                    <div style="margin:1rem 0;"><div style="margin-bottom:0.5rem;">2. "I use it every day for my <input type="text" id="speakBranch" placeholder="branch name" style="width:180px; padding:0.3rem 0.5rem; border:2px solid #e2e8f0; border-radius:8px;"> studies."</div>
+                    <button id="speakingRecordBtn2" class="modern-record-btn" disabled>Record</button><button id="speakingStopBtn2" class="modern-record-btn" style="display:none;">Stop</button><div id="speakingPlaybackCard2" style="display:none; margin-top:0.5rem;"><audio id="speakingPlayback2" controls></audio></div></div>
+                    <div style="margin:1rem 0;"><div style="margin-bottom:0.5rem;">3. "It helps me work efficiently."</div>
+                    <button id="speakingRecordBtn3" class="modern-record-btn" disabled>Record</button><button id="speakingStopBtn3" class="modern-record-btn" style="display:none;">Stop</button><div id="speakingPlaybackCard3" style="display:none; margin-top:0.5rem;"><audio id="speakingPlayback3" controls></audio></div></div>
+                </div>
+                
+                <div class="guided-support-box">
+                    <div class="guided-support-header">
+                        <div class="title">
+                            <span style="font-size: 1.2rem;">➕</span>
+                            <span>Guided Support</span>
+                        </div>
+                    </div>
+                    <div class="guided-support-content">
+                        <div class="guided-support-item">
+                            <strong>• I use</strong> 
+                            <input type="text" id="guidedTool" class="guided-support-input" placeholder="tool name" style="width: 140px;"> 
+                            <strong>to study.</strong>
+                        </div>
+                        <div class="guided-support-item">
+                            <strong>• It helps me</strong> 
+                            <input type="text" id="guidedAction" class="guided-support-input" placeholder="calculate/write/draw" style="width: 180px;"> 
+                            <strong>.</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display:flex; justify-content:flex-end; margin-top:1rem;"><button class="complete-activity-btn" id="completeSpeakingBtn" disabled>✓ Mark Speaking as Complete</button></div>
+            </div>
+        </div>
+        
+        <!-- 3. READING ACTIVITY -->
+        <div class="activity-card" id="reading-card">
+            <div class="card-header reading"><h2>📖 3. Reading Activity · Logic & Routine</h2></div>
+            <div class="card-body">
+                <div class="reading-passage"><strong>📖 Read the following passage slowly and clearly:</strong></div>
+                <div id="interactivePassage" class="interactive-passage"></div>
+                <div class="analysis-instruction"><strong>🔍 Analysis Task:</strong><br><br>• <span style="color:#1e293b;">Underline the verbs (action words:)</span><br><br>• <span style="color:#1e293b;">Circle the adjectives (describing words:)</span><br><em style="font-size:0.85rem;"><br></em></div>
+                <div style="display:flex; gap:1rem; margin:1rem 0; flex-wrap:wrap;">
+                    <button id="underlineModeBtn" class="btn-outline" style="background:#f59e0b; color:white; border:none;">Underline Mode (Verbs)</button>
+                    <button id="circleModeBtn" class="btn-outline" style="background:#3b82f6; color:white; border:none; opacity:0.5;">Circle Mode (Adjectives)</button>
+                </div>
+                <div id="underlineSection" style="display:block;">
+                    <div style="display:flex; gap:1rem;"><button class="btn-outline" id="checkUnderlinesBtn">✓ Check Underlines</button><button class="btn-outline" id="resetUnderlinesBtn">⟳ Reset Underlines</button></div>
+                    <div id="underlineFeedback" style="margin-top:0.8rem;"></div>
+                </div>
+                <div id="circleSection" style="display:none; margin-top:1rem;">
+                    <div style="display:flex; gap:1rem;"><button class="btn-outline" id="checkCirclesBtn">✓ Check Circles</button><button class="btn-outline" id="resetCirclesBtn">⟳ Reset Circles</button></div>
+                    <div id="circleFeedback" style="margin-top:0.8rem;"></div>
+                </div>
+                <div class="reading-stats"><div class="stat"><div class="stat-number" id="verbCount">0</div><div class="stat-label">Verbs Found</div></div><div class="stat"><div class="stat-number" id="adjCount">0</div><div class="stat-label">Adjectives Found</div></div></div>
+                <div style="display:flex; justify-content:flex-end; margin-top:1rem;"><button class="complete-activity-btn" id="completeReadingBtn" disabled>✓ Mark Reading as Complete</button></div>
+            </div>
+        </div>
+        
+        <!-- 4. WRITING ACTIVITY -->
+        <div class="activity-card" id="writing-card">
+            <div class="card-header writing"><h2>✍️ 4. Writing Activity · Personal Logs & Identity</h2></div>
+            <div class="card-body">
+                <div class="writing-prompt"><h3>✨ Part A: Personal Logs (Guided)</h3><br>
+                <p style="font-weight:500; margin-bottom:0.25rem;">1. I practice English because ____________________.</p><input type="text" id="guided1" class="habit-input" placeholder="Complete the sentence..."><div id="guided1Feedback" class="fix-feedback"></div>
+                <p style="font-weight:500; margin-bottom:0.25rem;">2. I feel __________ when I speak English.</p><input type="text" id="guided2" class="habit-input" placeholder="Complete the sentence..."><br><div id="guided2Feedback" class="fix-feedback"></div>
+                <h3>📝 Main Task: Write 5 daily habits using "I + Verb"</h3>
+                <input type="text" id="habit1" class="habit-input" placeholder="1. I wake up early"><div id="habit1Feedback" class="fix-feedback"></div>
+                <input type="text" id="habit2" class="habit-input" placeholder="2. I study English daily"><div id="habit2Feedback" class="fix-feedback"></div>
+                <input type="text" id="habit3" class="habit-input" placeholder="3. I practice speaking"><div id="habit3Feedback" class="fix-feedback"></div>
+                <input type="text" id="habit4" class="habit-input" placeholder="4. I read technical articles"><div id="habit4Feedback" class="fix-feedback"></div>
+                <input type="text" id="habit5" class="habit-input" placeholder="5. I review my notes"><div id="habit5Feedback" class="fix-feedback"></div>
+                </div>
+                <div class="writing-prompt"><h3>⚙️ Part B: Technical Identity</h3><br>
+                <p style="font-weight:500; margin-bottom:0.25rem;">1. I study __________ engineering.</p><input type="text" id="techBranch" class="habit-input" placeholder="Example: mechanical, computer, electrical"><div id="techBranchFeedback" class="fix-feedback"></div>
+                <p style="font-weight:500; margin-bottom:0.25rem;">2. I operate __________ (name a tool).</p><input type="text" id="techTool" class="habit-input" placeholder="Example: laptop, calculator, multimeter"><div id="techToolFeedback" class="fix-feedback"></div>
+                <p style="font-weight:500; margin-bottom:0.25rem;">3. I analyze __________ (document/drawing).</p><input type="text" id="techAnalyze" class="habit-input" placeholder="Example: blueprints, schematics, reports"><div id="techAnalyzeFeedback" class="fix-feedback"></div>
+                </div>
+                <button class="btn-outline" id="checkWritingBtn">✓ Check Answers</button>
+                <button class="btn-outline" id="resetWritingBtn">⟳ Reset Writing</button>
+                <div id="writingFeedback" class="quiz-feedback"></div>
+                <div style="display:flex; justify-content:flex-end; margin-top:1rem;"><button class="complete-activity-btn" id="completeWritingBtn" disabled>✓ Mark Writing as Complete</button></div>
+            </div>
+        </div>
+        
+        <!-- 5. VOCABULARY TABLE -->
+        <div class="activity-card" id="vocabulary-card">
+            <div class="card-header vocabulary"><h2>📘 5. Vocabulary of the Day</h2></div>
+            <div class="card-body">
+                <div class="vocab-table-container"><table class="vocab-table"><thead><tr><th>🔊</th><th>Word</th><th>Pronunciation</th><th>Meaning</th><th>Synonym</th></tr></thead>
+                <tbody>
+                    <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Routine')">🔊</button><td class="word-cell"><strong>Routine</strong><td><code>/ruːˈtiːn/</code><td>Daily activity</span><td>Schedule</span></tr>
+                    <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Early')">🔊</button><td class="word-cell"><strong>Early</strong><td><code>/ˈɜːrli/</code><td>Before time</span><td>Soon</span></tr>
+                    <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Fresh')">🔊</button><td class="word-cell"><strong>Fresh</strong><td><code>/freʃ/</code><td>Energetic</span><td>Active</span></tr>
+                    <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Plan')">🔊</button><td class="word-cell"><strong>Plan</strong><td><code>/plæn/</code><td>Decide/Design</span><td>Organize</span></tr>
+                    <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Habit')">🔊</button><td class="word-cell"><strong>Habit</strong><td><code>/ˈhæbɪt/</code><td>Repeated action</span><td>Practice</span></tr>
+                </tbody>
+            </table></div>
+                <div class="power-word-section"><div style="font-weight:700;">🔥 IDIOM OF THE DAY: "PRACTICE MAKES PERFECT"</div><br>
+                <p><strong>Marathi Meaning:</strong> सराव केल्याने परिपूर्णता येते.</p><br><p><strong>⚙️ The Logic:</strong> Just like a machine needs "running-in" time to work smoothly, your brain needs repetition to become fluent.</p><br>
+                <p><strong>✔ Example:</strong> "I practice my presentation daily because practice makes perfect."</p><br>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 6. GRAMMAR SECTION -->
+<div class="grammar-section" id="grammar-card">
+    <h3 style="margin: 0 0 1rem 0;">🧠 6. Grammar Hack: Present Simple (The "Always" Tense)</h3>
+    <p>Use for daily habits or technical facts (SOPs).</p>
+    
+    <div class="grammar-rule">
+        <p><strong>🔹 The Rule:</strong></p>
+        <p>• I / You / We / They → <strong>Study</strong></p>
+        <p>• He / She / It → <strong>Studies</strong> (Add 's' or 'es')</p>
+    </div>
+    
+    <div class="grammar-rule">
+        <p><strong>🔹 Negative Form:</strong></p>
+        <p>• I do not (don't) study.</p>
+        <p>• The motor does not (doesn't) start.</p>
+    </div>
+    
+    <div class="grammar-rule">
+        <p><strong>⚠️ Activity:</strong> Write complete sentences:</p><br>
+        <p>1. She (study) __________ engineering every day.</p><br>
+        <p>2. The machine (not work) __________ without calibration.</p><br>
+        <p>3. They (follow) __________ a strict routine.</p>
+    </div>
+    
+    <input type="text" id="grammar1" class="grammar-input" placeholder="Write complete sentence..."><div id="grammar1Feedback" class="fix-feedback"></div>
+    <input type="text" id="grammar2" class="grammar-input" placeholder="Write complete sentence..."><div id="grammar2Feedback" class="fix-feedback"></div>
+    <input type="text" id="grammar3" class="grammar-input" placeholder="Write complete sentence..."><div id="grammar3Feedback" class="fix-feedback"></div>
+    
+    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <button class="btn-outline" id="checkGrammarBtn">✓ Check Answers</button>
+        <button class="btn-outline" id="resetGrammarBtn">⟳ Reset Grammar</button>
+    </div>
+    <div id="grammarFeedback" class="quiz-feedback"></div>
+    <div style="display:flex; justify-content:flex-end;">
+        <button class="complete-activity-btn" id="completeGrammarBtn" disabled>✓ Mark Grammar as Complete</button>
+    </div>
+</div>
+        
+        <!-- 7. GAME SECTION -->
+        <div class="game-section" id="game-card"><h3>🎲 7. Solo Game: "The Component Scrambler" 🧩</h3><br>
+        <div class="game-word"><div class="game-question">Unscramble the words:</div><br>
+        <div style="margin:0.75rem 0;">1. NUIERTO → <input type="text" id="game1" class="inline-game-input" placeholder="Your answer"></div><div id="game1Feedback" class="fix-feedback"></div>
+        <div style="margin:0.75rem 0;">2. HESFR → <input type="text" id="game2" class="inline-game-input" placeholder="Your answer"></div><div id="game2Feedback" class="fix-feedback"></div>
+        <div style="margin:0.75rem 0;">3. RAYLE → <input type="text" id="game3" class="inline-game-input" placeholder="Your answer"></div><div id="game3Feedback" class="fix-feedback"></div>
+        <div style="margin:0.75rem 0;">4. NALP → <input type="text" id="game4" class="inline-game-input" placeholder="Your answer"></div><div id="game4Feedback" class="fix-feedback"></div></div>
+        <button class="btn-outline" id="checkGameBtn">✓ Check All Answers</button><button class="btn-outline" id="resetGameBtn">⟳ Reset Game</button>
+        <div id="gameResult" style="margin-top:1rem;"></div>
+        <div style="display:flex; justify-content:flex-end;"><button class="complete-activity-btn" id="completeGameBtn" disabled>✓ Mark Game as Complete</button></div></div>
+        
+        <!-- CHECKLIST - 6 items only -->
+        <div class="activity-card"><div class="card-header vocabulary"><h2>✅ DAY 1 COMPLETION CHECKLIST</h2></div>
+        <div class="card-body"><ul class="checklist">
+            <li><input type="checkbox" id="chk2" disabled><label> I completed the listening quiz (Listening Activity).</label></li>
+            <li><input type="checkbox" id="chk3" disabled><label> I spoke about a tool (Technical Translator).</label></li>
+            <li><input type="checkbox" id="chk4" disabled><label> I identified verbs & adjectives in the reading passage.</label></li>
+            <li><input type="checkbox" id="chk5" disabled><label> I wrote my 5 habits and Identity lines (Writing).</label></li>
+            <li><input type="checkbox" id="chk6" disabled><label> I completed the Present Simple grammar exercise.</label></li>
+            <li><input type="checkbox" id="chk7" disabled><label> I solved the Component Scrambler puzzle (Game).</label></li>
+        </ul>
+        <div style="text-align:right;"><span class="badge" id="progressCounter">0/6 completed</span></div>
+        <div style="display:flex; justify-content:center;"><button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 1 </button></div></div></div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+    let activityCompleted = { listening:false, speaking:false, reading:false, writing:false, vocabulary:false, game:false, grammar:false };
+    
+    function updateChecklistProgress(){ 
+        const checkboxes = ['chk2', 'chk3', 'chk4', 'chk5', 'chk6', 'chk7'];
+        let c=0; 
+        for(let i=0; i<checkboxes.length; i++){ 
+            if(document.getElementById(checkboxes[i])?.checked) c++; 
+        } 
+        document.getElementById('progressCounter').innerText=`${c}/6 completed`; 
+        const dayBtn = document.getElementById('dayCompleteBtn');
+        if(dayBtn){
+            dayBtn.disabled = (c !== 6);
+            dayBtn.style.opacity = (c === 6) ? '1' : '0.5';
+        }
+    }
+    
+    function markActivityComplete(activityId, checklistId){ 
+        if(activityCompleted[activityId]) return; 
+        activityCompleted[activityId]=true; 
+        document.getElementById(checklistId).checked=true; 
+        const btn=document.getElementById(`complete${activityId.charAt(0).toUpperCase()+activityId.slice(1)}Btn`); 
+        if(btn){btn.classList.add('completed'); btn.textContent='✓ Completed'; btn.disabled=true;} 
+        updateChecklistProgress(); 
+    }
+    
+function completeDay(){ 
+    const btn=document.getElementById('dayCompleteBtn'); 
+    if(btn.disabled) return; 
+    btn.innerHTML='✨ Completing day...'; 
+    btn.disabled=true; 
+    
+    // Send request to mark day as complete
+    fetch(`/learning/level/beginner/day/1/complete/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            btn.innerHTML='✓ Day Completed! 🎉'; 
+            if(typeof confetti!=='undefined') confetti({particleCount:200,spread:100,origin:{y:0.6}}); 
+            
+            // Redirect to level overview with celebration
+            setTimeout(()=>{ 
+                window.location.href = `/learning/level/beginner/?celebrate=true&completed=1`;
+            }, 500);
+        } else {
+            btn.innerHTML='❌ Error. Try Again'; 
+            btn.disabled=false;
+            alert(data.error || 'Failed to complete day');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        btn.innerHTML='▶ Complete Day 1'; 
+        btn.disabled=false;
+        alert('Network error. Please try again.');
+    });
+}
+    
+    // Listening logic
+    let listeningMediaRecorder, listeningChunks=[], listeningStream=null, hasRecording=false, quizCorrect=false, voiceConfirmed=false;
+    const listeningCompleteBtn=document.getElementById('completeListeningBtn');
+    function updateListeningBtn(){ listeningCompleteBtn.disabled=!(hasRecording && voiceConfirmed && quizCorrect); }
+    document.getElementById('listeningRecordBtn')?.addEventListener('click',async()=>{ try{ const stream=await navigator.mediaDevices.getUserMedia({audio:true}); listeningStream=stream; listeningMediaRecorder=new MediaRecorder(stream); listeningChunks=[]; listeningMediaRecorder.ondataavailable=e=>listeningChunks.push(e.data); listeningMediaRecorder.onstop=()=>{ const blob=new Blob(listeningChunks,{type:'audio/webm'}); document.getElementById('listeningPlayback').src=URL.createObjectURL(blob); document.getElementById('listeningPlaybackCard').style.display='block'; document.getElementById('comparisonSection').style.display='block'; hasRecording=true; updateListeningBtn(); if(listeningStream) listeningStream.getTracks().forEach(t=>t.stop()); }; listeningMediaRecorder.start(); document.getElementById('listeningRecordBtn').style.display='none'; document.getElementById('listeningStopBtn').style.display='inline-flex'; }catch(e){ alert('Microphone access needed'); } });
+    document.getElementById('listeningStopBtn')?.addEventListener('click',()=>{ if(listeningMediaRecorder?.state==='recording') listeningMediaRecorder.stop(); document.getElementById('listeningRecordBtn').style.display='inline-flex'; document.getElementById('listeningStopBtn').style.display='none'; });
+    document.getElementById('yesComparisonBtn')?.addEventListener('click',()=>{ voiceConfirmed=true; updateListeningBtn(); });
+    document.getElementById('noComparisonBtn')?.addEventListener('click',()=>{ hasRecording=false; voiceConfirmed=false; document.getElementById('listeningPlaybackCard').style.display='none'; document.getElementById('comparisonSection').style.display='none'; updateListeningBtn(); });
+    document.getElementById('checkListeningWorkBtn')?.addEventListener('click',()=>{ const q1=document.querySelector('input[name="q1"]:checked')?.value; const q2=document.querySelector('input[name="q2"]:checked')?.value; if(q1==='Excited' && q2==='Improve English'){ quizCorrect=true; document.getElementById('listeningQuizFeedback').innerHTML='✅ Correct!'; document.getElementById('listeningQuizFeedback').className='quiz-feedback correct'; }else{ quizCorrect=false; document.getElementById('listeningQuizFeedback').innerHTML='❌ Try again: excited & improve English'; document.getElementById('listeningQuizFeedback').className='quiz-feedback incorrect'; } updateListeningBtn(); });
+    listeningCompleteBtn?.addEventListener('click',()=>{ if(hasRecording&&voiceConfirmed&&quizCorrect) markActivityComplete('listening','chk2'); else alert('Please record, confirm, and answer quiz correctly.'); });
+    
+    // Speaking
+    let speakRec={1:false,2:false,3:false};
+    
+    function validateSentence1() {
+        const objInput = document.getElementById('speakObject');
+        const recBtn = document.getElementById('speakingRecordBtn1');
+        if (objInput && recBtn) {
+            const objVal = objInput.value.trim();
+            if (objVal !== "") {
+                recBtn.disabled = false;
+                recBtn.style.opacity = '1';
+            } else {
+                recBtn.disabled = true;
+                recBtn.style.opacity = '0.5';
+            }
+        }
+    }
+    
+    function validateSentence2() {
+        const branchInput = document.getElementById('speakBranch');
+        const recBtn = document.getElementById('speakingRecordBtn2');
+        if (branchInput && recBtn) {
+            const branchVal = branchInput.value.trim();
+            if (branchVal !== "") {
+                recBtn.disabled = false;
+                recBtn.style.opacity = '1';
+            } else {
+                recBtn.disabled = true;
+                recBtn.style.opacity = '0.5';
+            }
+        }
+    }
+    
+    function validateSentence3() {
+        const recBtn = document.getElementById('speakingRecordBtn3');
+        if (recBtn) {
+            recBtn.disabled = false;
+            recBtn.style.opacity = '1';
+        }
+    }
+    
+    document.getElementById('speakObject')?.addEventListener('input', validateSentence1);
+    document.getElementById('speakBranch')?.addEventListener('input', validateSentence2);
+    
+    function setupSpeak(idx, inputId=null){ 
+        const recBtn=document.getElementById(`speakingRecordBtn${idx}`); 
+        const stopBtn=document.getElementById(`speakingStopBtn${idx}`); 
+        const card=document.getElementById(`speakingPlaybackCard${idx}`); 
+        const audioEl=document.getElementById(`speakingPlayback${idx}`); 
+        let mediaRec, chunks; 
+        
+        recBtn?.addEventListener('click',async()=>{ 
+            if(inputId){ 
+                const inputVal=document.getElementById(inputId)?.value.trim(); 
+                if(!inputVal){ 
+                    alert(`Please fill in the blank for sentence ${idx} before recording.`); 
+                    return; 
+                } 
+            } 
+            try{ 
+                const s=await navigator.mediaDevices.getUserMedia({audio:true}); 
+                mediaRec=new MediaRecorder(s); 
+                chunks=[]; 
+                mediaRec.ondataavailable=e=>chunks.push(e.data); 
+                mediaRec.onstop=()=>{ 
+                    const blob=new Blob(chunks,{type:'audio/webm'}); 
+                    audioEl.src=URL.createObjectURL(blob); 
+                    card.style.display='block'; 
+                    speakRec[idx]=true; 
+                    s.getTracks().forEach(t=>t.stop()); 
+                    const all=Object.values(speakRec).every(v=>v===true); 
+                    document.getElementById('completeSpeakingBtn').disabled=!all; 
+                }; 
+                mediaRec.start(); 
+                recBtn.style.display='none'; 
+                stopBtn.style.display='inline-flex'; 
+            }catch(e){ alert('mic error'); } 
+        }); 
+        stopBtn?.addEventListener('click',()=>{ 
+            if(mediaRec?.state==='recording') mediaRec.stop(); 
+            recBtn.style.display='inline-flex'; 
+            stopBtn.style.display='none'; 
+        }); 
+    }
+    
+    setupSpeak(1, 'speakObject'); 
+    setupSpeak(2, 'speakBranch'); 
+    setupSpeak(3, null);
+    
+    validateSentence1();
+    validateSentence2();
+    validateSentence3();
+    
+    document.getElementById('completeSpeakingBtn')?.addEventListener('click',()=>{ 
+        const obj=document.getElementById('speakObject').value.trim(); 
+        const branch=document.getElementById('speakBranch').value.trim(); 
+        if(!obj){ alert('Please fill in the object name for sentence 1.'); return; } 
+        if(!branch){ alert('Please fill in the branch name for sentence 2.'); return; } 
+        if(Object.values(speakRec).every(v=>v)) markActivityComplete('speaking','chk3'); 
+        else alert('Please record all 3 sentences'); 
+    });
+    
+    // ==================== READING ACTIVITY ====================
+    const readingPassageTextFull = "I follow a daily routine to improve my English. I wake up early and feel fresh. I make a proper plan for my study. I develop a good habit of practicing daily. This helps me achieve success.";
+    const correctVerbs = ['follow', 'improve', 'wake', 'feel', 'make', 'develop', 'practicing', 'helps', 'achieve'];
+    const correctAdjs = ['daily', 'early', 'fresh', 'proper', 'good'];
+    
+    let readingSpansArray = [];
+    let currentReadMode = 'underline';
+    let selectedUnderlineWords = new Set();
+    let selectedCircleWords = new Set();
+    let underlineCheckedFlag = false;
+    let circleCheckedFlag = false;
+    
+    function buildReadingInteractive() {
+        const container = document.getElementById('interactivePassage');
+        const words = readingPassageTextFull.split(/\s+/);
+        container.innerHTML = '';
+        readingSpansArray = [];
+        
+        words.forEach((word, idx) => {
+            const cleanWord = word.toLowerCase().replace(/[.,!?;]/g, '');
+            const span = document.createElement('span');
+            span.className = 'clickable-word';
+            span.textContent = word + ' ';
+            span.setAttribute('data-word', cleanWord);
+            span.setAttribute('data-index', idx);
+            span.style.display = 'inline-block';
+            span.style.padding = '0.1rem 0.2rem';
+            span.style.margin = '0 0.1rem';
+            span.style.borderRadius = '4px';
+            span.style.cursor = 'pointer';
+            
+            span.onclick = (function(wordVal) {
+                return function() { toggleWordSelection(wordVal, this); };
+            })(cleanWord);
+            
+            container.appendChild(span);
+            readingSpansArray.push(span);
+        });
+        updateReadingVisuals();
+    }
+    
+    function toggleWordSelection(wordVal, spanElement) {
+        if (currentReadMode === 'underline') {
+            if (selectedUnderlineWords.has(wordVal)) {
+                selectedUnderlineWords.delete(wordVal);
+            } else {
+                selectedUnderlineWords.add(wordVal);
+            }
+            underlineCheckedFlag = false;
+            document.getElementById('underlineFeedback').innerHTML = '';
+        } else {
+            if (selectedCircleWords.has(wordVal)) {
+                selectedCircleWords.delete(wordVal);
+            } else {
+                selectedCircleWords.add(wordVal);
+            }
+            circleCheckedFlag = false;
+            document.getElementById('circleFeedback').innerHTML = '';
+        }
+        updateReadingVisuals();
+    }
+    
+    function updateReadingVisuals() {
+        readingSpansArray.forEach(span => {
+            const wordVal = span.getAttribute('data-word');
+            span.classList.remove('temp-underline', 'temp-circle', 'underline-green', 'underline-red', 'circle-green', 'circle-red');
+            span.style.textDecoration = '';
+            span.style.border = '';
+            span.style.backgroundColor = '';
+            
+            if (currentReadMode === 'underline') {
+                if (underlineCheckedFlag) {
+                    if (selectedUnderlineWords.has(wordVal)) {
+                        if (correctVerbs.includes(wordVal)) {
+                            span.classList.add('underline-green');
+                            span.style.textDecoration = 'underline';
+                            span.style.textDecorationThickness = '3px';
+                            span.style.textDecorationColor = '#22c55e';
+                            span.style.backgroundColor = '#f0fdf4';
+                        } else {
+                            span.classList.add('underline-red');
+                            span.style.textDecoration = 'underline';
+                            span.style.textDecorationThickness = '3px';
+                            span.style.textDecorationColor = '#dc2626';
+                            span.style.backgroundColor = '#fee2e2';
+                        }
+                    }
+                } else {
+                    if (selectedUnderlineWords.has(wordVal)) {
+                        span.classList.add('temp-underline');
+                        span.style.textDecoration = 'underline';
+                        span.style.textDecorationThickness = '3px';
+                        span.style.textDecorationColor = '#3b82f6';
+                        span.style.backgroundColor = '#eff6ff';
+                    }
+                }
+            } else {
+                if (circleCheckedFlag) {
+                    if (selectedCircleWords.has(wordVal)) {
+                        if (correctAdjs.includes(wordVal)) {
+                            span.classList.add('circle-green');
+                            span.style.border = '3px solid #22c55e';
+                            span.style.borderRadius = '50%';
+                            span.style.padding = '0.1rem 0.3rem';
+                            span.style.backgroundColor = '#f0fdf4';
+                        } else {
+                            span.classList.add('circle-red');
+                            span.style.border = '3px solid #dc2626';
+                            span.style.borderRadius = '50%';
+                            span.style.padding = '0.1rem 0.3rem';
+                            span.style.backgroundColor = '#fee2e2';
+                        }
+                    }
+                } else {
+                    if (selectedCircleWords.has(wordVal)) {
+                        span.classList.add('temp-circle');
+                        span.style.border = '3px solid #3b82f6';
+                        span.style.borderRadius = '50%';
+                        span.style.padding = '0.1rem 0.3rem';
+                        span.style.backgroundColor = '#eff6ff';
+                    }
+                }
+            }
+        });
+    }
+    
+    function checkUnderlinesFunc() {
+        if(selectedUnderlineWords.size === 0){
+            document.getElementById('underlineFeedback').innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ Please select some verbs first. Click on words in Underline Mode to select them.</p></div>';
+            return;
+        }
+        
+        let correctCount = 0;
+        selectedUnderlineWords.forEach(word => {
+            if (correctVerbs.includes(word)) correctCount++;
+        });
+        underlineCheckedFlag = true;
+        document.getElementById('verbCount').innerText = correctCount;
+        const missing = correctVerbs.filter(v => !selectedUnderlineWords.has(v));
+        let fb = `<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">✅ Correct verbs: ${correctCount}/${correctVerbs.length}</p>`;
+        if (missing.length) fb += `<p style="color:#dc2626;">❌ Missing verbs: ${missing.join(', ')}</p>`;
+        fb += `</div>`;
+        document.getElementById('underlineFeedback').innerHTML = fb;
+        updateReadingVisuals();
+        if (correctCount >= 5 && selectedCircleWords.size >= 3) document.getElementById('completeReadingBtn').disabled = false;
+        else document.getElementById('completeReadingBtn').disabled = true;
+    }
+    
+    function checkCirclesFunc() {
+        if(selectedCircleWords.size === 0){
+            document.getElementById('circleFeedback').innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ Please select some adjectives first. Click on words in Circle Mode to select them.</p></div>';
+            return;
+        }
+        
+        let correctCount = 0;
+        selectedCircleWords.forEach(word => {
+            if (correctAdjs.includes(word)) correctCount++;
+        });
+        circleCheckedFlag = true;
+        document.getElementById('adjCount').innerText = correctCount;
+        const missing = correctAdjs.filter(v => !selectedCircleWords.has(v));
+        let fb = `<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">✅ Correct adjectives: ${correctCount}/${correctAdjs.length}</p>`;
+        if (missing.length) fb += `<p style="color:#dc2626;">❌ Missing adjectives: ${missing.join(', ')}</p>`;
+        fb += `</div>`;
+        document.getElementById('circleFeedback').innerHTML = fb;
+        updateReadingVisuals();
+        if (selectedUnderlineWords.size >= 5 && correctCount >= 3) document.getElementById('completeReadingBtn').disabled = false;
+        else document.getElementById('completeReadingBtn').disabled = true;
+    }
+    
+    function resetUnderlines() {
+        selectedUnderlineWords.clear();
+        underlineCheckedFlag = false;
+        document.getElementById('underlineFeedback').innerHTML = '';
+        document.getElementById('verbCount').innerText = '0';
+        updateReadingVisuals();
+        document.getElementById('completeReadingBtn').disabled = true;
+    }
+    
+    function resetCircles() {
+        selectedCircleWords.clear();
+        circleCheckedFlag = false;
+        document.getElementById('circleFeedback').innerHTML = '';
+        document.getElementById('adjCount').innerText = '0';
+        updateReadingVisuals();
+        document.getElementById('completeReadingBtn').disabled = true;
+    }
+    
+    function switchToUnderlineMode() {
+        currentReadMode = 'underline';
+        document.getElementById('underlineModeBtn').style.opacity = '1';
+        document.getElementById('circleModeBtn').style.opacity = '0.5';
+        document.getElementById('underlineSection').style.display = 'block';
+        document.getElementById('circleSection').style.display = 'none';
+        updateReadingVisuals();
+    }
+    
+    function switchToCircleMode() {
+        currentReadMode = 'circle';
+        document.getElementById('circleModeBtn').style.opacity = '1';
+        document.getElementById('underlineModeBtn').style.opacity = '0.5';
+        document.getElementById('circleSection').style.display = 'block';
+        document.getElementById('underlineSection').style.display = 'none';
+        updateReadingVisuals();
+    }
+    
+    document.getElementById('underlineModeBtn')?.addEventListener('click', switchToUnderlineMode);
+    document.getElementById('circleModeBtn')?.addEventListener('click', switchToCircleMode);
+    document.getElementById('checkUnderlinesBtn')?.addEventListener('click', checkUnderlinesFunc);
+    document.getElementById('checkCirclesBtn')?.addEventListener('click', checkCirclesFunc);
+    document.getElementById('resetUnderlinesBtn')?.addEventListener('click', resetUnderlines);
+    document.getElementById('resetCirclesBtn')?.addEventListener('click', resetCircles);
+    document.getElementById('completeReadingBtn')?.addEventListener('click', () => {
+        const verbCorrect = [...selectedUnderlineWords].filter(w => correctVerbs.includes(w)).length;
+        const adjCorrect = [...selectedCircleWords].filter(w => correctAdjs.includes(w)).length;
+        if (verbCorrect >= 5 && adjCorrect >= 3) markActivityComplete('reading','chk4');
+        else alert('Please select at least 5 correct verbs (underline mode) and 3 correct adjectives (circle mode).');
+    });
+    buildReadingInteractive();
+    
+    // WRITING validation
+    let writingValid = false;
+    document.getElementById('checkWritingBtn')?.addEventListener('click', () => {
+        let guided1 = document.getElementById('guided1').value.trim();
+        let guided2 = document.getElementById('guided2').value.trim();
+        let habits = [1,2,3,4,5].map(i => document.getElementById(`habit${i}`)?.value.trim());
+        let branch = document.getElementById('techBranch')?.value.trim();
+        let tool = document.getElementById('techTool')?.value.trim();
+        let analyze = document.getElementById('techAnalyze')?.value.trim();
+        
+        let guided1Valid = guided1.length >= 8;
+        let guided2Valid = guided2.length >= 3 && /^[a-zA-Z]+$/.test(guided2);
+        let habitOk = habits.every(h => h.length >= 3 && /^I\s+\w+/.test(h));
+        let techOk = (branch.length >= 2 && tool.length >= 2 && analyze.length >= 2);
+        
+        let fb1=document.getElementById('guided1Feedback'), fb2=document.getElementById('guided2Feedback');
+        if(guided1Valid){ fb1.innerHTML='✅ Good reason!'; fb1.className='fix-feedback correct'; fb1.style.display='block'; }
+        else{ fb1.innerHTML='⚠️ Please write a meaningful reason (at least 8 characters).'; fb1.className='fix-feedback incorrect'; fb1.style.display='block'; }
+        if(guided2Valid){ fb2.innerHTML='✅ Valid feeling!'; fb2.className='fix-feedback correct'; fb2.style.display='block'; }
+        else{ fb2.innerHTML='⚠️ Please enter a valid feeling (e.g., confident, happy, nervous).'; fb2.className='fix-feedback incorrect'; fb2.style.display='block'; }
+        
+        for(let i=1;i<=5;i++){ let fb=document.getElementById(`habit${i}Feedback`); let val=document.getElementById(`habit${i}`).value.trim(); if(val.length>=3 && /^I\s+\w+/.test(val)){ fb.innerHTML='✅ Correct!'; fb.className='fix-feedback correct'; fb.style.display='block'; } else{ fb.innerHTML='❌ Must start with "I + verb".'; fb.className='fix-feedback incorrect'; fb.style.display='block'; } }
+        
+        let fbBranch=document.getElementById('techBranchFeedback'), fbTool=document.getElementById('techToolFeedback'), fbAnalyze=document.getElementById('techAnalyzeFeedback');
+        if(branch.length>=2){ fbBranch.innerHTML='✅ Good!'; fbBranch.className='fix-feedback correct'; fbBranch.style.display='block'; } else{ fbBranch.innerHTML='⚠️ Please specify your branch.'; fbBranch.className='fix-feedback warning'; fbBranch.style.display='block'; }
+        if(tool.length>=2){ fbTool.innerHTML='✅ Good!'; fbTool.className='fix-feedback correct'; fbTool.style.display='block'; } else{ fbTool.innerHTML='⚠️ Please specify a tool.'; fbTool.className='fix-feedback warning'; fbTool.style.display='block'; }
+        if(analyze.length>=2){ fbAnalyze.innerHTML='✅ Good!'; fbAnalyze.className='fix-feedback correct'; fbAnalyze.style.display='block'; } else{ fbAnalyze.innerHTML='⚠️ Please specify a document.'; fbAnalyze.className='fix-feedback warning'; fbAnalyze.style.display='block'; }
+        
+        if(guided1Valid && guided2Valid && habitOk && techOk){ writingValid=true; document.getElementById('writingFeedback').innerHTML='✅ Great! Writing complete.'; document.getElementById('writingFeedback').className='quiz-feedback correct'; document.getElementById('completeWritingBtn').disabled=false; }
+        else{ writingValid=false; document.getElementById('writingFeedback').innerHTML='⚠️ Please correct all answers above.'; document.getElementById('writingFeedback').className='quiz-feedback incorrect'; }
+    });
+    document.getElementById('resetWritingBtn')?.addEventListener('click',()=>{ document.getElementById('guided1').value=''; document.getElementById('guided2').value=''; for(let i=1;i<=5;i++) document.getElementById(`habit${i}`).value=''; document.getElementById('techBranch').value=''; document.getElementById('techTool').value=''; document.getElementById('techAnalyze').value=''; writingValid=false; document.getElementById('completeWritingBtn').disabled=true; document.getElementById('writingFeedback').innerHTML=''; });
+    document.getElementById('completeWritingBtn')?.addEventListener('click',()=>{ if(writingValid) markActivityComplete('writing','chk5'); else alert('Click "Check Answers" first.'); });
+    
+    // VOCABULARY
+    function playAudio(word){ const u=new SpeechSynthesisUtterance(word); u.lang='en-US'; u.rate=0.8; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); }
+    
+    // GRAMMAR
+    let grammarOk=false;
+    document.getElementById('checkGrammarBtn')?.addEventListener('click',()=>{
+        let g1 = document.getElementById('grammar1').value.trim();
+        let g2 = document.getElementById('grammar2').value.trim();
+        let g3 = document.getElementById('grammar3').value.trim();
+        
+        if(g1 === "" || g2 === "" || g3 === ""){
+            document.getElementById('grammarFeedback').innerHTML = '⚠️ Please write your answers in all fields before checking.';
+            document.getElementById('grammarFeedback').className = 'quiz-feedback warning';
+            grammarOk = false;
+            return;
+        }
+        
+        let g1Lower = g1.toLowerCase();
+        let g2Lower = g2.toLowerCase();
+        let g3Lower = g3.toLowerCase();
+        
+        let c1 = g1Lower.includes('studies') && g1Lower.includes('engineering');
+        let c2 = (g2Lower.includes('does not work') || g2Lower.includes("doesn't work")) && g2Lower.includes('calibration');
+        let c3 = g3Lower.includes('follow') && g3Lower.includes('routine');
+        
+        if(c1 && c2 && c3){ 
+            grammarOk=true; 
+            document.getElementById('grammarFeedback').innerHTML='✅ Correct!'; 
+            document.getElementById('grammarFeedback').className='quiz-feedback correct'; 
+            document.getElementById('completeGrammarBtn').disabled=false; 
+        } else{ 
+            grammarOk=false; 
+            document.getElementById('grammarFeedback').innerHTML='❌ Check answers: 1. "She studies engineering every day." 2. "The machine does not work without calibration." 3. "They follow a strict routine."'; 
+            document.getElementById('grammarFeedback').className='quiz-feedback incorrect'; 
+        }
+    });
+    document.getElementById('resetGrammarBtn')?.addEventListener('click',()=>{ document.getElementById('grammar1').value=''; document.getElementById('grammar2').value=''; document.getElementById('grammar3').value=''; grammarOk=false; document.getElementById('completeGrammarBtn').disabled=true; document.getElementById('grammarFeedback').innerHTML=''; });
+    document.getElementById('completeGrammarBtn')?.addEventListener('click',()=>{ if(grammarOk) markActivityComplete('grammar','chk6'); else alert('Check grammar answers first.'); });
+    
+    // GAME
+    let gameCorrect=false;
+    document.getElementById('checkGameBtn')?.addEventListener('click',()=>{
+        let a1 = document.getElementById('game1').value.trim();
+        let a2 = document.getElementById('game2').value.trim();
+        let a3 = document.getElementById('game3').value.trim();
+        let a4 = document.getElementById('game4').value.trim();
+        
+        if(a1 === "" || a2 === "" || a3 === "" || a4 === ""){
+            document.getElementById('gameResult').innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;">⚠️ Please fill in all the scrambled words before checking.</div>';
+            gameCorrect = false;
+            return;
+        }
+        
+        let a1Lower = a1.toLowerCase();
+        let a2Lower = a2.toLowerCase();
+        let a3Lower = a3.toLowerCase();
+        let a4Lower = a4.toLowerCase();
+        
+        if(a1Lower === 'routine' && a2Lower === 'fresh' && a3Lower === 'early' && a4Lower === 'plan'){ 
+            gameCorrect=true; 
+            document.getElementById('gameResult').innerHTML='<div style="background:#d1fae5;padding:0.75rem;border-radius:12px;">🎉 All correct!</div>'; 
+            document.getElementById('completeGameBtn').disabled=false; 
+        } else{ 
+            gameCorrect=false; 
+            document.getElementById('gameResult').innerHTML='<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;">❌ Some answers are incorrect. Correct answers: ROUTINE, FRESH, EARLY, PLAN</div>'; 
+        }
+    });
+    document.getElementById('resetGameBtn')?.addEventListener('click',()=>{ document.getElementById('game1').value=''; document.getElementById('game2').value=''; document.getElementById('game3').value=''; document.getElementById('game4').value=''; gameCorrect=false; document.getElementById('completeGameBtn').disabled=true; document.getElementById('gameResult').innerHTML=''; });
+    document.getElementById('completeGameBtn')?.addEventListener('click',()=>{ if(gameCorrect) markActivityComplete('game','chk7'); else alert('Solve unscramble correctly.'); });
+    
+    document.getElementById('dayCompleteBtn')?.addEventListener('click',completeDay);
+    updateChecklistProgress();
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+</body>
+</html>

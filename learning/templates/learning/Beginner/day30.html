@@ -1,0 +1,775 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 30: The Masterpiece | English for Engineers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, body * { font-family: 'Inter', sans-serif !important; }
+    body {
+        background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .lesson-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 1.5rem 2rem 1.5rem;
+        position: relative;
+        width: 100%;
+    }
+    .activity-card, .grammar-section, .game-section, .maintenance-schedule, .congrats-banner {
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+    }
+    .card-body { padding: 1.5rem; width: 100%; box-sizing: border-box; }
+    
+    .lesson-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 0;
+        padding: 1.2rem 0;
+        color: white;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        width: 100vw;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+    .lesson-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        animation: shimmer 4s infinite;
+        z-index: 0;
+    }
+    @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding: 0 1.5rem; }
+    .day-badge {
+        display: inline-block;
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(10px);
+        padding: 0.35rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+    .hero-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 0.4rem;
+        background: linear-gradient(135deg, #ffffff, #f3e8ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .power-line {
+        font-size: 0.9rem;
+        font-style: italic;
+        margin-top: 0.4rem;
+        background: rgba(255,255,255,0.15);
+        padding: 0.5rem 1.2rem;
+        border-radius: 50px;
+        backdrop-filter: blur(8px);
+        display: inline-block;
+    }
+    @media (max-width: 768px) {
+        .lesson-container { padding: 0 1rem 1rem 1rem; }
+        .hero-title { font-size: 1.4rem; }
+        .card-body { padding: 1rem; }
+    }
+    .activities-grid { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
+    .activity-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #eef2f6; }
+    .card-header { padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .card-header.listening { background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); border-bottom: 2px solid #a5b4fc; }
+    .card-header.speaking { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-bottom: 2px solid #c084fc; }
+    .card-header.reading { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-bottom: 2px solid #38bdf8; }
+    .card-header.writing { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); border-bottom: 2px solid #8b5cf6; }
+    .card-header.vocabulary { background: linear-gradient(135deg, #fae8ff 0%, #f3e8ff 100%); border-bottom: 2px solid #d946ef; }
+    .card-header.extra { background: linear-gradient(135deg, #d9f99d 0%, #bef264 100%); border-bottom: 2px solid #84cc16; }
+    .card-header h2 { font-size: 1.25rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem; color: #1e293b; }
+    
+    .complete-activity-btn {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 40px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    .complete-activity-btn.completed { background: #94a3b8; cursor: default; }
+    .complete-activity-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .audio-player { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 0.5rem 0; text-align: center; }
+    audio { width: 100%; outline: none; }
+    .quiz-section { background: #fefce8; border-radius: 12px; padding: 1rem; margin-top: 1rem; border-left: 4px solid #eab308; }
+    .quiz-option { margin: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-radius: 8px; cursor: pointer; }
+    .quiz-option:hover { background: #fef9e3; }
+    .quiz-feedback { margin-top: 0.75rem; padding: 0.75rem; border-radius: 8px; font-weight: 500; display: none; }
+    .quiz-feedback.correct { background: #d1fae5; color: #065f46; display: block; }
+    .quiz-feedback.incorrect { background: #fee2e2; color: #991b1b; display: block; }
+    
+    .task-box { background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; margin: 0.75rem 0; }
+    .task-header { background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 0.75rem 1rem; border-bottom: 2px solid #e2e8f0; }
+    .task-header .title { font-size: 1rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; }
+    .task-content { padding: 0.75rem 1rem; font-size: 0.9rem; color: #334155; line-height: 1.6; }
+    
+    .recording-section { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0; }
+    .recording-controls { display: flex; gap: 0.75rem; margin: 0.5rem 0; flex-wrap: wrap; }
+    .record-btn { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 40px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+    .record-btn.recording { animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.7); } 70% { box-shadow: 0 0 0 8px rgba(239,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); } }
+    
+    .combined-recording-section { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0; }
+    .comparison-message { background: #eef2ff; padding: 0.75rem; border-radius: 8px; margin: 0.75rem 0; border-left: 3px solid #8b5cf6; }
+    .yes-btn, .no-btn { padding: 0.4rem 1rem; border-radius: 40px; cursor: pointer; font-weight: 600; font-size: 0.85rem; border: none; }
+    .yes-btn { background: #22c55e; color: white; }
+    .no-btn { background: #ef4444; color: white; }
+    .modern-record-btn { background: #8b5cf6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 40px; cursor: pointer; font-weight: 600; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.5rem; }
+    
+    .reading-passage { background: #f8fafc; border-radius: 12px; padding: 1.5rem; margin: 0.5rem 0; line-height: 1.8; font-size: 1rem; }
+    .writing-prompt { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 0.5rem 0; }
+    .fill-blank-item { background: white; border-radius: 10px; padding: 1rem; margin: 0.75rem 0; border: 1px solid #e2e8f0; }
+    .fill-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.9rem; transition: all 0.2s; box-sizing: border-box; }
+    .fill-input:focus { outline: none; border-color: #8b5cf6; }
+    .habit-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; margin: 0.5rem 0; font-size: 0.9rem; box-sizing: border-box; }
+    .habit-input:focus { outline: none; border-color: #8b5cf6; }
+    
+    .vocab-table-container { overflow-x: auto; margin: 0.5rem 0; border-radius: 12px; border: 1px solid #e2e8f0; background: white; }
+    .vocab-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .vocab-table thead { background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); }
+    .vocab-table th { padding: 0.85rem 0.75rem; text-align: left; font-weight: 600; color: white; font-size: 0.85rem; }
+    .vocab-table td { padding: 0.75rem; border-bottom: 1px solid #e2e8f0; vertical-align: middle; color: #334155; }
+    .vocab-table .audio-cell { width: 50px; text-align: center; }
+    .vocab-audio-btn { background: none; border: none; cursor: pointer; font-size: 1rem; padding: 0.3rem; border-radius: 50%; transition: all 0.2s; color: #8b5cf6; }
+    .vocab-audio-btn:hover { background: #ede9fe; transform: scale(1.1); }
+    
+    .grammar-section { background: linear-gradient(135deg, #ede9fe 0%, #e0e7ff 100%); border-radius: 20px; padding: 1.5rem; margin: 1.5rem 0; position: relative; }
+    .grammar-rule { background: white; border-radius: 12px; padding: 1rem; margin: 0.75rem 0; }
+    .grammar-rule p { margin: 0.5rem 0; }
+    .grammar-rule .wrong { color: #dc2626; }
+    .grammar-rule .correct { color: #16a34a; font-weight: 600; }
+    .fix-sentence-item { background: white; border-radius: 12px; padding: 1rem; margin: 0.75rem 0; border: 1px solid #e2e8f0; }
+    .fix-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; margin: 0.5rem 0; font-size: 0.9rem; }
+    .fix-feedback { margin-top: 0.5rem; padding: 0.5rem; border-radius: 8px; font-size: 0.85rem; display: none; }
+    .fix-feedback.correct { background: #d4edda; color: #155724; display: block; }
+    .fix-feedback.incorrect { background: #f8d7da; color: #721c24; display: block; }
+    .fix-feedback.warning { background: #fef9e3; color: #92400e; border-left: 4px solid #f59e0b; display: block; }
+    .fix-explanation { margin-top: 0.5rem; padding: 0.5rem; background: #e7f3ff; border-radius: 8px; font-size: 0.85rem; color: #004085; display: none; }
+    
+    .game-section { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 20px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #bbf7d0; }
+    .game-word { background: white; border-radius: 12px; padding: 1rem; margin: 1rem 0; border: 1px solid #e2e8f0; }
+    .game-question { font-weight: 600; margin-bottom: 0.5rem; color: #1e293b; }
+    .game-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; }
+    .btn-outline { background: none; border: 2px solid #8b5cf6; padding: 0.6rem 1.2rem; border-radius: 40px; font-weight: 600; color: #8b5cf6; cursor: pointer; transition: 0.2s; margin-top: 0.6rem; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-outline:hover { background: #8b5cf6; color: white; }
+    
+    .checklist { list-style: none; padding: 0; }
+    .checklist li { margin: 0.75rem 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: #f8fafc; border-radius: 10px; }
+    .checklist input[type="checkbox"] { pointer-events: none; opacity: 0.6; cursor: not-allowed; }
+    .badge { background: #8b5cf620; border-radius: 30px; padding: 0.2rem 0.8rem; font-size: 0.7rem; font-weight: bold; color: #6d28d9; }
+    
+    .completion-banner { background: linear-gradient(135deg, #22c55e, #16a34a); border-radius: 20px; padding: 1.5rem; text-align: center; color: white; margin-top: 1.5rem; display: none; }
+    .next-day-btn { background: white; color: #16a34a; padding: 0.6rem 1.5rem; border-radius: 50px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; }
+    .btn-gold { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 50px; cursor: pointer; font-weight: 700; font-size: 1rem; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }
+    .ref-btn { background: none; border: 1px solid #8b5cf6; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.7rem; color: #8b5cf6; cursor: pointer; margin-left: 0.5rem; transition: all 0.2s; }
+    .ref-btn:hover { background: #8b5cf6; color: white; }
+    .ref-text { background: #f8fafc; border-radius: 12px; padding: 1rem; margin-top: 0.5rem; font-size: 0.85rem; color: #1e293b; border: 1px solid #e2e8f0; display: none; }
+    .ref-text.show { display: block; }
+    .analysis-instruction { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; background: #fef9e3; padding: 1rem; border-radius: 12px; border-left: 4px solid #eab308; }
+    .fill-blank-item p strong { color: #1e3a8a; font-size: 1.05rem; }
+    
+    .day-complete-btn {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+    .day-complete-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+    }
+    .day-complete-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: linear-gradient(135deg, #94a3b8, #64748b);
+    }
+    
+    .blank-highlight {
+        display: inline-block;
+        min-width: 130px;
+        text-align: center;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .game-option {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+    
+    @media (max-width: 768px) {
+        .lesson-container { padding: 1rem; }
+        .hero-title { font-size: 1.4rem; }
+        .card-header h2 { font-size: 1rem; }
+        .card-body { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="lesson-container">
+    
+    <div class="lesson-hero">
+        <div class="hero-content">
+            <div class="day-badge">Day 30 • Week 5</div>
+            <h1 class="hero-title">🏆 THE MASTERPIECE</h1>
+            <div class="power-line">💬 "Your words are the vehicle of your leadership; drive them with precision and purpose."</div>
+        </div>
+    </div>
+    
+    <div class="activities-grid">
+        
+        <!-- ==================== 1. LISTENING ACTIVITY ==================== -->
+        <div class="activity-card" id="listening-card">
+            <div class="card-header listening"><h2>🎧 1. Listening Activity · The Final Echo</h2></div>
+            <div class="card-body">
+                <div class="task-box"><div class="task-header"><div class="title"><span>🎯</span><span>The Task</span></div></div><div class="task-content">Listen to the "Master Audio" and focus on the pauses (...).</div></div>
+                <div class="audio-player"><audio id="listeningAudio" controls><source src="{% static 'learning/audio/day30.mp3' %}" type="audio/mpeg"></audio></div>
+                <div class="task-box"><div class="task-header"><div class="title"><span>⏸️</span><span>The Executive Pause</span></div></div><div class="task-content">After the word "journey," wait for 3 full seconds. Feel the weight of your accomplishment.</div></div>
+                <div class="combined-recording-section">
+                    <div style="font-weight:600; margin-bottom:0.5rem;">🎙️ Record & Compare</div>
+                    <div class="recording-controls"><button id="listeningRecordBtn" class="record-btn"> Start Recording</button><button id="listeningStopBtn" class="record-btn" style="background:#64748b; display:none;"> Stop Recording</button></div>
+                    <div id="listeningPlaybackCard" style="display:none;"><audio id="listeningPlayback" controls style="width:100%;"></audio></div>
+                    <div id="comparisonSection" style="display:none;"><div class="comparison-message">Think back to the "Myself Rahul" errors of Day 1. Now, listen to how you articulate your value with consummate skill.</div>
+                        <div style="display:flex; gap:0.75rem;"><button id="yesComparisonBtn" class="yes-btn">✓ Yes, I sound confident</button><button id="noComparisonBtn" class="no-btn">✗ No, try again</button></div>
+                        <div id="comparisonFeedback"></div>
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:flex-end;"><button class="complete-activity-btn" id="completeListeningBtn" data-activity="listening" data-checklist="chk1">✓ Mark Listening as Complete</button></div>
+            </div>
+        </div>
+        
+        <!-- ==================== 2. SPEAKING ACTIVITY ==================== -->
+        <div class="activity-card" id="speaking-card">
+            <div class="card-header speaking"><h2>🗣️ 2. Speaking Activity · The "Personal Brand" Template</h2></div>
+            <div class="card-body">
+                <div class="task-box"><div class="task-header"><div class="title"><span>🎯</span><span>The Task</span></div></div><div class="task-content">Fill in the blanks and record yourself delivering this introduction. This is your "Elevator Pitch" for the rest of your career.</div></div>
+                <div style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border-radius: 20px; overflow: hidden; border: 1px solid #e9d5ff;">
+                    <div style="background: linear-gradient(135deg, #f5f0ff 0%, #ede9fe 100%); padding: 1rem 1.5rem; border-bottom:2px solid #c4b5fd;">
+                        <div style="display:flex; align-items:center; gap:0.75rem;"><span style="font-size:1.3rem;">🗣️</span><div><div style="font-weight:800; font-size:1rem; color:#5b21b6;">The Exercise</div><div style="font-size:0.85rem; color:#6d28d9;">Speak with consummate skill. Practice saying each sentence:</div></div></div>
+                    </div>
+                    
+                    <div style="padding:1.2rem 1.5rem; border-bottom:1px solid #e9d5ff; background:white;">
+                        <div style="display:flex; gap:0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">1</div>
+                        <div>"Hello, I am <input type="text" id="userName" placeholder="Your Name" style="width:120px; padding:0.2rem 0.4rem; border:1px solid #cbd5e1; border-radius:6px;">. I am a <input type="text" id="userJob" placeholder="Your Job Title" style="width:120px; padding:0.2rem 0.4rem; border:1px solid #cbd5e1; border-radius:6px;"> known for my scrupulous approach to <input type="text" id="userWork" placeholder="Work Area" style="width:120px; padding:0.2rem 0.4rem; border:1px solid #cbd5e1; border-radius:6px;">."</div></div>
+                        <div style="margin-top:1rem;"><button id="pitchRecordBtn1" class="modern-record-btn"> Record</button><button id="pitchStopBtn1" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="pitchPlaybackCard1" style="display:none;"><audio id="pitchPlayback1" controls style="width:100%;"></audio></div></div>
+                    </div>
+                    
+                    <div style="padding:1.2rem 1.5rem; border-bottom:1px solid #e9d5ff; background:#fef9ff;">
+                        <div style="display:flex; gap:0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">2</div>
+                        <div>"I strive to manifest results that are both tangible and enduring."</div></div>
+                        <div style="margin-top:1rem;"><button id="pitchRecordBtn2" class="modern-record-btn"> Record</button><button id="pitchStopBtn2" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="pitchPlaybackCard2" style="display:none;"><audio id="pitchPlayback2" controls style="width:100%;"></audio></div></div>
+                    </div>
+                    
+                    <div style="padding:1.2rem 1.5rem; border-bottom:1px solid #e9d5ff; background:white;">
+                        <div style="display:flex; gap:0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">3</div>
+                        <div>"I advocate for cohesive solutions that expedite growth."</div></div>
+                        <div style="margin-top:1rem;"><button id="pitchRecordBtn3" class="modern-record-btn"> Record</button><button id="pitchStopBtn3" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="pitchPlaybackCard3" style="display:none;"><audio id="pitchPlayback3" controls style="width:100%;"></audio></div></div>
+                    </div>
+                    
+                    <div style="padding:1.2rem 1.5rem; background:#fef9ff;">
+                        <div style="display:flex; gap:0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">4</div>
+                        <div>"My philosophy is to remain resilient while searching for pragmatic ways to ameliorate complex challenges."</div></div>
+                        <div style="margin-top:1rem;"><button id="pitchRecordBtn4" class="modern-record-btn"> Record</button><button id="pitchStopBtn4" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="pitchPlaybackCard4" style="display:none;"><audio id="pitchPlayback4" controls style="width:100%;"></audio></div></div>
+                    </div>
+                </div>
+                <div style="margin-top:1rem;"><button class="ref-btn" id="showExampleBtn">📖 View Example Introduction</button><div id="exampleText" class="ref-text"><strong>💡 Example Introduction:</strong><br>"Hello, I am Rajesh. I am a Software Engineer known for my scrupulous approach to backend development. I strive to manifest results that are both tangible and enduring. I advocate for cohesive solutions that expedite growth. My philosophy is to remain resilient while searching for pragmatic ways to ameliorate complex challenges."</div></div>
+                <div style="display:flex; justify-content:flex-end;"><button class="complete-activity-btn" id="completeSpeakingBtn" data-activity="speaking" data-checklist="chk2">✓ Mark Speaking as Complete</button></div>
+            </div>
+        </div>
+        
+        <!-- ==================== 3. READING ACTIVITY ==================== -->
+        <div class="activity-card" id="reading-card">
+            <div class="card-header reading"><h2>📖 3. Reading Passage · The Masterpiece</h2></div>
+            <div class="card-body">
+                <div class="reading-passage"><strong>📖 Read this original passage aloud to practice your resonance and rhythm.</strong><br><br>"Professional excellence is not an ephemeral achievement; it is an enduring habit. To manifest true leadership, one must remain indefatigable when facing profound obstacles. A consummate communicator ensures their intent is unambiguous, utilizing articulate signposting to guide their audience. By remaining resilient and pragmatic, we can ameliorate even the most complex organizational friction, ensuring that every project we commence reaches its full, tangible potential."</div>
+                <div class="analysis-instruction"><strong>🎯 Reading Comprehension Exercise</strong></div>
+                <div class="fill-blank-item"><p><strong>Question 1: Critical Analysis</strong></p><p>According to the text, what is the relationship between "leadership" and "obstacles"?</p><textarea id="readingQ1" class="habit-input" rows="3" placeholder="Type your answer here..."></textarea><div id="readingQ1Feedback" class="fix-feedback"></div></div>
+                <div class="fill-blank-item"><p><strong>Question 2: Synonym Substitution</strong></p><p>In the third sentence, replace the word "unambiguous" with another Smart Word from your vocabulary that maintains the meaning.</p><textarea id="readingQ2" class="habit-input" rows="3" placeholder="Type your answer here..."></textarea><div id="readingQ2Feedback" class="fix-feedback"></div></div>
+                <div class="fill-blank-item"><p><strong>Question 3: Action Reflection</strong></p><p>Why does the author describe excellence as "enduring" rather than "ephemeral"?</p><textarea id="readingQ3" class="habit-input" rows="3" placeholder="Type your answer here..."></textarea><div id="readingQ3Feedback" class="fix-feedback"></div></div>
+                <button class="btn-outline" id="checkReadingBtn">✓ Check Answers</button>
+                <div style="display:flex; justify-content:flex-end;"><button class="complete-activity-btn" id="completeReadingBtn" data-activity="reading" data-checklist="chk3">✓ Mark Reading as Complete</button></div>
+            </div>
+        </div>
+        
+        <!-- ==================== 4. WRITING ACTIVITY ==================== -->
+        <div class="activity-card" id="writing-card">
+            <div class="card-header writing"><h2>✍️ 4. Writing Activity · The "Legacy" Polisher</h2></div>
+            <div class="card-body">
+                <h3 style="font-size:1rem; margin-bottom:0.5rem;">✨ Part A: The Error Cleanup (Final Exam)</h3>
+                <p style="margin-left:1rem;">Fix these last 3 "Indianisms" for a global audience:</p>
+                <div class="fill-blank-item"><p><strong>1.</strong> "The manager is angry on me, so he preponed the audit."</p><input type="text" id="fix1" class="fill-input" placeholder="Type your corrected sentence here"><div id="fix1Feedback" class="fix-feedback"></div><div id="fix1Explanation" class="fix-explanation"></div></div>
+                <div class="fill-blank-item"><p><strong>2.</strong> "Myself [Name], I passed out from college in 2020."</p><input type="text" id="fix2" class="fill-input" placeholder="Type your corrected sentence here (use your name)"><div id="fix2Feedback" class="fix-feedback"></div><div id="fix2Explanation" class="fix-explanation"></div></div>
+                <div class="fill-blank-item"><p><strong>3.</strong> "We are discussing on the issue, it is very deplorable."</p><input type="text" id="fix3" class="fill-input" placeholder="Type your corrected sentence here"><div id="fix3Feedback" class="fix-feedback"></div><div id="fix3Explanation" class="fix-explanation"></div></div>
+                <button class="btn-outline" id="checkAllFixBtn">✓ Check All Answers</button>
+                
+                <h3 style="font-size:1rem; margin:1rem 0 0.5rem;">⚡ Part B: Active Verb Transformation</h3>
+                <p style="margin-left:1rem;">Upgrade these weak bullet points into "Executive" bullet points using strong verbs:</p>
+                <div class="fill-blank-item"><p><strong>1.</strong> "I was in charge of a team."</p><input type="text" id="verb1" class="fill-input" placeholder="Type your executive version here"><div id="verb1Feedback" class="fix-feedback"></div></div>
+                <div class="fill-blank-item"><p><strong>2.</strong> "I made the process faster."</p><input type="text" id="verb2" class="fill-input" placeholder="Type your executive version here"><div id="verb2Feedback" class="fix-feedback"></div></div>
+                <div class="fill-blank-item"><p><strong>3.</strong> "I fixed the budget error."</p><input type="text" id="verb3" class="fill-input" placeholder="Type your executive version here"><div id="verb3Feedback" class="fix-feedback"></div></div>
+                <button class="btn-outline" id="checkAllVerbsBtn">✓ Check All Answers</button>
+                <div style="display:flex; justify-content:flex-end;"><button class="complete-activity-btn" id="completeWritingBtn" data-activity="writing" data-checklist="chk4">✓ Mark Writing as Complete</button></div>
+            </div>
+        </div>
+        
+        <!-- ==================== 5. VOCABULARY TABLE ==================== -->
+        <div class="activity-card">
+            <div class="card-header vocabulary"><h2>📖 The "Masterpiece" Review: The Top 30 Words</h2></div>
+            <div class="card-body">
+                <div style="border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <thead><tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                            <th style="padding: 1rem 1.25rem; text-align: left; font-weight: 700; width: 30%; border-right: 1px solid #e2e8f0;">🎯 CATEGORY</th>
+                            <th style="padding: 1rem 1.25rem; text-align: left; font-weight: 700;">⚡ THE POWER WORDS</th>
+                        </tr></thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 1rem 1.25rem; border-right: 1px solid #e2e8f0; font-weight: 600;">STRATEGY</td>
+                            <td style="padding: 1rem 1.25rem;"><div style="display: flex; flex-wrap: wrap; gap: 0.6rem;"><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Proactive</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Pragmatic</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Mitigate</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Contingency</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Feasible</span></div></td></tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 1rem 1.25rem; border-right: 1px solid #e2e8f0; font-weight: 600;">ACTION</td>
+                            <td style="padding: 1rem 1.25rem;"><div style="display: flex; flex-wrap: wrap; gap: 0.6rem;"><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Expedite</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Augment</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Rectify</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Instigate</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Commence</span></div></td></tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 1rem 1.25rem; border-right: 1px solid #e2e8f0; font-weight: 600;">CHARACTER</td>
+                            <td style="padding: 1rem 1.25rem;"><div style="display: flex; flex-wrap: wrap; gap: 0.6rem;"><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Indefatigable</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Resilient</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Meticulous</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Scrupulous</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Autonomous</span></div></td></tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 1rem 1.25rem; border-right: 1px solid #e2e8f0; font-weight: 600;">CLARITY</td>
+                            <td style="padding: 1rem 1.25rem;"><div style="display: flex; flex-wrap: wrap; gap: 0.6rem;"><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Lucid</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Unambiguous</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Articulate</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Elucidate</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Encapsulate</span></div></td></tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 1rem 1.25rem; border-right: 1px solid #e2e8f0; font-weight: 600;">IMPACT</td>
+                            <td style="padding: 1rem 1.25rem;"><div style="display: flex; flex-wrap: wrap; gap: 0.6rem;"><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Profound</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Compelling</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Tangible</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Paramount</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Substantial</span></div></td></tr>
+                            <tr><td style="padding: 1rem 1.25rem; border-right: 1px solid #e2e8f0; font-weight: 600;">SOPHISTICATION</td>
+                            <td style="padding: 1rem 1.25rem;"><div style="display: flex; flex-wrap: wrap; gap: 0.6rem;"><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Equanimity</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Clandestine</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Ephemeral</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Germane</span><span style="background: #f1f5f9; padding: 0.3rem 0.9rem; border-radius: 30px;">Consummate</span></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==================== 6. GRAMMAR SECTION ==================== -->
+        <div class="grammar-section">
+            <h3 style="margin:0 0 1rem 0;">🧠 Grammar Hack: The "Power Word" Chain</h3>
+            <p><strong>🔹 The Hack:</strong> To sound more sophisticated, connect your ideas using Signposting words. Avoid using "And" or "But" at the start of every sentence.</p>
+            <div class="grammar-rule">
+                <p><strong>📝 Example:</strong></p>
+                <p class="correct">Initially, we identified the bottleneck.</p>
+                <p class="correct">Furthermore, we scrutinized the data to find a feasible fix.</p>
+                <p class="correct">Consequently, the output augmented by 20%.</p>
+            </div>
+        </div>
+        
+        <!-- ==================== 7. SOLO GAME ==================== -->
+        <div class="game-section" id="game-card">
+            <h3>🎲 7. Solo Game: "The Executive Exit" 🧩</h3>
+            <div class="task-box"><div class="task-header"><div class="title"><span>🎯</span><span>Choose the Correct Smart Word</span></div></div><div class="task-content">Select the correct word to complete each sentence.</div></div>
+            
+            <div class="game-word">
+                <div class="game-question">1. The client gave an <span id="blank1" class="blank-highlight">___________</span> "Yes" to the proposal.</div>
+                <div class="game-options" style="display: flex; gap: 2rem; margin-top: 0.75rem;">
+                    <label class="game-option"><input type="radio" name="game1" value="unambiguous"> Unambiguous</label>
+                    <label class="game-option"><input type="radio" name="game1" value="ephemeral"> Ephemeral</label>
+                </div>
+                <div id="game1Feedback" class="fix-feedback"></div>
+            </div>
+            
+            <div class="game-word">
+                <div class="game-question">2. We need to <span id="blank2" class="blank-highlight">___________</span> the delivery to meet the deadline.</div>
+                <div class="game-options" style="display: flex; gap: 2rem; margin-top: 0.75rem;">
+                    <label class="game-option"><input type="radio" name="game2" value="expedite"> Expedite</label>
+                    <label class="game-option"><input type="radio" name="game2" value="circumvent"> Circumvent</label>
+                </div>
+                <div id="game2Feedback" class="fix-feedback"></div>
+            </div>
+            
+            <div class="game-word">
+                <div class="game-question">3. Her <span id="blank3" class="blank-highlight">___________</span> efforts led to the project's success.</div>
+                <div class="game-options" style="display: flex; gap: 2rem; margin-top: 0.75rem;">
+                    <label class="game-option"><input type="radio" name="game3" value="indefatigable"> Indefatigable</label>
+                    <label class="game-option"><input type="radio" name="game3" value="nonchalant"> Nonchalant</label>
+                </div>
+                <div id="game3Feedback" class="fix-feedback"></div>
+            </div>
+            
+            <button class="btn-outline" id="checkGameBtn">✓ Check All Answers</button>
+            <div id="gameResult" style="margin-top:1rem;"></div>
+            <div style="display:flex; justify-content:flex-end;"><button class="complete-activity-btn" id="completeGameBtn" data-activity="game" data-checklist="chk7">✓ Mark Game as Complete</button></div>
+        </div>
+        
+        <!-- ==================== CHECKLIST ==================== -->
+        <div class="activity-card">
+            <div class="card-header vocabulary"><h2>✅ DAY 30 COMPLETION CHECKLIST</h2></div>
+            <div class="card-body">
+                <ul class="checklist">
+                    <li><input type="checkbox" id="chk1"> <label> I practiced the "Final Echo" audio with confidence.</label></li>
+                    <li><input type="checkbox" id="chk2"> <label> I delivered my "Personal Brand" pitch aloud.</label></li>
+                    <li><input type="checkbox" id="chk3"> <label> I completed the reading comprehension exercise.</label></li>
+                    <li><input type="checkbox" id="chk4"> <label> I completed the "Legacy Polisher" writing tasks.</label></li>
+                    <li><input type="checkbox" id="chk6"> <label> I learned the "Power Word Chain" grammar hack.</label></li>
+                    <li><input type="checkbox" id="chk7"> <label> I completed the "Executive Exit" solo game.</label></li>
+                </ul>
+                <div style="text-align:right;"><span class="badge" id="progressCounter">0/6 completed</span></div>
+            </div>
+        </div>
+        
+        <div style="display:flex; justify-content:center; margin-top:1rem;">
+            <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 30 </button>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+// ==================== Activity Completion Tracking ====================
+let activityCompleted = { listening: false, speaking: false, reading: false, writing: false, grammar: false, game: false };
+let csrftoken = null;
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+csrftoken = getCookie('csrftoken');
+
+function updateChecklistProgress() {
+    const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk6', 'chk7'];
+    let completedCount = 0;
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (document.getElementById(checkboxes[i])?.checked) completedCount++;
+    }
+    document.getElementById('progressCounter').innerText = `${completedCount}/6 completed`;
+    if (completedCount === 6) {
+        document.getElementById('completionBanner').style.display = 'block';
+    }
+}
+
+function markActivityComplete(activityId, checklistId) {
+    if (activityCompleted[activityId]) return;
+    activityCompleted[activityId] = true;
+    document.getElementById(checklistId).checked = true;
+    const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+    if (btn) { btn.classList.add('completed'); btn.textContent = '✓ Completed'; btn.disabled = true; }
+    updateChecklistProgress();
+    
+    fetch(`/learning/day/30/complete/${activityId}/`, {
+        method: 'POST', headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed: true })
+    }).catch(err => console.error('Error saving progress:', err));
+}
+
+function updateProgress() { updateChecklistProgress(); }
+
+// ==================== COMPLETE DAY BUTTON LOGIC ====================
+function updateProgressCounter() {
+    const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk6', 'chk7'];
+    let completedCount = 0;
+    checkboxes.forEach(id => { if (document.getElementById(id)?.checked) completedCount++; });
+    const progressSpan = document.getElementById('progressCounter');
+    if (progressSpan) progressSpan.innerText = `${completedCount}/6 completed`;
+    const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+    if (dayCompleteBtn) {
+        if (completedCount === 6) { dayCompleteBtn.disabled = false; dayCompleteBtn.style.opacity = '1'; }
+        else { dayCompleteBtn.disabled = true; dayCompleteBtn.style.opacity = '0.5'; }
+    }
+    if (completedCount === 6) { const banner = document.getElementById('completionBanner'); if (banner) banner.style.display = 'block'; }
+}
+
+async function completeDay() {
+    const dayBtn = document.getElementById('dayCompleteBtn');
+    if (dayBtn.disabled) { alert('Please complete all 6 activities before completing the day!'); return; }
+    dayBtn.innerHTML = '✨ Saving progress...'; dayBtn.disabled = true;
+    try {
+        if (typeof confetti !== 'undefined') { confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } }); setTimeout(() => confetti({ particleCount: 100, spread: 70, origin: { y: 0.4 } }), 200); }
+        dayBtn.innerHTML = '✓ Day Completed! 🎉';
+        setTimeout(() => { window.location.href = `/learning/level/beginner/?celebrate=true&completed=30`; }, 2000);
+    } catch (error) { dayBtn.innerHTML = '🎉 Complete Day 30 🎉'; dayBtn.disabled = false; alert('Error. Please try again.'); }
+}
+
+// ==================== Listening Activity ====================
+let listeningMediaRecorder = null, listeningAudioChunks = [], listeningStream = null;
+let hasListeningRecording = false, listeningAssessmentPassed = false;
+
+document.getElementById('listeningRecordBtn')?.addEventListener('click', async () => {
+    try {
+        listeningStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        listeningMediaRecorder = new MediaRecorder(listeningStream);
+        listeningAudioChunks = [];
+        listeningMediaRecorder.ondataavailable = e => listeningAudioChunks.push(e.data);
+        listeningMediaRecorder.onstop = () => {
+            const audioBlob = new Blob(listeningAudioChunks, { type: 'audio/webm' });
+            document.getElementById('listeningPlayback').src = URL.createObjectURL(audioBlob);
+            document.getElementById('listeningPlaybackCard').style.display = 'block';
+            if (listeningStream) { listeningStream.getTracks().forEach(t => t.stop()); listeningStream = null; }
+            hasListeningRecording = true;
+            document.getElementById('comparisonSection').style.display = 'block';
+        };
+        listeningMediaRecorder.start();
+        document.getElementById('listeningRecordBtn').style.display = 'none';
+        document.getElementById('listeningStopBtn').style.display = 'inline-flex';
+    } catch(err) { alert('Unable to access microphone.'); }
+});
+document.getElementById('listeningStopBtn')?.addEventListener('click', () => {
+    if (listeningMediaRecorder?.state === 'recording') { listeningMediaRecorder.stop(); document.getElementById('listeningStopBtn').style.display = 'none'; document.getElementById('listeningRecordBtn').style.display = 'inline-flex'; }
+});
+document.getElementById('yesComparisonBtn')?.addEventListener('click', () => { listeningAssessmentPassed = true; document.getElementById('comparisonFeedback').innerHTML = '✅ Great! Your voice sounds confident and authoritative!'; });
+document.getElementById('noComparisonBtn')?.addEventListener('click', () => {
+    document.getElementById('listeningPlaybackCard').style.display = 'none'; document.getElementById('comparisonSection').style.display = 'none';
+    document.getElementById('listeningRecordBtn').style.display = 'inline-flex'; document.getElementById('listeningStopBtn').style.display = 'none';
+    hasListeningRecording = false; listeningAssessmentPassed = false; document.getElementById('comparisonFeedback').innerHTML = '';
+    if (listeningStream) { listeningStream.getTracks().forEach(t => t.stop()); listeningStream = null; }
+});
+document.getElementById('completeListeningBtn')?.addEventListener('click', () => {
+    if (!hasListeningRecording) { alert('Please record your voice first.'); return; }
+    if (!listeningAssessmentPassed) { alert('Please confirm your voice sounds confident.'); return; }
+    markActivityComplete('listening', 'chk1');
+});
+
+// ==================== Speaking Recorders ====================
+for(let i=1;i<=4;i++){ (function(n){
+    let recBtn = document.getElementById(`pitchRecordBtn${n}`), stopBtn = document.getElementById(`pitchStopBtn${n}`), play = document.getElementById(`pitchPlayback${n}`), card = document.getElementById(`pitchPlaybackCard${n}`), media = null, stream = null, rec = false;
+    if(recBtn) recBtn.addEventListener('click',async()=>{ if(!rec){ try{ stream = await navigator.mediaDevices.getUserMedia({audio:true}); media = new MediaRecorder(stream); let chunks = []; media.ondataavailable = e => chunks.push(e.data); media.onstop = () => { let blob = new Blob(chunks,{type:'audio/webm'}); play.src = URL.createObjectURL(blob); card.style.display = 'block'; if(stream) stream.getTracks().forEach(t => t.stop()); }; media.start(); recBtn.style.display = 'none'; stopBtn.style.display = 'inline-flex'; rec = true; } catch(e){ alert('Mic error'); } } });
+    if(stopBtn) stopBtn.addEventListener('click',()=>{ if(media?.state === 'recording'){ media.stop(); stopBtn.style.display = 'none'; recBtn.style.display = 'inline-flex'; rec = false; } });
+    })(i);
+}
+document.getElementById('completeSpeakingBtn')?.addEventListener('click', () => {
+    let allRecorded = true;
+    for(let i=1;i<=4;i++) if(document.getElementById(`pitchPlaybackCard${i}`)?.style.display !== 'block') allRecorded = false;
+    if(!allRecorded) { alert('Please record all 4 sentences.'); return; }
+    markActivityComplete('speaking', 'chk2');
+});
+
+document.getElementById('showExampleBtn')?.addEventListener('click',()=>{ document.getElementById('exampleText').classList.toggle('show'); });
+
+// ==================== Reading ====================
+window.readingAnswers = { q1: false, q2: false, q3: false };
+
+document.getElementById('checkReadingBtn')?.addEventListener('click', () => {
+    let q1 = document.getElementById('readingQ1').value.trim().toLowerCase();
+    let q2 = document.getElementById('readingQ2').value.trim().toLowerCase();
+    let q3 = document.getElementById('readingQ3').value.trim().toLowerCase();
+    let fb1 = document.getElementById('readingQ1Feedback');
+    let fb2 = document.getElementById('readingQ2Feedback');
+    let fb3 = document.getElementById('readingQ3Feedback');
+    
+    if (q1 === "") { fb1.innerHTML = '⚠️ Please answer Question 1.'; fb1.className = 'fix-feedback warning'; fb1.style.display = 'block'; window.readingAnswers.q1 = false; }
+    else if (q1.includes('indefatigable') || (q1.includes('profound') && q1.includes('obstacles'))) {
+        fb1.innerHTML = '✅ Correct! Leadership requires an indefatigable spirit when confronting profound obstacles.';
+        fb1.className = 'fix-feedback correct'; fb1.style.display = 'block'; window.readingAnswers.q1 = true;
+    } else { fb1.innerHTML = '❌ Incorrect.<br><br>💡 Correct Answer: Leadership requires an indefatigable spirit when confronting profound obstacles.';
+        fb1.className = 'fix-feedback incorrect'; fb1.style.display = 'block'; window.readingAnswers.q1 = false; }
+    
+    if (q2 === "") { fb2.innerHTML = '⚠️ Please answer Question 2.'; fb2.className = 'fix-feedback warning'; fb2.style.display = 'block'; window.readingAnswers.q2 = false; }
+    else if (q2.includes('lucid')) {
+        fb2.innerHTML = '✅ Correct! "Lucid" is a synonym for "unambiguous".';
+        fb2.className = 'fix-feedback correct'; fb2.style.display = 'block'; window.readingAnswers.q2 = true;
+    } else { fb2.innerHTML = '❌ Incorrect.<br><br>💡 Correct Answer: A consummate communicator ensures their intent is lucid.';
+        fb2.className = 'fix-feedback incorrect'; fb2.style.display = 'block'; window.readingAnswers.q2 = false; }
+    
+    if (q3 === "") { fb3.innerHTML = '⚠️ Please answer Question 3.'; fb3.className = 'fix-feedback warning'; fb3.style.display = 'block'; window.readingAnswers.q3 = false; }
+    else if (q3.includes('habit') || q3.includes('consistent')) {
+        fb3.innerHTML = '✅ Correct! Because excellence is a consistent habit rather than a temporary event.';
+        fb3.className = 'fix-feedback correct'; fb3.style.display = 'block'; window.readingAnswers.q3 = true;
+    } else { fb3.innerHTML = '❌ Incorrect.<br><br>💡 Correct Answer: Because excellence is a consistent habit rather than a temporary event.';
+        fb3.className = 'fix-feedback incorrect'; fb3.style.display = 'block'; window.readingAnswers.q3 = false; }
+});
+
+document.getElementById('completeReadingBtn')?.addEventListener('click', () => {
+    let q1 = document.getElementById('readingQ1').value.trim();
+    let q2 = document.getElementById('readingQ2').value.trim();
+    let q3 = document.getElementById('readingQ3').value.trim();
+    if (q1 === "" || q2 === "" || q3 === "") { alert('Please answer all reading comprehension questions.'); return; }
+    if (window.readingAnswers.q1 !== true || window.readingAnswers.q2 !== true || window.readingAnswers.q3 !== true) {
+        alert('Please correct all answers before marking as complete. Click "Check Answers" to see correct answers.');
+        return;
+    }
+    markActivityComplete('reading', 'chk3');
+});
+
+// ==================== Writing ====================
+const fixAnswers = {
+    1: { correct: "The manager is angry with me, so he rescheduled the audit.", hasAngryWith: /angry with/i, hasRescheduled: /\brescheduled\b/i, noPreponed: /preponed/i },
+    2: { correct: "My name is [Name]. I graduated from college in 2020.", hasCorrectIntro: /^(my name is|i am)/i, hasGraduated: /\bgraduated\b/i, noPassedOut: /passed out/i, noMyself: /myself/i },
+    3: { correct: "We are discussing the issue; it is very concerning.", hasNoDiscussOn: /discussing on/i, hasDiscuss: /\bdiscussing\b/i, hasConcerning: /\bconcerning\b/i, noDeplorable: /deplorable/i, hasSemicolon: /;/i, hasPeriod: /\./i }
+};
+
+document.getElementById('checkAllFixBtn')?.addEventListener('click', () => {
+    for(let i=1;i<=3;i++){ 
+        let input = document.getElementById(`fix${i}`).value.trim(); 
+        let fb = document.getElementById(`fix${i}Feedback`); 
+        let exp = document.getElementById(`fix${i}Explanation`);
+        if(input===""){ fb.innerHTML = '⚠️ Please enter your answer.'; fb.className = 'fix-feedback warning'; fb.style.display = 'block'; exp.style.display = 'none'; }
+        else{ let isCorrect=false;
+            if(i===1){ if(fixAnswers[1].hasAngryWith.test(input)&&fixAnswers[1].hasRescheduled.test(input)&&!fixAnswers[1].noPreponed.test(input)) isCorrect=true; }
+            else if(i===2){ if(fixAnswers[2].hasCorrectIntro.test(input)&&fixAnswers[2].hasGraduated.test(input)&&!fixAnswers[2].noPassedOut.test(input)&&!fixAnswers[2].noMyself.test(input)) isCorrect=true; }
+            else if(i===3){ if(!fixAnswers[3].hasNoDiscussOn.test(input)&&fixAnswers[3].hasDiscuss.test(input)&&fixAnswers[3].hasConcerning.test(input)&&!fixAnswers[3].noDeplorable.test(input)&&(fixAnswers[3].hasSemicolon.test(input)||fixAnswers[3].hasPeriod.test(input))) isCorrect=true; }
+            if(isCorrect){ fb.innerHTML = '✅ Correct!'; fb.className = 'fix-feedback correct'; fb.style.display = 'block'; exp.style.display = 'none'; }
+            else{ fb.innerHTML = `❌ Incorrect.<br><br>💡 Correct: "${fixAnswers[i].correct}"`; fb.className = 'fix-feedback incorrect'; fb.style.display = 'block'; exp.innerHTML = `💡 Correct answer: "${fixAnswers[i].correct}"`; exp.style.display = 'block'; }
+        }
+    }
+});
+
+const verbAnswers = {
+    1: { keywords: ['orchestrated', 'led', 'managed', 'directed'], requiredAfterVerb: ['team'], example: "Orchestrated a team to achieve record-breaking results." },
+    2: { keywords: ['expedited', 'accelerated', 'streamlined'], requiredAfterVerb: ['process'], example: "Expedited the process of client onboarding by 40%." },
+    3: { keywords: ['rectified', 'corrected', 'resolved'], requiredAfterVerb: ['error'], example: "Rectified a profound error in the budget that saved $50K." }
+};
+
+document.getElementById('checkAllVerbsBtn')?.addEventListener('click', () => {
+    for(let i=1;i<=3;i++){ 
+        let input = document.getElementById(`verb${i}`).value.trim().toLowerCase(); 
+        let fb = document.getElementById(`verb${i}Feedback`);
+        if(input===""){ fb.innerHTML = '⚠️ Please enter your answer.'; fb.className = 'fix-feedback warning'; fb.style.display = 'block'; }
+        else{ let startsWithVerb = verbAnswers[i].keywords.some(kw => input.startsWith(kw)); let hasRequiredContext = verbAnswers[i].requiredAfterVerb.some(word => input.includes(word)); let wordCount = input.split(/\s+/).filter(w=>w.length).length;
+            if(startsWithVerb && hasRequiredContext && wordCount >= 6){ fb.innerHTML = '✅ Correct! Great executive bullet point!'; fb.className = 'fix-feedback correct'; fb.style.display = 'block'; }
+            else{ fb.innerHTML = `❌ Incorrect.<br><br>💡 Example: "${verbAnswers[i].example}"`; fb.className = 'fix-feedback incorrect'; fb.style.display = 'block'; }
+        }
+    }
+});
+
+document.getElementById('completeWritingBtn')?.addEventListener('click', () => {
+    let fix1 = document.getElementById('fix1').value.trim();
+    let fix2 = document.getElementById('fix2').value.trim();
+    let fix3 = document.getElementById('fix3').value.trim();
+    let v1 = document.getElementById('verb1').value.trim();
+    let v2 = document.getElementById('verb2').value.trim();
+    let v3 = document.getElementById('verb3').value.trim();
+    if(fix1===""||fix2===""||fix3===""||v1===""||v2===""||v3===""){ alert('Complete all writing tasks.'); return; }
+    markActivityComplete('writing', 'chk4');
+});
+
+
+// ==================== Grammar ====================
+document.getElementById('completeGrammarBtn')?.addEventListener('click', () => markActivityComplete('grammar', 'chk6'));
+
+// ==================== Game ====================
+let gameSelections = { 1: null, 2: null, 3: null };
+const gameCorrectAnswers = { 1: 'unambiguous', 2: 'expedite', 3: 'indefatigable' };
+
+function updateGameDisplay() {
+    for (let i = 1; i <= 3; i++) {
+        const blankSpan = document.getElementById(`blank${i}`);
+        if (gameSelections[i] === gameCorrectAnswers[i]) {
+            blankSpan.innerHTML = `<span style="text-decoration: underline; text-decoration-color: #22c55e; padding: 0 8px; font-weight: 600;">${gameCorrectAnswers[i].charAt(0).toUpperCase() + gameCorrectAnswers[i].slice(1)}</span>`;
+            const radios = document.querySelectorAll(`input[name="game${i}"]`);
+            radios.forEach(radio => { radio.disabled = true; radio.parentElement.style.opacity = '0.5'; });
+        } else if (gameSelections[i]) {
+            blankSpan.innerHTML = `<span style="text-decoration: underline; text-decoration-color: #94a3b8; padding: 0 8px;">${gameSelections[i].charAt(0).toUpperCase() + gameSelections[i].slice(1)}</span>`;
+        } else {
+            blankSpan.innerHTML = '___________';
+        }
+    }
+}
+
+for (let i = 1; i <= 3; i++) {
+    const radios = document.querySelectorAll(`input[name="game${i}"]`);
+    radios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            gameSelections[i] = this.value;
+            updateGameDisplay();
+            const feedbackDiv = document.getElementById(`game${i}Feedback`);
+            feedbackDiv.style.display = 'none';
+        });
+    });
+}
+
+document.getElementById('checkGameBtn')?.addEventListener('click', () => {
+    let score = 0;
+    for (let i = 1; i <= 3; i++) {
+        const selected = gameSelections[i];
+        const feedbackDiv = document.getElementById(`game${i}Feedback`);
+        if (!selected) {
+            feedbackDiv.innerHTML = '⚠️ Please select an option.';
+            feedbackDiv.className = 'fix-feedback warning';
+            feedbackDiv.style.display = 'block';
+        } else if (selected === gameCorrectAnswers[i]) {
+            feedbackDiv.innerHTML = `✅ Correct! "${gameCorrectAnswers[i].charAt(0).toUpperCase() + gameCorrectAnswers[i].slice(1)}" is the right choice.`;
+            feedbackDiv.className = 'fix-feedback correct';
+            feedbackDiv.style.display = 'block';
+            score++;
+        } else {
+            feedbackDiv.innerHTML = `❌ Incorrect. The correct word is "${gameCorrectAnswers[i].charAt(0).toUpperCase() + gameCorrectAnswers[i].slice(1)}".`;
+            feedbackDiv.className = 'fix-feedback incorrect';
+            feedbackDiv.style.display = 'block';
+        }
+    }
+    const resultDiv = document.getElementById('gameResult');
+    if (score === 3) {
+        resultDiv.innerHTML = '<div style="background: #d1fae5; padding: 0.75rem; border-radius: 10px;"><p style="color: #065f46;">🎉 Perfect! You got all 3 correct! 🎉</p></div>';
+    } else {
+        resultDiv.innerHTML = `<div style="background: #fef9e3; padding: 0.75rem; border-radius: 10px;"><p style="color: #92400e;">📊 Score: ${score}/3 correct.</p></div>`;
+    }
+});
+
+document.getElementById('completeGameBtn')?.addEventListener('click', () => {
+    let allSelected = true;
+    for (let i = 1; i <= 3; i++) {
+        if (!gameSelections[i]) { allSelected = false; break; }
+    }
+    if (!allSelected) { alert('Please answer all game questions.'); return; }
+    let allCorrect = true;
+    for (let i = 1; i <= 3; i++) {
+        if (gameSelections[i] !== gameCorrectAnswers[i]) { allCorrect = false; break; }
+    }
+    if (!allCorrect) { alert('Please correct all answers before marking as complete.'); return; }
+    markActivityComplete('game', 'chk7');
+});
+
+// ==================== Vocabulary Audio ====================
+function playAudio(word) { let u = new SpeechSynthesisUtterance(word); u.lang = 'en-US'; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); }
+
+// ==================== Initialize ====================
+const checkboxes = ['chk1','chk2','chk3','chk4','chk6','chk7'].map(id => document.getElementById(id));
+checkboxes.forEach(cb => { if(cb){ cb.addEventListener('click', e => e.preventDefault()); cb.style.pointerEvents = 'none'; cb.style.opacity = '0.6'; } });
+document.getElementById('dayCompleteBtn')?.addEventListener('click', completeDay);
+document.getElementById('downloadCertificateBtn')?.addEventListener('click', () => { alert('Certificate generation feature coming soon!'); });
+updateProgressCounter();
+</script>
+</body>
+</html>

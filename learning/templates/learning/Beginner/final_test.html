@@ -1,0 +1,690 @@
+{% extends 'home_page/base.html' %}
+{% load static %}
+
+{% block title %}Final Assessment - {{ level_display }} Level{% endblock %}
+
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0e1117;
+    --ink-soft: #2d3445;
+    --ink-muted: #6b7280;
+    --cream: #f5f3ff;
+    --cream-dark: #ede9fe;
+    --ember: #7c3aed;
+    --ember-soft: #ddd6fe;
+    --ember-light: #f5f3ff;
+    --gold: #6d28d9;
+    --gold-light: #ede9fe;
+    --surface: #ffffff;
+    --border: #e5e0d5;
+    --border-strong: #c9c2b4;
+    --shadow-sm: 0 1px 4px rgba(14,17,23,0.06);
+    --shadow-md: 0 4px 20px rgba(14,17,23,0.09);
+    --shadow-lg: 0 12px 40px rgba(14,17,23,0.12);
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── STICKY HEADER BAR ───────────────────────────── */
+  .exam-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--ink);
+    color: #fff;
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 16px rgba(14,17,23,0.25);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .header-badge {
+    background: var(--ember);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 6px;
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    opacity: 0.95;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .progress-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .progress-pill .count-badge {
+    background: var(--ember);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 50px;
+  }
+
+  .timer-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--ember);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    box-shadow: 0 2px 10px rgba(193,68,14,0.4);
+    transition: background 0.3s;
+  }
+
+  .timer-pill.warning { background: #d97706; box-shadow: 0 2px 10px rgba(217,119,6,0.4); }
+  .timer-pill.critical { background: #dc2626; box-shadow: 0 2px 10px rgba(220,38,38,0.5); animation: pulse 1s infinite; }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+
+  /* ── PAGE LAYOUT ─────────────────────────────────── */
+  .page-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 3rem 1.25rem 4rem;
+  }
+
+  /* ── HERO SECTION ────────────────────────────────── */
+  .exam-hero {
+    text-align: center;
+    padding: 2.5rem 0 2rem;
+    border-bottom: 1.5px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ember);
+    background: var(--ember-light);
+    border: 1px solid var(--ember-soft);
+    padding: 5px 14px;
+    border-radius: 50px;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-title span { color: var(--ember); }
+
+  .hero-sub {
+    font-size: 14px;
+    color: var(--ink-muted);
+    font-weight: 500;
+  }
+
+  /* ── PROGRESS BAR ────────────────────────────────── */
+  .progress-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .progress-bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--cream-dark);
+    border-radius: 50px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--ember), var(--gold));
+    border-radius: 50px;
+    width: 0%;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .progress-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    min-width: 80px;
+    text-align: right;
+  }
+
+  /* ── ALERTS ──────────────────────────────────────── */
+  .alert {
+    padding: 0.875rem 1.25rem;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+  .alert-warning { background: var(--gold-light); border: 1px solid #fde68a; color: #92400e; }
+
+  /* ── QUESTION CARDS ──────────────────────────────── */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+
+  .question-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+
+  .question-card.answered {
+    border-left: 4px solid var(--ember);
+    padding-left: calc(2rem - 3px);
+  }
+
+  .question-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .q-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: var(--ember-light);
+    color: var(--ember);
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--ember-soft);
+  }
+
+  .question-card.answered .q-num {
+    background: var(--ember);
+    color: #fff;
+    border-color: var(--ember);
+  }
+
+  .q-status {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .question-card.answered .q-status {
+    color: var(--ember);
+  }
+
+  .question-text {
+    font-size: 0.975rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.55;
+    margin-bottom: 1.25rem;
+  }
+
+  /* ── OPTIONS ─────────────────────────────────────── */
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    list-style: none;
+  }
+
+  .option-item {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.7rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    background: var(--cream);
+    user-select: none;
+  }
+
+  .option-item:hover {
+    border-color: var(--border-strong);
+    background: #fff;
+    transform: translateX(3px);
+  }
+
+  .option-item.selected {
+    border-color: var(--ember);
+    background: var(--ember-light);
+    transform: translateX(3px);
+  }
+
+  .option-item input[type="radio"] {
+    display: none;
+  }
+
+  .option-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.18s ease;
+    background: #fff;
+  }
+
+  .option-item.selected .option-dot {
+    border-color: var(--ember);
+    background: var(--ember);
+  }
+
+  .option-dot::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+    transition: opacity 0.18s;
+  }
+
+  .option-item.selected .option-dot::after { opacity: 1; }
+
+  .option-letter {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-muted);
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+
+  .option-item.selected .option-letter { color: var(--ember); }
+
+  .option-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    line-height: 1.45;
+    flex: 1;
+  }
+
+  .option-item.selected .option-text { color: var(--ink); font-weight: 600; }
+
+  /* ── SUBMIT AREA ─────────────────────────────────── */
+  .submit-area {
+    text-align: center;
+    padding: 3rem 0 1rem;
+  }
+
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    padding: 1rem 3rem;
+    border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 20px rgba(14,17,23,0.25);
+    letter-spacing: 0.01em;
+  }
+
+  .submit-btn:hover {
+    background: var(--ember);
+    box-shadow: 0 8px 30px rgba(193,68,14,0.35);
+    transform: translateY(-2px);
+  }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  .submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .submit-icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .submit-hint {
+    margin-top: 1rem;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  /* ── FOOTER ──────────────────────────────────────── */
+  .exam-footer {
+    text-align: center;
+    padding: 1.5rem 0 0;
+    font-size: 12px;
+    color: var(--ink-muted);
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  /* ── MOBILE ──────────────────────────────────────── */
+  @media (max-width: 640px) {
+    .exam-header { padding: 0 1rem; height: 56px; }
+    .header-title { display: none; }
+    .progress-pill .label-text { display: none; }
+    .page-wrap { padding: 2rem 1rem 3rem; }
+    .question-card { padding: 1.25rem; }
+    .exam-hero { padding: 1.75rem 0 1.5rem; }
+  }
+</style>
+
+{% endblock %}
+
+{% block content %}
+<!-- Sticky Exam Header -->
+<header class="exam-header">
+  <div class="header-left">
+    <span class="header-badge">{{ level_display }}</span>
+    <span class="header-title">English Certification</span>
+  </div>
+  <div class="header-right">
+    <div class="progress-pill">
+      <span class="label-text">Answered</span>
+      <span class="count-badge" id="completedCount">0</span>
+      <span style="opacity:0.6">/ 25</span>
+    </div>
+    <div class="timer-pill" id="timerPill">
+      <span>⏱</span>
+      <span id="timerDisplay">30:00</span>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<div class="page-wrap">
+
+  <!-- Hero -->
+  <div class="exam-hero">
+    <div class="hero-eyebrow">🏆 Final Assessment</div>
+    <h1 class="hero-title">{{ level_display }} <span>English</span> Certification</h1>
+    <p class="hero-sub">25 questions · 30 minutes · Passing score: 18/25</p>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">0 of 25</div>
+  </div>
+
+  <!-- Alerts -->
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'error' %}
+        <div class="alert alert-error">⚠ {{ message }}</div>
+      {% elif message.tags == 'warning' %}
+        <div class="alert alert-warning">ℹ {{ message }}</div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  <!-- Test Form -->
+  <form method="POST" id="mcqTestForm">
+    {% csrf_token %}
+    <div id="questionsContainer"></div>
+
+    <div class="submit-area">
+      <button type="button" class="submit-btn" id="submitBtn">
+        <span class="submit-icon">✓</span>
+        <span>Submit Assessment</span>
+      </button>
+      <p class="submit-hint">Make sure you've reviewed all your answers before submitting.</p>
+    </div>
+  </form>
+
+  <div class="exam-footer">
+    {{ level_display }} Level · Professional Communication Certification · Powered by your training
+  </div>
+</div>
+
+<script>
+  const questionsData = [
+    { text: "If a leader wants to make a process happen faster, they should _________ it.", options: ["Circumvent", "Expedite", "Ameliorate", "Scrutinize"], correct: "b" },
+    { text: "Which word describes a person who is tireless and never gives up?", options: ["Ephemeral", "Indefatigable", "Pragmatic", "Tangible"], correct: "b" },
+    { text: "When a message is 'Unambiguous,' it means it is:", options: ["Very confusing", "Extremely long", "Not open to more than one interpretation (Clear)", "Written in the passive voice"], correct: "c" },
+    { text: "To 'Manifest' a result means to:", options: ["Hide it", "Display or show it through actions", "Delay it", "Forget it"], correct: "b" },
+    { text: "Which word is the 'Smart' version of 'Highest Level' or 'Extremely Skilled'?", options: ["Consummate", "Cohesive", "Resilient", "Feasible"], correct: "a" },
+    { text: "What is the global professional alternative for 'Prepone'?", options: ["Before-pone", "Advance or bring forward", "Back-date", "Early-fix"], correct: "b" },
+    { text: "Which is the correct way to introduce yourself in a global meeting?", options: ["Myself Rahul...", "I am Rahul...", "Me is Rahul...", "This side Rahul..."], correct: "b" },
+    { text: "If you want to say you graduated in 2020, which is most professional?", options: ["I passed out in 2020.", "I went out in 2020.", "I graduated in 2020.", "I left college in 2020."], correct: "c" },
+    { text: "Choose the correct preposition: 'The manager is angry ______ me.'", options: ["On", "With", "At", "For"], correct: "b" },
+    { text: "Instead of saying 'Do one thing,' what should you say to a global client?", options: ["Take one thing...", "I suggest that...", "One thing do...", "Do this..."], correct: "b" },
+    { text: "Which sentence is more diplomatic and professional?", options: ["You didn't send the report.", "The report has not been received yet."], correct: "b" },
+    { text: "Which word is used for 'Signposting' to show a result or consequence?", options: ["Initially", "Furthermore", "Consequently", "Additionally"], correct: "c" },
+    { text: "Which sentence uses the 'Power of Passive' correctly for diplomacy?", options: ["You made a mistake.", "A mistake was made."], correct: "b" },
+    { text: "To 'Ameliorate' a situation means to:", options: ["Make it worse", "Make it better", "Ignore it", "Finish it"], correct: "b" },
+    { text: "If a solution is 'Feasible,' it means it is:", options: ["Impossible", "Possible to do easily or conveniently", "Very expensive", "Very loud"], correct: "b" },
+    { text: "'Initially, we analysed the data. Furthermore, we found the bug.' What does 'Furthermore' indicate?", options: ["A contradiction", "Adding more information", "The end of the story", "A question"], correct: "b" },
+    { text: "A 'Cohesive' team is one that:", options: ["Fights often", "Works well together as a whole", "Works in different buildings", "Has no leader"], correct: "b" },
+    { text: "'The impact of the training was profound.' What does 'Profound' mean?", options: ["Very small", "Very deep or significant", "Very funny", "Very loud"], correct: "b" },
+    { text: "When you use 'Signposting,' you are helping the listener to:", options: ["Find a physical location", "Follow the structure of your speech", "Improve their spelling", "Speak faster"], correct: "b" },
+    { text: "An 'Enduring' legacy is one that:", options: ["Ends quickly", "Lasts for a long time", "Is forgotten", "Is very cheap"], correct: "b" },
+    { text: "'I advocate for a better environment.' What does 'Advocate' mean?", options: ["To oppose", "To publicly support or recommend", "To ignore", "To destroy"], correct: "b" },
+    { text: "'His speech was very lucid.' Lucid means:", options: ["Dark", "Clear and easy to understand", "Confusing", "Angry"], correct: "b" },
+    { text: "'We must mitigate the risks.' Mitigate means:", options: ["To increase", "To make less severe or serious", "To celebrate", "To ignore"], correct: "b" },
+    { text: "'She has an autonomous role.' Autonomous means:", options: ["Working under heavy supervision", "Having the freedom to act independently", "Working in a factory", "Having no job"], correct: "b" },
+    { text: "'Confidence is not \"they will like me,\" it is...' (Finish the Power Line)", options: ["...they must like me.", "...I will be fine if they don't.", "...I am the best.", "...everyone is watching me."], correct: "b" }
+  ];
+
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  const shuffled = shuffleArray([...questionsData]);
+  const LETTERS = ['A', 'B', 'C', 'D'];
+  let userAnswers = {};
+  let timeLeft = 30 * 60;
+  let timerInterval;
+  let isSubmitted = false;
+  const levelName = "{{ level }}";
+
+  function buildQuestions() {
+    const container = document.getElementById('questionsContainer');
+    container.innerHTML = '';
+    shuffled.forEach((q, i) => {
+      const card = document.createElement('div');
+      card.className = 'question-card';
+      card.id = `qcard-${i}`;
+
+      const optionsHtml = q.options.map((opt, oi) => {
+        const letter = String.fromCharCode(97 + oi);
+        return `
+          <li class="option-item" id="opt-${i}-${letter}" onclick="selectOption(${i},'${letter}')">
+            <input type="radio" name="q${i}" value="${letter}">
+            <div class="option-dot"></div>
+            <span class="option-letter">${LETTERS[oi]}</span>
+            <span class="option-text">${opt}</span>
+          </li>`;
+      }).join('');
+
+      card.innerHTML = `
+        <div class="question-meta">
+          <div class="q-num">${i + 1}</div>
+          <span class="q-status" id="qstatus-${i}">Unanswered</span>
+        </div>
+        <p class="question-text">${q.text}</p>
+        <ul class="options-list">${optionsHtml}</ul>`;
+
+      container.appendChild(card);
+    });
+  }
+
+  function selectOption(qi, letter) {
+    if (isSubmitted) return;
+    userAnswers[qi] = letter;
+
+    const card = document.getElementById(`qcard-${qi}`);
+    card.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
+    document.getElementById(`opt-${qi}-${letter}`).classList.add('selected');
+
+    card.classList.add('answered');
+    document.getElementById(`qstatus-${qi}`).textContent = 'Answered ✓';
+
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const count = Object.keys(userAnswers).length;
+    const total = shuffled.length;
+    document.getElementById('completedCount').textContent = count;
+    document.getElementById('progressFill').style.width = `${(count / total) * 100}%`;
+    document.getElementById('progressLabel').textContent = `${count} of ${total}`;
+  }
+
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      if (isSubmitted) return;
+      if (timeLeft <= 0) { clearInterval(timerInterval); autoSubmit(); return; }
+      timeLeft--;
+      const m = Math.floor(timeLeft / 60);
+      const s = timeLeft % 60;
+      document.getElementById('timerDisplay').textContent =
+        `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+      const pill = document.getElementById('timerPill');
+      pill.classList.remove('warning', 'critical');
+      if (timeLeft <= 60) pill.classList.add('critical');
+      else if (timeLeft <= 300) pill.classList.add('warning');
+    }, 1000);
+  }
+
+  function autoSubmit() {
+    if (isSubmitted) return;
+    alert("⏰ Time's up! Submitting your assessment...");
+    submit();
+  }
+
+  function submit() {
+    if (isSubmitted) return;
+    isSubmitted = true;
+    let score = 0;
+    shuffled.forEach((q, i) => { if (userAnswers[i] === q.correct) score++; });
+    localStorage.setItem('certificationScore', score);
+    localStorage.setItem('totalQuestions', shuffled.length);
+    localStorage.setItem('passingScore', 18);
+    window.location.href = `/learning/level/${levelName}/result/?score=${score}`;
+  }
+
+  document.getElementById('submitBtn').addEventListener('click', function () {
+    const answered = Object.keys(userAnswers).length;
+    const total = shuffled.length;
+    if (answered < total) {
+      const rem = total - answered;
+      if (!confirm(`⚠️ You still have ${rem} unanswered question${rem > 1 ? 's' : ''}. Submit anyway?`)) return;
+    }
+    this.disabled = true;
+    this.innerHTML = '<span>⏳</span><span>Submitting...</span>';
+    submit();
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    buildQuestions();
+    startTimer();
+    window.addEventListener('beforeunload', (e) => {
+      if (!isSubmitted && Object.keys(userAnswers).length > 0) {
+        e.preventDefault();
+        e.returnValue = 'You have unsaved answers. Leave anyway?';
+      }
+    });
+  });
+</script>
+{% endblock %}
