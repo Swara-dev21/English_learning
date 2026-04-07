@@ -278,6 +278,7 @@
         color: #4a62b0;
         font-size: 2.2rem;
         flex-shrink: 0;
+        transition: all 0.3s ease;
     }
 
     .level-content {
@@ -389,222 +390,230 @@
         margin: 0;
     }
 
+    /* ========== NEON LOCK STYLES ========== */
+    .neon-lock {
+        font-size: 50px;
+        color: #c084fc;
+        text-shadow:
+            0 0 5px #c084fc,
+            0 0 10px #c084fc,
+            0 0 20px #a855f7,
+            0 0 40px #9333ea;
+        animation: neonGlow 1.5s infinite alternate;
+        display: inline-block;
+    }
+
+    @keyframes neonGlow {
+        from {
+            text-shadow:
+                0 0 5px #c084fc,
+                0 0 10px #c084fc;
+        }
+        to {
+            text-shadow:
+                0 0 20px #a855f7,
+                0 0 40px #9333ea;
+        }
+    }
+
+    /* ========== ANIMATION ON THE BEGINNER CARD BUTTON AREA ========== */
+    
+    /* Floating lock that appears on the button area */
+    .floating-lock-on-card {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #e2e8f0;
+        border-radius: 40px;
+        padding: 15px 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+        min-width: 160px;
+        animation: floatOnButton 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+        text-align: center;
+        border: none;
+    }
+    
+    @keyframes floatOnButton {
+        0% {
+            transform: translate(-50%, -50%) scale(0.7);
+            opacity: 0;
+        }
+        100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+    }
+    
+    /* Lock shake animation - rotates in place without moving position */
+    @keyframes lockShakeOnly {
+        0% { transform: rotate(0deg); }
+        15% { transform: rotate(-8deg); }
+        30% { transform: rotate(8deg); }
+        45% { transform: rotate(-5deg); }
+        60% { transform: rotate(5deg); }
+        75% { transform: rotate(-3deg); }
+        100% { transform: rotate(0deg); }
+    }
+    
+    /* Lock to unlock transition - rotates and scales in place */
+    @keyframes lockToUnlockOnly {
+        0% { transform: scale(1) rotate(0deg); }
+        30% { transform: scale(1.15) rotate(12deg); }
+        60% { transform: scale(1.05) rotate(-6deg); }
+        100% { transform: scale(1) rotate(0deg); }
+    }
+    
+    /* Fade out animation */
+    @keyframes fadeOutUp {
+        0% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: translate(-50%, -50%) scale(0.8) translateY(-20px);
+            opacity: 0;
+        }
+    }
+    
+    /* Button pop animation - BLUE THEME */
+    @keyframes buttonPopCard {
+        0% {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        60% {
+            opacity: 1;
+            transform: scale(1.08);
+            background: #6b7fcb;
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+            background: #4a62b0;
+        }
+    }
+    
+    .button-pop-animation {
+        animation: buttonPopCard 0.4s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+    }
+    
+    /* Card subtle pulse on unlock */
+    @keyframes cardPulseUnlock {
+        0% {
+            box-shadow: 0 6px 16px rgba(0,0,0,0.03);
+            border-left-color: #eef2f6;
+        }
+        30% {
+            box-shadow: 0 0 0 8px rgba(74, 98, 176, 0.15);
+            border-left-color: #4a62b0;
+        }
+        70% {
+            box-shadow: 0 0 0 16px rgba(74, 98, 176, 0.08);
+            border-left-color: #6b7fcb;
+        }
+        100% {
+            box-shadow: 0 6px 16px rgba(0,0,0,0.03);
+            border-left-color: #4a62b0;
+        }
+    }
+    
+    .card-pulse {
+        animation: cardPulseUnlock 0.6s ease-out;
+    }
+    
+    /* Icon transform for level icon */
+    @keyframes iconBluePop {
+        0% {
+            background: #e0e7ff;
+            color: #4a62b0;
+            transform: scale(1);
+        }
+        50% {
+            background: #4a62b0;
+            color: white;
+            transform: scale(1.05);
+        }
+        100% {
+            background: #e0e7ff;
+            color: #4a62b0;
+            transform: scale(1);
+        }
+    }
+    
+    .icon-pop {
+        animation: iconBluePop 0.4s ease-out;
+    }
+
     /* ===== RESPONSIVE STYLES ===== */
     
     @media (max-width: 768px) {
-        .path-header h1 {
-            font-size: 2.4rem;
-        }
-
-        .quote-card {
-            padding: 1rem 1.5rem;
-        }
-
-        .quote-card p {
-            font-size: 1.2rem;
-            margin: 0 1.5rem;
-        }
-
-        .level-name {
-            font-size: 1.4rem;
-        }
-
-        .level-description {
-            font-size: 1rem;
-        }
-
-        .level-icon {
-            width: 60px;
-            height: 60px;
-            font-size: 1.8rem;
-        }
+        .path-header h1 { font-size: 2.4rem; }
+        .quote-card { padding: 1rem 1.5rem; }
+        .quote-card p { font-size: 1.2rem; margin: 0 1.5rem; }
+        .level-name { font-size: 1.4rem; }
+        .level-description { font-size: 1rem; }
+        .level-icon { width: 60px; height: 60px; font-size: 1.8rem; }
+        .floating-lock-on-card { padding: 12px 20px; min-width: 140px; }
+        .neon-lock { font-size: 40px; }
     }
 
     @media (max-width: 640px) {
-        .action-links {
-            margin: 0.5rem 0 1.5rem;
-        }
-        
-        .path-header h1 {
-            font-size: 2.2rem;
-        }
-
-        .quote-card p {
-            font-size: 1.1rem;
-            margin: 0 1.2rem;
-        }
-
-        .progress-tracker {
-            padding: 1rem;
-        }
-
-        .progress-steps::before {
-            left: 40px;
-            right: 40px;
-            top: 16px;
-        }
-
-        .step-marker {
-            width: 32px;
-            height: 32px;
-            font-size: 0.9rem;
-            border-width: 2px;
-        }
-
-        .step-label {
-            font-size: 0.9rem;
-        }
-
-        .step-status {
-            font-size: 0.75rem;
-        }
-
-        .level-card {
-            flex-direction: column;
-            text-align: center;
-            padding: 1.8rem 1.2rem;
-            gap: 1rem;
-        }
-
-        .level-header {
-            justify-content: center;
-        }
-
-        .level-name {
-            font-size: 1.5rem;
-        }
-
-        .level-description {
-            font-size: 0.95rem;
-        }
-
-        .level-action {
-            width: 100%;
-            min-width: auto;
-            margin-top: 0.5rem;
-        }
-
-        .btn-level {
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
-            width: 100%;
-            max-width: 250px;
-            margin: 0 auto;
-        }
-
-        .info-message {
-            flex-direction: column;
-            text-align: center;
-            padding: 1.5rem;
-        }
-
-        .info-icon {
-            margin-bottom: 0.5rem;
-        }
-
-        .info-text {
-            font-size: 1rem;
-        }
+        .action-links { margin: 0.5rem 0 1.5rem; }
+        .path-header h1 { font-size: 2.2rem; }
+        .quote-card p { font-size: 1.1rem; margin: 0 1.2rem; }
+        .progress-tracker { padding: 1rem; }
+        .progress-steps::before { left: 40px; right: 40px; top: 16px; }
+        .step-marker { width: 32px; height: 32px; font-size: 0.9rem; border-width: 2px; }
+        .step-label { font-size: 0.9rem; }
+        .step-status { font-size: 0.75rem; }
+        .level-card { flex-direction: column; text-align: center; padding: 1.8rem 1.2rem; gap: 1rem; }
+        .level-header { justify-content: center; }
+        .level-name { font-size: 1.5rem; }
+        .level-description { font-size: 0.95rem; }
+        .level-action { width: 100%; min-width: auto; margin-top: 0.5rem; }
+        .btn-level { padding: 0.8rem 1.5rem; font-size: 1rem; width: 100%; max-width: 250px; margin: 0 auto; }
+        .info-message { flex-direction: column; text-align: center; padding: 1.5rem; }
+        .info-icon { margin-bottom: 0.5rem; }
+        .info-text { font-size: 1rem; }
+        .floating-lock-on-card { padding: 10px 16px; min-width: 130px; }
+        .neon-lock { font-size: 35px; }
     }
 
     @media (max-width: 480px) {
-        .path-header h1 {
-            font-size: 1.8rem;
-        }
-
-        .quote-card {
-            padding: 0.8rem 1rem;
-        }
-
-        .quote-card p {
-            font-size: 1rem;
-            margin: 0 1rem;
-        }
-
-        .progress-tracker {
-            padding: 0.8rem;
-        }
-
-        .progress-steps::before {
-            left: 30px;
-            right: 30px;
-            top: 14px;
-        }
-
-        .step-marker {
-            width: 28px;
-            height: 28px;
-            font-size: 0.8rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .step-label {
-            font-size: 0.8rem;
-        }
-
-        .step-status {
-            font-size: 0.7rem;
-        }
-
-        .level-card {
-            padding: 1.5rem 1rem;
-        }
-
-        .level-icon {
-            width: 55px;
-            height: 55px;
-            font-size: 1.6rem;
-        }
-
-        .level-name {
-            font-size: 1.3rem;
-        }
-
-        .level-description {
-            font-size: 0.9rem;
-        }
-
-        .btn-level {
-            padding: 0.7rem 1.2rem;
-            font-size: 0.95rem;
-            max-width: 200px;
-        }
+        .path-header h1 { font-size: 1.8rem; }
+        .quote-card { padding: 0.8rem 1rem; }
+        .quote-card p { font-size: 1rem; margin: 0 1rem; }
+        .progress-tracker { padding: 0.8rem; }
+        .progress-steps::before { left: 30px; right: 30px; top: 14px; }
+        .step-marker { width: 28px; height: 28px; font-size: 0.8rem; margin-bottom: 0.3rem; }
+        .step-label { font-size: 0.8rem; }
+        .step-status { font-size: 0.7rem; }
+        .level-card { padding: 1.5rem 1rem; }
+        .level-icon { width: 55px; height: 55px; font-size: 1.6rem; }
+        .level-name { font-size: 1.3rem; }
+        .level-description { font-size: 0.9rem; }
+        .btn-level { padding: 0.7rem 1.2rem; font-size: 0.95rem; max-width: 200px; }
+        .floating-lock-on-card { padding: 8px 14px; min-width: 110px; }
+        .neon-lock { font-size: 28px; }
     }
 
     @media (max-width: 360px) {
-        .path-header h1 {
-            font-size: 1.6rem;
-        }
-
-        .quote-card p {
-            font-size: 0.9rem;
-        }
-
-        .level-name {
-            font-size: 1.2rem;
-        }
+        .path-header h1 { font-size: 1.6rem; }
+        .quote-card p { font-size: 0.9rem; }
+        .level-name { font-size: 1.2rem; }
     }
 
-    /* Landscape mode on phones */
     @media (max-width: 850px) and (orientation: landscape) {
-        .level-card {
-            flex-direction: row;
-            text-align: left;
-            padding: 1.2rem;
-        }
-
-        .level-header {
-            justify-content: flex-start;
-        }
-
-        .level-action {
-            width: auto;
-            min-width: 140px;
-        }
-
-        .btn-level {
-            width: auto;
-        }
+        .level-card { flex-direction: row; text-align: left; padding: 1.2rem; }
+        .level-header { justify-content: flex-start; }
+        .level-action { width: auto; min-width: 140px; }
+        .btn-level { width: auto; }
     }
 </style>
 
@@ -619,7 +628,6 @@
     </div>
 
     <div class="learning-path-container">
-        <!-- Header with Quote -->
         <div class="path-header">
             <h1>Your Learning Journey</h1>
             <div class="quote-card">
@@ -629,7 +637,6 @@
             </div>
         </div>
 
-        <!-- Compact Progress Tracker -->
         <div class="progress-tracker">
             <div class="progress-steps">
                 <div class="step {% if user_level_name == 'beginner' %}active{% endif %} {% if user_level_name == 'intermediate' or user_level_name == 'advanced' %}completed{% endif %}">
@@ -665,14 +672,13 @@
             </div>
         </div>
 
-        <!-- Level Cards -->
         <div class="levels-list">
-            <!-- BEGINNER LEVEL -->
-            <div class="level-card 
-                {% if user_level_name == 'beginner' %}unlocked
+            <!-- BEGINNER LEVEL - Animation with NEON LOCK -->
+            <div id="beginnerLevelCard" class="level-card 
+                {% if user_level_name == 'beginner' %}initial-locked
                 {% elif user_level_name == 'intermediate' or user_level_name == 'advanced' %}completed
                 {% else %}locked{% endif %}">
-                <div class="level-icon">
+                <div class="level-icon" id="beginnerIcon">
                     <i class="fas fa-book-open"></i>
                 </div>
                 <div class="level-content">
@@ -681,15 +687,15 @@
                     </div>
                     <p class="level-description">Master the basics of English communication with foundational vocabulary and simple conversations.</p>
                 </div>
-                <div class="level-action">
-                    {% if user_level_name == 'beginner' %}
-                        <a href="{% url 'learning:level_overview' level_name='beginner' %}" class="btn-level btn-unlocked">
-                            Start <i class="fas fa-arrow-right"></i>
-                        </a>
-                    {% elif user_level_name == 'intermediate' or user_level_name == 'advanced' %}
+                <div class="level-action" id="beginnerAction" style="position: relative;">
+                    {% if user_level_name == 'intermediate' or user_level_name == 'advanced' %}
                         <a href="{% url 'learning:level_overview' level_name='beginner' %}" class="btn-level btn-review">
                             <i class="fas fa-rotate-right"></i> Practice
                         </a>
+                    {% elif user_level_name == 'beginner' %}
+                        <span class="btn-level btn-locked" id="beginnerLockedBtn">
+                            <i class="fas fa-lock"></i> Locked
+                        </span>
                     {% else %}
                         <span class="btn-level btn-locked">
                             <i class="fas fa-lock"></i> Locked
@@ -756,7 +762,6 @@
             </div>
         </div>
 
-        <!-- Info Message -->
         <div class="info-message">
             <div class="info-icon">
                 {% if user_level_name == 'advanced' %}
@@ -777,4 +782,117 @@
         </div>
     </div>
 </div>
+
+<script>
+    // ========== SIMPLE 2-STEP ANIMATION: LOCKED → UNLOCKED ==========
+    // Grey background for locked state, Blue background for unlocked state (matching Start button)
+    (function() {
+        const userLevel = "{{ user_level_name|default:'beginner' }}";
+        
+        if (userLevel === 'beginner') {
+            const beginnerCard = document.getElementById('beginnerLevelCard');
+            const beginnerActionDiv = document.getElementById('beginnerAction');
+            const beginnerIcon = document.getElementById('beginnerIcon');
+            
+            setTimeout(function() {
+                const currentLockedBtn = document.getElementById('beginnerLockedBtn');
+                
+                if (beginnerCard && beginnerActionDiv && currentLockedBtn) {
+                    // Hide the original locked button temporarily
+                    currentLockedBtn.style.opacity = '0';
+                    currentLockedBtn.style.pointerEvents = 'none';
+                    
+                    // Create floating lock element with GREY background (locked state)
+                    const floatingLock = document.createElement('div');
+                    floatingLock.className = 'floating-lock-on-card';
+                    floatingLock.id = 'floatingLock';
+                    floatingLock.style.background = '#e2e8f0';
+                    floatingLock.innerHTML = `
+                        <div class="neon-lock" id="cardNeonLock" style="display: inline-block;">🔒</div>
+                        <div class="lock-label" style="color: #64748b; margin-top: 8px; font-weight: 600;">Level Locked</div>
+                        <div class="lock-sub" style="color: #94a3b8; font-size: 11px;">Unlocking in a moment...</div>
+                    `;
+                    beginnerActionDiv.appendChild(floatingLock);
+                    
+                    const neonLockElement = document.getElementById('cardNeonLock');
+                    
+                    // Step 1: Shake the neon lock (only rotates, doesn't move position)
+                    setTimeout(() => {
+                        if (neonLockElement) {
+                            // Stop the neon glow animation temporarily
+                            neonLockElement.style.animation = 'none';
+                            // Apply shake animation that only rotates
+                            neonLockElement.style.animation = 'lockShakeOnly 0.5s ease-in-out';
+                            
+                            // Step 2: Lock to unlock transition
+                            setTimeout(() => {
+                                neonLockElement.style.animation = 'lockToUnlockOnly 0.5s ease-out';
+                                
+                                setTimeout(() => {
+                                    // Change to unlock icon with blue color
+                                    neonLockElement.innerHTML = '🔓';
+                                    neonLockElement.style.color = '#ffffff';
+                                    neonLockElement.style.textShadow = '0 0 10px #ffffff, 0 0 20px #6b7fcb';
+                                    neonLockElement.style.animation = 'none';
+                                    
+                                    // Change text to "Level Unlocked"
+                                    floatingLock.querySelector('.lock-label').innerHTML = 'Level Unlocked! ✨';
+                                    floatingLock.querySelector('.lock-label').style.color = '#ffffff';
+                                    floatingLock.querySelector('.lock-sub').innerHTML = 'Ready to begin!';
+                                    floatingLock.querySelector('.lock-sub').style.color = '#e0e7ff';
+                                    
+                                    // Change background to BLUE (matching Start button)
+                                    floatingLock.style.background = '#4a62b0';
+                                    floatingLock.style.boxShadow = '0 4px 12px rgba(74, 98, 176, 0.3)';
+                                    
+                                    // Step 3: Fade out the floating lock
+                                    setTimeout(() => {
+                                        floatingLock.style.animation = 'fadeOutUp 0.3s ease-out forwards';
+                                        
+                                        // Remove floating lock and show start button
+                                        setTimeout(() => {
+                                            floatingLock.remove();
+                                            
+                                            // Create and show blue start button
+                                            const startButton = document.createElement('a');
+                                            startButton.href = "{% url 'learning:level_overview' level_name='beginner' %}";
+                                            startButton.className = 'btn-level btn-unlocked button-pop-animation';
+                                            startButton.innerHTML = ' Start  <i class="fas fa-arrow-right"></i>';
+                                            beginnerActionDiv.innerHTML = '';
+                                            beginnerActionDiv.appendChild(startButton);
+                                            
+                                            // Add pulse animation to the card
+                                            beginnerCard.classList.add('card-pulse');
+                                            
+                                            // Update card styling
+                                            beginnerCard.classList.remove('initial-locked', 'locked');
+                                            beginnerCard.classList.add('unlocked');
+                                            
+                                            // Animate the level icon with blue pop
+                                            if (beginnerIcon) {
+                                                beginnerIcon.classList.add('icon-pop');
+                                                setTimeout(() => {
+                                                    beginnerIcon.classList.remove('icon-pop');
+                                                }, 400);
+                                            }
+                                            
+                                            // Remove pulse after animation
+                                            setTimeout(() => {
+                                                beginnerCard.classList.remove('card-pulse');
+                                            }, 600);
+                                            
+                                        }, 300);
+                                        
+                                    }, 800);
+                                    
+                                }, 250);
+                                
+                            }, 500);
+                        }
+                    }, 100);
+                }
+            }, 2000);
+        }
+    })();
+</script>
 {% endblock %}

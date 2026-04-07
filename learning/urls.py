@@ -17,6 +17,7 @@ urlpatterns = [
     
     # Final test and certificate
     path('level/<str:level_name>/final-test/', views.take_final_test, name='final_test'),
+    path('level/<str:level_name>/take-test/', views.render_test_page, name='take_test'),  # ✅ ADD THIS
     path('level/<str:level_name>/result/', views.test_result, name='test_result'),
     path('level/<str:level_name>/certificate/', views.certificate_view, name='certificate'),
     
@@ -31,7 +32,6 @@ urlpatterns = [
     path('certificate/<int:certificate_id>/downloaded/', views.mark_certificate_downloaded, name='certificate_downloaded'),
     path('certificate/<int:certificate_id>/shared/', views.mark_certificate_shared, name='certificate_shared'),
 
-    
     # API endpoints
     path('api/progress/<str:level_name>/', views.get_progress_api, name='api_progress'),
 ]

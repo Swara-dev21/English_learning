@@ -25,6 +25,9 @@ class UserLearningProgress(models.Model):
     certificate_issued = models.BooleanField(default=False)
     certificate_issued_at = models.DateTimeField(null=True, blank=True)
     
+    # 👇 ADD THIS NEW FIELD
+    has_seen_intro = models.BooleanField(default=False)
+    
     class Meta:
         unique_together = ['user', 'level']
         ordering = ['-updated_at']

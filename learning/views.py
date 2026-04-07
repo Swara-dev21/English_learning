@@ -24,7 +24,8 @@ def get_user_progress(user, level):
         defaults={
             'completed_days': [],
             'current_day': 1,
-            'streak_days': 0
+            'streak_days': 0,
+            'has_seen_intro': False  # Added default
         }
     )
     return progress
@@ -80,24 +81,58 @@ def level_overview(request, level_name):
     # Get or create user progress
     progress = get_user_progress(request.user, level_name)
     
+    # ── AUTO-COMPLETE DAY FROM URL PARAM ──────────────────────────────────────
+    # Day templates redirect with ?celebrate=true&completed=N after finishing a day.
+    # If the API call failed (wrong URL in template), we catch it here and mark the day complete.
+    celebrate_day = request.GET.get('completed')
+    if celebrate_day:
+        try:
+            celebrate_day_num = int(celebrate_day)
+            if 1 <= celebrate_day_num <= 30 and celebrate_day_num not in progress.completed_days:
+                progress.complete_day(celebrate_day_num)  # updates current_day + streak in DB
+                # Refresh from DB
+                progress.refresh_from_db()
+        except (ValueError, TypeError):
+            pass
+
+    # ── DERIVE CURRENT DAY FROM COMPLETED DAYS (not the stale DB field) ───────
+    # This is the key fix: compute which day to show as "current" based on the
+    # actual list of completed days, so even if the API call URL was wrong the
+    # overview will correctly show the next unlocked day.
+    completed_set = set(progress.completed_days)
+    computed_current_day = 31  # default: all done
+    for d in range(1, 31):
+        if d not in completed_set:
+            computed_current_day = d
+            break
+
+    # Keep the DB field in sync silently
+    if progress.current_day != computed_current_day and computed_current_day <= 30:
+        progress.current_day = computed_current_day
+        progress.save()
+
+    # ✅ NEW LOGIC: Intro + Assessment
+    show_intro = not progress.has_seen_intro
+    is_assessment = request.GET.get('assessment') == 'true'
+
     # Get certificate if issued
     certificate = UserCertificate.objects.filter(user=request.user, level=level_name).first()
-    
+
     # Prepare day titles dictionary
     day_titles = {}
     for day in range(1, 31):
         day_titles[day] = get_day_title(level_name, day)
-    
+
     # Check if level is completed and certificate issued
     is_completed = progress.is_completed()
     certificate_issued = progress.certificate_issued
-    
+
     context = {
         'level': level_name,
         'level_display': level_name.capitalize(),
         'completed_count': len(progress.completed_days),
         'completed_days_list': progress.completed_days,
-        'current_day': progress.current_day,
+        'current_day': computed_current_day,   # ← use computed value, not stale DB field
         'streak': progress.streak_days,
         'percentage': progress.completion_percentage(),
         'is_completed': is_completed,
@@ -105,7 +140,17 @@ def level_overview(request, level_name):
         'certificate_id': certificate.id if certificate else None,
         'day_titles': day_titles,
         'user': request.user,
+
+        # ✅ NEW CONTEXT VARIABLES
+        'show_intro': show_intro,
+        'is_assessment': is_assessment,
     }
+
+    # ✅ MARK INTRO AS SEEN (only first time)
+    if show_intro:
+        progress.has_seen_intro = True
+        progress.save()
+
     return render(request, 'learning/level_overview.html', context)
 
 def get_day_title(level, day):
@@ -409,7 +454,7 @@ def save_writing_response(request, level_name, day_number):
     activity.save()
     
     return JsonResponse({'success': True})
-@login_required
+
 @login_required
 def take_final_test(request, level_name):
     """Display and process final test before certificate"""
@@ -446,17 +491,11 @@ def take_final_test(request, level_name):
                 }
             )
             
-            return redirect(f'/learning/level/{level_name}/?assessment_passed=true')
+            # Redirect to result page with score
+            return redirect(f'/learning/level/{level_name}/result/?score={score}')
         
-        # GET request - show test page
-        context = {
-            'level': level_name,
-            'level_display': level_name.capitalize(),
-            'progress': progress,
-            'testing_mode': True,  # Pass testing mode flag to template
-        }
-        template_path = f'learning/{level_name}/final_test.html'
-        return render(request, template_path, context)
+        # ✅ CHANGED: GET request - redirect to overview with assessment mode
+        return redirect(f'/learning/level/{level_name}/?assessment=true')
     
     # PRODUCTION MODE (when TESTING_MODE = False)
     if not progress.is_completed():
@@ -466,7 +505,7 @@ def take_final_test(request, level_name):
     if request.method == 'POST':
         score, total_questions = process_final_test_answers(request.POST, level_name)
         percentage = (score / total_questions) * 100
-        passing_percentage = 70
+        passing_percentage = 75  # Updated to 75% (15/20)
         
         if percentage >= passing_percentage:
             certificate, created = UserCertificate.objects.get_or_create(
@@ -482,16 +521,26 @@ def take_final_test(request, level_name):
             progress.save()
             
             messages.success(request, f'🎉 Congratulations! You passed with {score}/{total_questions} ({percentage:.1f}%)! 🎉')
-            return redirect(f'/learning/level/{level_name}/?assessment_passed=true')
+            
+            # Redirect to result page with score
+            return redirect(f'/learning/level/{level_name}/result/?score={score}')
         else:
-            messages.error(request, f'❌ You scored {score}/{total_questions} ({percentage:.1f}%). Minimum passing score is 70%. Please review and try again.')
+            messages.error(request, f'❌ You scored {score}/{total_questions} ({percentage:.1f}%). Minimum passing score is {passing_percentage}%. Please review and try again.')
             return redirect('learning:final_test', level_name=level_name)
+    
+    # ✅ CHANGED: GET request - redirect to overview with assessment mode
+    return redirect(f'/learning/level/{level_name}/?assessment=true')
+
+@login_required
+def render_test_page(request, level_name):
+    """Render the actual test page (after modal confirmation)"""
+    progress = get_user_progress(request.user, level_name)
     
     context = {
         'level': level_name,
         'level_display': level_name.capitalize(),
         'progress': progress,
-        'testing_mode': False,
+        'testing_mode': True if settings.DEBUG else False,
     }
     template_path = f'learning/{level_name}/final_test.html'
     return render(request, template_path, context)
@@ -522,35 +571,14 @@ def certificate_view(request, level_name):
     }
     return render(request, 'learning/certificate.html', context)
 
-from PIL import Image, ImageDraw, ImageFont
-from datetime import datetime
-import io
-import os
-from django.http import HttpResponse, JsonResponse
-from django.conf import settings
-
 # Paths to your template and fonts
 TEMPLATE_PATH = r"D:\English_learning\learning\static\learning\images\certificate_template.png"
 FONT_PATH_NAME = r"D:\English_learning\learning\static\learning\images\Cinzel-VariableFont_wght.ttf"
 FONT_PATH_DATE = r"D:\English_learning\learning\static\learning\images\Montserrat-VariableFont_wght.ttf"
-
-from PIL import Image, ImageDraw, ImageFont
-from datetime import datetime
-import io
-import os
-from django.http import HttpResponse, JsonResponse
-from django.conf import settings
-
-# Paths to your template and fonts
-TEMPLATE_PATH = r"D:\English_learning\learning\static\learning\images\certificate_template.png"
-FONT_PATH_NAME = r"D:\English_learning\learning\static\learning\images\Cinzel-VariableFont_wght.ttf"
-FONT_PATH_DATE = r"D:\English_learning\learning\static\learning\images\Montserrat-VariableFont_wght.ttf"
-
 
 @login_required
 def generate_certificate_png(request, level_name):
     """Generate PNG certificate using template with precise positioning"""
-
     try:
         # Open template
         if not os.path.exists(TEMPLATE_PATH):
@@ -561,18 +589,14 @@ def generate_certificate_png(request, level_name):
 
         img_width, img_height = img.size
 
-        # ======================
-        # 🎯 USER DATA
-        # ======================
+        # USER DATA
         user_name = request.user.get_full_name() or request.user.username
         today = datetime.today().strftime("%d %B %Y")
 
         certificate = UserCertificate.objects.filter(user=request.user, level=level_name).first()
         cert_code = certificate.certificate_code if certificate else generate_certificate_code(request.user, level_name)
 
-        # ======================
-        # 🎯 FONTS (Dynamic sizing for name)
-        # ======================
+        # FONTS (Dynamic sizing for name)
         name_font_size = 72
 
         # Auto reduce font size if name is long
@@ -585,18 +609,13 @@ def generate_certificate_png(request, level_name):
                 break
             name_font_size -= 2
 
-        # Bigger and bolder fonts for date and certificate ID
-        date_font = ImageFont.truetype(FONT_PATH_DATE, 36)  # Bigger and bold
-        id_font = ImageFont.truetype(FONT_PATH_DATE, 30)    # Bigger and bold
+        date_font = ImageFont.truetype(FONT_PATH_DATE, 36)
+        id_font = ImageFont.truetype(FONT_PATH_DATE, 30)
 
-        # ======================
-        # 🎯 COLOR - Same premium dark blue everywhere
-        # ======================
-        main_color = (31, 58, 95)  # Dark blue (premium look)
+        # COLOR - Same premium dark blue everywhere
+        main_color = (31, 58, 95)
 
-        # ======================
-        # 🎯 NAME - Centered on gold line
-        # ======================
+        # NAME - Centered on gold line
         bbox = draw.textbbox((0, 0), user_name, font=name_font)
         text_width = bbox[2] - bbox[0]
 
@@ -605,32 +624,21 @@ def generate_certificate_png(request, level_name):
 
         draw.text((x_name, y_name), user_name, fill=main_color, font=name_font)
 
-        # ======================
-        # 🎯 DATE - LEFT SIDE (moved right to avoid corner design)
-        # ======================
+        # DATE - LEFT SIDE
         date_text = f"Date Issued: {today}"
-
-        x_date = int(img_width * 0.12)  # Left side, moved right
+        x_date = int(img_width * 0.12)
         y_date = int(img_height * 0.88)
-
         draw.text((x_date, y_date), date_text, fill=main_color, font=date_font)
 
-        # ======================
-        # 🎯 CERTIFICATE ID - RIGHT SIDE
-        # ======================
+        # CERTIFICATE ID - RIGHT SIDE
         id_text = f"Certificate ID: {cert_code}"
-
         bbox = draw.textbbox((0, 0), id_text, font=id_font)
         text_width = bbox[2] - bbox[0]
-
-        x_id = img_width - text_width - int(img_width * 0.08)  # Right side with margin
-        y_id = int(img_height * 0.88)  # Same Y level as date
-
+        x_id = img_width - text_width - int(img_width * 0.08)
+        y_id = int(img_height * 0.88)
         draw.text((x_id, y_id), id_text, fill=main_color, font=id_font)
 
-        # ======================
-        # 🎯 SAVE IMAGE
-        # ======================
+        # SAVE IMAGE
         img_buffer = io.BytesIO()
         img.save(img_buffer, format='PNG', dpi=(300, 300))
         img_buffer.seek(0)
@@ -651,7 +659,6 @@ def generate_certificate_png(request, level_name):
         import traceback
         traceback.print_exc()
         return JsonResponse({'error': str(e)}, status=500)
-
 
 @login_required
 def view_certificate_png(request, level_name):
@@ -749,7 +756,6 @@ def generate_fallback_certificate(request, level_name, progress, certificate):
             'code': 'FALLBACK_ERROR'
         }, status=500)
 
-
 @login_required
 def certificate_status_api(request, level_name):
     """API to check certificate availability status - NO REDIRECTS"""
@@ -841,17 +847,16 @@ def generate_certificate_code(user, level):
 def process_final_test_answers(post_data, level_name):
     """Process final test answers and return score and total questions"""
     
-    # Answer key for all 25 questions
+    # Updated answer key for 20 questions (removed Q3, Q7, Q8, Q14, Q22)
     answer_key = {
-        'q1': 'b', 'q2': 'b', 'q3': 'c', 'q4': 'b', 'q5': 'a',
-        'q6': 'b', 'q7': 'b', 'q8': 'c', 'q9': 'b', 'q10': 'b',
-        'q11': 'b', 'q12': 'c', 'q13': 'b', 'q14': 'b', 'q15': 'b',
-        'q16': 'b', 'q17': 'b', 'q18': 'b', 'q19': 'b', 'q20': 'b',
-        'q21': 'b', 'q22': 'b', 'q23': 'b', 'q24': 'b', 'q25': 'b'
+        'q1': 'b', 'q2': 'b', 'q4': 'b', 'q5': 'a', 'q6': 'b',
+        'q9': 'b', 'q10': 'b', 'q11': 'b', 'q12': 'c', 'q13': 'b',
+        'q15': 'b', 'q16': 'b', 'q17': 'b', 'q18': 'b', 'q19': 'b',
+        'q20': 'b', 'q21': 'b', 'q23': 'b', 'q24': 'b', 'q25': 'b'
     }
     
+    total_questions = len(answer_key)  # This will be 20
     score = 0
-    total_questions = len(answer_key)
     
     for question, correct_answer in answer_key.items():
         user_answer = post_data.get(question, '').lower()
