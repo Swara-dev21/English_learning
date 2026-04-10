@@ -10,7 +10,7 @@
 {% block content %}
 <div class="profile-container">
     <div class="container">
-        <!-- Back to Home & Logout Links - FIXED POSITIONING -->
+        <!-- Back to Home & Logout Links -->
         <div class="back-buttons-container">
             <a href="{% url 'home_page:home' %}" class="home-link-top">
                 <i class="fas fa-arrow-left"></i> Back to Home
@@ -53,7 +53,7 @@
         <div class="two-column-layout">
             <!-- Left Column - Account Information -->
             <div class="left-column">
-                <div class="info-section-card">
+                <div class="info-section-card fade-in">
                     <h3 class="section-title">
                         <i class="fas fa-id-card"></i>
                         Account Information
@@ -84,90 +84,166 @@
                 </div>
             </div>
 
-            <!-- Right Column - Pretest Progress -->
+            <!-- Right Column - Pretest Progress (DYNAMIC - TRANSFORMS AFTER COMPLETION) -->
             <div class="right-column">
-                <div class="info-section-card">
+                <div class="info-section-card fade-in">
                     <h3 class="section-title">
                         <i class="fas fa-chart-line"></i>
-                        Pretest Progress
+                        {% if not profile.pretest_completed %}Pretest Progress{% else %}Your Learning Journey{% endif %}
                     </h3>
-                    
-                    <div class="progress-overview">
-                        <span>Overall Progress</span>
-                        <span class="progress-count">{{ profile.completed_tests }}/4 Tests</span>
-                    </div>
-                    
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: {% widthratio profile.completed_tests 4 100 %}%"></div>
-                    </div>
 
-                    <div class="test-status-list">
-                        <div class="test-status-item {% if profile.listening_completed %}completed{% endif %}">
-                            <span class="test-name">
-                                <i class="fas fa-headphones"></i>
-                                Listening
-                            </span>
-                            {% if profile.listening_completed %}
-                                <span class="status completed">Completed</span>
-                            {% else %}
-                                <span class="status pending">Pending</span>
-                            {% endif %}
-                        </div>
-
-                        <div class="test-status-item {% if profile.speaking_completed %}completed{% endif %}">
-                            <span class="test-name">
-                                <i class="fas fa-microphone"></i>
-                                Speaking
-                            </span>
-                            {% if profile.speaking_completed %}
-                                <span class="status completed">Completed</span>
-                            {% else %}
-                                <span class="status pending">Pending</span>
-                            {% endif %}
+                    {% if not profile.pretest_completed %}
+                        <!-- ===== STATE 1: BEFORE PRETEST COMPLETION ===== -->
+                        
+                        <div class="progress-overview">
+                            <span>Overall Progress</span>
+                            <span class="progress-count">{{ profile.completed_tests }}/4 Tests</span>
                         </div>
                         
-                        <div class="test-status-item {% if profile.reading_completed %}completed{% endif %}">
-                            <span class="test-name">
-                                <i class="fas fa-book"></i>
-                                Reading
-                            </span>
-                            {% if profile.reading_completed %}
-                                <span class="status completed">Completed</span>
-                            {% else %}
-                                <span class="status pending">Pending</span>
-                            {% endif %}
-                        </div>                        
-
-                        <div class="test-status-item {% if profile.writing_completed %}completed{% endif %}">
-                            <span class="test-name">
-                                <i class="fas fa-pen"></i>
-                                Writing
-                            </span>
-                            {% if profile.writing_completed %}
-                                <span class="status completed">Completed</span>
-                            {% else %}
-                                <span class="status pending">Pending</span>
-                            {% endif %}
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" data-progress-width="{% widthratio profile.completed_tests 4 100 %}%"></div>
                         </div>
-                    </div>
 
-                    <div class="pretest-action">
-                        {% if profile.pretest_completed %}
-                            <a href="{% url 'home_page:pretest_results' %}" class="view-results-btn">
-                                View Results
-                            </a>
-                        {% else %}
-                            <a href="{% url 'home_page:continue_pretest' %}" class="continue-pretest-btn">
+                        <div class="test-status-list">
+                            <div class="test-status-item {% if profile.listening_completed %}completed glow-on-complete{% endif %}">
+                                <span class="test-name">
+                                    <i class="fas fa-headphones"></i>
+                                    Listening
+                                </span>
+                                {% if profile.listening_completed %}
+                                    <span class="status completed">Completed</span>
+                                {% else %}
+                                    <span class="status pending">Pending</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="test-status-item {% if profile.speaking_completed %}completed glow-on-complete{% endif %}">
+                                <span class="test-name">
+                                    <i class="fas fa-microphone"></i>
+                                    Speaking
+                                </span>
+                                {% if profile.speaking_completed %}
+                                    <span class="status completed">Completed</span>
+                                {% else %}
+                                    <span class="status pending">Pending</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="test-status-item {% if profile.reading_completed %}completed glow-on-complete{% endif %}">
+                                <span class="test-name">
+                                    <i class="fas fa-book"></i>
+                                    Reading
+                                </span>
+                                {% if profile.reading_completed %}
+                                    <span class="status completed">Completed</span>
+                                {% else %}
+                                    <span class="status pending">Pending</span>
+                                {% endif %}
+                            </div>                        
+
+                            <div class="test-status-item {% if profile.writing_completed %}completed glow-on-complete{% endif %}">
+                                <span class="test-name">
+                                    <i class="fas fa-pen"></i>
+                                    Writing
+                                </span>
+                                {% if profile.writing_completed %}
+                                    <span class="status completed">Completed</span>
+                                {% else %}
+                                    <span class="status pending">Pending</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="pretest-action">
+                            <a href="{% url 'home_page:continue_pretest' %}" class="continue-pretest-btn ripple-btn">
                                 <i class="fas fa-play-circle"></i> Continue Pretest
                             </a>
-                        {% endif %}
-                    </div>
+                        </div>
+
+                    {% else %}
+                        <!-- ===== STATE 2: AFTER PRETEST COMPLETION ===== -->
+
+                        <!-- Results Summary -->
+                        <!-- Results Summary - FULLY ANIMATED -->
+                        <div class="result-summary">
+                            <h4> Pretest Complete! </h4>
+                            <p>Your learning levels are now unlocked based on your score.</p>
+                            <a href="{% url 'home_page:pretest_results' %}" class="view-results-link">
+                                View Detailed Results <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+
+                        <!-- Learning Levels - Backend handles all unlock logic -->
+                        <div class="levels-container">
+                            
+                            <!-- BEGINNER LEVEL -->
+                            <div class="level-card {% if beginner_unlocked %}unlocked unlock-pop{% else %}locked{% endif %} hover-lift">
+                                <div class="circular-progress" data-progress="{{ beginner_progress.completion_percentage }}">
+                                    <span class="progress-text">{{ beginner_progress.completion_percentage|floatformat:0 }}%</span>
+                                </div>
+                                <h4>Beginner</h4>
+                                <p class="day-count">{{ beginner_progress.completed_days_count }}/30 Days Completed</p>
+                                <a href="{% url 'learning:level_overview' 'beginner' %}" class="level-action-btn ripple-btn">
+                                    {% if beginner_progress.is_completed %}Review{% else %}Continue{% endif %} Learning <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+
+                            <!-- INTERMEDIATE LEVEL -->
+                            <div class="level-card {% if intermediate_unlocked %}unlocked unlock-pop{% else %}locked{% endif %} hover-lift">
+                                <div class="circular-progress" data-progress="{{ intermediate_progress.completion_percentage }}">
+                                    <span class="progress-text">{{ intermediate_progress.completion_percentage|floatformat:0 }}%</span>
+                                </div>
+                                <h4>Intermediate</h4>
+                                {% if intermediate_progress.exists %}
+                                    <p class="day-count">{{ intermediate_progress.completed_days_count }}/30 Days Completed</p>
+                                    <a href="{% url 'learning:level_overview' 'intermediate' %}" class="level-action-btn ripple-btn">
+                                        {% if intermediate_progress.is_completed %}Review{% else %}Continue{% endif %} Learning <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                {% else %}
+                                    {% if intermediate_unlocked %}
+                                        <p class="locked-message">✨ Ready to start!</p>
+                                        <a href="{% url 'learning:level_overview' 'intermediate' %}" class="level-action-btn ripple-btn">
+                                            Start Intermediate <i class="fas fa-arrow-right"></i>
+                                        </a>
+                                    {% else %}
+                                        <p class="locked-message">🔒 Complete Beginner first</p>
+                                        <button class="level-action-btn disabled" disabled>Locked</button>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+
+                            <!-- ADVANCED LEVEL -->
+                            <div class="level-card {% if advanced_unlocked %}unlocked unlock-pop{% else %}locked{% endif %} hover-lift">
+                                <div class="circular-progress" data-progress="{{ advanced_progress.completion_percentage }}">
+                                    <span class="progress-text">{{ advanced_progress.completion_percentage|floatformat:0 }}%</span>
+                                </div>
+                                <h4>Advanced</h4>
+                                {% if advanced_progress.exists %}
+                                    <p class="day-count">{{ advanced_progress.completed_days_count }}/30 Days Completed</p>
+                                    <a href="{% url 'learning:level_overview' 'advanced' %}" class="level-action-btn ripple-btn">
+                                        {% if advanced_progress.is_completed %}Review{% else %}Continue{% endif %} Learning <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                {% else %}
+                                    {% if advanced_unlocked %}
+                                        <p class="locked-message">✨ Ready to start!</p>
+                                        <a href="{% url 'learning:level_overview' 'advanced' %}" class="level-action-btn ripple-btn">
+                                            Start Advanced <i class="fas fa-arrow-right"></i>
+                                        </a>
+                                    {% else %}
+                                        <p class="locked-message">🔒 Complete Intermediate first</p>
+                                        <button class="level-action-btn disabled" disabled>Locked</button>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
         <!-- Edit Profile Section - Dropdown -->
-        <div class="dropdown-section">
+        <div class="dropdown-section fade-in">
             <div class="dropdown-header" onclick="toggleDropdown('editDropdown')">
                 <h3 class="section-title">
                     <i class="fas fa-edit"></i>
@@ -231,7 +307,7 @@
                         {% endfor %}
                         
                         <div class="form-actions">
-                            <button type="submit" class="save-btn">
+                            <button type="submit" class="save-btn ripple-btn">
                                 <i class="fas fa-save"></i> Update Profile
                             </button>
                         </div>
@@ -241,7 +317,7 @@
         </div>
 
         <!-- Change Password Section - Dropdown -->
-        <div class="dropdown-section">
+        <div class="dropdown-section fade-in">
             <div class="dropdown-header" onclick="toggleDropdown('passwordDropdown')">
                 <h3 class="section-title">
                     <i class="fas fa-lock"></i>
@@ -276,7 +352,7 @@
                         {% endfor %}
                         
                         <div class="form-actions">
-                            <button type="submit" class="save-btn">
+                            <button type="submit" class="save-btn ripple-btn">
                                 <i class="fas fa-save"></i> Change Password
                             </button>
                         </div>
@@ -288,7 +364,6 @@
 </div>
 
 <script>
-    // Function to toggle password visibility
     function togglePasswordVisibility(fieldId, iconElement) {
         const passwordField = document.getElementById(fieldId);
         if (passwordField) {
@@ -304,7 +379,6 @@
         }
     }
 
-    // Toggle dropdown function
     function toggleDropdown(dropdownId) {
         const dropdown = document.getElementById(dropdownId);
         const icon = document.getElementById(dropdownId + 'Icon');
@@ -318,7 +392,23 @@
         }
     }
 
-    // Auto-expand dropdown if there are form errors
+    // Ripple effect for buttons
+    document.querySelectorAll('.ripple-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple-effect');
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            this.style.position = 'relative';
+            this.style.overflow = 'hidden';
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
         {% if form.errors %}
             toggleDropdown('editDropdown');
@@ -327,9 +417,56 @@
         {% if password_form.errors %}
             toggleDropdown('passwordDropdown');
         {% endif %}
+
+        // 1. PROGRESS BAR ANIMATION (smooth fill)
+        const progressBar = document.querySelector('.progress-bar-fill');
+        if (progressBar) {
+            const targetWidth = progressBar.getAttribute('data-progress-width') || '0%';
+            progressBar.style.width = '0%';
+            setTimeout(() => {
+                progressBar.style.width = targetWidth;
+            }, 200);
+        }
+
+        // 2. CIRCULAR PROGRESS ANIMATION
+        document.querySelectorAll('.circular-progress').forEach(el => {
+            let progress = parseFloat(el.getAttribute('data-progress')) || 0;
+            let current = 0;
+            let interval = setInterval(() => {
+                current++;
+                let degree = (current / 100) * 360;
+                el.style.background = `conic-gradient(#667eea ${degree}deg, #e9ecef ${degree}deg)`;
+                if (current >= progress) clearInterval(interval);
+            }, 8);
+        });
+
+        // 3. GLOW ANIMATION FOR COMPLETED ITEMS (trigger once)
+        document.querySelectorAll('.glow-on-complete').forEach(el => {
+            el.classList.add('glow-pulse');
+            setTimeout(() => {
+                el.classList.remove('glow-pulse');
+            }, 1000);
+        });
+
+        // 4. UNLOCK POP ANIMATION (trigger when unlocked class appears)
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'class') {
+                    const target = mutation.target;
+                    if (target.classList.contains('unlocked') && target.classList.contains('unlock-pop')) {
+                        target.style.animation = 'none';
+                        target.offsetHeight; // force reflow
+                        target.style.animation = 'unlockPop 0.5s ease';
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.level-card').forEach(card => {
+            observer.observe(card, { attributes: true });
+        });
     });
 
-    // Close dropdown when clicking outside (optional)
     document.addEventListener('click', function(event) {
         const dropdowns = document.querySelectorAll('.dropdown-section');
         dropdowns.forEach(section => {
@@ -345,6 +482,23 @@
             }
         });
     });
+
+// Add this inside your DOMContentLoaded event listener
+
+// Create confetti effect for result summary on page load
+const resultSummary = document.querySelector('.result-summary');
+if (resultSummary) {
+
+    // Add bounce effect on hover
+    resultSummary.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.02)';
+        this.style.transition = 'transform 0.3s ease';
+    });
+    
+    resultSummary.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+    });
+}
 </script>
 {% endblock %}
 
@@ -361,7 +515,87 @@
         background: #e4e4ffe4;
     }
 
-    /* Password field container for eye icon */
+    /* ========== ANIMATIONS ========== */
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes unlockPop {
+        0% {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+        60% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @keyframes glowPulse {
+        0% {
+            box-shadow: 0 0 0px #28a745;
+        }
+        50% {
+            box-shadow: 0 0 20px #28a745;
+        }
+        100% {
+            box-shadow: 0 0 0px #28a745;
+        }
+    }
+
+    @keyframes rippleAnim {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 0.6s forwards;
+    }
+
+    .unlock-pop {
+        animation: unlockPop 0.5s ease;
+    }
+
+    .glow-pulse {
+        animation: glowPulse 1s ease;
+    }
+
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .ripple-effect {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+        transform: scale(0);
+        animation: rippleAnim 0.6s linear;
+        pointer-events: none;
+    }
+
+    /* Password field container */
     .password-field-container {
         position: relative;
         width: 100%;
@@ -405,14 +639,13 @@
         position: relative;
     }
 
-    /* ===== FIXED BACK BUTTONS CONTAINER - NOW PROPERLY POSITIONED ===== */
     .back-buttons-container {
-        position: relative; /* Changed from absolute */
+        position: relative;
         display: flex;
         justify-content: space-between;
         align-items: center;
         max-width: 1200px;
-        margin: 0 auto 20px auto; /* Added bottom margin */
+        margin: 0 auto 20px auto;
         width: 100%;
         z-index: 100;
     }
@@ -437,16 +670,10 @@
         transform: translateY(-2px);
     }
 
-    .home-link-top i {
-        font-size: 14px;
-    }
-
-    /* Profile Card - Updated margin */
     .profile-card {
         background: white;
         border-radius: 20px;
         padding: 25px;
-        margin-top: 0; /* Removed the 60px margin */
         margin-bottom: 30px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
         border: 1px solid #e9ecef;
@@ -457,10 +684,6 @@
         align-items: center;
         gap: 30px;
         flex-wrap: wrap;
-    }
-
-    .profile-image {
-        flex-shrink: 0;
     }
 
     .avatar-circle {
@@ -476,10 +699,11 @@
         font-weight: 600;
         text-transform: uppercase;
         box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        transition: transform 0.3s ease;
     }
 
-    .profile-info {
-        flex: 1;
+    .avatar-circle:hover {
+        transform: scale(1.05);
     }
 
     .profile-name {
@@ -508,7 +732,6 @@
         color: #667eea;
     }
 
-    /* Two Column Layout */
     .two-column-layout {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -516,13 +739,6 @@
         margin-bottom: 25px;
     }
 
-    .left-column,
-    .right-column {
-        display: flex;
-        flex-direction: column;
-    }
-
-    /* Info Cards */
     .info-section-card {
         background: white;
         border-radius: 20px;
@@ -549,7 +765,6 @@
         font-size: 20px;
     }
 
-    /* Info List */
     .info-list {
         display: flex;
         flex-direction: column;
@@ -564,10 +779,6 @@
         border-bottom: 1px dashed #e9ecef;
     }
 
-    .info-row:last-child {
-        border-bottom: none;
-    }
-
     .info-label {
         color: #718096;
         font-size: 14px;
@@ -580,17 +791,12 @@
         font-size: 14px;
     }
 
-    /* Progress Section */
     .progress-overview {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin: 15px 0 12px;
         font-size: 14px;
-    }
-
-    .progress-overview span:first-child {
-        color: #718096;
     }
 
     .progress-count {
@@ -610,10 +816,10 @@
         height: 100%;
         background: linear-gradient(135deg, #667eea, #764ba2);
         border-radius: 4px;
-        transition: width 0.3s ease;
+        transition: width 1s ease-in-out;
+        width: 0%;
     }
 
-    /* Test Status List */
     .test-status-list {
         display: flex;
         flex-direction: column;
@@ -629,6 +835,7 @@
         background: #f8f9fa;
         border-radius: 12px;
         border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
     }
 
     .test-status-item.completed {
@@ -672,13 +879,7 @@
         color: #c53030;
     }
 
-    /* Action Buttons */
-    .pretest-action {
-        margin-top: 20px;
-    }
-
-    .continue-pretest-btn,
-    .view-results-btn {
+    .continue-pretest-btn {
         display: block;
         text-align: center;
         padding: 14px;
@@ -689,19 +890,159 @@
         font-size: 14px;
         font-weight: 600;
         transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
     }
 
-    .continue-pretest-btn:hover,
-    .view-results-btn:hover {
+    .continue-pretest-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
     }
 
-    .view-results-btn {
-        background: linear-gradient(135deg, #48bb78, #38a169);
+    .result-summary {
+        text-align: center;
+        margin-bottom: 25px;
+        padding: 15px;
+        background: linear-gradient(135deg, #f0fff4, #e6fffa);
+        border-radius: 15px;
     }
 
-    /* Dropdown Sections */
+    .result-summary h4 {
+        font-size: 18px;
+        color: #1a202c;
+        margin-bottom: 8px;
+    }
+
+    .result-summary p {
+        font-size: 14px;
+        color: #718096;
+        margin-bottom: 12px;
+    }
+
+    .view-results-link {
+        display: inline-block;
+        color: #667eea;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .view-results-link:hover {
+        transform: translateX(5px);
+        color: #764ba2;
+    }
+
+    .levels-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .level-card {
+        flex: 1;
+        text-align: center;
+        padding: 20px 15px;
+        border-radius: 15px;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+
+    .level-card.unlocked {
+        background: #ffffff;
+        border: 2px solid #667eea;
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.15);
+    }
+
+    .level-card.locked {
+        opacity: 0.6;
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        filter: grayscale(100%);
+        transition: all 0.4s ease;
+    }
+
+    .level-card.unlocked {
+        filter: grayscale(0%);
+    }
+
+    .level-card h4 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a202c;
+        margin: 12px 0 8px;
+    }
+
+    .circular-progress {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: conic-gradient(#667eea 0deg, #e9ecef 0deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .circular-progress::before {
+        content: "";
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        background: white;
+        border-radius: 50%;
+    }
+
+    .progress-text {
+        position: relative;
+        font-size: 16px;
+        font-weight: 700;
+        color: #667eea;
+        z-index: 1;
+    }
+
+    .day-count, .locked-message {
+        font-size: 12px;
+        color: #718096;
+        margin-bottom: 12px;
+    }
+
+    .level-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        text-decoration: none;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .level-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .level-action-btn.disabled {
+        background: #cbd5e0;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .level-action-btn.disabled:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
     .dropdown-section {
         margin-bottom: 15px;
         background: white;
@@ -749,13 +1090,6 @@
         display: block;
     }
 
-    .dropdown-content .info-section-card {
-        box-shadow: none;
-        border: 1px solid #e9ecef;
-        padding: 20px;
-    }
-
-    /* Forms */
     .form-group {
         display: flex;
         flex-direction: column;
@@ -772,12 +1106,6 @@
         gap: 8px;
     }
 
-    .form-group label i {
-        color: #667eea;
-        font-size: 14px;
-        width: 18px;
-    }
-
     .current-value {
         font-size: 13px;
         color: #718096;
@@ -788,15 +1116,8 @@
         margin-bottom: 5px;
     }
 
-    .current-value span {
-        color: #667eea;
-        font-weight: 600;
-        margin-left: 5px;
-    }
-
     .field-wrapper input,
-    .field-wrapper select,
-    .form-group input {
+    .field-wrapper select {
         width: 100%;
         padding: 12px 15px;
         border: 2px solid #e9ecef;
@@ -806,8 +1127,7 @@
     }
 
     .field-wrapper input:focus,
-    .field-wrapper select:focus,
-    .form-group input:focus {
+    .field-wrapper select:focus {
         border-color: #667eea;
         outline: none;
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -843,6 +1163,8 @@
         min-width: 200px;
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
+        position: relative;
+        overflow: hidden;
     }
 
     .save-btn:hover {
@@ -850,328 +1172,223 @@
         box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
     }
 
-    /* ===== UPDATED MOBILE RESPONSIVE STYLES ===== */
     @media (max-width: 768px) {
-        .back-buttons-container {
-            position: relative !important;
-            margin: 0 auto 15px auto !important;
-            width: 100% !important;
-            padding: 0 !important;
-        }
-        
-        .profile-card {
-            margin-top: 0 !important;
-        }
-
         .two-column-layout {
             grid-template-columns: 1fr;
             gap: 20px;
         }
-
+        .levels-container {
+            flex-direction: column;
+            gap: 15px;
+        }
         .profile-card-content {
             flex-direction: column;
             text-align: center;
-            gap: 15px;
         }
-
         .profile-details {
             align-items: center;
-        }
-
-        .profile-name {
-            margin-bottom: 5px;
-        }
-
-        .info-section-card {
-            padding: 20px;
-        }
-
-        .dropdown-header {
-            padding: 15px 20px;
-        }
-
-        .dropdown-content {
-            padding: 0 20px 20px 20px;
-        }
-        
-        .password-field-container input {
-            padding: 12px 40px 12px 15px !important;
         }
     }
 
     @media (max-width: 576px) {
-        .profile-container {
-            padding: 15px 10px;
-        }
-
-        .back-buttons-container {
-            margin: 0 auto 12px auto !important;
-            gap: 8px;
-        }
-
-        .home-link-top {
-            padding: 8px 12px !important;
-            font-size: 14px !important;
-            flex: 1;
-            justify-content: center;
-        }
-
-        .home-link-top i {
-            font-size: 12px;
-        }
-
-        .profile-card {
-            padding: 20px;
-        }
-
-        .avatar-circle {
-            width: 70px;
-            height: 70px;
-            font-size: 28px;
-        }
-
-        .profile-name {
-            font-size: 20px;
-        }
-
-        .profile-detail-item {
-            font-size: 13px;
-        }
-
-        .profile-detail-item i {
-            font-size: 13px;
-            width: 16px;
-        }
-
-        .two-column-layout {
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .info-section-card {
-            padding: 18px;
-        }
-
-        .section-title {
-            font-size: 16px;
-            margin-bottom: 15px;
-            padding-bottom: 12px;
-        }
-
-        .section-title i {
-            font-size: 16px;
-        }
-
-        .info-list {
+        .levels-container {
             gap: 12px;
         }
-
-        .info-row {
-            padding: 6px 0;
+        .circular-progress {
+            width: 75px;
+            height: 75px;
         }
-
-        .info-label, .info-value {
-            font-size: 13px;
+        .circular-progress::before {
+            width: 58px;
+            height: 58px;
         }
-
-        .progress-overview {
-            margin: 12px 0 10px;
-            font-size: 13px;
-        }
-
-        .progress-bar-container {
-            margin-bottom: 20px;
-        }
-
-        .test-status-list {
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .test-status-item {
-            padding: 10px 12px;
-        }
-
-        .test-name {
-            font-size: 13px;
-            gap: 8px;
-        }
-
-        .test-name i {
-            font-size: 13px;
-            width: 16px;
-        }
-
-        .status {
-            font-size: 11px;
-            padding: 3px 8px;
-        }
-
-        .continue-pretest-btn,
-        .view-results-btn {
-            padding: 12px;
-            font-size: 13px;
-        }
-
-        .dropdown-header {
-            padding: 14px 18px;
-        }
-
-        .dropdown-header .section-title {
-            font-size: 15px;
-        }
-
-        .dropdown-content {
-            padding: 0 18px 18px 18px;
-        }
-
-        .dropdown-content .info-section-card {
-            padding: 16px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-            gap: 6px;
-        }
-
-        .form-group label {
-            font-size: 13px;
-        }
-
-        .form-group label i {
-            font-size: 13px;
-            width: 16px;
-        }
-
-        .current-value {
-            font-size: 12px;
-            padding: 6px 10px;
-        }
-
-        .field-wrapper input,
-        .field-wrapper select,
-        .form-group input {
-            padding: 10px 12px;
-            font-size: 13px;
-        }
-
-        .error-message {
-            font-size: 12px;
-        }
-
-        .form-actions {
-            margin-top: 16px;
-        }
-
-        .save-btn {
-            padding: 12px 30px;
-            font-size: 13px;
-            min-width: 160px;
-        }
-        
-        .password-field-container input {
-            padding: 10px 38px 10px 12px !important;
-            font-size: 13px;
-        }
-        
-        .password-toggle-icon {
-            right: 12px;
+        .progress-text {
             font-size: 14px;
         }
     }
+    <!-- Add this inside your <style> section - NEW ANIMATIONS -->
 
-    @media (max-width: 480px) {
-        .back-buttons-container {
-            margin: 0 auto 10px auto !important;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        
-        .home-link-top {
-            padding: 8px 12px !important;
-            font-size: 14px !important;
-            flex: 1;
-            justify-content: center;
-        }
+@keyframes slideInFromLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px);
     }
-
-    @media (max-width: 360px) {
-        .avatar-circle {
-            width: 60px;
-            height: 60px;
-            font-size: 24px;
-        }
-
-        .profile-name {
-            font-size: 18px;
-        }
-
-        .profile-detail-item {
-            font-size: 12px;
-        }
-
-        .section-title {
-            font-size: 15px;
-        }
-
-        .info-label, .info-value {
-            font-size: 12px;
-        }
-
-        .test-name {
-            font-size: 12px;
-        }
-
-        .status {
-            font-size: 10px;
-            padding: 2px 6px;
-        }
-
-        .dropdown-header {
-            padding: 12px 15px;
-        }
-
-        .dropdown-header .section-title {
-            font-size: 14px;
-        }
-
-        .save-btn {
-            padding: 10px 25px;
-            font-size: 12px;
-            min-width: 140px;
-        }
-        
-        .password-field-container input {
-            padding: 10px 36px 10px 12px !important;
-        }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
     }
+}
 
-    /* Touch device optimizations */
-    @media (hover: none) and (pointer: coarse) {
-        .home-link-top:hover,
-        .continue-pretest-btn:hover,
-        .view-results-btn:hover,
-        .save-btn:hover,
-        .dropdown-header:hover {
-            transform: none;
-        }
-
-        .home-link-top:active {
-            transform: translateY(-2px);
-        }
-
-        .continue-pretest-btn:active,
-        .view-results-btn:active,
-        .save-btn:active {
-            transform: translateY(-2px);
-        }
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
     }
-
-    /* Ensure no horizontal scrolling */
-    html, body {
-        max-width: 100%;
-        overflow-x: hidden;
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
     }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+    }
+}
+
+@keyframes celebrate {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(10deg);
+    }
+    75% {
+        transform: rotate(-10deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes shine {
+    0% {
+        background-position: -100%;
+    }
+    100% {
+        background-position: 200%;
+    }
+}
+
+/* Result Summary Container Animation */
+.result-summary {
+    text-align: center;
+    margin-bottom: 25px;
+    padding: 20px 25px;
+    background: linear-gradient(135deg, #667eea, #764ba2, #667eea);
+    background-size: 200% 200%;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    animation: slideInFromLeft 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), float 3s ease-in-out infinite;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+/* Shimmer effect on background */
+.result-summary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shine 3s infinite;
+}
+
+/* Celebrating emojis animation */
+.result-summary h4 {
+    font-size: 22px;
+    color: white;
+    margin-bottom: 10px;
+    animation: bounceIn 0.6s ease-out 0.2s both, celebrate 0.5s ease-in-out 0.8s;
+    display: inline-block;
+}
+
+/* Paragraph animation */
+.result-summary p {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 15px;
+    animation: slideInFromLeft 0.6s ease-out 0.4s both;
+}
+
+/* Link with pulse effect */
+.view-results-link {
+    display: inline-block;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    animation: pulseGlow 1.5s ease-in-out infinite;
+    backdrop-filter: blur(5px);
+}
+
+.view-results-link:hover {
+    transform: translateX(8px) scale(1.05);
+    background: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Add floating particles behind result summary */
+.result-summary::after {
+    position: absolute;
+    font-size: 60px;
+    opacity: 0.15;
+    bottom: -20px;
+    right: -20px;
+    pointer-events: none;
+    animation: float 4s ease-in-out infinite;
+}
+
+/* Optional: Add confetti-like dots animation */
+.confetti-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: gold;
+    border-radius: 50%;
+    opacity: 0;
+    animation: confettiFall 3s ease-out forwards;
+}
+
+@keyframes confettiFall {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(100px) rotate(360deg);
+    }
+}
 </style>
 {% endblock %}
 

@@ -1,6 +1,5 @@
-# learning/admin.py
 from django.contrib import admin
-from django.utils.html import format_html
+from django.utils.safestring import mark_safe  # Add this
 from .models import UserLearningProgress, DailyActivity, SavedVocabulary, UserCertificate
 
 @admin.register(UserLearningProgress)
@@ -20,10 +19,10 @@ class UserLearningProgressAdmin(admin.ModelAdmin):
     
     def certificate_status(self, obj):
         if obj.certificate_issued:
-            return format_html('<span style="color: green;">✓ Issued</span>')
+            return mark_safe('<span style="color: green;">✓ Issued</span>')
         elif obj.is_completed():
-            return format_html('<span style="color: orange;">⚠ Ready to Issue</span>')
-        return format_html('<span style="color: gray;">Not Available</span>')
+            return mark_safe('<span style="color: orange;">⚠ Ready to Issue</span>')
+        return mark_safe('<span style="color: gray;">Not Available</span>')
     certificate_status.short_description = 'Certificate'
 
 @admin.register(DailyActivity)

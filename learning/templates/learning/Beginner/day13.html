@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{%load static%}
+{% load static %}
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -21,7 +21,7 @@
     .lesson-container {
         max-width: 1000px;
         margin: 0 auto;
-        padding: 0 1.5rem 2rem 1.5rem;
+        padding: 0 1rem 1.5rem 1rem;
         position: relative;
         width: 100%;
     }
@@ -30,7 +30,7 @@
         box-sizing: border-box;
         position: relative;
     }
-    .card-body { padding: 1.5rem; width: 100%; box-sizing: border-box; }
+    .card-body { padding: 1.25rem; width: 100%; box-sizing: border-box; }
     
     .lesson-hero {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -59,7 +59,7 @@
         z-index: 0;
     }
     @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
-    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding: 0 1.5rem; }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding: 0 1rem; }
     .day-badge {
         display: inline-block;
         background: rgba(255,255,255,0.2);
@@ -72,7 +72,7 @@
         border: 1px solid rgba(255,255,255,0.3);
     }
     .hero-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         font-weight: 800;
         margin-bottom: 0.4rem;
         background: linear-gradient(135deg, #ffffff, #f3e8ff);
@@ -81,25 +81,84 @@
         color: transparent;
     }
     .power-line {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         font-style: italic;
         margin-top: 0.4rem;
         background: rgba(255,255,255,0.15);
-        padding: 0.5rem 1.2rem;
+        padding: 0.5rem 1rem;
         border-radius: 50px;
         backdrop-filter: blur(8px);
         display: inline-block;
     }
     
+    /* Enhanced Mobile Responsiveness */
     @media (max-width: 768px) {
-        .lesson-container { padding: 0 1rem 1rem 1rem; }
-        .hero-title { font-size: 1.4rem; }
+        .lesson-container { padding: 0 0.75rem 1rem 0.75rem; }
+        .hero-title { font-size: 1.3rem; }
         .card-body { padding: 1rem; }
+        .card-header { padding: 0.75rem 1rem; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+        .card-header h2 { font-size: 1.1rem; }
+        .vocab-table th, .vocab-table td { padding: 0.5rem 0.4rem; font-size: 0.75rem; }
+        .reading-passage, .interactive-passage { padding: 1rem; font-size: 0.9rem; }
+        .clickable-word { display: inline-block; margin: 0.1rem 0; }
+        .recording-controls { flex-direction: column; align-items: stretch; }
+        .record-btn, .modern-record-btn, .yes-btn, .no-btn { justify-content: center; padding: 0.6rem 1rem; min-height: 44px; }
+        .btn-outline { padding: 0.5rem 1rem; font-size: 0.8rem; min-height: 40px; justify-content: center; }
+        .reading-stats { flex-direction: column; gap: 0.5rem; }
+        .stat { text-align: center; background: white; border-radius: 12px; padding: 0.5rem; }
+        .task-content { font-size: 0.85rem; }
+        .game-word .game-question { font-size: 0.9rem; }
+        .habit-input, .grammar-input { font-size: 0.85rem; padding: 0.6rem; }
+        .combined-recording-section { padding: 0.75rem; }
+        .checklist li { flex-wrap: wrap; font-size: 0.85rem; }
+        .day-complete-btn { width: 100%; justify-content: center; padding: 0.7rem 1rem; font-size: 1rem; min-height: 50px; }
+        .complete-activity-btn { width: 100%; justify-content: center; min-height: 44px; }
+        .radio-option { margin-right: 1rem; display: inline-block; margin-bottom: 0.5rem; }
+    }
+    
+    @media (max-width: 480px) {
+        .hero-title { font-size: 1.2rem; }
+        .power-line { font-size: 0.75rem; padding: 0.4rem 0.8rem; }
+        .btn-outline { width: 100%; justify-content: center; }
+        .vocab-table-container { overflow-x: auto; }
+        .vocab-table { min-width: 500px; }
+        .quiz-option { flex-wrap: wrap; }
+        .game-word > div { flex-direction: column; align-items: stretch !important; }
+        .game-word > div > span { margin-bottom: 0.5rem; }
+        .game-input { width: 100% !important; }
+        .habit-line { padding: 10px 12px; }
+    }
+    
+    /* Pulse animation for completion buttons */
+    @keyframes softPulse {
+        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); transform: scale(1); }
+        70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); transform: scale(1.02); }
+        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: scale(1); }
+    }
+    
+    .complete-activity-btn:not(:disabled):not(.completed) {
+        animation: softPulse 1.8s infinite ease-in-out;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .complete-activity-btn:not(:disabled):not(.completed):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+        animation: none;
+    }
+    
+    .complete-activity-btn.completed { animation: none; background: #94a3b8; cursor: default; transform: none; }
+    
+    button, .complete-activity-btn, .record-btn, .modern-record-btn, .yes-btn, .no-btn, .btn-outline, .day-complete-btn, .vocab-audio-btn {
+        min-height: 44px;
+        min-width: 44px;
+        touch-action: manipulation;
     }
     
     .activities-grid { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
     .activity-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #eef2f6; }
-    .card-header { padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .card-header { padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
     .card-header.listening { background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); border-bottom: 2px solid #a5b4fc; }
     .card-header.speaking { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-bottom: 2px solid #c084fc; }
     .card-header.reading { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-bottom: 2px solid #38bdf8; }
@@ -112,18 +171,19 @@
         background: linear-gradient(135deg, #22c55e, #16a34a);
         color: white;
         border: none;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 1.2rem;
         border-radius: 40px;
         cursor: pointer;
         font-weight: 600;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
         margin-top: 1rem;
+        transition: all 0.2s ease;
     }
-    .complete-activity-btn.completed { background: #94a3b8; cursor: default; }
-    .complete-activity-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .complete-activity-btn.completed { background: #94a3b8; cursor: default; animation: none; }
+    .complete-activity-btn:disabled { opacity: 0.5; cursor: not-allowed; animation: none; }
     
     .day-complete-btn {
         background: linear-gradient(135deg, #22c55e, #16a34a);
@@ -139,15 +199,8 @@
         align-items: center;
         gap: 0.75rem;
     }
-    .day-complete-btn:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
-    }
-    .day-complete-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        background: linear-gradient(135deg, #94a3b8, #64748b);
-    }
+    .day-complete-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4); }
+    .day-complete-btn:disabled { opacity: 0.5; cursor: not-allowed; background: linear-gradient(135deg, #94a3b8, #64748b); }
     
     .audio-player { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 0.5rem 0; text-align: center; width: 100%; box-sizing: border-box; }
     audio { width: 100%; outline: none; }
@@ -166,28 +219,11 @@
     .task-content { padding: 0.75rem 1rem; font-size: 0.9rem; color: #334155; line-height: 1.6; }
     
     .recording-controls { display: flex; gap: 1rem; margin: 0.8rem 0; flex-wrap: wrap; align-items: center; }
-    .record-btn {
-        background: #ef4444;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 40px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s;
-        font-weight: 600;
-        font-size: 0.85rem;
-    }
+    .record-btn { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 40px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.3s; font-weight: 600; font-size: 0.85rem; }
     .record-btn:hover { transform: scale(1.02); }
     .record-btn.recording { animation: pulse 1.5s infinite; }
     
-    @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-        70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-    }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
     
     .combined-recording-section { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0; }
     .comparison-message { background: #eef2ff; padding: 0.75rem; border-radius: 8px; margin: 0.75rem 0; border-left: 3px solid #8b5cf6; }
@@ -195,26 +231,9 @@
     .yes-btn { background: #22c55e; color: white; }
     .no-btn { background: #ef4444; color: white; }
     
-    .modern-record-btn {
-        background: #8b5cf6;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 40px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 0.8rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.2s ease;
-    }
-    .modern-record-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-    }
+    .modern-record-btn { background: #8b5cf6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 40px; cursor: pointer; font-weight: 600; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease; }
+    .modern-record-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
     .modern-record-btn.recording { animation: pulse 1.5s infinite; }
-    .modern-record-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     
     .reading-passage { background: #f8fafc; border-radius: 12px; padding: 1.5rem; margin: 0.5rem 0; line-height: 1.8; font-size: 1rem; }
     .interactive-passage { background: white; border-radius: 12px; padding: 1.5rem; margin: 1rem 0; border: 2px solid #e2e8f0; line-height: 1.8; font-size: 1rem; }
@@ -229,14 +248,12 @@
     .stat-label { font-size: 0.75rem; color: #64748b; }
     
     .writing-prompt { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 0.5rem 0; }
-    .fill-blank-item { background: white; border-radius: 10px; padding: 1rem; margin: 0.75rem 0; border: 1px solid #e2e8f0; }
-    .fill-blank-item p { font-weight: 600; margin-bottom: 0.5rem; }
-    .fill-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.9rem; transition: all 0.2s; box-sizing: border-box; }
-    .fill-input:focus { outline: none; border-color: #8b5cf6; }
     .habit-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; margin: 0.5rem 0; font-size: 0.9rem; box-sizing: border-box; font-family: 'Inter', sans-serif; }
     .habit-input:focus { outline: none; border-color: #8b5cf6; }
-    .writing-textarea { width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Inter', sans-serif; resize: vertical; }
-    .writing-textarea:focus { outline: none; border-color: #8b5cf6; }
+    .fix-feedback { margin-top: 0.5rem; padding: 0.5rem; border-radius: 8px; font-size: 0.85rem; display: none; }
+    .fix-feedback.correct { background: #d4edda; color: #155724; display: block; }
+    .fix-feedback.incorrect { background: #f8d7da; color: #721c24; display: block; }
+    .fix-feedback.warning { background: #fef9e3; color: #92400e; display: block; }
     
     .vocab-table-container { overflow-x: auto; margin: 0.5rem 0; border-radius: 12px; border: 1px solid #e2e8f0; background: white; }
     .vocab-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
@@ -246,17 +263,12 @@
     .vocab-table .audio-cell { width: 50px; text-align: center; }
     .vocab-audio-btn { background: none; border: none; cursor: pointer; font-size: 1rem; padding: 0.3rem; border-radius: 50%; transition: all 0.2s; color: #8b5cf6; }
     .vocab-audio-btn:hover { background: #ede9fe; transform: scale(1.1); }
+    .vocab-table .check-cell { width: 50px; text-align: center; font-size: 1.1rem; }
     
     .grammar-section { background: linear-gradient(135deg, #ede9fe 0%, #e0e7ff 100%); border-radius: 20px; padding: 1.5rem; margin: 1.5rem 0; }
     .grammar-rule { background: white; border-radius: 12px; padding: 1rem; margin: 0.75rem 0; }
-    .grammar-rule .wrong { color: #dc2626; }
-    .grammar-rule .correct { color: #16a34a; font-weight: 600; }
     .grammar-input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; margin: 0.5rem 0; font-size: 0.9rem; font-family: 'Inter', sans-serif; }
     .grammar-input:focus { outline: none; border-color: #8b5cf6; }
-    .fix-feedback { margin-top: 0.5rem; padding: 0.5rem; border-radius: 8px; font-size: 0.85rem; display: none; }
-    .fix-feedback.correct { background: #d4edda; color: #155724; display: block; }
-    .fix-feedback.incorrect { background: #f8d7da; color: #721c24; display: block; }
-    .fix-feedback.warning { background: #fef9e3; color: #92400e; display: block; }
     
     .game-section { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 20px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #bbf7d0; }
     .game-word { background: white; border-radius: 12px; padding: 1rem; margin: 1rem 0; border: 1px solid #e2e8f0; }
@@ -268,22 +280,19 @@
     .btn-outline:hover { background: #8b5cf6; color: white; }
     
     .checklist { list-style: none; padding: 0; }
-    .checklist li { margin: 0.75rem 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: #f8fafc; border-radius: 10px; }
+    .checklist li { margin: 0.75rem 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: #f8fafc; border-radius: 10px; flex-wrap: wrap; }
     .checklist input[type="checkbox"] { pointer-events: none; opacity: 0.6; cursor: not-allowed; }
     .badge { background: #8b5cf620; border-radius: 30px; padding: 0.2rem 0.8rem; font-size: 0.7rem; font-weight: bold; color: #6d28d9; }
     
     .power-word-section { background: linear-gradient(135deg, #fefce8 0%, #fef9e3 100%); border-left: 4px solid #eab308; padding: 1rem; border-radius: 12px; margin: 1rem 0; }
-    
-    .completion-banner { background: linear-gradient(135deg, #22c55e, #16a34a); border-radius: 20px; padding: 1.5rem; text-align: center; color: white; margin-top: 1.5rem; display: none; }
-    .next-day-btn { background: white; color: #16a34a; padding: 0.6rem 1.5rem; border-radius: 50px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; }
-    
-    .task-instruction { background: #f8fafc; padding: 0.75rem 1rem; border-radius: 12px; margin-bottom: 1rem; border-left: 4px solid #8b5cf6; }
     .inline-hint { font-size: 0.75rem; color: #f59e0b; margin-top: 0.2rem; }
-    .habit-line { margin-bottom: 0.6rem; }
-    
+    .habit-line { margin-bottom: 0.6rem; background: #f8f9fa; padding: 12px 16px; margin: 12px 0; border-radius: 12px; border-left: 4px solid #2c7da0; }
+    .upgraded-word { background: #fef3c7; color: #b45309; font-weight: 600; padding: 0.1rem 0.3rem; border-radius: 6px; display: inline-block; }
     .grammar-table { width: 100%; border-collapse: collapse; margin: 1rem 0; background: white; border-radius: 12px; overflow: hidden; }
-    .grammar-table th, .grammar-table td { padding: 0.75rem; border: 1px solid #e2e8f0; text-align: left; vertical-align: top; }
+    .grammar-table th, .grammar-table td { padding: 0.75rem; border: 1px solid #e2e8f0; text-align: left; }
     .grammar-table th { background: #f1f5f9; font-weight: 700; }
+    .grammar-question-item { background: white; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; border: 1px solid #e2e8f0; }
+    .grammar-question-text { font-weight: 600; margin-bottom: 0.75rem; color: #1e293b; }
   </style>
 </head>
 <body>
@@ -304,56 +313,67 @@
             <div class="card-header listening">
                 <h2>🎧 1. Listening Activity · Rhythm & Steady Pacing</h2>
             </div>
-            <div class="task-content">This activity focuses on Rhythm and Steady Pacing.</div>
+            <div class="task-content" style="padding: 0 1.25rem;">This activity focuses on Rhythm and Steady Pacing.</div>
             <div class="card-body">
                 <div class="task-box">
                     <div class="task-header"><div class="title"><span>🎯</span><span>The Task</span></div></div>
                     <div class="task-content">Listen to the "Master Audio" and focus on the pauses (...).</div>
                 </div>
                 
-                
                 <div class="audio-player">
                 <audio id="listeningAudio" controls><source src="{% static 'learning/audio/day13.mp3' %}" type="audio/mpeg"></audio>
                 </div>
                 
-                <div class="task-box">
-                    <div class="task-header"><div class="title"><span>🎤</span><span>The Shadow Test</span></div></div>
-                    <div class="task-content">Speak with the audio. Maintain a steady, "ticking" rhythm like a clock.</div>
-                </div>
-                
-                <div class="combined-recording-section">
-                    <div style="font-weight: 600; margin-bottom: 0.5rem;">🎙️ The Record & Compare</div>
-                    <div class="recording-controls">
-                        <button id="listeningRecordBtn" class="record-btn"> Start Recording</button>
-                        <button id="listeningStopBtn" class="record-btn" style="background: #64748b; display: none;"> Stop Recording</button>
-                    </div>
-                    <div id="listeningPlaybackCard" style="display: none;"><audio id="listeningPlayback" controls style="width: 100%;"></audio></div>
-                    <div id="comparisonSection" style="display: none;">
-                        <div class="comparison-message">Does your voice sound like someone who has a solid, unbreakable routine?</div>
-                        <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
-                            <button id="yesComparisonBtn" class="yes-btn">✓ Yes, sounds like a routine!</button>
-                            <button id="noComparisonBtn" class="no-btn">✗ No, record again</button>
+                <div id="listeningTextSection" style="display: none;">
+                    <div class="task-box" style="margin-top: 1rem;">
+                        <div class="task-header"><div class="title"><span>📝</span><span>Listening Text</span></div></div>
+                        <div class="task-content" style="font-style: italic; background: #fef9e3;">
+                            “I practice English… every day… Even for a few minutes… Consistency… is the key to success… 👉 Regular effort beats talent."
                         </div>
-                        <div id="comparisonFeedback" style="margin-top: 0.5rem;"></div>
                     </div>
                 </div>
                 
-                <div class="quiz-section">
-                    <p><strong>🧠 Quick Listening Check</strong></p>
-                    <div><p><strong>1. What is the key to success?</strong></p>
-                        <label class="quiz-option"><input type="radio" name="q1" value="Talent"> Talent</label>
-                        <label class="quiz-option"><input type="radio" name="q1" value="Consistency"> Consistency</label>
+                <div id="postAudioListeningContent" style="display: none;">
+                    <div class="task-box">
+                        <div class="task-header"><div class="title"><span>🎤</span><span>The Shadow Test</span></div></div>
+                        <div class="task-content">Speak with the audio. Maintain a steady, "ticking" rhythm like a clock.</div>
                     </div>
-                    <div><p><strong>2. What beats talent?</strong></p>
-                        <label class="quiz-option"><input type="radio" name="q2" value="Regular effort"> Regular effort</label>
-                        <label class="quiz-option"><input type="radio" name="q2" value="Fast speed"> Fast speed</label>
+                    
+                    <div class="combined-recording-section">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">🎙️ The Record & Compare</div>
+                        <div class="recording-controls">
+                            <button id="listeningRecordBtn" class="record-btn"> Start Recording</button>
+                            <button id="listeningStopBtn" class="record-btn" style="background: #64748b; display: none;"> Stop Recording</button>
+                        </div>
+                        <div id="listeningPlaybackCard" style="display: none;"><audio id="listeningPlayback" controls style="width: 100%;"></audio></div>
+                        <div id="comparisonSection" style="display: none;">
+                            <div class="comparison-message">Does your voice sound like someone who has a solid, unbreakable routine?</div>
+                            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                <button id="yesComparisonBtn" class="yes-btn">✓ Yes, sounds like a routine!</button>
+                                <button id="noComparisonBtn" class="no-btn">✗ No, record again</button>
+                            </div>
+                            <div id="comparisonFeedback" style="margin-top: 0.5rem;"></div>
+                        </div>
                     </div>
-                    <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                    
+                    <div class="quiz-section">
+                        <p><strong>🧠 Quick Listening Check</strong></p>
+                        <div><p><strong>1. What is the key to success?</strong></p>
+                            <label class="quiz-option"><input type="radio" name="q1" value="Talent"> Talent</label>
+                            <label class="quiz-option"><input type="radio" name="q1" value="Consistency"> Consistency</label>
+                        </div>
+                        <div><p><strong>2. What beats talent?</strong></p>
+                            <label class="quiz-option"><input type="radio" name="q2" value="Regular effort"> Regular effort</label>
+                            <label class="quiz-option"><input type="radio" name="q2" value="Fast speed"> Fast speed</label>
+                        </div>
+                        <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                    </div>
+                    
+                    <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answer</button>
                 </div>
                 
-                <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answer</button>
                 <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                    <button class="complete-activity-btn" id="completeListeningBtn">✓ Mark Listening as Complete</button>
+                    <button class="complete-activity-btn" id="completeListeningBtn" disabled>✓ Mark Listening as Complete</button>
                 </div>
             </div>
         </div>
@@ -363,7 +383,7 @@
             <div class="card-header speaking">
                 <h2>🗣️ 2. Speaking Activity · The "Professor's Guidance"</h2>
             </div>
-            <div class="task-content">Talking to a teacher about your future plans requires a blend of respect and ambition.</div>
+            <div class="task-content" style="padding: 0 1.25rem;">Talking to a teacher about your future plans requires a blend of respect and ambition.</div>
             <div class="card-body">
                 <div class="task-box">
                     <div class="task-header"><div class="title"><span>🎯</span><span>The Task</span></div></div>
@@ -372,83 +392,24 @@
                 
                 <div style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border-radius: 20px; overflow: hidden; border: 1px solid #e9d5ff; margin-top: 1rem;">
                     <div style="background: linear-gradient(135deg, #f5f0ff 0%, #ede9fe 100%); padding: 1rem 1.5rem; border-bottom: 2px solid #c4b5fd;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                             <span style="font-size: 1.3rem;">🗣️</span>
                             <div><div style="font-weight: 800; font-size: 1rem; color: #5b21b6;">The Exercise</div>
                             <div style="font-size: 0.85rem; color: #6d28d9;">Speak these lines out loud. Focus on the "Will + Verb" for future certainty:</div></div>
                         </div>
                     </div>
                     
-                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: white;">
-                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">1</div>
-                        <div><div style="font-weight: 700;">You: "Good afternoon, Sir. I will aspire to join a core engineering firm." <span style="font-size:0.75rem; color:#6d28d9;">(Smart substitute for hope)</span></div></div></div>
-                        <div style="margin-top: 1rem;">
-                            <button id="speakingRecordBtn1" class="modern-record-btn"> Record</button>
-                            <button id="speakingStopBtn1" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button>
-                            <div id="speakingPlaybackCard1" style="display:none;"><audio id="speakingPlayback1" controls style="width:100%;"></audio></div>
-                        </div>
-                    </div>
-                    
-                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: #fef9ff;">
-                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">2</div>
-                        <div><div style="font-weight: 700;">Professor: "That requires a lot of technical expertise."</div></div></div>
-                        <div style="margin-top: 1rem;">
-                            <button id="speakingRecordBtn2" class="modern-record-btn"> Record</button>
-                            <button id="speakingStopBtn2" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button>
-                            <div id="speakingPlaybackCard2" style="display:none;"><audio id="speakingPlayback2" controls style="width:100%;"></audio></div>
-                        </div>
-                    </div>
-                    
-                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: white;">
-                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">3</div>
-                        <div><div style="font-weight: 700;">You: "I understand. I will dedicate two hours every day to my practical skills."</div></div></div>
-                        <div style="margin-top: 1rem;">
-                            <button id="speakingRecordBtn3" class="modern-record-btn"> Record</button>
-                            <button id="speakingStopBtn3" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button>
-                            <div id="speakingPlaybackCard3" style="display:none;"><audio id="speakingPlayback3" controls style="width:100%;"></audio></div>
-                        </div>
-                    </div>
-                    
-                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: #fef9ff;">
-                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">4</div>
-                        <div><div style="font-weight: 700;">Professor: "How will you manage your communication skills?"</div></div></div>
-                        <div style="margin-top: 1rem;">
-                            <button id="speakingRecordBtn4" class="modern-record-btn"> Record</button>
-                            <button id="speakingStopBtn4" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button>
-                            <div id="speakingPlaybackCard4" style="display:none;"><audio id="speakingPlayback4" controls style="width:100%;"></audio></div>
-                        </div>
-                    </div>
-                    
-                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: white;">
-                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">5</div>
-                        <div><div style="font-weight: 700;">You: "I will persist with my daily English routine. It will yield results soon."</div></div></div>
-                        <div style="margin-top: 1rem;">
-                            <button id="speakingRecordBtn5" class="modern-record-btn"> Record</button>
-                            <button id="speakingStopBtn5" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button>
-                            <div id="speakingPlaybackCard5" style="display:none;"><audio id="speakingPlayback5" controls style="width:100%;"></audio></div>
-                        </div>
-                    </div>
-                    
-                    <div style="padding: 1.2rem 1.5rem; background: #fef9ff;">
-                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">6</div>
-                        <div><div style="font-weight: 700;">Professor: "Good. That will ensure your success in the interviews."</div></div></div>
-                        <div style="margin-top: 1rem;">
-                            <button id="speakingRecordBtn6" class="modern-record-btn"> Record</button>
-                            <button id="speakingStopBtn6" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button>
-                            <div id="speakingPlaybackCard6" style="display:none;"><audio id="speakingPlayback6" controls style="width:100%;"></audio></div>
-                        </div>
-                    </div>
+                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: white;"><div style="display: flex; gap: 0.75rem; flex-wrap: wrap;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight: 500;">1</div><div><div style="font-weight: 500;color:#374151;"><strong>You →</strong> "Good afternoon, Sir. I will aspire to join a core engineering firm." <span style="font-size:0.75rem; color:#6d28d9;"></span></div></div></div><div style="margin-top: 1rem;"><button id="speakingRecordBtn1" class="modern-record-btn"> Record</button><button id="speakingStopBtn1" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="speakingPlaybackCard1" style="display:none;"><audio id="speakingPlayback1" controls style="width:100%;"></audio></div></div></div>
+                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: #fef9ff;"><div style="display: flex; gap: 0.75rem; flex-wrap: wrap;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight: 500;">2</div><div><div style="font-weight: 500;color:#374151;"><strong>Professor → </strong>"That requires a lot of technical expertise."</div></div></div><div style="margin-top: 1rem;"><button id="speakingRecordBtn2" class="modern-record-btn"> Record</button><button id="speakingStopBtn2" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="speakingPlaybackCard2" style="display:none;"><audio id="speakingPlayback2" controls style="width:100%;"></audio></div></div></div>
+                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: white;"><div style="display: flex; gap: 0.75rem; flex-wrap: wrap;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight: 500;">3</div><div><div style="font-weight: 500;color:#374151;"><strong>You → </strong> "I understand. I will dedicate two hours every day to my practical skills."</div></div></div><div style="margin-top: 1rem;"><button id="speakingRecordBtn3" class="modern-record-btn"> Record</button><button id="speakingStopBtn3" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="speakingPlaybackCard3" style="display:none;"><audio id="speakingPlayback3" controls style="width:100%;"></audio></div></div></div>
+                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: #fef9ff;"><div style="display: flex; gap: 0.75rem; flex-wrap: wrap;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight: 500;">4</div><div><div style="font-weight: 500;color:#374151;"><strong>Professor →</strong> "How will you manage your communication skills?"</div></div></div><div style="margin-top: 1rem;"><button id="speakingRecordBtn4" class="modern-record-btn"> Record</button><button id="speakingStopBtn4" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="speakingPlaybackCard4" style="display:none;"><audio id="speakingPlayback4" controls style="width:100%;"></audio></div></div></div>
+                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: white;"><div style="display: flex; gap: 0.75rem; flex-wrap: wrap;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight: 500;">5</div><div><div style="font-weight: 500;color:#374151;"><strong>You → </strong>"I will persist with my daily English routine. It will yield results soon."</div></div></div><div style="margin-top: 1rem;"><button id="speakingRecordBtn5" class="modern-record-btn"> Record</button><button id="speakingStopBtn5" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="speakingPlaybackCard5" style="display:none;"><audio id="speakingPlayback5" controls style="width:100%;"></audio></div></div></div>
+                    <div style="padding: 1.2rem 1.5rem; background: #fef9ff;"><div style="display: flex; gap: 0.75rem; flex-wrap: wrap;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">6</div><div><div style="font-weight: 500;"><strong>Professor → </strong>"Good. That will ensure your success in the interviews."</div></div></div><div style="margin-top: 1rem;"><button id="speakingRecordBtn6" class="modern-record-btn"> Record</button><button id="speakingStopBtn6" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="speakingPlaybackCard6" style="display:none;"><audio id="speakingPlayback6" controls style="width:100%;"></audio></div></div></div>
                 </div>
                 
-            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 16px; padding: 1rem 1.25rem; margin: 1.5rem 0 1rem 0; border-left: 4px solid #22c55e; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-                        <span style="font-size: 1.2rem;">💡</span>
-                        <span style="font-weight: 700; color: #166534; font-size: 0.9rem; letter-spacing: 0.5px;">WHY THIS WORKS</span>
-                    </div>
-                    <p style="color: #14532d; font-size: 0.9rem; line-height: 1.5; margin: 0;">
-                        This moves beyond "basic" English. Using words like <strong style="color: #15803d;">pursued</strong>, 
-                        <strong style="color: #15803d;">enhance</strong>, and <strong style="color: #15803d;">dedicated</strong> makes you sound like a high-level professional immediately.
-                    </p>
+                <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 16px; padding: 1rem 1.25rem; margin: 1.5rem 0 1rem 0; border-left: 4px solid #22c55e;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; flex-wrap: wrap;"><span style="font-size: 1.2rem;">💡</span><span style="font-weight: 700; color: #166534; font-size: 0.9rem;">WHY THIS WORKS</span></div>
+                    <p style="color: #14532d; font-size: 0.9rem; line-height: 1.5; margin: 0;">This moves beyond "basic" English. Using words like <strong style="color: #15803d;">aspire</strong>, <strong style="color: #15803d;">dedicate</strong>, and <strong style="color: #15803d;">persist</strong> makes you sound like a high-level professional immediately.</p>
                 </div>
                 
                 <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
@@ -465,47 +426,31 @@
             <div class="card-body">
                 <div class="reading-passage"><strong>📖 Read slowly. Notice how the Simple Future describes a vision that has not happened yet.</strong></div>
                 <div id="interactivePassage" class="interactive-passage"></div>
-                
                 <div class="analysis-instruction">
                     <strong>🔍 Analysis Task:</strong><br><br>
-                    • <span style="color: #1e293b;">Box the Future Tense verbs: will know, will accumulate, will develop, will soar, will notice, will not arrive, will inevitably occur</span><br><br>
+                    • <span style="color: #1e293b;">Box the Future Tense verbs: (will know, will accumulate..)</span><br><br>
                     <em style="font-size: 0.85rem;">Step 1: Click on ALL words in each phrase → Step 2: Click "Check Answers" to see results</em>
                 </div>
-                
-                <div class="reading-stats">
-                    <div class="stat"><div class="stat-number" id="selectedCount">0</div><div class="stat-label">Words Selected</div></div>
-                    <div class="stat"><div class="stat-number" id="correctCount">0</div><div class="stat-label">Correct Phrases</div><div style="font-size: 0.7rem;">Need: 7 phrases</div></div>
-                </div>
-                
-                <div style="display: flex; gap: 1rem;">
-                    <button class="btn-outline" id="checkReadingBtn">✓ Check Answers</button>
-                    <button class="btn-outline" id="resetReadingBtn">⟳ Reset Selections</button>
-                </div>
+                <div class="reading-stats"><div class="stat"><div class="stat-number" id="selectedCount">0</div><div class="stat-label">Words Selected</div></div><div class="stat"><div class="stat-number" id="correctCount">0</div><div class="stat-label">Correct Phrases</div><div style="font-size: 0.7rem;">Need: 7 phrases</div></div></div>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;"><button class="btn-outline" id="checkReadingBtn">✓ Check Answers</button><button class="btn-outline" id="resetReadingBtn">⟳ Reset Selections</button></div>
                 <div id="readingFeedback" style="margin-top: 0.8rem;"></div>
-                
-                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                    <button class="complete-activity-btn" id="completeReadingBtn" disabled>✓ Mark Reading as Complete</button>
-                </div>
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;"><button class="complete-activity-btn" id="completeReadingBtn" disabled>✓ Mark Reading as Complete</button></div>
             </div>
         </div>
         
-        <!-- ==================== 4. WRITING ACTIVITY ==================== -->
+        <!-- ==================== 4. WRITING ACTIVITY - STRICT VALIDATION ==================== -->
         <div class="activity-card" id="writing-card">
             <div class="card-header writing">
                 <h2>✍️ 4. Writing Activity · The "Future Vision" Log</h2>
             </div>
             <div class="card-body">
-            <div class="writing-prompt">
-                <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">✨ Part A: The "Future Vision" Upgrade</h3>
-                
-                <p>Instead of "I want to be," write:</p>
-                <textarea id="futureVision1" class="writing-textarea" rows="2" placeholder="I will evolve into a professional engineer."></textarea>
-                <div id="futureVision1Feedback" class="fix-feedback"></div>
-                
-                <p>Instead of "I will try," write:</p>
-                <textarea id="futureVision2" class="writing-textarea" rows="2" placeholder="I will strive to maintain my daily streak."></textarea>
-                <div id="futureVision2Feedback" class="fix-feedback"></div>
-            </div>
+                <div class="writing-prompt">
+                    <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">✨ Part A: The "Future Vision" Upgrade (Read & Learn)</h3>
+                    <p>Instead of "I want to be," write:</p>
+                    <p style="background: #e0e7ff; padding: 0.75rem; border-radius: 8px;">→ <span class="upgraded-word">"I will evolve into a professional engineer."</span></p>
+                    <p>Instead of "I will try," write:</p>
+                    <p style="background: #e0e7ff; padding: 0.75rem; border-radius: 8px;">→ <span class="upgraded-word">"I will strive to maintain my daily streak."</span></p>
+                </div>
                 
                 <div class="writing-prompt">
                     <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">✍️ Main Task: Write 3 things you will do tomorrow to improve yourself</h3>
@@ -522,18 +467,12 @@
                         <input type="text" id="future3" class="habit-input" placeholder="3. I will __________">
                         <div id="future3Feedback" class="fix-feedback"></div>
                     </div>
-                    <div class="inline-hint">✨ Rule: After "will", always use the base form (V1) of the verb.</div>
+                    <div class="inline-hint">✨ Rule: After "will", always use the base form (V1) of the verb. Example: "I will read" (NOT "I will reading" or "I will reads")</div>
                 </div>
                 
                 <div id="writingFeedback" class="quiz-feedback"></div>
-                
-                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                    <button class="btn-outline" id="checkWritingBtn">✓ Check Answers</button>
-                </div>
-                
-                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                    <button class="complete-activity-btn" id="completeWritingBtn" disabled>✓ Mark Writing as Complete</button>
-                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;"><button class="btn-outline" id="checkWritingBtn">✓ Check Answers</button></div>
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;"><button class="complete-activity-btn" id="completeWritingBtn" disabled>✓ Mark Writing as Complete</button></div>
             </div>
         </div>
         
@@ -545,125 +484,54 @@
             <div class="card-body">
                 <div class="vocab-table-container">
                     <table class="vocab-table">
-                        <thead><tr><th>🔊</th><th>Simple Word</th><th>Smart Word</th><th>Pronunciation</th><th>Meaning</th><th>Synonym</th><th></th></tr></thead>
+                        <thead><th>🔊</th><th>✅</th><th>Simple Word</th><th>Smart Word</th><th>Pronunciation</th><th>Meaning</th><th>Synonym</th></thead>
                         <tbody>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Aspire')">🔊</button></span><td>Hope/Want</span><td class="word-cell"><strong>Aspire</strong></span><td><code>/əˈspaɪər/</code></span><td>To have a high ambition</span><td>Aim</span></td>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Accumulate')">🔊</button></span><td>Collect/Add up</span><td class="word-cell"><strong>Accumulate</strong></span><td><code>/əˈkjuː.mjə.leɪt/</code></span><td>To gather or build up</span><td>Amass</span></td>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Formidable')">🔊</button></span><td>Strong/Scary</span><td class="word-cell"><strong>Formidable</strong></span><td><code>/fɔːˈmɪd.ə.bəl/</code></span><td>Inspiring fear or respect</span><td>Impressive</span></td>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Yield')">🔊</button></span><td>Give/Produce</span><td class="word-cell"><strong>Yield</strong></span><td><code>/jiːld/</code></span><td>To produce a result</span><td>Generate</span></td>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Inevitably')">🔊</button></span><td>Surely</span><td class="word-cell"><strong>Inevitably</strong></span><td><code>/ɪnˈev.ɪ.tə.bli/</code></span><td>As is certain to happen</span><td>Unavoidably</span></td>
+                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Aspire">🔊</button></td><td class="check-cell" id="check-aspire">⬜</td><td>Hope/Want</td><td><strong>Aspire</strong></td><td><code>/əˈspaɪər/</code></td><td>To have a high ambition</td><td>Aim</td></tr>
+                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Accumulate">🔊</button></td><td class="check-cell" id="check-accumulate">⬜</td><td>Collect/Add up</td><td><strong>Accumulate</strong></td><td><code>/əˈkjuː.mjə.leɪt/</code></td><td>To gather or build up</td><td>Amass</td></tr>
+                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Formidable">🔊</button></td><td class="check-cell" id="check-formidable">⬜</td><td>Strong/Scary</td><td><strong>Formidable</strong></td><td><code>/fɔːˈmɪd.ə.bəl/</code></td><td>Inspiring fear or respect</td><td>Impressive</td></tr>
+                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Yield">🔊</button></td><td class="check-cell" id="check-yield">⬜</td><td>Give/Produce</td><td><strong>Yield</strong></td><td><code>/jiːld/</code></td><td>To produce a result</td><td>Generate</td></tr>
+                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Inevitably">🔊</button></td><td class="check-cell" id="check-inevitably">⬜</td><td>Surely</td><td><strong>Inevitably</strong></td><td><code>/ɪnˈev.ɪ.tə.bli/</code></td><td>As is certain to happen</td><td>Unavoidably</td></tr>
                         </tbody>
                     </table>
                 </div>
-                
-                <div class="power-word-section">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
-                        <span>🔥</span><span>POWER WORD OF THE DAY: "UNAVOIDABLE"</span>
-                    </div>
-                    <p><strong>Pronunciation:</strong> /ʌnəˈvɔɪdəbəl/ (Un-a-VOID-a-bul)</p>
-                    <p><strong>Meaning:</strong> Impossible to avoid or prevent.</p>
-                    <p><strong>Usage:</strong> "With your current hard work, success is unavoidable."</p>
-                </div>
-                
-                <div style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-left: 4px solid #38bdf8; padding: 1rem; border-radius: 12px; margin: 1rem 0;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #075985;">
-                        <span>💡</span><span>Idiom of the Day: "Slow and steady wins the race"</span>
-                    </div>
-                    <p><strong>Meaning:</strong> संयम आणि सातत्य यशाकडे नेते.</p>
-                    <p><strong>The Logic:</strong> You don't need to learn 1000 words in one day. Learning 5 words every day is what actually wins the "fluency race."</p>
-                    <p><strong>Example:</strong> "Don't rush your studies; remember, slow and steady wins the race."</p>
-                </div>
-                
+                <div class="power-word-section"><div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e; flex-wrap: wrap;"><span>🔥</span><span>POWER WORD OF THE DAY: "UNAVOIDABLE"</span></div><p><strong>Pronunciation:</strong> /ʌnəˈvɔɪdəbəl/ (Un-a-VOID-a-bul)</p><p><strong>Meaning:</strong> Impossible to avoid or prevent.</p><p><strong>Usage:</strong> "With your current hard work, success is unavoidable."</p></div>
+                <div style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-left: 4px solid #38bdf8; padding: 1rem; border-radius: 12px; margin: 1rem 0;"><div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #075985; flex-wrap: wrap;"><span>💡</span><span>Idiom of the Day: "Slow and steady wins the race"</span></div><p><strong>Meaning:</strong> संयम आणि सातत्य यशाकडे नेते.</p><p><strong>The Logic:</strong> You don't need to learn 1000 words in one day. Learning 5 words every day is what actually wins the "fluency race."</p><p><strong>Example:</strong> "Don't rush your studies; remember, slow and steady wins the race."</p></div>
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;"><button class="complete-activity-btn" id="completeVocabularyBtn" disabled>✓ Mark Vocabulary as Complete</button></div>
             </div>
         </div>
         
-               <!-- ==================== 6. GRAMMAR SECTION - UPDATED: Complete sentences required ==================== -->
+        <!-- ==================== 6. GRAMMAR SECTION ==================== -->
         <div class="grammar-section" id="grammar-card">
             <h3 style="margin: 0 0 1rem 0;">🧠 6. Grammar Hack: Simple Future (The "Vision" Tense)</h3>
             <p>Use this for promises, plans, and predictions about the future.</p>
-            <div class="grammar-rule">
-                <p><strong>Formula:</strong> Subject + Will + Base Verb (Action)</p>
-                <p><strong>Note:</strong> Never add "-ed" or "-ing" after will. (Wrong: I will played. Right: I will play.)</p>
+            <div class="grammar-rule"><p><strong>Formula:</strong> Subject + Will + Base Verb (Action)</p><p><strong>Note:</strong> Never add "-ed" or "-ing" after will. (Wrong: I will played. Right: I will play.)</p></div>
+            <table class="grammar-table"><thead><tr><th>Usage</th><th>Example</th></tr></thead><tbody><tr><td style="padding:0.75rem;">Promise</td><td style="padding:0.75rem;">I will practice every day.</td></tr><tr><td style="padding:0.75rem;">Prediction</td><td style="padding:0.75rem;">It will rain tomorrow.</td></tr><tr><td style="padding:0.75rem;">Decision</td><td style="padding:0.75rem;">I will call you later.</td></tr></tbody></table>
+            <div class="grammar-rule"><p><strong>⚠️ Activity:</strong> Write complete sentences in Future Tense:</p>
+                <div class="grammar-question-item"><div class="grammar-question-text">1. I (master) __________ this language.</div><input type="text" id="grammar1" class="grammar-input" placeholder="Write complete sentence..."><div id="grammar1Feedback" class="fix-feedback"></div></div>
+                <div class="grammar-question-item"><div class="grammar-question-text">2. We (achieve) __________ our targets.</div><input type="text" id="grammar2" class="grammar-input" placeholder="Write complete sentence..."><div id="grammar2Feedback" class="fix-feedback"></div></div>
+                <div class="grammar-question-item"><div class="grammar-question-text">3. The company (hire) __________ new engineers.</div><input type="text" id="grammar3" class="grammar-input" placeholder="Write complete sentence..."><div id="grammar3Feedback" class="fix-feedback"></div></div>
+                <div class="inline-hint">✨ Example: "I will master this language." (Use "will" + base verb)</div>
             </div>
-            
-            <table class="grammar-table">
-                <thead><tr><th>Usage</th><th>Example</th></tr></thead>
-                <tbody>
-                    <tr><td style="padding:0.75rem; border:1px solid #e2e8f0;">Promise</td><td style="padding:0.75rem; border:1px solid #e2e8f0;">I will practice every day.</td></tr>
-                    <tr><td style="padding:0.75rem; border:1px solid #e2e8f0;">Prediction</td><td style="padding:0.75rem; border:1px solid #e2e8f0;">It will rain tomorrow.</td></tr>
-                    <tr><td style="padding:0.75rem; border:1px solid #e2e8f0;">Decision</td><td style="padding:0.75rem; border:1px solid #e2e8f0;">I will call you later.</td></tr>
-                </tbody>
-            </table>
-            
-            <div class="grammar-rule">
-                <p><strong>⚠️ Activity:</strong> Write complete sentences in Future Tense:</p>
-                <p>1. I (master) __________ this language.</p>
-                <p>2. We (achieve) __________ our targets.</p>
-                <p>3. The company (hire) __________ new engineers.</p>
-                <div class="inline-hint">✨ Example: "I will master this language." (Write the complete sentence!)</div>
-            </div>
-            
-            <div class="habit-line">
-                <input type="text" id="grammar1" class="grammar-input" placeholder="Write complete sentence...">
-                <div id="grammar1Feedback" class="fix-feedback"></div>
-            </div>
-            <div class="habit-line">
-                <input type="text" id="grammar2" class="grammar-input" placeholder="Write complete sentence...">
-                <div id="grammar2Feedback" class="fix-feedback"></div>
-            </div>
-            <div class="habit-line">
-                <input type="text" id="grammar3" class="grammar-input" placeholder="Write complete sentence...">
-                <div id="grammar3Feedback" class="fix-feedback"></div>
-            </div>
-            
-            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                <button class="btn-outline" id="checkGrammarBtn">✓ Check Answers</button>
-            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;"><button class="btn-outline" id="checkGrammarBtn">✓ Check Answers</button></div>
             <div id="grammarFeedback" class="quiz-feedback"></div>
-            <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                <button class="complete-activity-btn" id="completeGrammarBtn" disabled>✓ Mark Grammar as Complete</button>
-            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 1rem;"><button class="complete-activity-btn" id="completeGrammarBtn" disabled>✓ Mark Grammar as Complete</button></div>
         </div>
         
         <!-- ==================== 7. GAME SECTION ==================== -->
         <div class="game-section" id="game-card">
             <h3 style="margin: 0 0 1rem 0;">🎲 7. Solo Game: "The Consistency Swap" 🧩</h3>
-            
-            <div class="game-word">
-                <div class="game-question"><strong>🔤 Part A: Smart Swap</strong></div>
-                <div><p>1. "My work will <strong>produce</strong> good results."</p>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;"><span>→ "My work will</span> <input type="text" id="game1" class="game-input" style="width: 200px;" placeholder="smart word"> <span>good results."</span></div>
-                    <div id="game1Feedback" class="fix-feedback"></div>
-                </div>
-                <div><p>2. "Small habits will <strong>add up</strong>."</p>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;"><span>→ "Small habits will</span> <input type="text" id="game2" class="game-input" style="width: 200px;" placeholder="smart word"> <span>."</span></div>
-                    <div id="game2Feedback" class="fix-feedback"></div>
-                </div>
-                <div><p>3. "I <strong>hope</strong> to travel."</p>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;"><span>→ "I</span> <input type="text" id="game3" class="game-input" style="width: 200px;" placeholder="smart word"> <span>to travel."</span></div>
-                    <div id="game3Feedback" class="fix-feedback"></div>
-                </div>
+            <div class="game-word"><div class="game-question"><strong>🔤 Part A: Smart Swap</strong></div><br>
+                <div><p>1. "My work will <strong>produce</strong> good results."</p><div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;"><span>→ "My work will</span> <input type="text" id="game1" class="game-input" style="width: 200px;" placeholder="smart word"> <span>good results."</span></div><br><div id="game1Feedback" class="fix-feedback"></div></div>
+                <div><p>2. "Small habits will <strong>add up</strong>."</p><div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;"><span>→ "Small habits will</span> <input type="text" id="game2" class="game-input" style="width: 200px;" placeholder="smart word"> <span>."</span></div><br><div id="game2Feedback" class="fix-feedback"></div></div>
+                <div><p>3. "I <strong>hope</strong> to travel."</p><div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;"><span>→ "I</span> <input type="text" id="game3" class="game-input" style="width: 200px;" placeholder="smart word"> <span>to travel."</span></div><br><div id="game3Feedback" class="fix-feedback"></div></div>
             </div>
-            
-            <div class="game-word">
-                <div class="game-question"><strong>🔍 Part B: The "Will" Logic</strong></div>
-                <div><p>1. "I will going to the college tomorrow."</p>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;"><span>→</span> <input type="text" id="game4" class="game-input" style="flex: 2; min-width: 300px;" placeholder="Corrected sentence..."></div>
-                    <div id="game4Feedback" class="fix-feedback"></div>
-                </div>
-                <div><p>2. "She will finishes her work soon."</p>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;"><span>→</span> <input type="text" id="game5" class="game-input" style="flex: 2; min-width: 300px;" placeholder="Corrected sentence..."></div>
-                    <div id="game5Feedback" class="fix-feedback"></div>
-                </div>
+            <div class="game-word"><div class="game-question"><strong>🔍 Part B: The "Will" Logic</strong></div>
+                <div><p>1. "I will going to the college tomorrow."</p><br><div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;"><span>→</span> <input type="text" id="game4" class="game-input" style="flex: 2; min-width: 300px;" placeholder="Corrected sentence..."></div><br><div id="game4Feedback" class="fix-feedback"></div></div>
+                <div><p>2. "She will finishes her work soon."</p><br><div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;"><span>→</span> <input type="text" id="game5" class="game-input" style="flex: 2; min-width: 300px;" placeholder="Corrected sentence..."></div><div id="game5Feedback" class="fix-feedback"></div></div>
             </div>
-            
-            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                <button class="btn-outline" id="checkGameBtn">✓ Check All Answers</button>
-            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;"><button class="btn-outline" id="checkGameBtn">✓ Check All Answers</button></div>
             <div id="gameResult" style="margin-top: 1rem;"></div>
-            <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                <button class="complete-activity-btn" id="completeGameBtn" disabled>✓ Mark Game as Complete</button>
-            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 1rem;"><button class="complete-activity-btn" id="completeGameBtn" disabled>✓ Mark Game as Complete</button></div>
         </div>
         
         <!-- ==================== COMPLETION CHECKLIST ==================== -->
@@ -676,15 +544,13 @@
                     <li><input type="checkbox" id="chk1" disabled> <label> I practiced the "Professor's Guidance" dialogue with confidence.</label></li>
                     <li><input type="checkbox" id="chk2" disabled> <label> I identified all future tense markers in the reading passage.</label></li>
                     <li><input type="checkbox" id="chk3" disabled> <label> I correctly used Will + Verb in the Grammar Hack.</label></li>
-                    <li><input type="checkbox" id="chk4" disabled> <label> I completed the vocabulary section.</label></li>
-                    <li><input type="checkbox" id="chk5" disabled> <label> I completed my 13th day of practice. Consistency is now my superpower.</label></li>
+                    <li><input type="checkbox" id="chk4" disabled> <label> I completed the vocabulary section (listened to all words).</label></li>
+                    <li><input type="checkbox" id="chk5" disabled> <label> I completed the writing activity with correct future tense sentences.</label></li>
                     <li><input type="checkbox" id="chk6" disabled> <label> I completed the listening activity with a steady rhythm.</label></li>
                     <li><input type="checkbox" id="chk7" disabled> <label> I completed the "Consistency Swap" game correctly.</label></li>
                 </ul>
                 <div style="text-align: right; margin-bottom: 1rem;"><span class="badge" id="progressCounter">0/7 completed</span></div>
-                <div style="display: flex; justify-content: center;">
-                    <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 13 </button>
-                </div>
+                <div style="display: flex; justify-content: center;"><button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 13 </button></div>
             </div>
         </div>
         
@@ -694,879 +560,363 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
     // ==================== Global Variables ====================
-    let completedActivities = 0;
-    let activityCompleted = {
-        listening: false, speaking: false, reading: false,
-        writing: false, vocabulary: false, game: false, grammar: false
-    };
-    
+    let activityCompleted = { listening: false, speaking: false, reading: false, writing: false, vocabulary: false, game: false, grammar: false };
     let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
-    let writingValid = { vision1: false, vision2: false, f1: false, f2: false, f3: false };
-    
-    // Speaking recordings tracking (6 lines)
+    let writingValid = { f1: false, f2: false, f3: false };
     let speakingRecorded = { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
-    let speakingBlobs = { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null };
-    
-    // Reading variables
+    let speakingBlobs = {};
     let selectedWordIndices = new Set();
     let allSpans = [];
     let phraseStartPositions = {};
     let readingCompleteEnabled = false;
     const futurePhrasesList = [
-        { phrase: "will know", words: ["will", "know"] },
-        { phrase: "will accumulate", words: ["will", "accumulate"] },
-        { phrase: "will develop", words: ["will", "develop"] },
-        { phrase: "will soar", words: ["will", "soar"] },
-        { phrase: "will notice", words: ["will", "notice"] },
-        { phrase: "will not arrive", words: ["will", "not", "arrive"] },
+        { phrase: "will know", words: ["will", "know"] }, { phrase: "will accumulate", words: ["will", "accumulate"] },
+        { phrase: "will develop", words: ["will", "develop"] }, { phrase: "will soar", words: ["will", "soar"] },
+        { phrase: "will notice", words: ["will", "notice"] }, { phrase: "will not arrive", words: ["will", "not", "arrive"] },
         { phrase: "will inevitably occur", words: ["will", "inevitably", "occur"] }
     ];
-    
-    // Grammar variables - updated for complete sentences
     let grammarAllCorrect = false;
-    const validGrammarAnswers = [
-        "i will master this language",
-        "we will achieve our targets",
-        "the company will hire new engineers"
-    ];
-    
-    // Game variables
+    const validGrammarAnswers = ["i will master this language", "we will achieve our targets", "the company will hire new engineers"];
+    let vocabWordsList = ['Aspire', 'Accumulate', 'Formidable', 'Yield', 'Inevitably'];
+    let vocabHeard = { 'Aspire': false, 'Accumulate': false, 'Formidable': false, 'Yield': false, 'Inevitably': false };
     let gameAllCorrect = false;
     
-    // ==================== Helper Functions ====================
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    
+    function getCookie(name) { let v=null; if(document.cookie&&document.cookie!==''){const c=document.cookie.split(';');for(let i=0;i<c.length;i++){const cookie=c[i].trim();if(cookie.substring(0,name.length+1)===(name+'=')){v=decodeURIComponent(cookie.substring(name.length+1));break;}}}return v; }
     csrftoken = getCookie('csrftoken');
     
-    function updateChecklistProgress() {
-        const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6', 'chk7'];
-        let completedCount = 0;
-        checkboxes.forEach(id => { if (document.getElementById(id)?.checked) completedCount++; });
-        const progressSpan = document.getElementById('progressCounter');
-        if (progressSpan) progressSpan.innerText = `${completedCount}/7 completed`;
-        
-        const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-        if (dayCompleteBtn) {
-            if (completedCount === 7) {
-                dayCompleteBtn.disabled = false;
-                dayCompleteBtn.style.opacity = '1';
-                dayCompleteBtn.style.cursor = 'pointer';
-            } else {
-                dayCompleteBtn.disabled = true;
-                dayCompleteBtn.style.opacity = '0.5';
-                dayCompleteBtn.style.cursor = 'not-allowed';
-            }
-        }
-    }
+    function updateChecklistProgress() { const checkboxes=['chk1','chk2','chk3','chk4','chk5','chk6','chk7']; let c=0; checkboxes.forEach(id=>{if(document.getElementById(id)?.checked)c++;}); document.getElementById('progressCounter').innerText=`${c}/7 completed`; const btn=document.getElementById('dayCompleteBtn'); if(btn){btn.disabled=c!==7; btn.style.opacity=c===7?'1':'0.5';} }
+    function markActivityComplete(activityId, checklistId){ if(activityCompleted[activityId])return; activityCompleted[activityId]=true; const cb=document.getElementById(checklistId); if(cb)cb.checked=true; const btn=document.getElementById(`complete${activityId.charAt(0).toUpperCase()+activityId.slice(1)}Btn`); if(btn){btn.classList.add('completed'); btn.textContent='✓ Completed'; btn.disabled=true;} updateChecklistProgress(); }
+    async function completeDay(){ const btn=document.getElementById('dayCompleteBtn'); if(btn.disabled){alert('Please complete all 7 activities before completing the day!');return;} btn.innerHTML='⏳ Saving progress...'; btn.disabled=true; try{if(typeof confetti!=='undefined')confetti({particleCount:200,spread:100,origin:{y:0.6}}); btn.innerHTML='✓ Day Completed! 🎉'; setTimeout(()=>{window.location.href=`/learning/level/beginner/?celebrate=true&completed=13`;},2000);}catch(e){btn.innerHTML='🎉 Complete Day 13 🎉'; btn.disabled=false; alert('Error. Please try again.');} }
     
-    function markActivityComplete(activityId, checklistId) {
-        if (activityCompleted[activityId]) return;
-        activityCompleted[activityId] = true;
-        completedActivities++;
-        const checkbox = document.getElementById(checklistId);
-        if (checkbox) checkbox.checked = true;
-        const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-        if (btn) { btn.classList.add('completed'); btn.textContent = '✓ Completed'; btn.disabled = true; }
-        updateChecklistProgress();
-        
-        fetch(`/learning/day/13/complete/${activityId}/`, {
-            method: 'POST',
-            headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ completed: true })
-        }).catch(err => console.error('Error:', err));
-    }
+    // Vocabulary
+    function updateVocabularyButtonStatus(){ const allHeard=vocabWordsList.every(w=>vocabHeard[w]===true); const btn=document.getElementById('completeVocabularyBtn'); if(btn)btn.disabled=!allHeard; }
+    function playAudio(word){ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(word); u.lang='en-IN'; u.rate=0.85; function setVoice(){ const v=window.speechSynthesis.getVoices(); let sv=v.find(voice=>voice.lang==='en-IN'||voice.name.includes('Indian'))||v.find(voice=>voice.lang==='en-GB')||v.find(voice=>voice.lang.startsWith('en')); if(sv)u.voice=sv; window.speechSynthesis.speak(u); } if(window.speechSynthesis.getVoices().length===0)window.speechSynthesis.onvoiceschanged=setVoice; else setVoice(); if(vocabHeard.hasOwnProperty(word)){ vocabHeard[word]=true; const cell=document.getElementById(`check-${word.toLowerCase()}`); if(cell){cell.innerHTML='✅'; cell.style.color='#16a34a';} updateVocabularyButtonStatus(); } }
+    document.querySelectorAll('.vocab-audio-btn').forEach(btn=>{btn.addEventListener('click',function(){playAudio(this.getAttribute('data-word'));});});
+    document.getElementById('completeVocabularyBtn')?.addEventListener('click',()=>{if(vocabWordsList.every(w=>vocabHeard[w]))markActivityComplete('vocabulary','chk4'); else alert('Please listen to all vocabulary words first.');});
     
-    async function completeDay() {
-        const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-        if (dayCompleteBtn.disabled) {
-            alert('Please complete all 7 activities before completing the day!');
-            return;
-        }
-        dayCompleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving progress...';
-        dayCompleteBtn.disabled = true;
-        try {
-            if (typeof confetti !== 'undefined') {
-                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#4a62b0', '#10b981', '#f59e0b', '#ef4444'] });
-                setTimeout(() => { confetti({ particleCount: 100, spread: 70, origin: { y: 0.4 } }); }, 200);
-            }
-            dayCompleteBtn.innerHTML = '✓ Day Completed! 🎉';
-            setTimeout(() => { window.location.href = `/learning/level/beginner/?celebrate=true&completed=13`; }, 2000);
-        } catch (error) {
-            dayCompleteBtn.innerHTML = '🎉 Complete Day 13 🎉';
-            dayCompleteBtn.disabled = false;
-            alert('Error. Please try again.');
-        }
-    }
+    // Listening Activity (simplified for brevity - keep existing logic)
+    let listeningMediaRecorder, listeningAudioChunks, listeningStream, hasListeningRecording=false, listeningQuizAnswers={q1:null,q2:null}, listeningQuizCorrect=false, listeningVoiceConfirmed=false, masterAudioFinished=false;
+    const listeningCompleteBtn=document.getElementById('completeListeningBtn'), listeningAudioElem=document.getElementById('listeningAudio'), listeningTextSection=document.getElementById('listeningTextSection'), postAudioListeningContent=document.getElementById('postAudioListeningContent');
+    if(listeningAudioElem){listeningAudioElem.addEventListener('ended',function(){if(!masterAudioFinished){masterAudioFinished=true; if(listeningTextSection)listeningTextSection.style.display='block'; if(postAudioListeningContent)postAudioListeningContent.style.display='block';}});}
+    function updateListeningCompleteButton(){if(listeningCompleteBtn){listeningCompleteBtn.disabled=!(hasListeningRecording&&listeningVoiceConfirmed&&listeningQuizCorrect&&masterAudioFinished);}}
+    const lRecBtn=document.getElementById('listeningRecordBtn'), lStopBtn=document.getElementById('listeningStopBtn'), lPlayback=document.getElementById('listeningPlayback'), lPlaybackCard=document.getElementById('listeningPlaybackCard'), lCompare=document.getElementById('comparisonSection'), lYes=document.getElementById('yesComparisonBtn'), lNo=document.getElementById('noComparisonBtn'), lCompareFb=document.getElementById('comparisonFeedback'), lCheckBtn=document.getElementById('checkListeningWorkBtn'), lQuizFb=document.getElementById('listeningQuizFeedback');
+    if(lRecBtn){lRecBtn.addEventListener('click',async()=>{try{listeningStream=await navigator.mediaDevices.getUserMedia({audio:true}); listeningMediaRecorder=new MediaRecorder(listeningStream); listeningAudioChunks=[]; listeningMediaRecorder.ondataavailable=e=>listeningAudioChunks.push(e.data); listeningMediaRecorder.onstop=()=>{const blob=new Blob(listeningAudioChunks,{type:'audio/webm'}); lPlayback.src=URL.createObjectURL(blob); lPlaybackCard.style.display='block'; if(listeningStream)listeningStream.getTracks().forEach(t=>t.stop()); hasListeningRecording=true; lCompare.style.display='block'; updateListeningCompleteButton();}; listeningMediaRecorder.start(); lRecBtn.style.display='none'; lStopBtn.style.display='inline-flex'; lRecBtn.classList.add('recording');}catch(e){alert('Unable to access microphone.');}});}
+    if(lStopBtn){lStopBtn.addEventListener('click',()=>{if(listeningMediaRecorder?.state==='recording'){listeningMediaRecorder.stop(); lStopBtn.style.display='none'; lRecBtn.style.display='inline-flex'; lRecBtn.classList.remove('recording');}});}
+    if(lYes){lYes.addEventListener('click',()=>{listeningVoiceConfirmed=true; lCompareFb.innerHTML='✅ Great! Your voice sounds like a solid routine!'; updateListeningCompleteButton();});}
+    if(lNo){lNo.addEventListener('click',()=>{lPlaybackCard.style.display='none'; lPlayback.src=''; lCompare.style.display='none'; lRecBtn.style.display='inline-flex'; lStopBtn.style.display='none'; lRecBtn.classList.remove('recording'); hasListeningRecording=false; listeningVoiceConfirmed=false; listeningQuizCorrect=false; lCompareFb.innerHTML=''; if(listeningStream)listeningStream.getTracks().forEach(t=>t.stop()); updateListeningCompleteButton();});}
+    document.querySelectorAll('input[name="q1"]').forEach(r=>r.addEventListener('change',e=>{listeningQuizAnswers.q1=e.target.value; listeningQuizCorrect=false; updateListeningCompleteButton();}));
+    document.querySelectorAll('input[name="q2"]').forEach(r=>r.addEventListener('change',e=>{listeningQuizAnswers.q2=e.target.value; listeningQuizCorrect=false; updateListeningCompleteButton();}));
+    if(lCheckBtn){lCheckBtn.addEventListener('click',()=>{if(!hasListeningRecording){lQuizFb.innerHTML='⚠️ Please record your voice first.'; lQuizFb.className='quiz-feedback warning'; lQuizFb.style.display='block'; return;} if(!listeningQuizAnswers.q1||!listeningQuizAnswers.q2){lQuizFb.innerHTML='⚠️ Please answer both questions.'; lQuizFb.className='quiz-feedback warning'; lQuizFb.style.display='block'; return;} let q1c=listeningQuizAnswers.q1==='Consistency'; let q2c=listeningQuizAnswers.q2==='Regular effort'; if(q1c&&q2c){lQuizFb.innerHTML='✅ Correct! Great job!'; lQuizFb.className='quiz-feedback correct'; listeningQuizCorrect=true;}else{let m='❌ Incorrect. '; if(!q1c)m+='Check question 1 again. '; if(!q2c)m+='Check question 2 again.'; lQuizFb.innerHTML=m; lQuizFb.className='quiz-feedback incorrect'; listeningQuizCorrect=false;} lQuizFb.style.display='block'; updateListeningCompleteButton();});}
+    if(listeningCompleteBtn){listeningCompleteBtn.addEventListener('click',()=>{if(!masterAudioFinished){alert('Please listen to the complete master audio first.');return;} if(!hasListeningRecording){alert('Please record your voice first.');return;} if(!listeningVoiceConfirmed){alert('Please confirm your voice sounds like a solid routine.');return;} if(!listeningQuizCorrect){alert('Please answer both quiz questions correctly.');return;} markActivityComplete('listening','chk6');});}
     
-    // ==================== Vocabulary Audio ====================
-    function playAudio(word) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(word);
-        utterance.lang = 'en-IN';
-        utterance.rate = 0.85;
-        utterance.pitch = 1.0;
-        function setVoiceAndSpeak() {
-            const voices = window.speechSynthesis.getVoices();
-            let selectedVoice = voices.find(voice => voice.lang === 'en-IN' || voice.lang.includes('IN') || voice.name.includes('Indian'));
-            if (!selectedVoice) selectedVoice = voices.find(voice => voice.lang === 'en-GB');
-            if (!selectedVoice) selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
-            if (selectedVoice) utterance.voice = selectedVoice;
-            window.speechSynthesis.speak(utterance);
-        }
-        if (window.speechSynthesis.getVoices().length === 0) window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
-        else setVoiceAndSpeak();
-    }
+    // Speaking
+    function setupSpeakingRecording(n){const rb=document.getElementById(`speakingRecordBtn${n}`); const sb=document.getElementById(`speakingStopBtn${n}`); const pc=document.getElementById(`speakingPlaybackCard${n}`); const pb=document.getElementById(`speakingPlayback${n}`); let mr, chunks=[]; if(!rb)return; rb.addEventListener('click',async()=>{try{const s=await navigator.mediaDevices.getUserMedia({audio:true}); mr=new MediaRecorder(s); chunks=[]; mr.ondataavailable=e=>chunks.push(e.data); mr.onstop=()=>{const blob=new Blob(chunks,{type:'audio/webm'}); pb.src=URL.createObjectURL(blob); pc.style.display='block'; speakingBlobs[n]=blob; speakingRecorded[n]=true; s.getTracks().forEach(t=>t.stop()); rb.style.display='inline-flex'; sb.style.display='none'; rb.classList.remove('recording'); const all=[1,2,3,4,5,6].every(num=>speakingRecorded[num]); const btn=document.getElementById('completeSpeakingBtn'); if(btn)btn.disabled=!all;}; mr.start(); rb.style.display='none'; sb.style.display='inline-flex'; rb.classList.add('recording');}catch(e){alert('Unable to access microphone.');}}); if(sb){sb.addEventListener('click',()=>{if(mr?.state==='recording')mr.stop();});}}
+    for(let i=1;i<=6;i++)setupSpeakingRecording(i);
+    document.getElementById('completeSpeakingBtn')?.addEventListener('click',()=>{if([1,2,3,4,5,6].every(n=>speakingRecorded[n]))markActivityComplete('speaking','chk1'); else alert('Please record all 6 sentences.');});
     
-    async function saveWord(word) {
-        const response = await fetch('/learning/vocabulary/save/', {
-            method: 'POST', headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ word: word })
-        });
-        const data = await response.json();
-        alert(data.message);
-    }
+    // Reading
+    const readingPassageText="If you study one page today, you will know more than you did yesterday. Over time, these small actions will accumulate. You will develop a formidable vocabulary. Your confidence will soar, and recruiters will notice your consistency. Success will not arrive overnight, but it will inevitably occur if you do not stop.";
+    function setupReadingActivity(){ const el=document.getElementById('interactivePassage'); const words=readingPassageText.split(/\s+/); el.innerHTML=''; allSpans=[]; selectedWordIndices.clear(); phraseStartPositions={}; words.forEach((word,idx)=>{const cleanWord=word.toLowerCase().replace(/[.,!?;]/g,''); const span=document.createElement('span'); span.className='clickable-word'; span.textContent=word+' '; span.style.cursor='pointer'; span.style.padding='0.1rem 0.2rem'; span.style.margin='0'; span.style.borderRadius='4px'; span.style.display='inline-block'; span.dataset.index=idx; span.dataset.word=cleanWord; span.onclick=()=>toggleReadingWordSelection(span); el.appendChild(span); allSpans.push(span);}); for(let phraseInfo of futurePhrasesList){const targetWords=phraseInfo.words; for(let i=0;i<=allSpans.length-targetWords.length;i++){let match=true; for(let j=0;j<targetWords.length;j++){if(!allSpans[i+j]||allSpans[i+j].dataset.word!==targetWords[j]){match=false; break;}} if(match){phraseStartPositions[phraseInfo.phrase]=i; break;}} } document.getElementById('selectedCount').innerText='0'; document.getElementById('correctCount').innerText='0'; }
+    function toggleReadingWordSelection(el){const idx=parseInt(el.dataset.index); if(selectedWordIndices.has(idx)){selectedWordIndices.delete(idx); el.classList.remove('selected'); el.style.backgroundColor=''; el.style.border='';}else{selectedWordIndices.add(idx); el.classList.add('selected'); el.style.backgroundColor='#e0e7ff'; el.style.border='2px solid #667eea';} document.getElementById('selectedCount').innerText=selectedWordIndices.size; }
+    function checkReadingAnswers(){ if(selectedWordIndices.size===0){document.getElementById('readingFeedback').innerHTML='<div style="background:#fef9e3;padding:0.75rem;border-radius:10px;"><p style="color:#92400e;">⚠️ Please click on future tense phrases.</p></div>'; return;} allSpans.forEach(span=>{span.style.backgroundColor=''; span.style.border='';}); let found=[]; for(let phraseInfo of futurePhrasesList){const phrase=phraseInfo.phrase; const start=phraseStartPositions[phrase]; const wc=phraseInfo.words.length; if(start!==undefined){let allSel=true; for(let i=start;i<start+wc;i++){if(!selectedWordIndices.has(i)){allSel=false; break;}} if(allSel){found.push(phrase); for(let i=start;i<start+wc;i++){allSpans[i].style.backgroundColor='#bbf7d0'; allSpans[i].style.border='2px solid #22c55e';}}else{for(let i=start;i<start+wc;i++){if(selectedWordIndices.has(i)){allSpans[i].style.backgroundColor='#fee2e2'; allSpans[i].style.border='2px solid #dc2626';}}}}} const correct=found.length; document.getElementById('correctCount').innerText=correct; const fb=document.getElementById('readingFeedback'); if(correct===7){fb.innerHTML='<div style="background:#d1fae5;padding:0.75rem;border-radius:10px;"><p style="color:#065f46;">✅ Perfect! You found all 7 Future Tense verbs!</p></div>'; document.getElementById('completeReadingBtn').disabled=false; readingCompleteEnabled=true;}else{let missing=[]; for(let p of futurePhrasesList){if(!found.includes(p.phrase))missing.push(`"${p.phrase}"`);} fb.innerHTML=`<div style="background:#fef9e3;padding:0.75rem 1rem;border-radius:12px;"><p style="color:#92400e;">⚠️ You found ${correct} out of 7. Missing: ${missing.join(', ')}</p></div>`; document.getElementById('completeReadingBtn').disabled=true; readingCompleteEnabled=false;}}
+    document.getElementById('checkReadingBtn')?.addEventListener('click',checkReadingAnswers);
+    document.getElementById('resetReadingBtn')?.addEventListener('click',()=>{selectedWordIndices.clear(); allSpans.forEach(span=>{span.classList.remove('selected'); span.style.backgroundColor=''; span.style.border='';}); document.getElementById('selectedCount').innerText='0'; document.getElementById('correctCount').innerText='0'; document.getElementById('readingFeedback').innerHTML=''; document.getElementById('completeReadingBtn').disabled=true; readingCompleteEnabled=false;});
+    document.getElementById('completeReadingBtn')?.addEventListener('click',()=>{if(readingCompleteEnabled)markActivityComplete('reading','chk2'); else alert('Please click "Check Answers" first and ensure all 7 phrases are correct.');});
     
-    // ==================== Listening Activity ====================
-    let listeningMediaRecorder, listeningAudioChunks = [], listeningStream = null;
-    let hasListeningRecording = false, listeningQuizAnswers = { q1: null, q2: null };
-    let listeningQuizCorrect = false;
-    let listeningVoiceConfirmed = false;
-    const listeningCompleteBtn = document.getElementById('completeListeningBtn');
+    // ==================== WRITING ACTIVITY - STRICT VALIDATION WITH VERB CHECKING ====================
 
-    function updateListeningCompleteButton() {
-        if (listeningCompleteBtn) {
-            if (hasListeningRecording && listeningVoiceConfirmed && listeningQuizCorrect) {
-                listeningCompleteBtn.disabled = false;
-                listeningCompleteBtn.style.opacity = '1';
-            } else {
-                listeningCompleteBtn.disabled = true;
-                listeningCompleteBtn.style.opacity = '0.5';
-            }
-        }
-    }
-
-    const listeningRecordBtn = document.getElementById('listeningRecordBtn');
-    const listeningStopBtn = document.getElementById('listeningStopBtn');
-    const listeningPlayback = document.getElementById('listeningPlayback');
-    const listeningPlaybackCard = document.getElementById('listeningPlaybackCard');
-    const comparisonSection = document.getElementById('comparisonSection');
-    const yesComparisonBtn = document.getElementById('yesComparisonBtn');
-    const noComparisonBtn = document.getElementById('noComparisonBtn');
-    const comparisonFeedback = document.getElementById('comparisonFeedback');
-    const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
-    const listeningQuizFeedback = document.getElementById('listeningQuizFeedback');
-
-    if (listeningRecordBtn) {
-        listeningRecordBtn.addEventListener('click', async () => {
-            try {
-                listeningStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                listeningMediaRecorder = new MediaRecorder(listeningStream);
-                listeningAudioChunks = [];
-                listeningMediaRecorder.ondataavailable = (event) => listeningAudioChunks.push(event.data);
-                listeningMediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(listeningAudioChunks, { type: 'audio/webm' });
-                    listeningPlayback.src = URL.createObjectURL(audioBlob);
-                    listeningPlaybackCard.style.display = 'block';
-                    if (listeningStream) listeningStream.getTracks().forEach(t => t.stop());
-                    hasListeningRecording = true;
-                    comparisonSection.style.display = 'block';
-                    updateListeningCompleteButton();
-                };
-                listeningMediaRecorder.start();
-                listeningRecordBtn.style.display = 'none';
-                listeningStopBtn.style.display = 'inline-flex';
-                listeningRecordBtn.classList.add('recording');
-            } catch (err) { alert('Unable to access microphone.'); }
-        });
-    }
-    if (listeningStopBtn) {
-        listeningStopBtn.addEventListener('click', () => {
-            if (listeningMediaRecorder?.state === 'recording') {
-                listeningMediaRecorder.stop();
-                listeningStopBtn.style.display = 'none';
-                listeningRecordBtn.style.display = 'inline-flex';
-                listeningRecordBtn.classList.remove('recording');
-            }
-        });
-    }
-
-    if (yesComparisonBtn) {
-        yesComparisonBtn.addEventListener('click', () => {
-            listeningVoiceConfirmed = true;
-            comparisonFeedback.innerHTML = '✅ Great! Your voice sounds like someone with a solid, unbreakable routine!';
-            updateListeningCompleteButton();
-        });
-    }
-    if (noComparisonBtn) {
-        noComparisonBtn.addEventListener('click', () => {
-            listeningPlaybackCard.style.display = 'none';
-            listeningPlayback.src = '';
-            comparisonSection.style.display = 'none';
-            listeningRecordBtn.style.display = 'inline-flex';
-            listeningStopBtn.style.display = 'none';
-            listeningRecordBtn.classList.remove('recording');
-            hasListeningRecording = false;
-            listeningVoiceConfirmed = false;
-            listeningQuizCorrect = false;
-            comparisonFeedback.innerHTML = '';
-            if (listeningStream) listeningStream.getTracks().forEach(t => t.stop());
-            updateListeningCompleteButton();
-        });
-    }
-
-    document.querySelectorAll('input[name="q1"]').forEach(radio => radio.addEventListener('change', e => { listeningQuizAnswers.q1 = e.target.value; listeningQuizCorrect = false; updateListeningCompleteButton(); }));
-    document.querySelectorAll('input[name="q2"]').forEach(radio => radio.addEventListener('change', e => { listeningQuizAnswers.q2 = e.target.value; listeningQuizCorrect = false; updateListeningCompleteButton(); }));
-
-    if (checkListeningWorkBtn) {
-        checkListeningWorkBtn.addEventListener('click', () => {
-            if (!hasListeningRecording) {
-                listeningQuizFeedback.innerHTML = '⚠️ Please record your voice first.';
-                listeningQuizFeedback.className = 'quiz-feedback warning';
-                listeningQuizFeedback.style.display = 'block';
-                return;
-            }
-            if (!listeningQuizAnswers.q1 || !listeningQuizAnswers.q2) {
-                listeningQuizFeedback.innerHTML = '⚠️ Please answer both questions.';
-                listeningQuizFeedback.className = 'quiz-feedback warning';
-                listeningQuizFeedback.style.display = 'block';
-                return;
-            }
-            if (listeningQuizAnswers.q1 === 'Consistency' && listeningQuizAnswers.q2 === 'Regular effort') {
-                listeningQuizFeedback.innerHTML = '✅ Correct! Great job!';
-                listeningQuizFeedback.className = 'quiz-feedback correct';
-                listeningQuizCorrect = true;
-            } else {
-                listeningQuizFeedback.innerHTML = '❌ Incorrect. Listen again.';
-                listeningQuizFeedback.className = 'quiz-feedback incorrect';
-                listeningQuizCorrect = false;
-            }
-            listeningQuizFeedback.style.display = 'block';
-            updateListeningCompleteButton();
-        });
-    }
-
-    if (listeningCompleteBtn) {
-        listeningCompleteBtn.addEventListener('click', () => {
-            if (!hasListeningRecording) { alert('Please record your voice first.'); return; }
-            if (!listeningVoiceConfirmed) { alert('Please confirm your voice sounds like a solid routine.'); return; }
-            if (!listeningQuizCorrect) { alert('Please answer both quiz questions correctly.'); return; }
-            markActivityComplete('listening', 'chk6');
-        });
-        listeningCompleteBtn.disabled = true;
-        listeningCompleteBtn.style.opacity = '0.5';
-    }
+function checkWritingSentenceStrict(inputId, feedbackId) {
+    const input = document.getElementById(inputId);
+    const feedback = document.getElementById(feedbackId);
+    if (!input) return false;
     
-    // ==================== Speaking Activity ====================
-    function setupSpeakingRecording(sentenceNum) {
-        const recordBtn = document.getElementById(`speakingRecordBtn${sentenceNum}`);
-        const stopBtn = document.getElementById(`speakingStopBtn${sentenceNum}`);
-        const playbackCard = document.getElementById(`speakingPlaybackCard${sentenceNum}`);
-        const playback = document.getElementById(`speakingPlayback${sentenceNum}`);
-        let mediaRecorder, audioChunks = [];
-        
-        recordBtn.addEventListener('click', async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-                mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
-                mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    playback.src = URL.createObjectURL(audioBlob);
-                    playbackCard.style.display = 'block';
-                    speakingBlobs[sentenceNum] = audioBlob;
-                    speakingRecorded[sentenceNum] = true;
-                    stream.getTracks().forEach(t => t.stop());
-                    recordBtn.style.display = 'inline-flex';
-                    stopBtn.style.display = 'none';
-                    recordBtn.classList.remove('recording');
-                    
-                    const allRecorded = [1,2,3,4,5,6].every(num => speakingRecorded[num]);
-                    const completeBtn = document.getElementById('completeSpeakingBtn');
-                    if (completeBtn) completeBtn.disabled = !allRecorded;
-                };
-                mediaRecorder.start();
-                recordBtn.style.display = 'none';
-                stopBtn.style.display = 'inline-flex';
-                recordBtn.classList.add('recording');
-            } catch (err) { alert('Unable to access microphone.'); }
-        });
-        stopBtn.addEventListener('click', () => { if (mediaRecorder?.state === 'recording') mediaRecorder.stop(); });
-    }
+    let userAnswer = input.value.trim();
     
-    for (let i = 1; i <= 6; i++) setupSpeakingRecording(i);
-    
-    document.getElementById('completeSpeakingBtn')?.addEventListener('click', () => {
-        const allRecorded = [1,2,3,4,5,6].every(num => speakingRecorded[num]);
-        if (!allRecorded) { alert('Please record all 6 sentences before submitting.'); return; }
-        markActivityComplete('speaking', 'chk1');
-    });
-    
-    // ==================== Reading Activity ====================
-    const readingPassageText = "If you study one page today, you will know more than you did yesterday. Over time, these small actions will accumulate. You will develop a formidable vocabulary. Your confidence will soar, and recruiters will notice your consistency. Success will not arrive overnight, but it will inevitably occur if you do not stop.";
-    
-    function setupReadingActivity() {
-        const passageElement = document.getElementById('interactivePassage');
-        const words = readingPassageText.split(/\s+/);
-        passageElement.innerHTML = '';
-        allSpans = [];
-        selectedWordIndices.clear();
-        phraseStartPositions = {};
-        
-        words.forEach((word, index) => {
-            const cleanWord = word.toLowerCase().replace(/[.,!?;]/g, '');
-            const span = document.createElement('span');
-            span.className = 'clickable-word';
-            span.textContent = word + ' ';
-            span.style.cursor = 'pointer';
-            span.style.padding = '0.1rem 0.2rem';
-            span.style.margin = '0';
-            span.style.borderRadius = '4px';
-            span.style.display = 'inline-block';
-            span.dataset.index = index;
-            span.dataset.word = cleanWord;
-            span.onclick = () => toggleReadingWordSelection(span);
-            passageElement.appendChild(span);
-            allSpans.push(span);
-        });
-        
-        for (let phraseInfo of futurePhrasesList) {
-            const targetWords = phraseInfo.words;
-            for (let i = 0; i <= allSpans.length - targetWords.length; i++) {
-                let match = true;
-                for (let j = 0; j < targetWords.length; j++) {
-                    if (!allSpans[i + j] || allSpans[i + j].dataset.word !== targetWords[j]) {
-                        match = false;
-                        break;
-                    }
-                }
-                if (match) {
-                    phraseStartPositions[phraseInfo.phrase] = i;
-                    break;
-                }
-            }
-        }
-        document.getElementById('selectedCount').innerText = '0';
-        document.getElementById('correctCount').innerText = '0';
-    }
-    
-    function toggleReadingWordSelection(element) {
-        const index = parseInt(element.dataset.index);
-        if (selectedWordIndices.has(index)) {
-            selectedWordIndices.delete(index);
-            element.classList.remove('selected');
-            element.style.backgroundColor = '';
-            element.style.border = '';
-        } else {
-            selectedWordIndices.add(index);
-            element.classList.add('selected');
-            element.style.backgroundColor = '#e0e7ff';
-            element.style.border = '2px solid #667eea';
-        }
-        document.getElementById('selectedCount').innerText = selectedWordIndices.size;
-    }
-    
-    function checkReadingAnswers() {
-        if (selectedWordIndices.size === 0) {
-            document.getElementById('readingFeedback').innerHTML = '<div style="background: #fef9e3; padding: 0.75rem; border-radius: 10px;"><p style="color: #92400e; font-weight: 600;">⚠️ Please click on the future tense phrases (will + verb) in the passage before checking.</p></div>';
-            return;
-        }
-        
-        allSpans.forEach(span => { span.style.backgroundColor = ''; span.style.border = ''; span.style.borderRadius = ''; span.style.padding = ''; });
-        let foundPhrases = [];
-        for (let phraseInfo of futurePhrasesList) {
-            const phrase = phraseInfo.phrase;
-            const startPos = phraseStartPositions[phrase];
-            const wordCount = phraseInfo.words.length;
-            if (startPos !== undefined) {
-                let allSelected = true;
-                for (let i = startPos; i < startPos + wordCount; i++) {
-                    if (!selectedWordIndices.has(i)) { allSelected = false; break; }
-                }
-                if (allSelected) {
-                    foundPhrases.push(phrase);
-                    for (let i = startPos; i < startPos + wordCount; i++) {
-                        allSpans[i].style.backgroundColor = '#bbf7d0';
-                        allSpans[i].style.border = '2px solid #22c55e';
-                        allSpans[i].style.borderRadius = '4px';
-                        allSpans[i].style.padding = '0.1rem 0.3rem';
-                    }
-                } else {
-                    for (let i = startPos; i < startPos + wordCount; i++) {
-                        if (selectedWordIndices.has(i)) {
-                            allSpans[i].style.backgroundColor = '#fee2e2';
-                            allSpans[i].style.border = '2px solid #dc2626';
-                            allSpans[i].style.borderRadius = '4px';
-                            allSpans[i].style.padding = '0.1rem 0.3rem';
-                        }
-                    }
-                }
-            }
-        }
-        for (let i = 0; i < allSpans.length; i++) {
-            const span = allSpans[i];
-            if (selectedWordIndices.has(i) && span.style.backgroundColor !== '#bbf7d0') {
-                let isPartOfPhrase = false;
-                for (let phraseInfo of futurePhrasesList) {
-                    const startPos = phraseStartPositions[phraseInfo.phrase];
-                    const wordCount = phraseInfo.words.length;
-                    if (startPos !== undefined && i >= startPos && i < startPos + wordCount) {
-                        isPartOfPhrase = true;
-                        break;
-                    }
-                }
-                if (!isPartOfPhrase) {
-                    span.style.backgroundColor = '#fee2e2';
-                    span.style.border = '2px solid #dc2626';
-                    span.style.borderRadius = '4px';
-                    span.style.padding = '0.1rem 0.3rem';
-                }
-            }
-        }
-        const correctCount = foundPhrases.length;
-        document.getElementById('correctCount').innerText = correctCount;
-        const feedback = document.getElementById('readingFeedback');
-        if (correctCount === 7) {
-            feedback.innerHTML = '<div style="background: #d1fae5; padding: 0.75rem; border-radius: 10px;"><p style="color: #065f46; font-weight: 600;">✅ Perfect! You found all 7 Future Tense verbs (will + verb)!</p></div>';
-            document.getElementById('completeReadingBtn').disabled = false;
-            readingCompleteEnabled = true;
-        } else {
-            let missingPhrases = [];
-            for (let phraseInfo of futurePhrasesList) {
-                if (!foundPhrases.includes(phraseInfo.phrase)) {
-                    missingPhrases.push(`"${phraseInfo.phrase}"`);
-                }
-            }
-            feedback.innerHTML = `<div style="background: #fef9e3; padding: 0.75rem 1rem; border-radius: 12px;"><p style="color: #92400e;">⚠️ You found ${correctCount} out of 7 correct phrases. Missing: ${missingPhrases.join(', ')}.<br>💡 Green box = correct phrase, Red box = incorrect selection. Remember to select ALL words in each phrase together!</p></div>`;
-            document.getElementById('completeReadingBtn').disabled = true;
-            readingCompleteEnabled = false;
-        }
-    }
-    
-    document.getElementById('checkReadingBtn')?.addEventListener('click', checkReadingAnswers);
-    document.getElementById('resetReadingBtn')?.addEventListener('click', () => {
-        selectedWordIndices.clear();
-        allSpans.forEach(span => {
-            span.classList.remove('selected');
-            span.style.backgroundColor = '';
-            span.style.border = '';
-            span.style.borderRadius = '';
-            span.style.padding = '';
-        });
-        document.getElementById('selectedCount').innerText = '0';
-        document.getElementById('correctCount').innerText = '0';
-        document.getElementById('readingFeedback').innerHTML = '';
-        document.getElementById('completeReadingBtn').disabled = true;
-        readingCompleteEnabled = false;
-    });
-    
-    document.getElementById('completeReadingBtn')?.addEventListener('click', () => {
-        if (!readingCompleteEnabled) {
-            alert('Please click "Check Answers" first and ensure all 7 phrases are correct.');
-            return;
-        }
-        markActivityComplete('reading', 'chk2');
-    });
-    
-    // ==================== Writing Activity ====================
-    function checkFutureVision1() {
-        const vision = document.getElementById('futureVision1').value.trim();
-        const feedback = document.getElementById('futureVision1Feedback');
-        
-        if (!vision) {
-            feedback.innerHTML = '⚠️ Please write your vision statement.';
+    // Check if empty
+    if (!userAnswer) {
+        if (feedback) {
+            feedback.innerHTML = '⚠️ Please write a sentence.';
             feedback.className = 'fix-feedback warning';
             feedback.style.display = 'block';
-            writingValid.vision1 = false;
-            return false;
         }
-        
-        if (vision.toLowerCase().includes('will evolve') && vision.length > 20) {
-            feedback.innerHTML = '✅ Correct! Great vision statement!';
-            feedback.className = 'fix-feedback correct';
-            feedback.style.display = 'block';
-            writingValid.vision1 = true;
-            return true;
-        } else {
-            feedback.innerHTML = '⚠️ Use "I will evolve into a professional engineer."';
+        input.style.borderColor = '#dc2626';
+        return false;
+    }
+    
+    // Check if starts with "I will" (case insensitive)
+    if (!/^I will\s+/i.test(userAnswer)) {
+        if (feedback) {
+            feedback.innerHTML = '❌ Sentence must start with <strong>"I will"</strong>. Example: "I will read a book."';
             feedback.className = 'fix-feedback incorrect';
             feedback.style.display = 'block';
-            writingValid.vision1 = false;
-            return false;
         }
+        input.style.borderColor = '#dc2626';
+        return false;
     }
-
-    function checkFutureVision2() {
-        const vision = document.getElementById('futureVision2').value.trim();
-        const feedback = document.getElementById('futureVision2Feedback');
-        
-        if (!vision) {
-            feedback.innerHTML = '⚠️ Please write your vision statement.';
-            feedback.className = 'fix-feedback warning';
-            feedback.style.display = 'block';
-            writingValid.vision2 = false;
-            return false;
-        }
-        
-        if (vision.toLowerCase().includes('will strive') && vision.length > 20) {
-            feedback.innerHTML = '✅ Correct! Great vision statement!';
-            feedback.className = 'fix-feedback correct';
-            feedback.style.display = 'block';
-            writingValid.vision2 = true;
-            return true;
-        } else {
-            feedback.innerHTML = '⚠️ Use "I will strive to maintain my daily streak."';
+    
+    // Extract the part after "I will"
+    let afterWill = userAnswer.replace(/^I will\s+/i, '').trim();
+    
+    // Check if something exists after "I will"
+    if (afterWill.length < 2) {
+        if (feedback) {
+            feedback.innerHTML = '❌ Please write a meaningful action after <strong>"I will"</strong>. Example: "I will read a book"';
             feedback.className = 'fix-feedback incorrect';
             feedback.style.display = 'block';
-            writingValid.vision2 = false;
-            return false;
         }
-    }
-
-    function checkWritingSentence(inputId, feedbackId) {
-        const input = document.getElementById(inputId);
-        const feedback = document.getElementById(feedbackId);
-        if (!input) return false;
-        const userAnswer = input.value.trim();
-        if (!userAnswer) {
-            if (feedback) { feedback.innerHTML = '⚠️ Please write a sentence.'; feedback.className = 'fix-feedback warning'; feedback.style.display = 'block'; }
-            return false;
-        }
-        const startsWithIWill = /^I will\s+/i;
-        function isBaseForm(sentence) {
-            const match = sentence.match(/^I will\s+(\w+)/i);
-            if (!match) return false;
-            const verb = match[1].toLowerCase();
-            return !verb.endsWith('ing') && !verb.endsWith('ed') && !verb.endsWith('s');
-        }
-        const isValid = startsWithIWill.test(userAnswer) && isBaseForm(userAnswer) && userAnswer.split(/\s+/).length >= 3;
-        if (isValid) {
-            if (feedback) { feedback.innerHTML = '✅ Correct! Good use of Future Tense!'; feedback.className = 'fix-feedback correct'; feedback.style.display = 'block'; }
-            input.style.borderColor = '#22c55e';
-            return true;
-        } else {
-            if (feedback) { feedback.innerHTML = '⚠️ Use "I will + base verb" (e.g., "I will read", NOT "I will reading")'; feedback.className = 'fix-feedback incorrect'; feedback.style.display = 'block'; }
-            input.style.borderColor = '#dc2626';
-            return false;
-        }
-    }
-
-    function checkWritingAnswers() {
-        // Check if any field is empty
-        const vision1 = document.getElementById('futureVision1').value.trim();
-        const vision2 = document.getElementById('futureVision2').value.trim();
-        const f1 = document.getElementById('future1').value.trim();
-        const f2 = document.getElementById('future2').value.trim();
-        const f3 = document.getElementById('future3').value.trim();
-        
-        if (!vision1 || !vision2 || !f1 || !f2 || !f3) {
-            document.getElementById('writingFeedback').innerHTML = '⚠️ Please fill in all the fields before checking.';
-            document.getElementById('writingFeedback').className = 'quiz-feedback warning';
-            document.getElementById('writingFeedback').style.display = 'block';
-            document.getElementById('completeWritingBtn').disabled = true;
-            return;
-        }
-        
-        const vision1Valid = checkFutureVision1();
-        const vision2Valid = checkFutureVision2();
-        const valid1 = checkWritingSentence('future1', 'future1Feedback');
-        const valid2 = checkWritingSentence('future2', 'future2Feedback');
-        const valid3 = checkWritingSentence('future3', 'future3Feedback');
-        
-        writingValid.vision1 = vision1Valid;
-        writingValid.vision2 = vision2Valid;
-        writingValid.f1 = valid1; 
-        writingValid.f2 = valid2; 
-        writingValid.f3 = valid3;
-        
-        const feedback = document.getElementById('writingFeedback');
-        if (vision1Valid && vision2Valid && valid1 && valid2 && valid3) {
-            feedback.innerHTML = '✅ All answers are correct! You can now mark as complete.';
-            feedback.className = 'quiz-feedback correct';
-            feedback.style.display = 'block';
-            document.getElementById('completeWritingBtn').disabled = false;
-        } else {
-            feedback.innerHTML = '⚠️ Please correct all answers. Make sure you write the vision statements and each sentence starts with "I will + base verb".';
-            feedback.className = 'quiz-feedback incorrect';
-            feedback.style.display = 'block';
-            document.getElementById('completeWritingBtn').disabled = true;
-        }
-    }
-
-    document.getElementById('checkWritingBtn')?.addEventListener('click', checkWritingAnswers);
-    document.getElementById('completeWritingBtn')?.addEventListener('click', () => {
-        if (!writingValid.vision1 || !writingValid.vision2 || !writingValid.f1 || !writingValid.f2 || !writingValid.f3) {
-            alert('Please check your answers first using "Check Answers" button.');
-            return;
-        }
-        markActivityComplete('writing', 'chk5');
-    });
-    
-    // ==================== Vocabulary ====================
-    // Auto-mark vocabulary as complete
-    setTimeout(() => {
-        if (!activityCompleted.vocabulary) {
-            markActivityComplete('vocabulary', 'chk4');
-        }
-    }, 500);
-    
-        // ==================== Grammar - UPDATED for complete sentences with flexible validation ====================
-    const grammarBtn = document.getElementById('completeGrammarBtn');
-
-    function updateGrammarCompleteButton() {
-        if (grammarBtn) {
-            if (grammarAllCorrect) {
-                grammarBtn.disabled = false;
-                grammarBtn.style.opacity = '1';
-            } else {
-                grammarBtn.disabled = true;
-                grammarBtn.style.opacity = '0.5';
-            }
-        }
-    }
-
-    function normalizeSentence(sentence) {
-        // Remove extra spaces, convert to lowercase, remove trailing period
-        return sentence.trim().toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '');
-    }
-
-    function checkGrammarAnswers() {
-        let answer1 = document.getElementById('grammar1')?.value.trim();
-        let answer2 = document.getElementById('grammar2')?.value.trim();
-        let answer3 = document.getElementById('grammar3')?.value.trim();
-        
-        // Check for empty answers
-        if (!answer1 || !answer2 || !answer3) {
-            document.getElementById('grammarFeedback').innerHTML = '⚠️ Please write your answers in all fields before checking.';
-            document.getElementById('grammarFeedback').className = 'quiz-feedback warning';
-            document.getElementById('grammarFeedback').style.display = 'block';
-            grammarAllCorrect = false;
-            updateGrammarCompleteButton();
-            return;
-        }
-        
-        // Normalize the answers (remove extra spaces, convert to lowercase, remove trailing period)
-        const norm1 = normalizeSentence(answer1);
-        const norm2 = normalizeSentence(answer2);
-        const norm3 = normalizeSentence(answer3);
-        
-        // Define correct answers (normalized)
-        const correct1 = "i will master this language";
-        const correct2 = "we will achieve our targets";
-        const correct3 = "the company will hire new engineers";
-        
-        // Also allow variations with "our" vs "the" for answer 2? No, keep exact as expected
-        const correct1Valid = norm1 === correct1;
-        const correct2Valid = norm2 === correct2;
-        const correct3Valid = norm3 === correct3;
-        
-        // Show individual feedback for each field
-        const fb1 = document.getElementById('grammar1Feedback');
-        const fb2 = document.getElementById('grammar2Feedback');
-        const fb3 = document.getElementById('grammar3Feedback');
-        
-        if (correct1Valid) {
-            fb1.innerHTML = '✅ Correct!';
-            fb1.className = 'fix-feedback correct';
-            fb1.style.display = 'block';
-            document.getElementById('grammar1').style.borderColor = '#22c55e';
-        } else {
-            fb1.innerHTML = '❌ Correct: "I will master this language."';
-            fb1.className = 'fix-feedback incorrect';
-            fb1.style.display = 'block';
-            document.getElementById('grammar1').style.borderColor = '#dc2626';
-        }
-        
-        if (correct2Valid) {
-            fb2.innerHTML = '✅ Correct!';
-            fb2.className = 'fix-feedback correct';
-            fb2.style.display = 'block';
-            document.getElementById('grammar2').style.borderColor = '#22c55e';
-        } else {
-            fb2.innerHTML = '❌ Correct: "We will achieve our targets."';
-            fb2.className = 'fix-feedback incorrect';
-            fb2.style.display = 'block';
-            document.getElementById('grammar2').style.borderColor = '#dc2626';
-        }
-        
-        if (correct3Valid) {
-            fb3.innerHTML = '✅ Correct!';
-            fb3.className = 'fix-feedback correct';
-            fb3.style.display = 'block';
-            document.getElementById('grammar3').style.borderColor = '#22c55e';
-        } else {
-            fb3.innerHTML = '❌ Correct: "The company will hire new engineers."';
-            fb3.className = 'fix-feedback incorrect';
-            fb3.style.display = 'block';
-            document.getElementById('grammar3').style.borderColor = '#dc2626';
-        }
-        
-        grammarAllCorrect = correct1Valid && correct2Valid && correct3Valid;
-        
-        const feedback = document.getElementById('grammarFeedback');
-        if (grammarAllCorrect) {
-            feedback.innerHTML = '✅ Correct! All grammar answers are right!';
-            feedback.className = 'quiz-feedback correct';
-            feedback.style.display = 'block';
-        } else {
-            feedback.innerHTML = '❌ Some answers are incorrect. Please check the feedback above.';
-            feedback.className = 'quiz-feedback incorrect';
-            feedback.style.display = 'block';
-        }
-        updateGrammarCompleteButton();
-    }
-
-    document.getElementById('checkGrammarBtn')?.addEventListener('click', checkGrammarAnswers);
-
-    if (grammarBtn) {
-        grammarBtn.addEventListener('click', () => {
-            if (!grammarAllCorrect) {
-                alert('Please correct all grammar answers first. Click "Check Answers" to see which are wrong.');
-                return;
-            }
-            markActivityComplete('grammar', 'chk3');
-        });
-        grammarBtn.disabled = true;
-        grammarBtn.style.opacity = '0.5';
+        input.style.borderColor = '#dc2626';
+        return false;
     }
     
-    // ==================== Game Section ====================
-    const gameBtn = document.getElementById('completeGameBtn');
-
-    const validGameAnswers = {
-        game1: { primary: ['yield'], synonyms: ['produce', 'generate', 'give', 'return', 'provide', 'deliver'] },
-        game2: { primary: ['accumulate'], synonyms: ['amass', 'gather', 'collect', 'build up', 'pile up', 'stockpile'] },
-        game3: { primary: ['aspire'], synonyms: ['aim', 'desire', 'seek', 'strive', 'hope', 'dream', 'wish', 'pursue'] }
+    // Extract the first word after "I will" (should be a verb)
+    let firstWordMatch = afterWill.match(/^(\w+)/);
+    if (!firstWordMatch) {
+        if (feedback) {
+            feedback.innerHTML = '❌ Please write a <strong>verb</strong> after "I will". Example: "I will <strong>read</strong> a book"';
+            feedback.className = 'fix-feedback incorrect';
+            feedback.style.display = 'block';
+        }
+        input.style.borderColor = '#dc2626';
+        return false;
+    }
+    
+    let verb = firstWordMatch[1].toLowerCase();
+    
+    // List of valid base form verbs (common English verbs)
+    const validVerbs = [
+        'read', 'write', 'study', 'learn', 'practice', 'speak', 'listen', 'watch', 'review', 'complete',
+        'solve', 'analyze', 'design', 'build', 'create', 'develop', 'improve', 'enhance', 'strengthen',
+        'finish', 'start', 'begin', 'continue', 'try', 'attempt', 'focus', 'concentrate', 'work',
+        'prepare', 'plan', 'organize', 'manage', 'lead', 'guide', 'help', 'support', 'assist',
+        'communicate', 'discuss', 'share', 'explain', 'describe', 'present', 'demonstrate', 'show',
+        'achieve', 'attain', 'accomplish', 'complete', 'execute', 'implement', 'apply', 'use',
+        'make', 'do', 'go', 'come', 'see', 'look', 'find', 'think', 'know', 'understand',
+        'remember', 'forget', 'learn', 'teach', 'train', 'exercise', 'eat', 'drink', 'sleep', 'wake',
+        'arrive', 'leave', 'meet', 'call', 'email', 'send', 'receive', 'ask', 'answer', 'question',
+        'join', 'participate', 'attend', 'visit', 'travel', 'drive', 'walk', 'run', 'jump', 'play',
+        'buy', 'sell', 'pay', 'cost', 'save', 'spend', 'earn', 'invest', 'plan', 'schedule', 'arrange',
+        'fix', 'repair', 'clean', 'wash', 'organize', 'arrange', 'sort', 'check', 'verify', 'confirm',
+        'research', 'explore', 'discover', 'find', 'locate', 'identify', 'recognize', 'notice', 'observe',
+        'calculate', 'measure', 'test', 'experiment', 'prototype', 'model', 'simulate', 'program', 'code'
+    ];
+    
+    // List of invalid/gibberish patterns (common random typing)
+    const isGibberish = (word) => {
+        // Check if word contains repeated meaningless patterns
+        if (/^[a-z]{1,2}$/i.test(word) && !['do', 'be', 'go', 'up', 'in', 'on', 'at', 'to', 'by', 'for', 'with', 'from'].includes(word)) return true;
+        // Check if word has same letter repeated 3+ times (hhh, sss, etc.)
+        if (/(.)\1\1/.test(word)) return true;
+        // Check if word is keyboard mashing (asdf, qwerty, etc.)
+        if (/^[asdfghjkl]+$/i.test(word)) return true;
+        if (/^[qwertyuiop]+$/i.test(word)) return true;
+        if (/^[zxcvbnm]+$/i.test(word)) return true;
+        // Check if word has no vowels (possible gibberish) but exclude short words like 'my', 'by'
+        if (word.length > 3 && !/[aeiou]/i.test(word)) return true;
+        return false;
     };
-
-    function updateGameCompleteButton() {
-        if (gameBtn) {
-            if (gameAllCorrect) {
-                gameBtn.disabled = false;
-                gameBtn.style.opacity = '1';
-            } else {
-                gameBtn.disabled = true;
-                gameBtn.style.opacity = '0.5';
-            }
+    
+    // Check if the verb is valid
+    const isValidVerb = validVerbs.includes(verb);
+    const isGibberishVerb = isGibberish(verb);
+    
+    // Check for incorrect verb forms
+    if (verb.endsWith('ing')) {
+        if (feedback) {
+            feedback.innerHTML = '❌ Use <strong>base form</strong> (not "-ing"). Correct: "I will <strong>read</strong>" (NOT "I will reading")';
+            feedback.className = 'fix-feedback incorrect';
+            feedback.style.display = 'block';
         }
+        input.style.borderColor = '#dc2626';
+        return false;
     }
-
-    function checkGameAnswer(inputId, validWords) {
-        const input = document.getElementById(inputId);
-        if (!input) return false;
-        const userAnswer = input.value.trim().toLowerCase().replace(/[.,!?;]$/, '');
-        if (!userAnswer) return false;
-        const allValid = [validWords.primary[0], ...validWords.synonyms];
-        const isValid = allValid.includes(userAnswer);
-        const feedback = document.getElementById(`${inputId}Feedback`);
-        if (isValid) {
-            if (feedback) { feedback.innerHTML = '✅ Correct!'; feedback.className = 'fix-feedback correct'; feedback.style.display = 'block'; }
-            input.style.borderColor = '#22c55e';
-            return true;
-        } else {
-            if (feedback) { feedback.innerHTML = `✗ Incorrect. Try: ${validWords.primary[0]}`; feedback.className = 'fix-feedback incorrect'; feedback.style.display = 'block'; }
+    
+    if (verb.endsWith('ed') && !['ed', 'red', 'bed', 'led'].includes(verb)) {
+        if (feedback) {
+            feedback.innerHTML = '❌ Use <strong>base form</strong> (not past tense). Correct: "I will <strong>finish</strong>" (NOT "I will finished")';
+            feedback.className = 'fix-feedback incorrect';
+            feedback.style.display = 'block';
+        }
+        input.style.borderColor = '#dc2626';
+        return false;
+    }
+    
+    if (verb.endsWith('s') && !['is', 'has', 'was', 'does', 'goes', 'does'].includes(verb) && verb.length > 2) {
+        // Check if it's a third person singular verb (like reads, writes)
+        const baseFormWithoutS = verb.slice(0, -1);
+        if (validVerbs.includes(baseFormWithoutS)) {
+            if (feedback) {
+                feedback.innerHTML = `❌ Use <strong>base form</strong> (not third person). Correct: "I will <strong>${baseFormWithoutS}</strong>" (NOT "I will ${verb}")`;
+                feedback.className = 'fix-feedback incorrect';
+                feedback.style.display = 'block';
+            }
             input.style.borderColor = '#dc2626';
             return false;
         }
     }
-
-    function checkGameSentenceExact(inputId, correctSentence) {
-        const input = document.getElementById(inputId);
-        if (!input) return false;
-        const userAnswer = input.value.trim().toLowerCase().replace(/\s+/g, ' ').trim();
-        if (!userAnswer) return false;
-        const normalizedCorrect = correctSentence.toLowerCase().replace(/\s+/g, ' ').trim();
-        const isValid = userAnswer === normalizedCorrect;
-        const feedback = document.getElementById(`${inputId}Feedback`);
-        if (isValid) {
-            if (feedback) { feedback.innerHTML = '✅ Correct!'; feedback.className = 'fix-feedback correct'; feedback.style.display = 'block'; }
-            input.style.borderColor = '#22c55e';
-            return true;
-        } else {
-            if (feedback) { feedback.innerHTML = `✗ Incorrect. Correct: "${correctSentence}"`; feedback.className = 'fix-feedback incorrect'; feedback.style.display = 'block'; }
-            input.style.borderColor = '#dc2626';
-            return false;
+    
+    // Check for gibberish
+    if (isGibberishVerb) {
+        if (feedback) {
+            feedback.innerHTML = '❌ Please write a <strong>meaningful verb</strong> after "I will". Example: "I will <strong>study</strong> English"';
+            feedback.className = 'fix-feedback incorrect';
+            feedback.style.display = 'block';
         }
+        input.style.borderColor = '#dc2626';
+        return false;
     }
-
-    function checkAllGameAnswers() {
-        // Check for empty answers
-        const game1Val = document.getElementById('game1')?.value.trim();
-        const game2Val = document.getElementById('game2')?.value.trim();
-        const game3Val = document.getElementById('game3')?.value.trim();
-        const game4Val = document.getElementById('game4')?.value.trim();
-        const game5Val = document.getElementById('game5')?.value.trim();
+    
+    // Check if verb is meaningful (in valid list)
+    if (!isValidVerb && verb.length > 2) {
+        // Provide suggestions based on similar words
+        let suggestions = '';
+        if (verb.startsWith('stu')) suggestions = ' Did you mean <strong>study</strong>?';
+        else if (verb.startsWith('pra')) suggestions = ' Did you mean <strong>practice</strong>?';
+        else if (verb.startsWith('rea')) suggestions = ' Did you mean <strong>read</strong>?';
+        else if (verb.startsWith('wri')) suggestions = ' Did you mean <strong>write</strong>?';
+        else if (verb.startsWith('lea')) suggestions = ' Did you mean <strong>learn</strong>?';
+        else if (verb.startsWith('wor')) suggestions = ' Did you mean <strong>work</strong>?';
         
-        if (!game1Val || !game2Val || !game3Val || !game4Val || !game5Val) {
-            document.getElementById('gameResult').innerHTML = '<div style="background: #fef9e3; padding: 0.75rem; border-radius: 10px;"><p style="color: #92400e; font-weight: 600;">⚠️ Please fill in all the blank fields before checking.</p></div>';
-            gameAllCorrect = false;
-            updateGameCompleteButton();
-            return;
+        if (feedback) {
+            feedback.innerHTML = `❌ "<strong>${verb}</strong>" is not a valid verb. Use a meaningful action like <strong>read, write, study, practice, learn</strong>.${suggestions}`;
+            feedback.className = 'fix-feedback incorrect';
+            feedback.style.display = 'block';
         }
-        
-        const q1 = checkGameAnswer('game1', validGameAnswers.game1);
-        const q2 = checkGameAnswer('game2', validGameAnswers.game2);
-        const q3 = checkGameAnswer('game3', validGameAnswers.game3);
-        const q4 = checkGameSentenceExact('game4', 'I will go to the college tomorrow.');
-        const q5 = checkGameSentenceExact('game5', 'She will finish her work soon.');
-        
-        gameAllCorrect = q1 && q2 && q3 && q4 && q5;
-        
-        const resultDiv = document.getElementById('gameResult');
-        if (gameAllCorrect) {
-            resultDiv.innerHTML = '<div style="background: #d1fae5; padding: 0.75rem; border-radius: 10px;"><p style="color: #065f46;">🎉 Perfect! All answers are correct!</p></div>';
-        } else {
-            let message = '<div style="background: #fef9e3; padding: 0.75rem 1rem; border-radius: 12px;"><p style="color: #92400e;">❌ Some answers need correction:</p>';
-            if (!q1) message += '<p>• Question 1: Replace "produce" with yield, generate, provide</p>';
-            if (!q2) message += '<p>• Question 2: Replace "add up" with accumulate, amass, gather</p>';
-            if (!q3) message += '<p>• Question 3: Replace "hope" with aspire, aim, strive</p>';
-            if (!q4) message += '<p>• Question 4: Use "I will go to the college tomorrow." (Use "go" not "going")</p>';
-            if (!q5) message += '<p>• Question 5: Use "She will finish her work soon." (Use "finish" not "finishes")</p>';
-            message += '</div>';
-            resultDiv.innerHTML = message;
+        input.style.borderColor = '#dc2626';
+        return false;
+    }
+    
+    // Check minimum length of the sentence (should have at least 3 words total: I + will + verb + object)
+    let wordCount = userAnswer.split(/\s+/).length;
+    if (wordCount < 3) {
+        if (feedback) {
+            feedback.innerHTML = '⚠️ Please write a <strong>complete sentence</strong> (at least 3 words). Example: "I will read a book"';
+            feedback.className = 'fix-feedback warning';
+            feedback.style.display = 'block';
         }
-        updateGameCompleteButton();
+        input.style.borderColor = '#dc2626';
+        return false;
     }
-
-    document.getElementById('checkGameBtn')?.addEventListener('click', checkAllGameAnswers);
-
-    if (gameBtn) {
-        gameBtn.addEventListener('click', () => {
-            if (!gameAllCorrect) {
-                alert('Please correct all game answers first. Click "Check All Answers" to see which are wrong.');
-                return;
-            }
-            markActivityComplete('game', 'chk7');
-        });
-        gameBtn.disabled = true;
-        gameBtn.style.opacity = '0.5';
+    
+    // Check if the sentence has meaningful content (not just "I will do" without object)
+    if (wordCount <= 3 && (verb === 'do' || verb === 'be' || verb === 'go')) {
+        if (feedback) {
+            feedback.innerHTML = '⚠️ Please add <strong>more details</strong> to your sentence. Example: "I will do <strong>my homework</strong>"';
+            feedback.className = 'fix-feedback warning';
+            feedback.style.display = 'block';
+        }
+        input.style.borderColor = '#f59e0b';
+        return false;
     }
-        
-    // ==================== Initialize ====================
-    document.addEventListener('DOMContentLoaded', function() {
-        setupReadingActivity();
-        updateChecklistProgress();
-        
+    
+    // All validation passed
+    if (feedback) {
+        feedback.innerHTML = '✅ Correct! Good use of Future Tense!';
+        feedback.className = 'fix-feedback correct';
+        feedback.style.display = 'block';
+    }
+    input.style.borderColor = '#22c55e';
+    return true;
+}
+
+function checkWritingAnswers() {
+    const f1 = document.getElementById('future1')?.value.trim() || '';
+    const f2 = document.getElementById('future2')?.value.trim() || '';
+    const f3 = document.getElementById('future3')?.value.trim() || '';
+    
+    const feedbackDiv = document.getElementById('writingFeedback');
+    
+    // Check if any field is empty
+    if (!f1 || !f2 || !f3) {
+        feedbackDiv.innerHTML = '⚠️ Please fill in <strong>all three sentences</strong> before checking.';
+        feedbackDiv.className = 'quiz-feedback warning';
+        feedbackDiv.style.display = 'block';
         document.getElementById('completeWritingBtn').disabled = true;
-        document.getElementById('completeReadingBtn').disabled = true;
-        document.getElementById('completeSpeakingBtn').disabled = true;
-        
-        const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-        if (dayCompleteBtn) dayCompleteBtn.addEventListener('click', completeDay);
-    });
+        writingValid.f1 = false;
+        writingValid.f2 = false;
+        writingValid.f3 = false;
+        return;
+    }
+    
+    // Validate each sentence
+    const v1 = checkWritingSentenceStrict('future1', 'future1Feedback');
+    const v2 = checkWritingSentenceStrict('future2', 'future2Feedback');
+    const v3 = checkWritingSentenceStrict('future3', 'future3Feedback');
+    
+    writingValid.f1 = v1;
+    writingValid.f2 = v2;
+    writingValid.f3 = v3;
+    
+    if (v1 && v2 && v3) {
+        feedbackDiv.innerHTML = '✅ <strong>Perfect!</strong> All three sentences are correct! You can now mark Writing as Complete.';
+        feedbackDiv.className = 'quiz-feedback correct';
+        feedbackDiv.style.display = 'block';
+        document.getElementById('completeWritingBtn').disabled = false;
+    } else {
+        feedbackDiv.innerHTML = '❌ <strong>Please correct the sentences above.</strong><br><br>📌 <strong>Rules:</strong><br>• Start with <strong>"I will"</strong><br>• Use the <strong>base form</strong> of the verb (no -ing, -ed, -s endings)<br>• Write a <strong>meaningful action</strong><br><br>✅ <strong>Examples:</strong><br>• "I will <strong>read</strong> a technical article"<br>• "I will <strong>practice</strong> 5 new words"<br>• "I will <strong>solve</strong> a math problem"';
+        feedbackDiv.className = 'quiz-feedback incorrect';
+        feedbackDiv.style.display = 'block';
+        document.getElementById('completeWritingBtn').disabled = true;
+    }
+}
+
+// Add real-time input listeners to clear validation feedback when user types
+['future1', 'future2', 'future3'].forEach(id => {
+    const input = document.getElementById(id);
+    if (input) {
+        input.addEventListener('input', function() {
+            const feedback = document.getElementById(`${id}Feedback`);
+            if (feedback) {
+                feedback.innerHTML = '';
+                feedback.style.display = 'none';
+                feedback.className = 'fix-feedback';
+            }
+            this.style.borderColor = '#e2e8f0';
+            
+            const overallFeedback = document.getElementById('writingFeedback');
+            if (overallFeedback) {
+                overallFeedback.innerHTML = '';
+                overallFeedback.style.display = 'none';
+                overallFeedback.className = 'quiz-feedback';
+            }
+            
+            document.getElementById('completeWritingBtn').disabled = true;
+            writingValid.f1 = false;
+            writingValid.f2 = false;
+            writingValid.f3 = false;
+        });
+    }
+});
+
+// Attach event listeners to buttons
+document.getElementById('checkWritingBtn')?.addEventListener('click', checkWritingAnswers);
+
+document.getElementById('completeWritingBtn')?.addEventListener('click', () => {
+    if (writingValid.f1 && writingValid.f2 && writingValid.f3) {
+        markActivityComplete('writing', 'chk5');
+    } else {
+        alert('⚠️ Please check your answers first using "Check Answers" button. All sentences must start with "I will" followed by a meaningful verb in base form.');
+    }
+});
+    // Grammar
+    function checkGrammarSentence(num,ans,correct){const fb=document.getElementById(`grammar${num}Feedback`); if(!ans){if(fb){fb.innerHTML='⚠️ Please write the complete sentence.'; fb.className='fix-feedback warning'; fb.style.display='block';}return false;} if(ans.length<15){if(fb){fb.innerHTML='⚠️ Please write a complete sentence (e.g., "I will master this language")'; fb.className='fix-feedback warning'; fb.style.display='block';}return false;} const normalized=ans.trim().toLowerCase().replace(/\s+/g,' ').replace(/\.$/,''); const isValid=normalized===correct; if(isValid){if(fb){fb.innerHTML='✅ Correct!'; fb.className='fix-feedback correct'; fb.style.display='block';} document.getElementById(`grammar${num}`).style.borderColor='#22c55e'; return true;}else{if(fb){fb.innerHTML=`❌ Incorrect. Correct: "${correct.charAt(0).toUpperCase()+correct.slice(1)}"`; fb.className='fix-feedback incorrect'; fb.style.display='block';} document.getElementById(`grammar${num}`).style.borderColor='#dc2626'; return false;}}
+    function checkGrammarAnswers(){const a1=document.getElementById('grammar1')?.value.trim(); const a2=document.getElementById('grammar2')?.value.trim(); const a3=document.getElementById('grammar3')?.value.trim(); if(!a1||!a2||!a3){document.getElementById('grammarFeedback').innerHTML='⚠️ Please write your answers in all fields before checking.'; document.getElementById('grammarFeedback').className='quiz-feedback warning'; document.getElementById('grammarFeedback').style.display='block'; grammarAllCorrect=false; updateGrammarCompleteButton(); return;} const v1=checkGrammarSentence(1,a1,validGrammarAnswers[0]); const v2=checkGrammarSentence(2,a2,validGrammarAnswers[1]); const v3=checkGrammarSentence(3,a3,validGrammarAnswers[2]); grammarAllCorrect=v1&&v2&&v3; const fb=document.getElementById('grammarFeedback'); if(grammarAllCorrect){fb.innerHTML='✅ Correct! All grammar answers are right!'; fb.className='quiz-feedback correct'; fb.style.display='block';}else{fb.innerHTML='❌ Some answers are incorrect. Please check the feedback above.'; fb.className='quiz-feedback incorrect'; fb.style.display='block';} updateGrammarCompleteButton();}
+    function updateGrammarCompleteButton(){const btn=document.getElementById('completeGrammarBtn'); if(btn){btn.disabled=!grammarAllCorrect; btn.style.opacity=grammarAllCorrect?'1':'0.5';}}
+    document.getElementById('checkGrammarBtn')?.addEventListener('click',checkGrammarAnswers);
+    document.getElementById('completeGrammarBtn')?.addEventListener('click',()=>{if(grammarAllCorrect)markActivityComplete('grammar','chk3'); else alert('Please correct all grammar answers first. Click "Check Answers" to see which are wrong.');});
+    document.getElementById('completeGrammarBtn').disabled=true;
+    
+    // Game
+    const validGameAnswers={game1:{primary:['yield'],synonyms:['produce','generate','give','return','provide','deliver']},game2:{primary:['accumulate'],synonyms:['amass','gather','collect','build up','pile up','stockpile']},game3:{primary:['aspire'],synonyms:['aim','desire','seek','strive','hope','dream','wish','pursue']}};
+    function checkGameAnswer(id,valid){const inp=document.getElementById(id).value.trim().toLowerCase().replace(/[.,!?;]$/,''); if(!inp)return false; const allValid=[valid.primary[0],...valid.synonyms]; const isValid=allValid.includes(inp); const fb=document.getElementById(`${id}Feedback`); if(isValid){if(fb){fb.innerHTML='✅ Correct!'; fb.className='fix-feedback correct'; fb.style.display='block';} document.getElementById(id).style.borderColor='#22c55e'; return true;}else{if(fb){fb.innerHTML=`✗ Incorrect. Try: ${valid.primary[0]}`; fb.className='fix-feedback incorrect'; fb.style.display='block';} document.getElementById(id).style.borderColor='#dc2626'; return false;}}
+    function checkGameSentenceExact(id,correct){const inp=document.getElementById(id).value.trim().toLowerCase().replace(/\s+/g,' ').trim(); if(!inp)return false; const norm=correct.toLowerCase().replace(/\s+/g,' ').trim(); const isValid=inp===norm; const fb=document.getElementById(`${id}Feedback`); if(isValid){if(fb){fb.innerHTML='✅ Correct!'; fb.className='fix-feedback correct'; fb.style.display='block';} document.getElementById(id).style.borderColor='#22c55e'; return true;}else{if(fb){fb.innerHTML=`✗ Incorrect. Correct: "${correct}"`; fb.className='fix-feedback incorrect'; fb.style.display='block';} document.getElementById(id).style.borderColor='#dc2626'; return false;}}
+    function checkAllGameAnswers(){const g1=document.getElementById('game1')?.value.trim(), g2=document.getElementById('game2')?.value.trim(), g3=document.getElementById('game3')?.value.trim(), g4=document.getElementById('game4')?.value.trim(), g5=document.getElementById('game5')?.value.trim(); if(!g1||!g2||!g3||!g4||!g5){document.getElementById('gameResult').innerHTML='<div style="background:#fef9e3;padding:0.75rem;border-radius:10px;"><p style="color:#92400e;">⚠️ Please fill in all the blank fields before checking.</p></div>'; gameAllCorrect=false; updateGameCompleteButton(); return;} const q1=checkGameAnswer('game1',validGameAnswers.game1); const q2=checkGameAnswer('game2',validGameAnswers.game2); const q3=checkGameAnswer('game3',validGameAnswers.game3); const q4=checkGameSentenceExact('game4','I will go to the college tomorrow.'); const q5=checkGameSentenceExact('game5','She will finish her work soon.'); gameAllCorrect=q1&&q2&&q3&&q4&&q5; const resDiv=document.getElementById('gameResult'); if(gameAllCorrect){resDiv.innerHTML='<div style="background:#d1fae5;padding:0.75rem;border-radius:10px;"><p style="color:#065f46;">🎉 Perfect! All answers are correct!</p></div>';}else{let msg='<div style="background:#fef9e3;padding:0.75rem 1rem;border-radius:12px;"><p style="color:#92400e;">❌ Some answers need correction:</p>'; if(!q1)msg+='<p>• Question 1: Replace "produce" with yield, generate, provide</p>'; if(!q2)msg+='<p>• Question 2: Replace "add up" with accumulate, amass, gather</p>'; if(!q3)msg+='<p>• Question 3: Replace "hope" with aspire, aim, strive</p>'; if(!q4)msg+='<p>• Question 4: Use "I will go to the college tomorrow." (Use "go" not "going")</p>'; if(!q5)msg+='<p>• Question 5: Use "She will finish her work soon." (Use "finish" not "finishes")</p>'; msg+='</div>'; resDiv.innerHTML=msg;} updateGameCompleteButton();}
+    function updateGameCompleteButton(){const btn=document.getElementById('completeGameBtn'); if(btn){btn.disabled=!gameAllCorrect; btn.style.opacity=gameAllCorrect?'1':'0.5';}}
+    document.getElementById('checkGameBtn')?.addEventListener('click',checkAllGameAnswers);
+    document.getElementById('completeGameBtn')?.addEventListener('click',()=>{if(gameAllCorrect)markActivityComplete('game','chk7'); else alert('Please correct all game answers first. Click "Check All Answers" to see which are wrong.');});
+    document.getElementById('completeGameBtn').disabled=true;
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded',function(){setupReadingActivity(); updateChecklistProgress(); document.getElementById('completeWritingBtn').disabled=true; document.getElementById('completeReadingBtn').disabled=true; document.getElementById('completeSpeakingBtn').disabled=true; document.getElementById('completeVocabularyBtn').disabled=true; document.getElementById('dayCompleteBtn')?.addEventListener('click',completeDay);});
 </script>
 </body>
 </html>

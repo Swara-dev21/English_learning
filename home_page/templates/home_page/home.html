@@ -1708,6 +1708,7 @@ html {
             </p>
             
             <div class="hero-buttons" id="heroButtons">
+                
                 {% if not user.is_authenticated %}
                     <a href="{% url 'home_page:register' %}" class="btn-secondary">
                         Register →
@@ -1716,9 +1717,38 @@ html {
                         Login →
                     </a>
                 {% endif %}
+
+                {% if user.is_authenticated %}
+    
+                {% if not user.profile.pretest_completed %}
+                    <a href="{% url 'home_page:test_introduction' %}" class="btn-primary">
+                        Start Your Journey →
+                    </a>
+
+                {% elif active_learning %}
+
+                    {% if not active_learning.has_seen_intro %}
+                        <a href="{% url 'learning:level_selection' %}" class="btn-primary">
+                            Start Journey →
+                        </a>
+                    {% else %}
+                        <a href="{% url 'learning:level_overview' active_learning.level %}" class="btn-primary">
+                            Continue Journey →
+                        </a>
+                    {% endif %}
+
+                {% else %}
+                    <a href="{% url 'learning:level_selection' %}" class="btn-primary">
+                        Start Learning →
+                    </a>
+                {% endif %}
+
+            {% else %}
                 <a href="{% url 'home_page:test_introduction' %}" class="btn-primary">
                     Start Your Journey →
                 </a>
+            {% endif %}
+
             </div>
             
             <div class="hero-footer">

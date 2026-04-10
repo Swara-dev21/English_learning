@@ -25,7 +25,7 @@ def get_user_progress(user, level):
             'completed_days': [],
             'current_day': 1,
             'streak_days': 0,
-            'has_seen_intro': False  # Added default
+            'has_seen_intro': False
         }
     )
     return progress
@@ -33,34 +33,64 @@ def get_user_progress(user, level):
 @login_required
 def level_selection(request):
     """Display level selection page based on pretest results"""
-    # Get user's overall score from profile
     profile = request.user.profile
-    overall_percentage = profile.get_overall_pretest_score() if hasattr(profile, 'get_overall_pretest_score') else 0
     
-    # Determine unlocked levels
+    # Convert profile.level to lowercase for consistent comparison
+    # profile.level stores: "Beginner", "Intermediate", "Advanced"
+    # We need: "beginner", "intermediate", "advanced"
+    user_level_from_profile = profile.level.lower() if profile.level else 'beginner'
+    
+    # Get pretest score if available
+    overall_percentage = 0
+    if hasattr(profile, 'get_overall_pretest_score'):
+        overall_percentage = profile.get_overall_pretest_score()
+    
+    # Determine unlocked levels based on pretest score
     if overall_percentage >= 80:
+        # User qualifies for Advanced
         user_level = 'advanced'
         beginner_unlocked = True
         intermediate_unlocked = True
         advanced_unlocked = True
     elif overall_percentage >= 60:
+        # User qualifies for Intermediate
         user_level = 'intermediate'
         beginner_unlocked = True
         intermediate_unlocked = True
         advanced_unlocked = False
     else:
+        # User is Beginner
         user_level = 'beginner'
         beginner_unlocked = True
         intermediate_unlocked = False
         advanced_unlocked = False
     
-    # Get progress for each level
-    beginner_progress = get_user_progress(request.user, 'beginner')
+    # If no pretest was taken (score is 0), use the profile.level to determine unlocks
+    if overall_percentage == 0:
+        if user_level_from_profile == 'beginner':
+            beginner_unlocked = True
+            intermediate_unlocked = False
+            advanced_unlocked = False
+            user_level = 'beginner'
+        elif user_level_from_profile == 'intermediate':
+            beginner_unlocked = True
+            intermediate_unlocked = True
+            advanced_unlocked = False
+            user_level = 'intermediate'
+        elif user_level_from_profile == 'advanced':
+            beginner_unlocked = True
+            intermediate_unlocked = True
+            advanced_unlocked = True
+            user_level = 'advanced'
+    
+    # Get or create progress for each level (only if unlocked)
+    beginner_progress = get_user_progress(request.user, 'beginner') if beginner_unlocked else None
     intermediate_progress = get_user_progress(request.user, 'intermediate') if intermediate_unlocked else None
     advanced_progress = get_user_progress(request.user, 'advanced') if advanced_unlocked else None
     
     context = {
-        'user_level_name': user_level,
+        'user_level': user_level,  # 'beginner', 'intermediate', or 'advanced'
+        'user_level_name': user_level.capitalize(),  # 'Beginner', 'Intermediate', 'Advanced'
         'beginner_unlocked': beginner_unlocked,
         'intermediate_unlocked': intermediate_unlocked,
         'advanced_unlocked': advanced_unlocked,
@@ -73,57 +103,84 @@ def level_selection(request):
 @login_required
 def level_overview(request, level_name):
     """Display the 30-day journey overview for a specific level"""
-    # Validate level
     if level_name not in ['beginner', 'intermediate', 'advanced']:
         messages.error(request, 'Invalid level selected.')
         return redirect('learning:level_selection')
     
-    # Get or create user progress
     progress = get_user_progress(request.user, level_name)
     
-    # ── AUTO-COMPLETE DAY FROM URL PARAM ──────────────────────────────────────
-    # Day templates redirect with ?celebrate=true&completed=N after finishing a day.
-    # If the API call failed (wrong URL in template), we catch it here and mark the day complete.
     celebrate_day = request.GET.get('completed')
     if celebrate_day:
         try:
             celebrate_day_num = int(celebrate_day)
             if 1 <= celebrate_day_num <= 30 and celebrate_day_num not in progress.completed_days:
-                progress.complete_day(celebrate_day_num)  # updates current_day + streak in DB
-                # Refresh from DB
+                progress.complete_day(celebrate_day_num)
                 progress.refresh_from_db()
         except (ValueError, TypeError):
             pass
 
-    # ── DERIVE CURRENT DAY FROM COMPLETED DAYS (not the stale DB field) ───────
-    # This is the key fix: compute which day to show as "current" based on the
-    # actual list of completed days, so even if the API call URL was wrong the
-    # overview will correctly show the next unlocked day.
     completed_set = set(progress.completed_days)
-    computed_current_day = 31  # default: all done
+    computed_current_day = 31
     for d in range(1, 31):
         if d not in completed_set:
             computed_current_day = d
             break
 
-    # Keep the DB field in sync silently
     if progress.current_day != computed_current_day and computed_current_day <= 30:
         progress.current_day = computed_current_day
         progress.save()
 
-    # ✅ NEW LOGIC: Intro + Assessment
     show_intro = not progress.has_seen_intro
     is_assessment = request.GET.get('assessment') == 'true'
 
-    # Get certificate if issued
     certificate = UserCertificate.objects.filter(user=request.user, level=level_name).first()
 
-    # Prepare day titles dictionary
     day_titles = {}
     for day in range(1, 31):
         day_titles[day] = get_day_title(level_name, day)
 
-    # Check if level is completed and certificate issued
+    # ─────────────────────────────────────────────────────────────
+    # POWER LINES COLLECTION - 30 Motivational Quotes
+    # ─────────────────────────────────────────────────────────────
+    power_lines_collection = [
+        "🌱 You don't have to be a master to start, but you have to start to become a master.",
+        "🌞 Every new morning is a fresh chance—what you do today builds who you become tomorrow.",
+        "💪 Confidence is not being perfect; it is the courage to start even when you are nervous.",
+        "👂 To speak well, you must first learn to hear what is not being said.",
+        "🔥 Fear is a reaction; courage is a decision. Every mistake is just data for your future success.",
+        "✨ You never get a second chance to make a first impression. Speak with clarity, lead with confidence.",
+        "🏃‍♀️ Transformation is a marathon, not a sprint. Celebrate the small wins, for they are the building blocks of a masterpiece.",
+        "📚 He who asks a question is a fool for five minutes; he who does not ask a question remains a fool forever.",
+        "🗣️ Communication is not about speaking more; it is about understanding better.",
+        "🔍 Clarity begins when confusion ends—ask, learn, and grow.",
+        "🎤 Your voice matters—use it with confidence.",
+        "🤝 Small conversations create big opportunities.",
+        "📈 Every interaction is a chance to improve your communication.",
+        "🪓 Reviewing what you have learned is like sharpening a saw; it makes the next cut much easier.",
+        "🔑 Consistency is the key that unlocks mastery.",
+        "📅 Practice daily, even when you don't feel like it—that's where growth happens.",
+        "🚀 Confidence grows when you step outside your comfort zone.",
+        "🧠 Clear thinking leads to clear speaking.",
+        "🌟 Nature gave us two ears and one mouth so that we can listen twice as much as we speak.",
+        "🏆 Success is built on discipline, not motivation.",
+        "🎯 You don't have to be perfect to start, but you have to start to be perfect.",
+        "🧠 Setting goals is the first step in turning the invisible into the visible.",
+        "⏳ A clear vision creates a strong direction.",
+        "💼 Professional communication builds professional identity.",
+        "👑 Leadership begins with the way you express yourself.",
+        "💎 Your words define your value.",
+        "🌿 Personal development is the conviction that you can learn, grow, and transcend your current limits.",
+        "🧘‍♀️ Confidence is not 'they will like me,' it is 'I will be fine if they don't.'",
+        "⚡ Consistency turns effort into excellence.",
+        "🚗 Your words are the vehicle of your leadership; drive them with precision and purpose."
+    ]
+
+    # Map power lines to days (1-30)
+    day_power_lines = {}
+    for day in range(1, 31):
+        # Cycle through the collection if needed (though we have exactly 30)
+        day_power_lines[day] = power_lines_collection[(day - 1) % len(power_lines_collection)]
+
     is_completed = progress.is_completed()
     certificate_issued = progress.certificate_issued
 
@@ -132,24 +189,18 @@ def level_overview(request, level_name):
         'level_display': level_name.capitalize(),
         'completed_count': len(progress.completed_days),
         'completed_days_list': progress.completed_days,
-        'current_day': computed_current_day,   # ← use computed value, not stale DB field
+        'current_day': computed_current_day,
         'streak': progress.streak_days,
         'percentage': progress.completion_percentage(),
         'is_completed': is_completed,
         'certificate_issued': certificate_issued,
         'certificate_id': certificate.id if certificate else None,
         'day_titles': day_titles,
+        'day_power_lines': day_power_lines,  # Added power lines to context
         'user': request.user,
-
-        # ✅ NEW CONTEXT VARIABLES
         'show_intro': show_intro,
         'is_assessment': is_assessment,
     }
-
-    # ✅ MARK INTRO AS SEEN (only first time)
-    if show_intro:
-        progress.has_seen_intro = True
-        progress.save()
 
     return render(request, 'learning/level_overview.html', context)
 
@@ -257,8 +308,7 @@ def get_day_title(level, day):
 
 @login_required
 def day_detail(request, level_name, day_number):
-    """Display a specific day's learning content - TESTING MODE (no access restrictions)"""
-    # Validate level and day
+    """Display a specific day's learning content"""
     if level_name not in ['beginner', 'intermediate', 'advanced']:
         messages.error(request, 'Invalid level selected.')
         return redirect('learning:level_selection')
@@ -267,12 +317,8 @@ def day_detail(request, level_name, day_number):
         messages.error(request, 'Invalid day number.')
         return redirect('learning:level_overview', level_name=level_name)
     
-    # Get or create user progress
     progress = get_user_progress(request.user, level_name)
     
-    # NO ACCESS CHECK - ALL DAYS ARE ACCESSIBLE FOR TESTING
-    
-    # Get completed activities for this day
     completed_activities = DailyActivity.objects.filter(
         user=request.user,
         level=level_name,
@@ -280,7 +326,6 @@ def day_detail(request, level_name, day_number):
         completed=True
     ).values_list('activity_type', flat=True)
     
-    # Prepare sentences for speaking activity
     sentences = get_sentences_for_day(level_name, day_number)
     
     context = {
@@ -293,14 +338,11 @@ def day_detail(request, level_name, day_number):
         'sentences': sentences,
     }
     
-    # Template path: learning/beginner/day1.html
     template_name = f'learning/{level_name}/day{day_number}.html'
-    
     return render(request, template_name, context)
 
 def get_sentences_for_day(level_name, day_number):
     """Get speaking sentences for specific day and level"""
-    # Default sentences for Day 11 (Beginner)
     default_sentences = [
         (1, "Thank you for the explanation! It was very insightful."),
         (2, "Currently, I am implementing the changes we discussed."),
@@ -308,8 +350,6 @@ def get_sentences_for_day(level_name, day_number):
         (4, "I was analysing the data when you arrived."),
         (5, "I am truly indebted for your guidance."),
     ]
-    
-    # You can customize sentences for each day here
     return default_sentences
 
 @login_required
@@ -330,7 +370,6 @@ def complete_activity(request, level_name, day_number, activity_type):
             activity.completed_at = timezone.now()
             activity.save()
             
-            # Check if all activities for this day are complete
             all_activities = ['listening', 'speaking', 'reading', 'writing', 'vocabulary', 'grammar', 'game']
             completed_count = DailyActivity.objects.filter(
                 user=request.user,
@@ -359,7 +398,6 @@ def complete_day(request, level_name, day_number):
     """Mark an entire day as complete and unlock next day"""
     progress = get_user_progress(request.user, level_name)
     
-    # Verify all activities are completed
     all_activities = ['listening', 'speaking', 'reading', 'writing', 'vocabulary', 'grammar', 'game']
     completed_activities = DailyActivity.objects.filter(
         user=request.user,
@@ -376,17 +414,18 @@ def complete_day(request, level_name, day_number):
             'total': len(all_activities)
         }, status=400)
     
-    # Mark day as complete
     if progress.complete_day(day_number):
-        # Check if level is now complete
         level_completed = progress.is_completed()
+        
+        # Calculate total stars (completed days count)
+        total_stars = len(progress.completed_days)
         
         return JsonResponse({
             'success': True,
             'day_completed': day_number,
             'next_day': progress.current_day if not level_completed else None,
             'level_completed': level_completed,
-            'completed_days': len(progress.completed_days),
+            'completed_days': total_stars,  # This is the star count!
             'percentage': progress.completion_percentage(),
             'streak': progress.streak_days,
         })
@@ -404,7 +443,6 @@ def save_recording(request, level_name, day_number, activity_type):
     file_path = f'recordings/{request.user.id}/{level_name}/day{day_number}/{activity_type}_{timezone.now().timestamp()}.webm'
     saved_path = default_storage.save(file_path, ContentFile(audio_file.read()))
     
-    # Update or create activity with recording URL
     activity, _ = DailyActivity.objects.get_or_create(
         user=request.user,
         level=level_name,
@@ -460,29 +498,22 @@ def take_final_test(request, level_name):
     """Display and process final test before certificate"""
     progress = get_user_progress(request.user, level_name)
     
-    # TESTING MODE: Allow multiple attempts and auto-pass for testing
-    TESTING_MODE = True  # Keep True for testing, False for production
+    TESTING_MODE = True
     
     if TESTING_MODE:
-        # For testing: Allow access even if not completed all days
         if not progress.is_completed():
             messages.info(request, '⚠️ TESTING MODE: Assessment taken before completing all days.')
         
         if request.method == 'POST':
-            # Process test answers
             score, total_questions = process_final_test_answers(request.POST, level_name)
             percentage = (score / total_questions) * 100
             
-            # Always pass in testing mode (or check score if you want)
-            # For testing, we'll auto-pass regardless of score
             messages.success(request, f'🎉 TESTING MODE: Assessment passed! Score: {score}/{total_questions} ({percentage:.1f}%) 🎉')
             
-            # Update progress - mark certificate as issued for testing
             progress.certificate_issued = True
             progress.certificate_issued_at = timezone.now()
             progress.save()
             
-            # Create or update certificate
             certificate, created = UserCertificate.objects.get_or_create(
                 user=request.user,
                 level=level_name,
@@ -491,13 +522,10 @@ def take_final_test(request, level_name):
                 }
             )
             
-            # Redirect to result page with score
             return redirect(f'/learning/level/{level_name}/result/?score={score}')
         
-        # ✅ CHANGED: GET request - redirect to overview with assessment mode
         return redirect(f'/learning/level/{level_name}/?assessment=true')
     
-    # PRODUCTION MODE (when TESTING_MODE = False)
     if not progress.is_completed():
         messages.warning(request, '⚠️ You must complete all 30 days before taking the final test.')
         return redirect('learning:level_overview', level_name=level_name)
@@ -505,7 +533,7 @@ def take_final_test(request, level_name):
     if request.method == 'POST':
         score, total_questions = process_final_test_answers(request.POST, level_name)
         percentage = (score / total_questions) * 100
-        passing_percentage = 75  # Updated to 75% (15/20)
+        passing_percentage = 75
         
         if percentage >= passing_percentage:
             certificate, created = UserCertificate.objects.get_or_create(
@@ -522,18 +550,16 @@ def take_final_test(request, level_name):
             
             messages.success(request, f'🎉 Congratulations! You passed with {score}/{total_questions} ({percentage:.1f}%)! 🎉')
             
-            # Redirect to result page with score
             return redirect(f'/learning/level/{level_name}/result/?score={score}')
         else:
             messages.error(request, f'❌ You scored {score}/{total_questions} ({percentage:.1f}%). Minimum passing score is {passing_percentage}%. Please review and try again.')
             return redirect('learning:final_test', level_name=level_name)
     
-    # ✅ CHANGED: GET request - redirect to overview with assessment mode
     return redirect(f'/learning/level/{level_name}/?assessment=true')
 
 @login_required
 def render_test_page(request, level_name):
-    """Render the actual test page (after modal confirmation)"""
+    """Render the actual test page"""
     progress = get_user_progress(request.user, level_name)
     
     context = {
@@ -547,10 +573,9 @@ def render_test_page(request, level_name):
 
 @login_required
 def certificate_view(request, level_name):
-    """Display certificate page - only if all requirements are met"""
+    """Display certificate page"""
     progress = get_user_progress(request.user, level_name)
     
-    # Check requirements
     if not progress.is_completed():
         messages.error(request, '❌ You must complete all 30 days before accessing your certificate.')
         return redirect('learning:level_overview', level_name=level_name)
@@ -571,16 +596,14 @@ def certificate_view(request, level_name):
     }
     return render(request, 'learning/certificate.html', context)
 
-# Paths to your template and fonts
 TEMPLATE_PATH = r"D:\English_learning\learning\static\learning\images\certificate_template.png"
 FONT_PATH_NAME = r"D:\English_learning\learning\static\learning\images\Cinzel-VariableFont_wght.ttf"
 FONT_PATH_DATE = r"D:\English_learning\learning\static\learning\images\Montserrat-VariableFont_wght.ttf"
 
 @login_required
 def generate_certificate_png(request, level_name):
-    """Generate PNG certificate using template with precise positioning"""
+    """Generate PNG certificate using template"""
     try:
-        # Open template
         if not os.path.exists(TEMPLATE_PATH):
             return JsonResponse({'error': 'Template not found'}, status=500)
 
@@ -589,17 +612,14 @@ def generate_certificate_png(request, level_name):
 
         img_width, img_height = img.size
 
-        # USER DATA
         user_name = request.user.get_full_name() or request.user.username
         today = datetime.today().strftime("%d %B %Y")
 
         certificate = UserCertificate.objects.filter(user=request.user, level=level_name).first()
         cert_code = certificate.certificate_code if certificate else generate_certificate_code(request.user, level_name)
 
-        # FONTS (Dynamic sizing for name)
         name_font_size = 72
 
-        # Auto reduce font size if name is long
         while name_font_size > 40:
             name_font = ImageFont.truetype(FONT_PATH_NAME, name_font_size)
             bbox = draw.textbbox((0, 0), user_name, font=name_font)
@@ -612,10 +632,8 @@ def generate_certificate_png(request, level_name):
         date_font = ImageFont.truetype(FONT_PATH_DATE, 36)
         id_font = ImageFont.truetype(FONT_PATH_DATE, 30)
 
-        # COLOR - Same premium dark blue everywhere
         main_color = (31, 58, 95)
 
-        # NAME - Centered on gold line
         bbox = draw.textbbox((0, 0), user_name, font=name_font)
         text_width = bbox[2] - bbox[0]
 
@@ -624,13 +642,11 @@ def generate_certificate_png(request, level_name):
 
         draw.text((x_name, y_name), user_name, fill=main_color, font=name_font)
 
-        # DATE - LEFT SIDE
         date_text = f"Date Issued: {today}"
         x_date = int(img_width * 0.12)
         y_date = int(img_height * 0.88)
         draw.text((x_date, y_date), date_text, fill=main_color, font=date_font)
 
-        # CERTIFICATE ID - RIGHT SIDE
         id_text = f"Certificate ID: {cert_code}"
         bbox = draw.textbbox((0, 0), id_text, font=id_font)
         text_width = bbox[2] - bbox[0]
@@ -638,12 +654,10 @@ def generate_certificate_png(request, level_name):
         y_id = int(img_height * 0.88)
         draw.text((x_id, y_id), id_text, fill=main_color, font=id_font)
 
-        # SAVE IMAGE
         img_buffer = io.BytesIO()
         img.save(img_buffer, format='PNG', dpi=(300, 300))
         img_buffer.seek(0)
 
-        # Save in DB
         certificate, created = UserCertificate.objects.get_or_create(
             user=request.user,
             level=level_name,
@@ -662,7 +676,7 @@ def generate_certificate_png(request, level_name):
 
 @login_required
 def view_certificate_png(request, level_name):
-    """View existing certificate PNG - returns actual PNG image"""
+    """View existing certificate PNG"""
     certificate = UserCertificate.objects.filter(
         user=request.user,
         level=level_name
@@ -674,62 +688,50 @@ def view_certificate_png(request, level_name):
         return generate_certificate_png(request, level_name)
 
 def generate_fallback_certificate(request, level_name, progress, certificate):
-    """Generate a simple fallback certificate if template is missing"""
+    """Generate a simple fallback certificate"""
     try:
-        # Create a new image
         img = Image.new('RGB', (1200, 800), color='white')
         draw = ImageDraw.Draw(img)
         
-        # Draw border
         draw.rectangle([10, 10, 1190, 790], outline='#d4af37', width=5)
         draw.rectangle([20, 20, 1180, 780], outline='#d4af37', width=2)
         
-        # Draw title
         try:
-            font_title = ImageFont.truetype(FONT_PATH_REGULAR, 48)
-            font_name = ImageFont.truetype(FONT_PATH_REGULAR, 60)
-            font_text = ImageFont.truetype(FONT_PATH_REGULAR, 24)
+            font_title = ImageFont.truetype(FONT_PATH_DATE, 48)
+            font_name = ImageFont.truetype(FONT_PATH_DATE, 60)
+            font_text = ImageFont.truetype(FONT_PATH_DATE, 24)
         except:
             font_title = ImageFont.load_default()
             font_name = ImageFont.load_default()
             font_text = ImageFont.load_default()
         
-        # Title
         title = "CERTIFICATE OF GRADUATION"
         bbox = draw.textbbox((0, 0), title, font=font_title)
         text_x = (1200 - (bbox[2] - bbox[0])) // 2
         draw.text((text_x, 80), title, fill='#2d3748', font=font_title)
         
-        # Subtitle
         subtitle = "This certificate is proudly presented to"
         bbox = draw.textbbox((0, 0), subtitle, font=font_text)
         text_x = (1200 - (bbox[2] - bbox[0])) // 2
         draw.text((text_x, 200), subtitle, fill='#718096', font=font_text)
         
-        # Name
         user_name = request.user.get_full_name() or request.user.username
         bbox = draw.textbbox((0, 0), user_name, font=font_name)
         text_x = (1200 - (bbox[2] - bbox[0])) // 2
         draw.text((text_x, 280), user_name, fill='#d4af37', font=font_name)
         
-        # Description
         desc = f"For successfully completing the 30-Day {level_name.capitalize()} English Learning Journey"
         bbox = draw.textbbox((0, 0), desc, font=font_text)
         text_x = (1200 - (bbox[2] - bbox[0])) // 2
         draw.text((text_x, 400), desc, fill='#4a5568', font=font_text)
         
-        # Date
         today = datetime.now().strftime("%B %d, %Y")
         draw.text((100, 650), f"Date: {today}", fill='#718096', font=font_text)
-        
-        # Level
         draw.text((100, 700), f"Level: {level_name.capitalize()}", fill='#718096', font=font_text)
         
-        # Certificate code
         code = certificate.certificate_code if certificate else generate_certificate_code(request.user, level_name)
         draw.text((1200 - 300, 700), f"Code: {code}", fill='#718096', font=font_text)
         
-        # Save to memory
         img_buffer = io.BytesIO()
         img.save(img_buffer, format='PNG')
         img_buffer.seek(0)
@@ -758,19 +760,17 @@ def generate_fallback_certificate(request, level_name, progress, certificate):
 
 @login_required
 def certificate_status_api(request, level_name):
-    """API to check certificate availability status - NO REDIRECTS"""
+    """API to check certificate availability status"""
     progress = get_user_progress(request.user, level_name)
     certificate = UserCertificate.objects.filter(
         user=request.user,
         level=level_name
     ).first()
     
-    # Determine what actions are allowed
     all_days_completed = progress.is_completed()
     test_passed = progress.certificate_issued
     has_certificate = certificate is not None and certificate.certificate_image is not None
     
-    # Determine status message and available actions
     if has_certificate:
         status = 'available'
         message = 'Your graduation certificate is ready!'
@@ -846,8 +846,6 @@ def generate_certificate_code(user, level):
 
 def process_final_test_answers(post_data, level_name):
     """Process final test answers and return score and total questions"""
-    
-    # Updated answer key for 20 questions (removed Q3, Q7, Q8, Q14, Q22)
     answer_key = {
         'q1': 'b', 'q2': 'b', 'q4': 'b', 'q5': 'a', 'q6': 'b',
         'q9': 'b', 'q10': 'b', 'q11': 'b', 'q12': 'c', 'q13': 'b',
@@ -855,7 +853,7 @@ def process_final_test_answers(post_data, level_name):
         'q20': 'b', 'q21': 'b', 'q23': 'b', 'q24': 'b', 'q25': 'b'
     }
     
-    total_questions = len(answer_key)  # This will be 20
+    total_questions = len(answer_key)
     score = 0
     
     for question, correct_answer in answer_key.items():
@@ -878,6 +876,19 @@ def get_progress_api(request, level_name):
         'certificate_issued': progress.certificate_issued,
     })
 
+
+@login_required
+def check_day_completion(request, level_name, day_number):
+    """Check if a specific day is completed"""
+    progress = get_user_progress(request.user, level_name)
+    is_completed = day_number in progress.completed_days
+    
+    return JsonResponse({
+        'success': True,
+        'day': day_number,
+        'is_completed': is_completed,
+        'completed_days_count': len(progress.completed_days),
+    })
 @login_required
 def mark_certificate_downloaded(request, certificate_id):
     """Legacy: Track when user downloads certificate"""
@@ -916,10 +927,18 @@ def reset_test_status(request, level_name):
     progress.certificate_issued_at = None
     progress.save()
     
-    # Optionally delete certificate image
     certificate = UserCertificate.objects.filter(user=request.user, level=level_name).first()
     if certificate:
         certificate.certificate_image = None
         certificate.save()
     
     return JsonResponse({'success': True, 'message': 'Assessment status reset for testing'})
+
+@login_required
+@require_http_methods(["POST"])
+def mark_intro_seen(request, level_name):
+    """Mark that the user has seen the intro for a specific level"""
+    progress = get_user_progress(request.user, level_name)
+    progress.has_seen_intro = True
+    progress.save()
+    return JsonResponse({'success': True})

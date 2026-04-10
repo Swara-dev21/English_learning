@@ -76,6 +76,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'home_page.context_processors.user_profile_context',
                 'home_page.context_processors.global_timer',
+                'home_page.context_processors.learning_progress_context',
             ],
         },
     },

@@ -19,17 +19,41 @@
             <a href="{% url 'home_page:home' %}#why-us" class="nav-link">Why The Fluent Engineer</a>
             <a href="{% url 'home_page:home' %}#how-we-work" class="nav-link">Learning Process</a>
             
-            <!-- Dynamic Test/Result Button -->
             {% if user.is_authenticated %}
-                {% if user.profile.pretest_completed %}
-                    <a href="{% url 'home_page:pretest_results' %}" class="nav-link result-btn">View Result</a>
+
+                {% if not user.profile.pretest_completed %}
+                    <!-- Step 1 -->
+                    <a href="{% url 'home_page:test_introduction' %}" class="nav-link test-btn">
+                        Take Free Assessment
+                    </a>
+
+                {% elif active_learning %}
+
+                    {% if not active_learning.has_seen_intro %}
+                        <!-- Intro NOT completed -->
+                        <a href="{% url 'learning:level_selection' %}" class="nav-link result-btn">
+                            Start Journey
+                        </a>
+
+                    {% else %}
+                        <!-- Intro completed -->
+                        <a href="{% url 'learning:level_overview' active_learning.level %}" class="nav-link result-btn">
+                            Continue Journey
+                        </a>
+                    {% endif %}
+
                 {% else %}
-                    <a href="{% url 'home_page:test_introduction' %}" class="nav-link test-btn">Take Free Assessment</a>
+                    <!-- No learning started -->
+                    <a href="{% url 'home_page:pretest_results' %}" class="nav-link result-btn">
+                        View Result
+                    </a>
                 {% endif %}
+
             {% else %}
-                <a href="{% url 'home_page:login' %}?next={% url 'home_page:test_introduction' %}" class="nav-link test-btn">Take Free Assessment</a>
+                <a href="{% url 'home_page:login' %}?next={% url 'home_page:test_introduction' %}" class="nav-link test-btn">
+                    Take Free Assessment
+                </a>
             {% endif %}
-        </div>
 
         <!-- Profile Section (Right side) - Only shown when logged in -->
         <div class="profile-section">

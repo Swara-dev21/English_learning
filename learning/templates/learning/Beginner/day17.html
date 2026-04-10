@@ -21,7 +21,7 @@
     .lesson-container {
         max-width: 1000px;
         margin: 0 auto;
-        padding: 0 1.5rem 2rem 1.5rem;
+        padding: 0 1rem 1.5rem 1rem;
         position: relative;
         width: 100%;
     }
@@ -30,7 +30,7 @@
         box-sizing: border-box;
         position: relative;
     }
-    .card-body { padding: 1.5rem; width: 100%; box-sizing: border-box; }
+    .card-body { padding: 1.25rem; width: 100%; box-sizing: border-box; }
     
     .lesson-hero {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -59,7 +59,7 @@
         z-index: 0;
     }
     @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
-    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding: 0 1.5rem; }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center; padding: 0 1rem; }
     .day-badge {
         display: inline-block;
         background: rgba(255,255,255,0.2);
@@ -72,7 +72,7 @@
         border: 1px solid rgba(255,255,255,0.3);
     }
     .hero-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         font-weight: 800;
         margin-bottom: 0.4rem;
         background: linear-gradient(135deg, #ffffff, #f3e8ff);
@@ -81,25 +81,105 @@
         color: transparent;
     }
     .power-line {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         font-style: italic;
         margin-top: 0.4rem;
         background: rgba(255,255,255,0.15);
-        padding: 0.5rem 1.2rem;
+        padding: 0.5rem 1rem;
         border-radius: 50px;
         backdrop-filter: blur(8px);
         display: inline-block;
     }
     
+    /* Enhanced Mobile Responsiveness */
     @media (max-width: 768px) {
-        .lesson-container { padding: 0 1rem 1rem 1rem; }
-        .hero-title { font-size: 1.4rem; }
+        .lesson-container { padding: 0 0.75rem 1rem 0.75rem; }
+        .hero-title { font-size: 1.3rem; }
         .card-body { padding: 1rem; }
+        .card-header { padding: 0.75rem 1rem; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+        .card-header h2 { font-size: 1.1rem; }
+        .vocab-table th, .vocab-table td { padding: 0.5rem 0.3rem; font-size: 0.7rem; }
+        .reading-passage, .interactive-passage { padding: 1rem; font-size: 0.9rem; overflow-x: auto; }
+        .clickable-word { display: inline-block; margin: 0.1rem 0; }
+        .recording-controls { flex-direction: column; align-items: stretch; }
+        .record-btn, .modern-record-btn, .yes-btn, .no-btn { justify-content: center; padding: 0.6rem 1rem; min-height: 44px; }
+        .btn-outline { padding: 0.5rem 1rem; font-size: 0.8rem; min-height: 40px; justify-content: center; width: 100%; }
+        .reading-stats { flex-direction: column; gap: 0.5rem; }
+        .stat { text-align: center; background: white; border-radius: 12px; padding: 0.5rem; }
+        .task-content { font-size: 0.85rem; }
+        .game-word .game-question { font-size: 0.9rem; }
+        .habit-input, .grammar-input, .game-input { font-size: 0.85rem; padding: 0.6rem; }
+        .combined-recording-section { padding: 0.75rem; }
+        .checklist li { flex-wrap: wrap; font-size: 0.85rem; }
+        .day-complete-btn { width: 100%; justify-content: center; padding: 0.7rem 1rem; font-size: 1rem; min-height: 50px; }
+        .complete-activity-btn { width: 100%; justify-content: center; min-height: 44px; }
+        .vocab-table-container { overflow-x: auto; }
+        .vocab-table { min-width: 550px; }
+        .grammar-rule { padding: 0.75rem; }
+        .grammar-rule p { font-size: 0.85rem; }
+        .grammar-rule .quiz-option { margin: 0.3rem 0; }
+        .article-box { width: 28px; height: 28px; line-height: 24px; font-size: 0.85rem; }
+        .inline-hint { font-size: 0.7rem; }
+        .quiz-option { flex-wrap: wrap; gap: 0.5rem; }
+        .game-word > div { flex-direction: column; align-items: stretch !important; }
+        .game-word > div > span { margin-bottom: 0.5rem; }
+        .habit-line { padding: 10px 12px; }
+    }
+    
+    @media (max-width: 480px) {
+        .hero-title { font-size: 1.2rem; }
+        .power-line { font-size: 0.75rem; padding: 0.4rem 0.8rem; }
+        .btn-outline { width: 100%; justify-content: center; }
+        .reading-stats .stat-number { font-size: 1rem; }
+        .article-box { width: 24px; height: 24px; line-height: 20px; font-size: 0.75rem; }
+        .grammar-table th, .grammar-table td { padding: 0.5rem; font-size: 0.7rem; }
+        .radio-option { display: block; margin: 0.5rem 0; }
+    }
+    
+    /* Pulse animation for completion buttons */
+    @keyframes softPulse {
+        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); transform: scale(1); }
+        70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); transform: scale(1.02); }
+        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: scale(1); }
+    }
+    
+    .complete-activity-btn:not(:disabled):not(.completed) {
+        animation: softPulse 1.8s infinite ease-in-out;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .complete-activity-btn:not(:disabled):not(.completed):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+        animation: none;
+    }
+    
+    .complete-activity-btn.completed {
+        animation: none;
+        background: #94a3b8;
+        cursor: default;
+        transform: none;
+    }
+    
+    /* Ensure buttons have proper touch targets on mobile */
+    button, 
+    .complete-activity-btn,
+    .record-btn,
+    .modern-record-btn,
+    .yes-btn,
+    .no-btn,
+    .btn-outline,
+    .day-complete-btn,
+    .vocab-audio-btn {
+        min-height: 44px;
+        min-width: 44px;
+        touch-action: manipulation;
     }
     
     .activities-grid { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
     .activity-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #eef2f6; }
-    .card-header { padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .card-header { padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
     .card-header.listening { background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); border-bottom: 2px solid #a5b4fc; }
     .card-header.speaking { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-bottom: 2px solid #c084fc; }
     .card-header.reading { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-bottom: 2px solid #38bdf8; }
@@ -112,18 +192,19 @@
         background: linear-gradient(135deg, #22c55e, #16a34a);
         color: white;
         border: none;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 1.2rem;
         border-radius: 40px;
         cursor: pointer;
         font-weight: 600;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
         margin-top: 1rem;
+        transition: all 0.2s ease;
     }
-    .complete-activity-btn.completed { background: #94a3b8; cursor: default; }
-    .complete-activity-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .complete-activity-btn.completed { background: #94a3b8; cursor: default; animation: none; }
+    .complete-activity-btn:disabled { opacity: 0.5; cursor: not-allowed; animation: none; }
     
     .day-complete-btn {
         background: linear-gradient(135deg, #22c55e, #16a34a);
@@ -139,21 +220,14 @@
         align-items: center;
         gap: 0.75rem;
     }
-    .day-complete-btn:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
-    }
-    .day-complete-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        background: linear-gradient(135deg, #94a3b8, #64748b);
-    }
+    .day-complete-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4); }
+    .day-complete-btn:disabled { opacity: 0.5; cursor: not-allowed; background: linear-gradient(135deg, #94a3b8, #64748b); }
     
     .audio-player { background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 0.5rem 0; text-align: center; width: 100%; box-sizing: border-box; }
     audio { width: 100%; outline: none; }
     
     .quiz-section { background: #fefce8; border-radius: 12px; padding: 1rem; margin-top: 1rem; border-left: 4px solid #eab308; }
-    .quiz-option { margin: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-radius: 8px; cursor: pointer; }
+    .quiz-option { margin: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-radius: 8px; cursor: pointer; flex-wrap: wrap; }
     .quiz-option:hover { background: #fef9e3; }
     .quiz-feedback { margin-top: 0.75rem; padding: 0.75rem; border-radius: 8px; font-weight: 500; display: none; }
     .quiz-feedback.correct { background: #d1fae5; color: #065f46; display: block; }
@@ -162,7 +236,7 @@
     
     .task-box { background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; margin: 0.75rem 0; width: 100%; box-sizing: border-box; }
     .task-header { background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 0.75rem 1rem; border-bottom: 2px solid #e2e8f0; }
-    .task-header .title { font-size: 1rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; }
+    .task-header .title { font-size: 1rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
     .task-content { padding: 0.75rem 1rem; font-size: 0.9rem; color: #334155; line-height: 1.6; }
     
     .recording-controls { display: flex; gap: 1rem; margin: 0.8rem 0; flex-wrap: wrap; align-items: center; }
@@ -217,14 +291,13 @@
     .modern-record-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     
     .reading-passage { background: #f8fafc; border-radius: 12px; padding: 1.5rem; margin: 0.5rem 0; line-height: 1.8; font-size: 1rem; }
-    .interactive-passage { background: white; border-radius: 12px; padding: 1.5rem; margin: 1rem 0; border: 2px solid #e2e8f0; line-height: 1.8; font-size: 1rem; }
+    .interactive-passage { background: white; border-radius: 12px; padding: 1.5rem; margin: 1rem 0; border: 2px solid #e2e8f0; line-height: 1.8; font-size: 1rem; overflow-x: auto; white-space: normal; word-wrap: break-word; }
     .clickable-word { display: inline-block; padding: 0.1rem 0.2rem; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
     .clickable-word:hover { background: #e0e7ff; transform: scale(1.02); }
-    .clickable-word.selected { background-color: #e0e7ff; border: 2px solid #667eea; }
     
     .analysis-instruction { background: #fef9e3; padding: 1rem; border-radius: 12px; margin: 1rem 0; border-left: 4px solid #eab308; }
-    .reading-stats { display: flex; gap: 1rem; margin: 0.8rem 0; padding: 0.8rem; background: #f8fafc; border-radius: 12px; }
-    .stat { text-align: center; flex: 1; }
+    .reading-stats { display: flex; gap: 1rem; margin: 0.8rem 0; padding: 0.8rem; background: #f8fafc; border-radius: 12px; flex-wrap: wrap; }
+    .stat { text-align: center; flex: 1; min-width: 100px; }
     .stat-number { font-size: 1.3rem; font-weight: 700; color: #667eea; }
     .stat-label { font-size: 0.75rem; color: #64748b; }
     
@@ -263,7 +336,7 @@
         border-color: #8b5cf6;
         box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
     }
-    .habit-line { margin-bottom: 0.6rem; }
+    .habit-line { margin-bottom: 0.6rem; background: #f8f9fa; padding: 12px 16px; margin: 12px 0; border-radius: 12px; border-left: 4px solid #2c7da0; }
     .inline-hint { font-size: 0.75rem; color: #f59e0b; margin-top: 0.2rem; margin-bottom: 0.5rem; }
     
     .fix-feedback { margin-top: 0.5rem; padding: 0.5rem; border-radius: 8px; font-size: 0.85rem; display: none; }
@@ -274,9 +347,10 @@
     .vocab-table-container { overflow-x: auto; margin: 0.5rem 0; border-radius: 12px; border: 1px solid #e2e8f0; background: white; }
     .vocab-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
     .vocab-table thead { background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); }
-    .vocab-table th { padding: 0.85rem 0.75rem; text-align: left; font-weight: 600; color: white; font-size: 0.85rem; }
-    .vocab-table td { padding: 0.75rem; border-bottom: 1px solid #e2e8f0; vertical-align: middle; color: #334155; }
+    .vocab-table th { padding: 0.85rem 0.5rem; text-align: left; font-weight: 600; color: white; font-size: 0.8rem; }
+    .vocab-table td { padding: 0.7rem 0.5rem; border-bottom: 1px solid #e2e8f0; vertical-align: middle; color: #334155; }
     .vocab-table .audio-cell { width: 50px; text-align: center; }
+    .vocab-table .check-cell { width: 50px; text-align: center; font-size: 1.1rem; }
     .vocab-audio-btn { background: none; border: none; cursor: pointer; font-size: 1rem; padding: 0.3rem; border-radius: 50%; transition: all 0.2s; color: #8b5cf6; }
     .vocab-audio-btn:hover { background: #ede9fe; transform: scale(1.1); }
     
@@ -284,6 +358,9 @@
     .grammar-rule { background: white; border-radius: 12px; padding: 1rem; margin: 0.75rem 0; }
     .grammar-rule .wrong { color: #dc2626; }
     .grammar-rule .correct { color: #16a34a; font-weight: 600; }
+    .grammar-rule .rule-list { margin-left: 1.5rem; margin-top: 0.5rem; margin-bottom: 0.5rem; }
+    .grammar-rule .rule-list li { margin: 0.5rem 0; line-height: 1.5; }
+    .grammar-rule .example { background: #f0fdf4; padding: 0.5rem; border-radius: 8px; margin: 0.5rem 0; font-family: monospace; }
     
     .game-section { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 20px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #bbf7d0; }
     .game-word { background: white; border-radius: 12px; padding: 1rem; margin: 1rem 0; border: 1px solid #e2e8f0; }
@@ -295,7 +372,7 @@
     .btn-outline:hover { background: #8b5cf6; color: white; }
     
     .checklist { list-style: none; padding: 0; }
-    .checklist li { margin: 0.75rem 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: #f8fafc; border-radius: 10px; }
+    .checklist li { margin: 0.75rem 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: #f8fafc; border-radius: 10px; flex-wrap: wrap; }
     .checklist input[type="checkbox"] { pointer-events: none; opacity: 0.6; cursor: not-allowed; }
     .badge { background: #8b5cf620; border-radius: 30px; padding: 0.2rem 0.8rem; font-size: 0.7rem; font-weight: bold; color: #6d28d9; }
     
@@ -307,8 +384,30 @@
     
     .task-instruction { background: #f8fafc; padding: 0.75rem 1rem; border-radius: 12px; margin-bottom: 1rem; border-left: 4px solid #8b5cf6; }
     
-    .article-box { display: inline-block; width: 32px; height: 32px; border: 2px solid #f59e0b; border-radius: 6px; text-align: center; line-height: 28px; margin: 0 2px; cursor: pointer; background-color: #fef3c7; font-weight: bold; font-size: 1rem; }
-    .specific-the-word.marked-the { text-decoration: underline; text-decoration-color: #22c55e; text-decoration-thickness: 3px; }
+    .article-box { display: inline-block; width: 32px; height: 32px; border: 2px solid #f59e0b; border-radius: 6px; text-align: center; line-height: 28px; margin: 0 2px; cursor: pointer; background-color: #fef3c7; font-weight: bold; font-size: 1rem; vertical-align: middle; }
+    @media (max-width: 480px) { .article-box { width: 28px; height: 28px; line-height: 24px; font-size: 0.85rem; } }
+    
+    .underline-word {
+        text-decoration: underline !important;
+        text-decoration-thickness: 3px !important;
+        cursor: pointer;
+    }
+    .underline-correct {
+        text-decoration: underline !important;
+        text-decoration-thickness: 3px !important;
+        text-decoration-color: #22c55e !important;
+        background-color: #f0fdf4 !important;
+        border-radius: 4px;
+        padding: 0.1rem 0.3rem;
+    }
+    .underline-incorrect {
+        text-decoration: underline !important;
+        text-decoration-thickness: 3px !important;
+        text-decoration-color: #dc2626 !important;
+        background-color: #fee2e2 !important;
+        border-radius: 4px;
+        padding: 0.1rem 0.3rem;
+    }
   </style>
 </head>
 <body>
@@ -339,42 +438,54 @@
                 <audio id="listeningAudio" controls><source src="{% static 'learning/audio/day17.mp3' %}" type="audio/mpeg"></audio>
                 </div>
                 
-                <div class="task-box">
-                    <div class="task-header"><div class="title"><span>🎯</span><span>The Target Test</span></div></div>
-                    <div class="task-content">Choose a small object on the wall. Speak the lines while keeping your eyes fixed on that object. Do not look away until the sentence ends.</div>
-                </div>
-                
-                <div class="combined-recording-section">
-                    <div style="font-weight: 600; margin-bottom: 0.5rem;">🎙️ The Record & Compare</div>
-                    <div class="recording-controls">
-                        <button id="listeningRecordBtn" class="record-btn"> Start Recording</button>
-                        <button id="listeningStopBtn" class="record-btn" style="background: #64748b; display: none;"> Stop Recording</button>
-                    </div>
-                    <div id="listeningPlaybackCard" style="display: none;"><audio id="listeningPlayback" controls style="width: 100%;"></audio></div>
-                    <div id="comparisonSection" style="display: none;">
-                        <div class="comparison-message">Does your voice sound more "stable" when your eyes are not moving around?</div>
-                        <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
-                            <button id="yesComparisonBtn" class="yes-btn">✓ Yes, voice sounds stable!</button>
-                            <button id="noComparisonBtn" class="no-btn">✗ No, voice still shaky</button>
+                <div id="listeningTextSection" style="display: none;">
+                    <div class="task-box" style="margin-top: 1rem;">
+                        <div class="task-header"><div class="title"><span>📝</span><span>Listening Text</span></div></div>
+                        <div class="task-content" style="font-style: italic; background: #fef9e3;">
+                            "I maintain eye contact… while speaking… It shows confidence… and honesty… People trust me more… Eye contact helps… build strong relationships…"
                         </div>
-                        <div id="comparisonFeedback" style="margin-top: 0.5rem;"></div>
                     </div>
                 </div>
                 
-                <div class="quiz-section">
-                    <p><strong>🧠 Quick Listening Check</strong></p>
-                    <div><p><strong>1. What does eye contact show?</strong></p>
-                        <label class="quiz-option"><input type="radio" name="q1" value="Shyness"> Shyness</label>
-                        <label class="quiz-option"><input type="radio" name="q1" value="Confidence and honesty"> Confidence and honesty</label>
+                <div id="postAudioListeningContent" style="display: none;">
+                    <div class="task-box">
+                        <div class="task-header"><div class="title"><span>🎯</span><span>The Target Test</span></div></div>
+                        <div class="task-content">Choose a small object on the wall. Speak the lines while keeping your eyes fixed on that object. Do not look away until the sentence ends.</div>
                     </div>
-                    <div><p><strong>2. What does it help build?</strong></p>
-                        <label class="quiz-option"><input type="radio" name="q2" value="Stress"> Stress</label>
-                        <label class="quiz-option"><input type="radio" name="q2" value="Strong relationships"> Strong relationships</label>
+                    
+                    <div class="combined-recording-section">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">🎙️ The Record & Compare</div>
+                        <div class="recording-controls">
+                            <button id="listeningRecordBtn" class="record-btn"> Start Recording</button>
+                            <button id="listeningStopBtn" class="record-btn" style="background: #64748b; display: none;"> Stop Recording</button>
+                        </div>
+                        <div id="listeningPlaybackCard" style="display: none;"><audio id="listeningPlayback" controls style="width: 100%;"></audio></div>
+                        <div id="comparisonSection" style="display: none;">
+                            <div class="comparison-message">Does your voice sound more "stable" when your eyes are not moving around?</div>
+                            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                <button id="yesComparisonBtn" class="yes-btn">✓ Yes, voice sounds stable!</button>
+                                <button id="noComparisonBtn" class="no-btn">✗ No, voice still shaky</button>
+                            </div>
+                            <div id="comparisonFeedback" style="margin-top: 0.5rem;"></div>
+                        </div>
                     </div>
-                    <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                    
+                    <div class="quiz-section">
+                        <p><strong>🧠 Quick Listening Check</strong></p>
+                        <div><p><strong>1. What does eye contact show?</strong></p>
+                            <label class="quiz-option"><input type="radio" name="q1" value="Shyness"> Shyness</label>
+                            <label class="quiz-option"><input type="radio" name="q1" value="Confidence and honesty"> Confidence and honesty</label>
+                        </div>
+                        <div><p><strong>2. What does it help build?</strong></p>
+                            <label class="quiz-option"><input type="radio" name="q2" value="Stress"> Stress</label>
+                            <label class="quiz-option"><input type="radio" name="q2" value="Strong relationships"> Strong relationships</label>
+                        </div>
+                        <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                    </div>
+                    
+                    <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answer</button>
                 </div>
                 
-                <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answer</button>
                 <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
                     <button class="complete-activity-btn" id="completeListeningBtn" disabled>✓ Mark Listening as Complete</button>
                 </div>
@@ -386,7 +497,7 @@
             <div class="card-header speaking">
                 <h2>🗣️ 2. Speaking Activity · The "Project Presentation"</h2>
             </div>
-            <em>Presenting a complex idea requires you to look at your audience, not your slides</em>
+            <em style="padding: 0 1.25rem;">Presenting a complex idea requires you to look at your audience, not your slides</em>
             <div class="card-body">
                 <div class="task-box">
                     <div class="task-header"><div class="title"><span>🎯</span><span>The Task</span></div></div>
@@ -395,7 +506,7 @@
                 
                 <div style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border-radius: 20px; overflow: hidden; border: 1px solid #e9d5ff; margin-top: 1rem;">
                     <div style="background: linear-gradient(135deg, #f5f0ff 0%, #ede9fe 100%); padding: 1rem 1.5rem; border-bottom: 2px solid #c4b5fd;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                             <span style="font-size: 1.3rem;">🗣️</span>
                             <div><div style="font-weight: 800; font-size: 1rem; color: #5b21b6;">The Exercise</div>
                             <div style="font-size: 0.85rem; color: #6d28d9;">Speak these lines out loud. Keep your head up and eyes forward:</div></div>
@@ -403,32 +514,32 @@
                     </div>
                     
                     <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: white;">
-                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">1</div>
-                        <div><div style="font-weight: 700;">"I envisage (Day 13) that this design will have surpassed all safety standards by next month."</div></div></div>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:500;">1</div>
+                        <div><div style="font-weight: 500;">"I envisage that this design will have surpassed all safety standards by next month."</div></div></div>
                         <div style="margin-top: 1rem;"><button id="speakingRecordBtn1" class="modern-record-btn"> Record</button><button id="speakingStopBtn1" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="speakingPlaybackCard1" style="display:none;"><audio id="speakingPlayback1" controls style="width:100%;"></audio></div></div>
                     </div>
                     
                     <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: #fef9ff;">
-                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">2</div>
-                        <div><div style="font-weight: 700;">"Please observe the intricate details on the left side." <span style="font-size:0.75rem;">(Smart substitute for very small/detailed)</span></div></div></div>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:500;">2</div>
+                        <div><div style="font-weight: 500;">"Please observe the intricate details on the left side."</div></div></div>
                         <div style="margin-top: 1rem;"><button id="speakingRecordBtn2" class="modern-record-btn"> Record</button><button id="speakingStopBtn2" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="speakingPlaybackCard2" style="display:none;"><audio id="speakingPlayback2" controls style="width:100%;"></audio></div></div>
                     </div>
                     
                     <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: white;">
-                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">3</div>
-                        <div><div style="font-weight: 700;">"I will be monitoring (Day 11) the performance the entire time."</div></div></div>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:500;">3</div>
+                        <div><div style="font-weight: 500;">"I will be monitoring the performance the entire time."</div></div></div>
                         <div style="margin-top: 1rem;"><button id="speakingRecordBtn3" class="modern-record-btn"> Record</button><button id="speakingStopBtn3" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="speakingPlaybackCard3" style="display:none;"><audio id="speakingPlayback3" controls style="width:100%;"></audio></div></div>
                     </div>
                     
                     <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: #fef9ff;">
-                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">4</div>
-                        <div><div style="font-weight: 700;">"The consensus among the team is very positive." <span style="font-size:0.75rem;">(Smart substitute for very much agreement)</span></div></div></div>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:500;">4</div>
+                        <div><div style="font-weight: 500;">"The consensus among the team is very positive."</div></div></div>
                         <div style="margin-top: 1rem;"><button id="speakingRecordBtn4" class="modern-record-btn"> Record</button><button id="speakingStopBtn4" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="speakingPlaybackCard4" style="display:none;"><audio id="speakingPlayback4" controls style="width:100%;"></audio></div></div>
                     </div>
                     
                     <div style="padding: 1.2rem 1.5rem; background: white;">
-                        <div style="display: flex; gap: 0.75rem;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700;">5</div>
-                        <div><div style="font-weight: 700;">"By the time we launch, we will have conducted a thorough audit."</div></div></div>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;"><div style="background:#ede9fe; width:28px; height:28px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:500;">5</div>
+                        <div><div style="font-weight: 500;">"By the time we launch, we will have conducted a thorough audit."</div></div></div>
                         <div style="margin-top: 1rem;"><button id="speakingRecordBtn5" class="modern-record-btn"> Record</button><button id="speakingStopBtn5" class="modern-record-btn" style="background:#a78bfa; display:none;"> Stop</button><div id="speakingPlaybackCard5" style="display:none;"><audio id="speakingPlayback5" controls style="width:100%;"></audio></div></div>
                     </div>
                 </div>
@@ -450,9 +561,9 @@
                 
                 <div class="analysis-instruction">
                     <strong>🔍 Analysis Task:</strong><br><br>
-                    • <span style="background: #fef3c7; padding: 0.1rem 0.3rem; border: 2px solid #f59e0b;">Box</span> the places where no article is used (marked with — above) - click on □ boxes and select "—"<br>
-                    • <span style="text-decoration: underline;">Underline</span> the "Specific The" (e.g The foundation) - Click on ANY words to underline<br><br>
-                    <em style="font-size: 0.85rem;">Step 1: Click on □ boxes to select Zero Article → Step 2: Click on ANY words to underline → Click "Check Answers" to see results</em>
+                    • <span style="background: #fef3c7; padding: 0.1rem 0.3rem; border: 2px solid #f8f7f5;"></span>👉 Click on each box and choose the correct article (a, an, the, or —)<br>
+                    • <span style="text-decoration: underline;">Underline</span> the "Specific The" (e.g The foundation, The manager) - Click on ANY words to underline<br><br>
+                    
                 </div>
                 
                 <div class="reading-stats">
@@ -463,7 +574,7 @@
                     </div>
                     <div class="stat">
                         <div class="stat-number" id="specificTheCount">0</div>
-                        <div class="stat-label">Specific "The" Phrases Found</div>
+                        <div class="stat-label">Specific "The" Words Underlined</div>
                         <div style="font-size: 0.7rem; color: #64748b;">Need: 5</div>
                     </div>
                 </div>
@@ -487,15 +598,15 @@
             </div>
             <div class="card-body">
                 <div class="writing-prompt">
-                    <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">✨ Part A: The "Very" Replacement Challenge</h3>
-                    <p>Instead of using the word "very," use these Smart Words from previous days and today:</p>
-                    <p>1. "The drawing is very detailed." → "The drawing is <input type="text" id="replace1" class="habit-input" style="width: auto; display: inline-block; margin: 0 0.5rem; max-width: 180px;" placeholder="smart word">."</p>
+                    <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">✨ Part A: The "Very" Replacement Challenge</h3><br>
+                    <p>Instead of using the word "very," use these Smart Words from previous days and today:</p><br>
+                    <p>1. "The drawing is very detailed." → "The drawing is <input type="text" id="replace1" class="habit-input" style="width: auto; display: inline-block; margin: 0 0.5rem; max-width: 180px;" placeholder="smart word">."</p><br>
                     <div id="replace1-feedback" class="fix-feedback"></div>
-                    <p>2. "The result is very big/important." → "The result is <input type="text" id="replace2" class="habit-input" style="width: auto; display: inline-block; margin: 0 0.5rem; max-width: 180px;" placeholder="smart word">."</p>
+                    <br><p>2. "The result is very important." → "The result is <input type="text" id="replace2" class="habit-input" style="width: auto; display: inline-block; margin: 0 0.5rem; max-width: 180px;" placeholder="smart word">."</p><br>
                     <div id="replace2-feedback" class="fix-feedback"></div>
-                    <p>3. "He is very friendly." → "He is <input type="text" id="replace3" class="habit-input" style="width: auto; display: inline-block; margin: 0 0.5rem; max-width: 180px;" placeholder="smart word">."</p>
+                    <br><p>3. "He is very friendly." → "He is <input type="text" id="replace3" class="habit-input" style="width: auto; display: inline-block; margin: 0 0.5rem; max-width: 180px;" placeholder="smart word">."</p><br>
                     <div id="replace3-feedback" class="fix-feedback"></div>
-                    <p>4. "The situation is very difficult." → "The situation is <input type="text" id="replace4" class="habit-input" style="width: auto; display: inline-block; margin: 0 0.5rem; max-width: 180px;" placeholder="smart word">."</p>
+                    <br><p>4. "The situation is very difficult." → "The situation is <input type="text" id="replace4" class="habit-input" style="width: auto; display: inline-block; margin: 0 0.5rem; max-width: 180px;" placeholder="smart word">."</p><br>
                     <div id="replace4-feedback" class="fix-feedback"></div>
                 </div>
                 
@@ -511,7 +622,7 @@
                 
                 <div id="writingFeedback" class="quiz-feedback"></div>
                 
-                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
                     <button class="btn-outline" id="checkWritingBtn">✓ Check Answers</button>
                     <button class="btn-outline" id="resetWritingBtn">⟳ Reset Answers</button>
                 </div>
@@ -527,23 +638,23 @@
             <div class="card-header vocabulary">
                 <h2>📘 5. Vocabulary of the Day · The "Precision" List</h2>
             </div>
-            <em>Stop saying "Very..."! Use these professional substitutes:</em>
+            <em style="padding: 0 1.25rem;">Stop saying "Very..."! Use these professional substitutes:</em>
             <div class="card-body">
                 <div class="vocab-table-container">
                     <table class="vocab-table">
-                        <thead><tr><th>🔊</th><th>Instead of "Very..."</th><th>Smart Word</th><th>Pronunciation</th><th>Meaning</th><th>Synonym</th></tr></thead>
+                        <thead><th>🔊</th><th>✅</th><th>Instead of "Very..."</th><th>Smart Word</th><th>Pronunciation</th><th>Meaning</th><th>Synonym</th></thead>
                         <tbody>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Intricate')">🔊</button></span><td>Very detailed</span><td><strong>Intricate</strong></span><td><code>/ˈɪn.trɪ.kət/</code></span><td>Having many small parts</span><td>Complex</span></tr>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Lucid')">🔊</button></span><td>Very clear</span><td><strong>Lucid</strong></span><td><code>/ˈluː.sɪd/</code></span><td>Easy to understand</span><td>Transparent</span></tr>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Pivotal')">🔊</button></span><td>Very important</span><td><strong>Pivotal</strong></span><td><code>/ˈpɪv.ə.təl/</code></span><td>Of crucial importance</span><td>Essential</span></tr>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Rapid')">🔊</button></span><td>Very fast</span><td><strong>Rapid</strong></span><td><code>/ˈræp.ɪd/</code></span><td>Happening in a short time</span><td>Swift</span></tr>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" onclick="playAudio('Convicted')">🔊</button></span><td>Very sure</span><td><strong>Convicted</strong></span><td><code>/kənˈvɪk.tɪd/</code></span><td>Firmly believing in something</span><td>Certain</span></tr>
+                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Intricate">🔊</button></span><td class="check-cell" id="check-intricate">⬜</span><td class="word-cell">Very detailed</span><td class="word-cell"><strong>Intricate</strong></span><td class="word-cell"><code>/ˈɪn.trɪ.kət/</code></span><td class="word-cell">Having many small parts</span><td class="word-cell">Complex</span></tr>
+                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Lucid">🔊</button></span><td class="check-cell" id="check-lucid">⬜</span><td class="word-cell">Very clear</span><td class="word-cell"><strong>Lucid</strong></span><td class="word-cell"><code>/ˈluː.sɪd/</code></span><td class="word-cell">Easy to understand</span><td class="word-cell">Transparent</span></tr>
+                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Pivotal">🔊</button></span><td class="check-cell" id="check-pivotal">⬜</span><td class="word-cell">Very important</span><td class="word-cell"><strong>Pivotal</strong></span><td class="word-cell"><code>/ˈpɪv.ə.təl/</code></span><td class="word-cell">Of crucial importance</span><td class="word-cell">Essential</span></tr>
+                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Rapid">🔊</button></span><td class="check-cell" id="check-rapid">⬜</span><td class="word-cell">Very fast</span><td class="word-cell"><strong>Rapid</strong></span><td class="word-cell"><code>/ˈræp.ɪd/</code></span><td class="word-cell">Happening in a short time</span><td class="word-cell">Swift</span></tr>
+                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Convicted">🔊</button></span><td class="check-cell" id="check-convicted">⬜</span><td class="word-cell">Very sure</span><td class="word-cell"><strong>Convicted</strong></span><td class="word-cell"><code>/kənˈvɪk.tɪd/</code></span><td class="word-cell">Firmly believing in something</span><td class="word-cell">Certain</span></tr>
                         </tbody>
                     </table>
                 </div>
                 
                 <div class="power-word-section">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e; flex-wrap: wrap;">
                         <span>🔥</span><span>POWER WORD OF THE DAY: "UNWAVERING"</span>
                     </div>
                     <p><strong>Pronunciation:</strong> /ʌnˈweɪvərɪŋ/ (Un-WAY-ver-ing)</p>
@@ -552,7 +663,7 @@
                 </div>
                 
                 <div class="idiom-section">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #075985;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #075985; flex-wrap: wrap;">
                         <span>💡</span><span>Idiom of the Day: "See eye to eye"</span>
                     </div>
                     <p><strong>Marathi Meaning:</strong> पूर्णपणे सहमत असणे.</p>
@@ -560,25 +671,36 @@
                     <p><strong>Example:</strong> "My boss and I don't always see eye to eye on the design, but we respect each other."</p>
                 </div>
                 
-                <div style="display: flex; justify-content: flex-end;">
-                    <button class="complete-activity-btn" id="completeVocabularyBtn">✓ Mark Vocabulary as Complete</button>
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                    <button class="complete-activity-btn" id="completeVocabularyBtn" disabled>✓ Mark Vocabulary as Complete</button>
                 </div>
             </div>
         </div>
         
-        <!-- ==================== 6. GRAMMAR SECTION ==================== -->
+        <!-- ==================== 6. GRAMMAR SECTION - ENHANCED INTERFACE ==================== -->
         <div class="grammar-section" id="grammar-card">
             <h3 style="margin: 0 0 1rem 0;">🧠 6. Grammar Hack: The Advanced Article Compass</h3>
             <p>Knowing when NOT to use an article is as important as knowing when to use one.</p>
             
             <div class="grammar-rule">
                 <p><strong>🔹 The Hack:</strong></p>
-                <p>• <strong>The "Zero Article" Rule (No A/An/The):</strong></p>
-                <p>&nbsp;&nbsp;&nbsp;✓ <strong>General Plurals:</strong> I like — cars. (Not "The cars" in general)</p>
-                <p>&nbsp;&nbsp;&nbsp;✓ <strong>Abstract Ideas:</strong> I value — honesty. (Not "The honesty")</p>
-                <p>&nbsp;&nbsp;&nbsp;✓ <strong>Proper Names:</strong> I live in — Nashik. (Not "The Nashik")</p>
-                <p>• <strong>The "Unique" The:</strong> Use for things that are "only one": The Sun, The Principal, The Internet</p>
-                <p>• <strong>The "Mentioned Before" Rule:</strong> I have a plan. The plan is simple.</p>
+                
+                <div style="background: #f0fdf4; padding: 0.75rem; border-radius: 12px; margin: 0.5rem 0;">
+                    <p><strong>• The "Zero Article" Rule (No A/An/The):</strong></p>
+                    <ul class="rule-list" style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>✓ <strong>General Plurals:</strong> I like <span class="upgraded-word">—</span> cars. (Not "The cars" in general)</li>
+                        <li>✓ <strong>Abstract Ideas:</strong> I value <span class="upgraded-word">—</span> honesty. (Not "The honesty")</li>
+                        <li>✓ <strong>Proper Names:</strong> I live in <span class="upgraded-word">—</span> Nashik. (Not "The Nashik")</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #eff6ff; padding: 0.75rem; border-radius: 12px; margin: 0.5rem 0;">
+                    <p><strong>• The "Unique" The:</strong> Use for things that are "only one": <strong>The Sun</strong>, <strong>The Principal</strong>, <strong>The Internet</strong></p>
+                </div>
+                
+                <div style="background: #fef3c7; padding: 0.75rem; border-radius: 12px; margin: 0.5rem 0;">
+                    <p><strong>• The "Mentioned Before" Rule:</strong> I have <strong>a plan</strong>. <strong>The plan</strong> is simple.</p>
+                </div>
             </div>
             
             <div class="grammar-rule">
@@ -620,7 +742,7 @@
                 <div style="margin-bottom: 1rem; padding: 0.5rem 0;">
                     <p><strong>4.</strong> We discussed __________ pollution in __________ Mumbai.</p>
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                             <span style="font-weight: 500;">First blank:</span>
                             <label class="quiz-option"><input type="radio" name="grammar4a" value="a"> a</label>
                             <label class="quiz-option"><input type="radio" name="grammar4a" value="an"> an</label>
@@ -629,7 +751,7 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-top: 0.75rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                             <span style="font-weight: 500;">Second blank:</span>
                             <label class="quiz-option"><input type="radio" name="grammar4b" value="a"> a</label>
                             <label class="quiz-option"><input type="radio" name="grammar4b" value="an"> an</label>
@@ -641,7 +763,7 @@
                 </div>
             </div>
             
-            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
                 <button class="btn-outline" id="checkGrammarBtn">✓ Check Answers</button>
                 <button class="btn-outline" id="resetGrammarBtn">⟳ Reset Answers</button>
             </div>
@@ -657,16 +779,16 @@
             <h3 style="margin: 0 0 1rem 0;">🎲 7. Solo Game: "The Visionary Swap" 🧩</h3>
             
             <div class="game-word">
-                <div class="game-question"><strong>🔤 Part A: Smart Swap</strong></div>
-                <div><p>1. "The explanation was very clear."</p>
+                <div class="game-question"><strong>🔤 Part A: Smart Swap</strong></div><br>
+                <div><p>1. "The explanation was very clear."</p><br>
                     <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">→ "The explanation was <input type="text" id="game1" class="game-input" style="width: 200px;" placeholder="smart word">."</div>
                     <div id="game1Feedback" class="fix-feedback"></div>
                 </div>
-                <div><p>2. "This is a very important step."</p>
+                <br><div><p>2. "This is a very important step."</p>
                     <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">→ "This is a <input type="text" id="game2" class="game-input" style="width: 200px;" placeholder="smart word"> step."</div>
                     <div id="game2Feedback" class="fix-feedback"></div>
                 </div>
-                <div><p>3. "The movement was very fast."</p>
+                <br><div><p>3. "The movement was very fast."</p>
                     <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">→ "The movement was <input type="text" id="game3" class="game-input" style="width: 200px;" placeholder="smart word">."</div>
                     <div id="game3Feedback" class="fix-feedback"></div>
                 </div>
@@ -676,15 +798,15 @@
                 <div class="game-question"><strong>🔍 Part B: The "The" Logic</strong></div>
                 <div style="margin-top: 0.5rem;">
                     <p>"Please pass me the wrench." Why is "the" used here?</p>
-                    <div style="display: flex; gap: 2rem; margin-top: 0.5rem;">
-                        <label class="quiz-option"><input type="radio" name="theLogic" value="any">  Because any wrench is okay</label>
-                        <label class="quiz-option"><input type="radio" name="theLogic" value="specific">  Because I am pointing at a specific wrench</label>
+                    <div style="display: flex; gap: 2rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                        <label class="quiz-option"><input type="radio" name="theLogic" value="any"> Because any wrench is okay</label>
+                        <label class="quiz-option"><input type="radio" name="theLogic" value="specific"> Because I am pointing at a specific wrench</label>
                     </div>
                     <div id="game4Feedback" class="fix-feedback"></div>
                 </div>
             </div>
             
-            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
                 <button class="btn-outline" id="checkGameBtn">✓ Check All Answers</button>
                 <button class="btn-outline" id="resetGameBtn">⟳ Reset Answers</button>
             </div>
@@ -705,7 +827,8 @@
                     <li><input type="checkbox" id="chk1" disabled> <label> I practiced the "Project Presentation" while maintaining eye contact.</label></li>
                     <li><input type="checkbox" id="chk2" disabled> <label> I identified where the "Zero Article" was used in the reading.</label></li>
                     <li><input type="checkbox" id="chk3" disabled> <label> I completed the "Very" Replacement Challenge.</label></li>
-                    <li><input type="checkbox" id="chk5" disabled> <label> I looked at myself in the eye while practicing today.</label></li>
+                    <li><input type="checkbox" id="chk4" disabled> <label> I completed the grammar activity correctly.</label></li>
+                    <li><input type="checkbox" id="chk5" disabled> <label> I listened to all vocabulary words and completed the vocabulary activity.</label></li>
                     <li><input type="checkbox" id="chk6" disabled> <label> I completed the listening activity with stable voice.</label></li>
                     <li><input type="checkbox" id="chk7" disabled> <label> I completed the "Visionary Swap" game correctly.</label></li>
                 </ul>
@@ -725,6 +848,16 @@
     let completedActivities = 0;
     let activityCompleted = { listening: false, speaking: false, reading: false, writing: false, vocabulary: false, game: false, grammar: false };
     let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+    
+    // Vocabulary variables
+    let vocabWordsList = ['Intricate', 'Lucid', 'Pivotal', 'Rapid', 'Convicted'];
+    let vocabHeard = {
+        'Intricate': false,
+        'Lucid': false,
+        'Pivotal': false,
+        'Rapid': false,
+        'Convicted': false
+    };
     
     // Reading variables
     let articleSelections = {};
@@ -751,13 +884,15 @@
     let gameAllCorrect = false;
     
     // Listening validation
+    let listeningMediaRecorder, listeningAudioChunks = [], listeningStream = null;
     let hasListeningRecording = false;
     let listeningVoiceConfirmed = false;
     let listeningQuizCorrect = false;
     let listeningQuizAnswers = { q1: null, q2: null };
-    
-    // Power word validation
-    let powerWordCompleted = false;
+    let masterAudioFinished = false;
+    const listeningAudioElem = document.getElementById('listeningAudio');
+    const listeningTextSection = document.getElementById('listeningTextSection');
+    const postAudioListeningContent = document.getElementById('postAudioListeningContent');
     
     // ==================== Helper Functions ====================
     function getCookie(name) {
@@ -776,23 +911,19 @@
     }
     csrftoken = getCookie('csrftoken');
     
-   function updateChecklistProgress() {
-    // Only use checkboxes that actually exist in HTML
-    const checkboxes = ['chk1', 'chk2', 'chk3', 'chk5', 'chk6', 'chk7'];
-    let completedCount = 0;
-    checkboxes.forEach(id => { 
-        const chk = document.getElementById(id);
-        if (chk && chk.checked) completedCount++; 
-    });
-    const progressSpan = document.getElementById('progressCounter');
-    if (progressSpan) progressSpan.innerText = `${completedCount}/7 completed`;
-    
-    const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-    if (dayCompleteBtn) {
-        dayCompleteBtn.disabled = completedCount !== 7;
-        dayCompleteBtn.style.opacity = completedCount === 7 ? '1' : '0.5';
+    function updateChecklistProgress() {
+        const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6', 'chk7'];
+        let completedCount = 0;
+        checkboxes.forEach(id => { const chk = document.getElementById(id); if (chk && chk.checked) completedCount++; });
+        const progressSpan = document.getElementById('progressCounter');
+        if (progressSpan) progressSpan.innerText = `${completedCount}/7 completed`;
+        
+        const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+        if (dayCompleteBtn) {
+            dayCompleteBtn.disabled = completedCount !== 7;
+            dayCompleteBtn.style.opacity = completedCount === 7 ? '1' : '0.5';
+        }
     }
-}
     
     function markActivityComplete(activityId, checklistId) {
         if (activityCompleted[activityId]) return;
@@ -828,6 +959,14 @@
     }
     
     // ==================== Vocabulary Audio ====================
+    function updateVocabularyButtonStatus() {
+        const allHeard = vocabWordsList.every(word => vocabHeard[word] === true);
+        const vocabCompleteBtn = document.getElementById('completeVocabularyBtn');
+        if (vocabCompleteBtn) {
+            vocabCompleteBtn.disabled = !allHeard;
+        }
+    }
+    
     function playAudio(word) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(word);
@@ -844,10 +983,45 @@
         }
         if (window.speechSynthesis.getVoices().length === 0) window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
         else setVoiceAndSpeak();
+        
+        if (vocabHeard.hasOwnProperty(word)) {
+            vocabHeard[word] = true;
+            const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
+            if (checkCell) {
+                checkCell.innerHTML = '✅';
+                checkCell.style.color = '#16a34a';
+            }
+            updateVocabularyButtonStatus();
+        }
     }
     
+    document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const word = this.getAttribute('data-word');
+            playAudio(word);
+        });
+    });
+    
+    document.getElementById('completeVocabularyBtn')?.addEventListener('click', () => {
+        const allHeard = vocabWordsList.every(word => vocabHeard[word] === true);
+        if (!allHeard) {
+            alert('Please listen to all vocabulary words before marking as complete.');
+            return;
+        }
+        markActivityComplete('vocabulary', 'chk5');
+    });
+    
     // ==================== Listening Activity ====================
-    let listeningMediaRecorder, listeningAudioChunks = [], listeningStream = null;
+    if (listeningAudioElem) {
+        listeningAudioElem.addEventListener('ended', function() {
+            if (!masterAudioFinished) {
+                masterAudioFinished = true;
+                if (listeningTextSection) listeningTextSection.style.display = 'block';
+                if (postAudioListeningContent) postAudioListeningContent.style.display = 'block';
+            }
+        });
+    }
+    
     const listeningRecordBtn = document.getElementById('listeningRecordBtn');
     const listeningStopBtn = document.getElementById('listeningStopBtn');
     const listeningPlayback = document.getElementById('listeningPlayback');
@@ -859,6 +1033,12 @@
     const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
     const listeningCompleteBtn = document.getElementById('completeListeningBtn');
     const listeningQuizFeedback = document.getElementById('listeningQuizFeedback');
+    
+    function updateListeningCompleteButton() {
+        if (listeningCompleteBtn) {
+            listeningCompleteBtn.disabled = !(hasListeningRecording && listeningVoiceConfirmed && listeningQuizCorrect && masterAudioFinished);
+        }
+    }
     
     if (listeningRecordBtn) {
         listeningRecordBtn.addEventListener('click', async () => {
@@ -941,7 +1121,10 @@
                 listeningQuizFeedback.className = 'quiz-feedback correct';
                 listeningQuizCorrect = true;
             } else {
-                listeningQuizFeedback.innerHTML = '❌ Incorrect. Listen again.';
+                let errorMsg = '❌ Incorrect. ';
+                if (listeningQuizAnswers.q1 !== 'Confidence and honesty') errorMsg += 'Check question 1 again. ';
+                if (listeningQuizAnswers.q2 !== 'Strong relationships') errorMsg += 'Check question 2 again.';
+                listeningQuizFeedback.innerHTML = errorMsg;
                 listeningQuizFeedback.className = 'quiz-feedback incorrect';
                 listeningQuizCorrect = false;
             }
@@ -950,13 +1133,9 @@
         });
     }
     
-    function updateListeningCompleteButton() {
-        if (listeningCompleteBtn) {
-            listeningCompleteBtn.disabled = !(hasListeningRecording && listeningVoiceConfirmed && listeningQuizCorrect);
-        }
-    }
     if (listeningCompleteBtn) {
         listeningCompleteBtn.addEventListener('click', () => {
+            if (!masterAudioFinished) { alert('Please listen to the complete master audio first.'); return; }
             if (!hasListeningRecording) { alert('Please record your voice first.'); return; }
             if (!listeningVoiceConfirmed) { alert('Please confirm your voice sounds stable.'); return; }
             if (!listeningQuizCorrect) { alert('Please answer both quiz questions correctly.'); return; }
@@ -972,6 +1151,7 @@
         const playbackCard = document.getElementById(`speakingPlaybackCard${num}`);
         const playback = document.getElementById(`speakingPlayback${num}`);
         let mediaRecorder, audioChunks = [];
+        if (!recordBtn) return;
         recordBtn.addEventListener('click', async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -997,7 +1177,9 @@
                 recordBtn.classList.add('recording');
             } catch (err) { alert('Unable to access microphone.'); }
         });
-        stopBtn.addEventListener('click', () => { if (mediaRecorder?.state === 'recording') mediaRecorder.stop(); });
+        if (stopBtn) {
+            stopBtn.addEventListener('click', () => { if (mediaRecorder?.state === 'recording') mediaRecorder.stop(); });
+        }
     }
     for (let i = 1; i <= 5; i++) setupSpeakingRecording(i);
     
@@ -1063,17 +1245,7 @@
                 boxSpan.dataset.spot = segment.spot;
                 boxSpan.dataset.selected = '';
                 boxSpan.style.display = 'inline-block';
-                boxSpan.style.width = '32px';
-                boxSpan.style.height = '32px';
-                boxSpan.style.border = '2px solid #f59e0b';
-                boxSpan.style.borderRadius = '6px';
-                boxSpan.style.textAlign = 'center';
-                boxSpan.style.lineHeight = '28px';
-                boxSpan.style.margin = '0 2px';
                 boxSpan.style.cursor = 'pointer';
-                boxSpan.style.backgroundColor = '#fef3c7';
-                boxSpan.style.fontWeight = 'bold';
-                boxSpan.style.fontSize = '1rem';
                 boxSpan.onclick = () => showArticleOptions(boxSpan);
                 container.appendChild(boxSpan);
                 articleBoxes.push(boxSpan);
@@ -1087,15 +1259,20 @@
     function toggleWordUnderline(element) {
         if (selectedUnderlinedWords.has(element)) {
             selectedUnderlinedWords.delete(element);
-            element.classList.remove('selected');
-            element.style.backgroundColor = '';
-            element.style.border = '';
+            element.classList.remove('underline-word');
             element.style.textDecoration = '';
+            element.style.backgroundColor = '';
+            element.style.borderRadius = '';
+            element.style.padding = '';
         } else {
             selectedUnderlinedWords.add(element);
-            element.classList.add('selected');
-            element.style.backgroundColor = '#e0e7ff';
-            element.style.border = '2px solid #667eea';
+            element.classList.add('underline-word');
+            element.style.textDecoration = 'underline';
+            element.style.textDecorationThickness = '3px';
+            element.style.textDecorationColor = '#3b82f6';
+            element.style.backgroundColor = '#eff6ff';
+            element.style.borderRadius = '4px';
+            element.style.padding = '0.1rem 0.3rem';
         }
         document.getElementById('specificTheCount').innerText = selectedUnderlinedWords.size;
     }
@@ -1160,7 +1337,6 @@
     }
     
     function checkReadingAnswers() {
-        // Check if any article boxes are still unselected
         let anyUnselected = false;
         for (let spot of Object.keys(correctArticleAnswers)) {
             if (!articleSelections[spot]) {
@@ -1176,9 +1352,11 @@
         }
         
         allWordSpans.forEach(span => {
-            span.style.backgroundColor = '';
-            span.style.border = '';
             span.style.textDecoration = '';
+            span.style.backgroundColor = '';
+            span.style.borderRadius = '';
+            span.style.padding = '';
+            span.classList.remove('underline-correct', 'underline-incorrect');
         });
         
         articleBoxes.forEach(box => {
@@ -1200,25 +1378,20 @@
             if (isSelected) {
                 if (isCorrect) {
                     correctUnderlineCount++;
+                    span.classList.add('underline-correct');
                     span.style.textDecoration = 'underline';
+                    span.style.textDecorationThickness = '3px';
                     span.style.textDecorationColor = '#22c55e';
-                    span.style.textDecorationThickness = '3px';
-                    span.style.backgroundColor = '#bbf7d0';
-                    span.style.border = '2px solid #22c55e';
-                    span.style.borderRadius = '4px';
-                    span.style.padding = '0.1rem 0.3rem';
+                    span.style.backgroundColor = '#f0fdf4';
                 } else {
+                    span.classList.add('underline-incorrect');
                     span.style.textDecoration = 'underline';
-                    span.style.textDecorationColor = '#dc2626';
                     span.style.textDecorationThickness = '3px';
+                    span.style.textDecorationColor = '#dc2626';
                     span.style.backgroundColor = '#fee2e2';
-                    span.style.border = '2px solid #dc2626';
-                    span.style.borderRadius = '4px';
-                    span.style.padding = '0.1rem 0.3rem';
                 }
             } else if (isCorrect) {
                 span.style.backgroundColor = '';
-                span.style.border = '';
             }
         }
         
@@ -1238,9 +1411,9 @@
             let message = '<div style="background: #fef9e3; padding: 0.75rem 1rem; border-radius: 12px;"><p style="color: #92400e;">📊 Your Progress:</p>';
             if (correctArticlesCount === 6) message += `<p style="color: #065f46;">✅ Zero Articles: Complete! (6/6)</p>`;
             else message += `<p style="color: #dc2626;">⚠️ Zero Articles: ${correctArticlesCount}/6 correct. Need to select "—" for all 6 boxes.</p>`;
-            if (correctUnderlineCount === 5) message += `<p style="color: #065f46;">✅ Specific "The" Phrases: Complete! (5/5)</p>`;
-            else message += `<p style="color: #dc2626;">⚠️ Specific "The" Phrases: ${correctUnderlineCount}/5 correct. Missing: ${correctSpecificTheWords.filter(w => ![...selectedUnderlinedWords].some(s => s.dataset.word === w)).join(', ')}</p>`;
-            message += '<p style="color: #b45309; font-size: 0.85rem; margin-top: 0.5rem;">💡 Click on words to underline them. Green underline = correct, Red underline = incorrect.</p></div>';
+            if (correctUnderlineCount === 5) message += `<p style="color: #065f46;">✅ Specific "The" Words: Complete! (5/5)</p>`;
+            else message += `<p style="color: #dc2626;">⚠️ Specific "The" Words: ${correctUnderlineCount}/5 correct. Missing: ${correctSpecificTheWords.filter(w => ![...selectedUnderlinedWords].some(s => s.dataset.word === w)).join(', ')}</p>`;
+            message += '<p style="color: #b45309; font-size: 0.85rem; margin-top: 0.5rem;">💡 Green underline = correct, Red underline = incorrect.</p></div>';
             feedback.innerHTML = message;
             document.getElementById('completeReadingBtn').disabled = true;
         }
@@ -1250,7 +1423,7 @@
         articleSelections = {};
         selectedUnderlinedWords.clear();
         articleBoxes.forEach(box => { box.textContent = '□'; box.dataset.selected = ''; box.style.backgroundColor = '#fef3c7'; box.style.borderColor = '#f59e0b'; });
-        allWordSpans.forEach(span => { span.classList.remove('selected'); span.style.backgroundColor = ''; span.style.border = ''; span.style.textDecoration = ''; span.style.padding = ''; });
+        allWordSpans.forEach(span => { span.style.textDecoration = ''; span.style.backgroundColor = ''; span.style.borderRadius = ''; span.style.padding = ''; span.classList.remove('underline-correct', 'underline-incorrect', 'underline-word'); });
         document.getElementById('articlesPlacedCount').innerText = '0';
         document.getElementById('specificTheCount').innerText = '0';
         document.getElementById('readingFeedback').innerHTML = '';
@@ -1268,8 +1441,8 @@
         for (let i = 0; i < allWordSpans.length; i++) {
             if (correctSpecificTheWords.includes(allWordSpans[i].dataset.word) && selectedUnderlinedWords.has(allWordSpans[i])) correctUnderlineCount++;
         }
-        if (correctArticlesCount < 6) { alert(`Please identify ${6 - correctArticlesCount} more Zero Article spots.`); return; }
-        if (correctUnderlineCount < 5) { alert(`Please underline ${5 - correctUnderlineCount} more Specific "The" phrases.`); return; }
+        if (correctArticlesCount < 6) { alert(`Please select "—" for all ${6 - correctArticlesCount} Zero Article spots.`); return; }
+        if (correctUnderlineCount < 5) { alert(`Please underline ${5 - correctUnderlineCount} more Specific "The" words.`); return; }
         markActivityComplete('reading', 'chk2');
     });
     
@@ -1417,9 +1590,7 @@
     document.getElementById('resetGrammarBtn')?.addEventListener('click', resetGrammar);
     document.getElementById('completeGrammarBtn')?.addEventListener('click', () => {
         if (!grammarChecked) { alert('Please check your answers first using "Check Answers" button.'); return; }
-        const allCorrect = grammarAnswers.q1 && grammarAnswers.q2 && grammarAnswers.q3 && grammarAnswers.q4a && grammarAnswers.q4b;
-        if (allCorrect) markActivityComplete('grammar', 'chk5');
-        else alert('Please correct all grammar answers first.');
+        markActivityComplete('grammar', 'chk4');
     });
     
     // ==================== Game ====================
@@ -1502,11 +1673,6 @@
         markActivityComplete('game', 'chk7');
     });
     
-    // ==================== Vocabulary ====================
-    document.getElementById('completeVocabularyBtn')?.addEventListener('click', () => {
-        markActivityComplete('vocabulary', 'chk5');
-    });
-    
     // ==================== Initialize ====================
     document.addEventListener('DOMContentLoaded', () => {
         setupReadingActivity();
@@ -1516,7 +1682,7 @@
         document.getElementById('completeSpeakingBtn').disabled = true;
         document.getElementById('completeGrammarBtn').disabled = true;
         document.getElementById('completeGameBtn').disabled = true;
-        document.getElementById('completeVocabularyBtn').disabled = false;
+        document.getElementById('completeVocabularyBtn').disabled = true;
         document.getElementById('dayCompleteBtn')?.addEventListener('click', completeDay);
     });
 </script>

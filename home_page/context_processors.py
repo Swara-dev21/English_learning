@@ -76,3 +76,17 @@ def global_timer(request):
                 del request.session['test_start_time']
     
     return {'global_timer': timer_data}
+
+from learning.models import UserLearningProgress
+
+def learning_progress_context(request):
+    if request.user.is_authenticated:
+        progress = UserLearningProgress.objects.filter(user=request.user).first()
+
+        return {
+            'active_learning': progress,
+            'active_level': progress.level if progress else None,
+            'has_seen_intro': progress.has_seen_intro if progress else False
+        }
+
+    return {}

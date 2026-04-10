@@ -1,898 +1,987 @@
-<!-- templates/learning/level_selection.html -->
-{% extends 'home_page/base.html' %}
-{% load static %}
-
-{% block title %}Your Learning Path{% endblock %}
-
-{% block content %}
-<style>
-    /* ===== MOBILE-FIRST RESPONSIVE DESIGN ===== */
-    :root {
-        /* Periwinkle Color Palette */
-        --primary: #4a62b0;
-        --primary-light: #e0e7ff;
-        --primary-soft: #f0f3ff;
-        --primary-dark: #2e4085;
-        --accent: #6b7fcb;
-        
-        --success: #10b981;
-        --success-light: #d1fae5;
-        --warning: #f59e0b;
-        --warning-light: #fef3c7;
-        --danger: #ef4444;
-        --danger-light: #fee2e2;
-        
-        --text-primary: #1a1f33;
-        --text-secondary: #2a3150;
-        --text-tertiary: #4a5578;
-        --text-muted: #6b7191;
-        --bg-white: #ffffff;
-        --bg-light: #f9fafb;
-        --bg-soft: #f5f7ff;
-        --border-light: #e2e8f0;
-        
-        --shadow-sm: 0 2px 8px rgba(74, 98, 176, 0.05);
-        --shadow-md: 0 4px 12px rgba(74, 98, 176, 0.08);
-        --shadow-lg: 0 8px 24px rgba(74, 98, 176, 0.12);
-        
-        --radius-sm: 12px;
-        --radius-md: 16px;
-        --radius-lg: 24px;
-        --radius-xl: 32px;
-    }
-
-    .results-container {
-        min-height: 100vh;
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 1rem;
-    }
-
-    /* Action Links - EXACT SAME as results page */
-    .action-links {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-        margin: 1rem 0 2rem;
-        flex-wrap: wrap;
-    }
-
-    .back-link {
-        color: var(--text-secondary);
-        text-decoration: none;
-        font-size: 0.95rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.6rem 1.2rem;
-        background: var(--bg-white);
-        border-radius: 40px;
-        box-shadow: var(--shadow-sm);
-        transition: all 0.2s;
-        flex: 0 1 auto;
-    }
-
-    .back-link i {
-        font-size: 0.85rem;
-        color: var(--primary);
-    }
-
-    .back-link:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
-
-    .learning-path-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 0;
-    }
-
-    /* Header Section */
-    .path-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .path-header h1 {
-        font-size: 2.8rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 1rem;
-        letter-spacing: -0.02em;
-    }
-
-    .quote-card {
-        background: linear-gradient(135deg, #e0e7ff 0%, #f5f7ff 100%);
-        border-radius: 16px;
-        padding: 1.2rem 2rem;
-        margin: 1.2rem auto;
-        position: relative;
-        box-shadow: 0 4px 12px rgba(74, 98, 176, 0.1);
-    }
-
-    .quote-card i {
-        color: #4a62b0;
-        font-size: 1.3rem;
-        opacity: 0.5;
-        position: absolute;
-    }
-
-    .quote-card i.fa-quote-left {
-        top: 8px;
-        left: 12px;
-    }
-
-    .quote-card i.fa-quote-right {
-        bottom: 8px;
-        right: 12px;
-    }
-
-    .quote-card p {
-        font-size: 1.3rem;
-        color: #1e293b;
-        font-style: italic;
-        font-weight: 500;
-        margin: 0 2rem;
-        line-height: 1.5;
-    }
-
-    /* Compact Progress Bar */
-    .progress-tracker {
-        background: white;
-        border-radius: 16px;
-        padding: 1.2rem 1.5rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        border: 1px solid #eef2f6;
-    }
-
-    .progress-steps {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        position: relative;
-    }
-
-    .progress-steps::before {
-        content: '';
-        position: absolute;
-        top: 18px;
-        left: 60px;
-        right: 60px;
-        height: 3px;
-        background: #e2e8f0;
-        z-index: 1;
-    }
-
-    .step {
-        position: relative;
-        z-index: 2;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        flex: 1;
-    }
-
-    .step-marker {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: white;
-        border: 3px solid #e2e8f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        font-size: 1rem;
-        color: #94a3b8;
-        margin-bottom: 0.4rem;
-        transition: all 0.3s ease;
-    }
-
-    .step.active .step-marker {
-        background: #4a62b0;
-        border-color: #4a62b0;
-        color: white;
-        box-shadow: 0 0 0 3px rgba(74, 98, 176, 0.2);
-    }
-
-    .step.completed .step-marker {
-        background: #4a62b0;
-        border-color: #4a62b0;
-        color: white;
-    }
-
-    .step-label {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 0.1rem;
-    }
-
-    .step-status {
-        font-size: 0.85rem;
-        color: #64748b;
-    }
-
-    /* Level Cards */
-    .levels-list {
-        display: flex;
-        flex-direction: column;
-        gap: 1.2rem;
-        margin: 2rem 0;
-    }
-
-    .level-card {
-        background: white;
-        border-radius: 20px;
-        padding: 1.5rem 1.8rem;
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.03);
-        border: 1px solid #eef2f6;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .level-card.unlocked {
-        background: linear-gradient(135deg, #ffffff 0%, #f5f7ff 100%);
-        border-left: 5px solid #4a62b0;
-    }
-
-    .level-card.unlocked:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 15px 30px rgba(74, 98, 176, 0.12);
-        border-color: #4a62b0;
-    }
-
-    .level-card.locked {
-        opacity: 0.75;
-        background: #f8fafc;
-        filter: grayscale(20%);
-    }
-
-    .level-card.completed {
-        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-        border-left: 5px solid #94a3b8;
-    }
-
-    .level-card.completed:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 15px 30px rgba(74, 98, 176, 0.08);
-        border-color: #4a62b0;
-    }
-
-    .level-icon {
-        width: 70px;
-        height: 70px;
-        background: #e0e7ff;
-        border-radius: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #4a62b0;
-        font-size: 2.2rem;
-        flex-shrink: 0;
-        transition: all 0.3s ease;
-    }
-
-    .level-content {
-        flex: 1;
-    }
-
-    .level-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    .level-name {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin: 0;
-    }
-
-    .level-description {
-        color: #475569;
-        font-size: 1.1rem;
-        margin: 0;
-        line-height: 1.5;
-    }
-
-    .level-action {
-        min-width: 140px;
-    }
-
-    .btn-level {
-        padding: 0.9rem 1.8rem;
-        border-radius: 40px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        width: 100%;
-    }
-
-    .btn-unlocked {
-        background: #4a62b0;
-        color: white;
-        box-shadow: 0 4px 12px rgba(74, 98, 176, 0.25);
-    }
-
-    .btn-unlocked:hover {
-        background: #3a4f8c;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(74, 98, 176, 0.35);
-    }
-
-    .btn-review {
-        background: #64748b;
-        color: white;
-        box-shadow: 0 4px 12px rgba(100, 116, 139, 0.25);
-    }
-
-    .btn-review:hover {
-        background: #475569;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(100, 116, 139, 0.35);
-    }
-
-    .btn-locked {
-        background: #e2e8f0;
-        color: #94a3b8;
-        cursor: not-allowed;
-        pointer-events: none;
-    }
-
-    /* Info Message */
-    .info-message {
-        background: #e0e7ff;
-        border-radius: 14px;
-        padding: 1.2rem 1.8rem;
-        margin: 2rem 0;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        border: 1px solid rgba(74, 98, 176, 0.2);
-    }
-
-    .info-icon {
-        width: 44px;
-        height: 44px;
-        background: #4a62b0;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-    }
-
-    .info-text {
-        color: #1e293b;
-        font-size: 1.1rem;
-        font-weight: 500;
-        margin: 0;
-    }
-
-    /* ========== NEON LOCK STYLES ========== */
-    .neon-lock {
-        font-size: 50px;
-        color: #c084fc;
-        text-shadow:
-            0 0 5px #c084fc,
-            0 0 10px #c084fc,
-            0 0 20px #a855f7,
-            0 0 40px #9333ea;
-        animation: neonGlow 1.5s infinite alternate;
-        display: inline-block;
-    }
-
-    @keyframes neonGlow {
-        from {
-            text-shadow:
-                0 0 5px #c084fc,
-                0 0 10px #c084fc;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Your Learning Path | Periwinkle English</title>
+    <!-- Font Awesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ===== GLOBAL RESET & PERIWINKLE COLOR SCHEME ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        to {
-            text-shadow:
-                0 0 20px #a855f7,
-                0 0 40px #9333ea;
-        }
-    }
 
-    /* ========== ANIMATION ON THE BEGINNER CARD BUTTON AREA ========== */
-    
-    /* Floating lock that appears on the button area */
-    .floating-lock-on-card {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: #e2e8f0;
-        border-radius: 40px;
-        padding: 15px 25px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        z-index: 100;
-        min-width: 160px;
-        animation: floatOnButton 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
-        text-align: center;
-        border: none;
-    }
-    
-    @keyframes floatOnButton {
-        0% {
-            transform: translate(-50%, -50%) scale(0.7);
+        :root {
+            --primary: #4a62b0;
+            --primary-light: #e0e7ff;
+            --primary-soft: #f0f3ff;
+            --primary-dark: #2e4085;
+            --accent: #6b7fcb;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-primary: #1a1f33;
+            --text-secondary: #2a3150;
+            --text-tertiary: #4a5578;
+            --text-muted: #6b7191;
+            --bg-white: #ffffff;
+            --bg-light: #f9fafb;
+            --bg-soft: #f5f7ff;
+            --border-light: #e2e8f0;
+            --shadow-sm: 0 2px 8px rgba(74, 98, 176, 0.05);
+            --shadow-md: 0 6px 20px rgba(74, 98, 176, 0.10);
+            --shadow-lg: 0 12px 36px rgba(74, 98, 176, 0.15);
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 26px;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-soft);
+            overflow-x: hidden;
+        }
+
+        /* --- MAIN WRAPPER --- */
+        .lp-wrapper {
+            min-height: 100vh;
+            width: 100%;
+            padding: 1.5rem 1rem 3rem;
+        }
+        .lp-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* --- ACTION LINKS --- */
+        .action-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.2rem;
+            background: var(--bg-white);
+            border-radius: 40px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.25s;
+            font-weight: 500;
+        }
+        .nav-link i {
+            color: var(--primary);
+        }
+        .nav-link:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* --- HEADER & QUOTE CAROUSEL --- */
+        .hero h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 6vw, 3rem);
+            font-weight: 800;
+            color: var(--text-primary);
+            text-align: center;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            animation: fadeUp 0.5s ease forwards;
+        }
+        .quote-rotator {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f5f7ff 100%);
+            border-radius: var(--radius-md);
+            padding: 1rem 2rem;
+            margin: 0 auto 2rem;
+            max-width: 560px;
+            text-align: center;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+            animation: fadeUp 0.5s 0.1s ease forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .quote-rotator i.fa-quote-left,
+        .quote-rotator i.fa-quote-right {
+            position: absolute;
+            color: var(--primary);
+            opacity: 0.3;
+            font-size: 1.4rem;
+        }
+        .quote-rotator i.fa-quote-left { top: 12px; left: 16px; }
+        .quote-rotator i.fa-quote-right { bottom: 12px; right: 16px; }
+        .quote-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            font-weight: 500;
+            color: var(--text-primary);
+            transition: opacity 0.4s ease;
+            line-height: 1.5;
+            margin: 0 1rem;
+        }
+
+        /* --- PROGRESS STEPPER --- */
+        .stepper-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+            animation: fadeUp 0.5s 0.2s ease forwards;
             opacity: 0;
         }
-        100% {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
+        .steps-row {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
         }
-    }
-    
-    /* Lock shake animation - rotates in place without moving position */
-    @keyframes lockShakeOnly {
-        0% { transform: rotate(0deg); }
-        15% { transform: rotate(-8deg); }
-        30% { transform: rotate(8deg); }
-        45% { transform: rotate(-5deg); }
-        60% { transform: rotate(5deg); }
-        75% { transform: rotate(-3deg); }
-        100% { transform: rotate(0deg); }
-    }
-    
-    /* Lock to unlock transition - rotates and scales in place */
-    @keyframes lockToUnlockOnly {
-        0% { transform: scale(1) rotate(0deg); }
-        30% { transform: scale(1.15) rotate(12deg); }
-        60% { transform: scale(1.05) rotate(-6deg); }
-        100% { transform: scale(1) rotate(0deg); }
-    }
-    
-    /* Fade out animation */
-    @keyframes fadeOutUp {
-        0% {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
+        .step-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
         }
-        100% {
-            transform: translate(-50%, -50%) scale(0.8) translateY(-20px);
-            opacity: 0;
+        .step-marker {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid var(--border-light);
+            background: var(--bg-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            transition: all 0.3s;
         }
-    }
-    
-    /* Button pop animation - BLUE THEME */
-    @keyframes buttonPopCard {
-        0% {
-            opacity: 0;
-            transform: scale(0.8);
-        }
-        60% {
-            opacity: 1;
-            transform: scale(1.08);
-            background: #6b7fcb;
-        }
-        100% {
-            opacity: 1;
-            transform: scale(1);
-            background: #4a62b0;
-        }
-    }
-    
-    .button-pop-animation {
-        animation: buttonPopCard 0.4s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
-    }
-    
-    /* Card subtle pulse on unlock */
-    @keyframes cardPulseUnlock {
-        0% {
-            box-shadow: 0 6px 16px rgba(0,0,0,0.03);
-            border-left-color: #eef2f6;
-        }
-        30% {
-            box-shadow: 0 0 0 8px rgba(74, 98, 176, 0.15);
-            border-left-color: #4a62b0;
-        }
-        70% {
-            box-shadow: 0 0 0 16px rgba(74, 98, 176, 0.08);
-            border-left-color: #6b7fcb;
-        }
-        100% {
-            box-shadow: 0 6px 16px rgba(0,0,0,0.03);
-            border-left-color: #4a62b0;
-        }
-    }
-    
-    .card-pulse {
-        animation: cardPulseUnlock 0.6s ease-out;
-    }
-    
-    /* Icon transform for level icon */
-    @keyframes iconBluePop {
-        0% {
-            background: #e0e7ff;
-            color: #4a62b0;
-            transform: scale(1);
-        }
-        50% {
-            background: #4a62b0;
+        .step-item.active .step-marker {
+            background: var(--primary);
+            border-color: var(--primary);
             color: white;
-            transform: scale(1.05);
+            box-shadow: 0 0 0 0 rgba(74,98,176,0.4);
+            animation: stepPulse 2s infinite;
         }
-        100% {
-            background: #e0e7ff;
-            color: #4a62b0;
+        .step-item.completed .step-marker {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+        .step-label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+        .step-status {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        @keyframes stepPulse {
+            0% { box-shadow: 0 0 0 0 rgba(74,98,176,0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(74,98,176,0); }
+            100% { box-shadow: 0 0 0 0 rgba(74,98,176,0); }
+        }
+
+        /* --- LEVEL CARDS (modern glassmorph + 3D tilt) --- */
+        .levels-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+        .level-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            padding: 1.3rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .level-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* unlocked style */
+        .level-card.unlocked {
+            border-left: 5px solid var(--primary);
+        }
+        .level-card.unlocked:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: var(--shadow-lg);
+        }
+        .level-card.completed {
+            border-left: 5px solid var(--success);
+        }
+        .level-card.locked {
+            opacity: 0.75;
+            background: #fafcff;
+        }
+        .card-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--primary-light);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary);
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+        .level-card.unlocked .card-icon {
+            box-shadow: 0 0 12px rgba(74,98,176,0.3);
+        }
+        .card-content {
+            flex: 1;
+        }
+        .level-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            margin-bottom: 0.4rem;
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .level-badge.completed-badge { background: var(--success-light); color: #065f46; }
+        .level-badge.locked-badge { background: #eef2f6; color: var(--text-muted); }
+        .level-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+        }
+        .level-desc {
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+            line-height: 1.4;
+        }
+        .card-action {
+            min-width: 130px;
+            text-align: center;
+        }
+        .btn-level {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.4rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            width: 100%;
+        }
+        .btn-start {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(74,98,176,0.3);
+        }
+        .btn-start:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        .btn-review {
+            background: #eef2ff;
+            color: var(--primary-dark);
+        }
+        .btn-locked {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+
+        /* --- INFO BANNER --- */
+        .info-banner {
+            background: var(--primary-light);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            animation: fadeUp 0.5s 0.3s forwards;
+            opacity: 0;
+        }
+        .info-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .info-text {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* --- SHAKE ANIMATION --- */
+        @keyframes shakeEffect {
+            0%,100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-3px); }
+            80% { transform: translateX(3px); }
+        }
+        .shake-card {
+            animation: shakeEffect 0.4s ease-in-out;
+        }
+
+        /* --- UNLOCK OVERLAY (beginner specific) --- */
+        .unlock-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(240, 243, 255, 0.96);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-lg);
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .unlock-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .unlock-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.2rem 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.8);
+            transition: transform 0.35s cubic-bezier(0.34, 1.3, 0.64, 1);
+        }
+        .unlock-overlay.active .unlock-card {
             transform: scale(1);
         }
-    }
-    
-    .icon-pop {
-        animation: iconBluePop 0.4s ease-out;
-    }
+        .lock-emoji {
+            font-size: 2.8rem;
+            display: block;
+            margin-bottom: 6px;
+            animation: softRock 2s infinite ease;
+        }
+        @keyframes softRock {
+            0%,100% { transform: rotate(0deg); }
+            25% { transform: rotate(-8deg); }
+            75% { transform: rotate(8deg); }
+        }
 
-    /* ===== RESPONSIVE STYLES ===== */
-    
-    @media (max-width: 768px) {
-        .path-header h1 { font-size: 2.4rem; }
-        .quote-card { padding: 1rem 1.5rem; }
-        .quote-card p { font-size: 1.2rem; margin: 0 1.5rem; }
-        .level-name { font-size: 1.4rem; }
-        .level-description { font-size: 1rem; }
-        .level-icon { width: 60px; height: 60px; font-size: 1.8rem; }
-        .floating-lock-on-card { padding: 12px 20px; min-width: 140px; }
-        .neon-lock { font-size: 40px; }
-    }
+        /* --- CONFETTI CANVAS (single burst, full window) --- */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
 
-    @media (max-width: 640px) {
-        .action-links { margin: 0.5rem 0 1.5rem; }
-        .path-header h1 { font-size: 2.2rem; }
-        .quote-card p { font-size: 1.1rem; margin: 0 1.2rem; }
-        .progress-tracker { padding: 1rem; }
-        .progress-steps::before { left: 40px; right: 40px; top: 16px; }
-        .step-marker { width: 32px; height: 32px; font-size: 0.9rem; border-width: 2px; }
-        .step-label { font-size: 0.9rem; }
-        .step-status { font-size: 0.75rem; }
-        .level-card { flex-direction: column; text-align: center; padding: 1.8rem 1.2rem; gap: 1rem; }
-        .level-header { justify-content: center; }
-        .level-name { font-size: 1.5rem; }
-        .level-description { font-size: 0.95rem; }
-        .level-action { width: 100%; min-width: auto; margin-top: 0.5rem; }
-        .btn-level { padding: 0.8rem 1.5rem; font-size: 1rem; width: 100%; max-width: 250px; margin: 0 auto; }
-        .info-message { flex-direction: column; text-align: center; padding: 1.5rem; }
-        .info-icon { margin-bottom: 0.5rem; }
-        .info-text { font-size: 1rem; }
-        .floating-lock-on-card { padding: 10px 16px; min-width: 130px; }
-        .neon-lock { font-size: 35px; }
-    }
+        /* --- ANIMATED BUTTON GLOW (for start button) --- */
+        @keyframes softGlow {
+            0% { box-shadow: 0 0 0 0 rgba(74,98,176,0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(74,98,176,0); }
+            100% { box-shadow: 0 0 0 0 rgba(74,98,176,0); }
+        }
+        .btn-start {
+            animation: softGlow 1.8s infinite;
+        }
 
-    @media (max-width: 480px) {
-        .path-header h1 { font-size: 1.8rem; }
-        .quote-card { padding: 0.8rem 1rem; }
-        .quote-card p { font-size: 1rem; margin: 0 1rem; }
-        .progress-tracker { padding: 0.8rem; }
-        .progress-steps::before { left: 30px; right: 30px; top: 14px; }
-        .step-marker { width: 28px; height: 28px; font-size: 0.8rem; margin-bottom: 0.3rem; }
-        .step-label { font-size: 0.8rem; }
-        .step-status { font-size: 0.7rem; }
-        .level-card { padding: 1.5rem 1rem; }
-        .level-icon { width: 55px; height: 55px; font-size: 1.6rem; }
-        .level-name { font-size: 1.3rem; }
-        .level-description { font-size: 0.9rem; }
-        .btn-level { padding: 0.7rem 1.2rem; font-size: 0.95rem; max-width: 200px; }
-        .floating-lock-on-card { padding: 8px 14px; min-width: 110px; }
-        .neon-lock { font-size: 28px; }
-    }
+        /* --- FLOATING ENTRY ANIMATIONS --- */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    @media (max-width: 360px) {
-        .path-header h1 { font-size: 1.6rem; }
-        .quote-card p { font-size: 0.9rem; }
-        .level-name { font-size: 1.2rem; }
-    }
+        /* Responsive */
+        @media (max-width: 650px) {
+            .level-card { flex-direction: column; text-align: center; padding: 1.5rem; }
+            .card-action { width: 100%; margin-top: 0.6rem; }
+            .card-icon { width: 55px; height: 55px; font-size: 1.6rem; }
+            .level-title { font-size: 1.3rem; }
+            .info-banner { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
 
-    @media (max-width: 850px) and (orientation: landscape) {
-        .level-card { flex-direction: row; text-align: left; padding: 1.2rem; }
-        .level-header { justify-content: flex-start; }
-        .level-action { width: auto; min-width: 140px; }
-        .btn-level { width: auto; }
-    }
-</style>
+<!-- Confetti Canvas (single burst) -->
+<canvas id="confettiCanvas"></canvas>
 
-<div class="results-container">
-    <div class="action-links">
-        <a href="{% url 'home_page:home' %}" class="back-link">
-            <i class="fas fa-home"></i> Home
-        </a>
-        <a href="{% url 'home_page:profile' %}" class="back-link">
-            <i class="fas fa-user"></i> Profile
-        </a>
-    </div>
+<div class="lp-wrapper">
+    <div class="lp-container">
+        <!-- Top Navigation (preserve redirects) -->
+        <div class="action-top">
+            <a href="#" class="nav-link" id="homeLink"><i class="fas fa-home"></i> Home</a>
+            <a href="#" class="nav-link" id="profileLink"><i class="fas fa-user"></i> Profile</a>
+        </div>
 
-    <div class="learning-path-container">
-        <div class="path-header">
+        <!-- Hero + Quote Carousel -->
+        <div class="hero">
             <h1>Your Learning Journey</h1>
-            <div class="quote-card">
-                <i class="fas fa-quote-left"></i>
-                <p>Every expert was once a beginner. Keep going!</p>
-                <i class="fas fa-quote-right"></i>
-            </div>
+        </div>
+        <div class="quote-rotator">
+            <i class="fas fa-quote-left"></i>
+            <p class="quote-text" id="dynamicQuote">Every expert was once a beginner. Keep going!</p>
+            <i class="fas fa-quote-right"></i>
         </div>
 
-        <div class="progress-tracker">
-            <div class="progress-steps">
-                <div class="step {% if user_level_name == 'beginner' %}active{% endif %} {% if user_level_name == 'intermediate' or user_level_name == 'advanced' %}completed{% endif %}">
-                    <div class="step-marker">
-                        {% if user_level_name == 'intermediate' or user_level_name == 'advanced' %}<i class="fas fa-check"></i>{% else %}1{% endif %}
-                    </div>
+        <!-- Progress Stepper -->
+        <div class="stepper-card">
+            <div class="steps-row">
+                <div class="step-item" id="stepBeginner">
+                    <div class="step-marker" id="stepBeginnerMarker">1</div>
                     <div class="step-label">Beginner</div>
-                    <div class="step-status">
-                        {% if user_level_name == 'beginner' %}Current
-                        {% elif user_level_name == 'intermediate' or user_level_name == 'advanced' %}Completed
-                        {% else %}Locked{% endif %}
-                    </div>
+                    <div class="step-status" id="stepBeginnerStatus">Locked</div>
                 </div>
-                <div class="step {% if user_level_name == 'intermediate' %}active{% endif %} {% if user_level_name == 'advanced' %}completed{% endif %}">
-                    <div class="step-marker">
-                        {% if user_level_name == 'advanced' %}<i class="fas fa-check"></i>{% else %}2{% endif %}
-                    </div>
+                <div class="step-item" id="stepIntermediate">
+                    <div class="step-marker" id="stepIntermediateMarker">2</div>
                     <div class="step-label">Intermediate</div>
-                    <div class="step-status">
-                        {% if user_level_name == 'intermediate' %}Current
-                        {% elif user_level_name == 'advanced' %}Completed
-                        {% else %}Locked{% endif %}
-                    </div>
+                    <div class="step-status" id="stepIntermediateStatus">Locked</div>
                 </div>
-                <div class="step {% if user_level_name == 'advanced' %}active{% endif %}">
-                    <div class="step-marker">3</div>
+                <div class="step-item" id="stepAdvanced">
+                    <div class="step-marker" id="stepAdvancedMarker">3</div>
                     <div class="step-label">Advanced</div>
-                    <div class="step-status">
-                        {% if user_level_name == 'advanced' %}Current
-                        {% else %}Locked{% endif %}
-                    </div>
+                    <div class="step-status" id="stepAdvancedStatus">Locked</div>
                 </div>
             </div>
         </div>
 
-        <div class="levels-list">
-            <!-- BEGINNER LEVEL - Animation with NEON LOCK -->
-            <div id="beginnerLevelCard" class="level-card 
-                {% if user_level_name == 'beginner' %}initial-locked
-                {% elif user_level_name == 'intermediate' or user_level_name == 'advanced' %}completed
-                {% else %}locked{% endif %}">
-                <div class="level-icon" id="beginnerIcon">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <div class="level-content">
-                    <div class="level-header">
-                        <h2 class="level-name">Beginner</h2>
+        <!-- Level Cards -->
+        <div class="levels-stack" id="levelsStack">
+            <!-- BEGINNER CARD -->
+            <div id="beginnerCard" class="level-card locked" data-level="beginner">
+                <div class="unlock-overlay" id="beginnerOverlay">
+                    <div class="unlock-card">
+                        <span class="lock-emoji" id="beginnerLockEmoji">🔒</span>
+                        <div style="font-weight:700; margin-top:4px;" id="beginnerLockLabel">Level Locked</div>
+                        <div style="font-size:12px; color:#64748b;" id="beginnerLockSub">Unlocking shortly...</div>
                     </div>
-                    <p class="level-description">Master the basics of English communication with foundational vocabulary and simple conversations.</p>
                 </div>
-                <div class="level-action" id="beginnerAction" style="position: relative;">
-                    {% if user_level_name == 'intermediate' or user_level_name == 'advanced' %}
-                        <a href="{% url 'learning:level_overview' level_name='beginner' %}" class="btn-level btn-review">
-                            <i class="fas fa-rotate-right"></i> Practice
-                        </a>
-                    {% elif user_level_name == 'beginner' %}
-                        <span class="btn-level btn-locked" id="beginnerLockedBtn">
-                            <i class="fas fa-lock"></i> Locked
-                        </span>
-                    {% else %}
-                        <span class="btn-level btn-locked">
-                            <i class="fas fa-lock"></i> Locked
-                        </span>
-                    {% endif %}
+                <div class="card-icon"><i class="fas fa-book-open"></i></div>
+                <div class="card-content">
+                    <span class="level-badge locked-badge" id="beginnerBadge">🔒 Locked</span>
+                    <div class="level-title">Beginner</div>
+                    <div class="level-desc">Master the basics of English communication with foundational vocabulary and simple conversations.</div>
+                </div>
+                <div class="card-action" id="beginnerAction">
+                    <button class="btn-level btn-locked" id="beginnerLockedBtn"><i class="fas fa-lock"></i> Locked</button>
                 </div>
             </div>
 
-            <!-- INTERMEDIATE LEVEL -->
-            <div class="level-card 
-                {% if user_level_name == 'intermediate' %}unlocked
-                {% elif user_level_name == 'advanced' %}completed
-                {% else %}locked{% endif %}">
-                <div class="level-icon" style="{% if user_level_name == 'beginner' %}background: #f1f5f9; color: #94a3b8;{% endif %}">
-                    <i class="fas fa-chart-line"></i>
+            <!-- INTERMEDIATE CARD -->
+            <div id="intermediateCard" class="level-card locked" data-level="intermediate">
+                <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="card-content">
+                    <span class="level-badge locked-badge" id="intermediateBadge">🔒 Locked</span>
+                    <div class="level-title">Intermediate</div>
+                    <div class="level-desc">Build fluency and confidence in conversations with more complex topics and expressions.</div>
                 </div>
-                <div class="level-content">
-                    <div class="level-header">
-                        <h2 class="level-name">Intermediate</h2>
-                    </div>
-                    <p class="level-description">Build fluency and confidence in conversations with more complex topics and expressions.</p>
-                </div>
-                <div class="level-action">
-                    {% if user_level_name == 'intermediate' %}
-                        <a href="{% url 'learning:level_overview' level_name='intermediate' %}" class="btn-level btn-unlocked">
-                            Start <i class="fas fa-arrow-right"></i>
-                        </a>
-                    {% elif user_level_name == 'advanced' %}
-                        <a href="{% url 'learning:level_overview' level_name='intermediate' %}" class="btn-level btn-review">
-                            <i class="fas fa-rotate-right"></i> Practice
-                        </a>
-                    {% else %}
-                        <span class="btn-level btn-locked">
-                            <i class="fas fa-lock"></i> Locked
-                        </span>
-                    {% endif %}
+                <div class="card-action">
+                    <button class="btn-level btn-locked" id="intermediateLockedBtn"><i class="fas fa-lock"></i> Locked</button>
                 </div>
             </div>
 
-            <!-- ADVANCED LEVEL -->
-            <div class="level-card 
-                {% if user_level_name == 'advanced' %}unlocked
-                {% else %}locked{% endif %}">
-                <div class="level-icon" style="{% if user_level_name != 'advanced' %}background: #f1f5f9; color: #94a3b8;{% endif %}">
-                    <i class="fas fa-crown"></i>
+            <!-- ADVANCED CARD -->
+            <div id="advancedCard" class="level-card locked" data-level="advanced">
+                <div class="card-icon"><i class="fas fa-crown"></i></div>
+                <div class="card-content">
+                    <span class="level-badge locked-badge" id="advancedBadge">🔒 Locked</span>
+                    <div class="level-title">Advanced</div>
+                    <div class="level-desc">Achieve mastery and fluency with sophisticated language and nuanced communication.</div>
                 </div>
-                <div class="level-content">
-                    <div class="level-header">
-                        <h2 class="level-name">Advanced</h2>
-                    </div>
-                    <p class="level-description">Achieve mastery and fluency with sophisticated language and nuanced communication.</p>
-                </div>
-                <div class="level-action">
-                    {% if user_level_name == 'advanced' %}
-                        <a href="{% url 'learning:level_overview' level_name='advanced' %}" class="btn-level btn-unlocked">
-                            Start <i class="fas fa-arrow-right"></i>
-                        </a>
-                    {% else %}
-                        <span class="btn-level btn-locked">
-                            <i class="fas fa-lock"></i> Locked
-                        </span>
-                    {% endif %}
+                <div class="card-action">
+                    <button class="btn-level btn-locked" id="advancedLockedBtn"><i class="fas fa-lock"></i> Locked</button>
                 </div>
             </div>
         </div>
 
-        <div class="info-message">
-            <div class="info-icon">
-                {% if user_level_name == 'advanced' %}
-                    <i class="fas fa-crown"></i>
-                {% else %}
-                    <i class="fas fa-lock"></i>
-                {% endif %}
-            </div>
-            <p class="info-text">
-                {% if user_level_name == 'beginner' %}
-                    Complete all 30 Beginner tasks to unlock the Intermediate level and advance your learning journey.
-                {% elif user_level_name == 'intermediate' %}
-                    Complete all 30 Intermediate tasks to unlock the Advanced level and achieve mastery.
-                {% elif user_level_name == 'advanced' %}
-                    You've reached the highest level! Keep practicing daily to maintain your excellence.
-                {% endif %}
-            </p>
+        <!-- Info Banner -->
+        <div class="info-banner">
+            <div class="info-icon"><i class="fas fa-lock" id="infoIcon"></i></div>
+            <p class="info-text" id="infoMessage">Complete all 30 Beginner tasks to unlock the Intermediate level and advance your learning journey.</p>
         </div>
     </div>
 </div>
 
 <script>
-    // ========== SIMPLE 2-STEP ANIMATION: LOCKED → UNLOCKED ==========
-    // Grey background for locked state, Blue background for unlocked state (matching Start button)
-    (function() {
-        const userLevel = "{{ user_level_name|default:'beginner' }}";
+    // ========== GET DATA FROM DJANGO BACKEND ==========
+    const userLevel = '{{ user_level }}';
+    const beginnerUnlocked = {{ beginner_unlocked|yesno:"true,false" }};
+    const intermediateUnlocked = {{ intermediate_unlocked|yesno:"true,false" }};
+    const advancedUnlocked = {{ advanced_unlocked|yesno:"true,false" }};
+    const beginnerProgress = {{ beginner_progress.completion_percentage|default:0 }};
+    const intermediateProgress = {{ intermediate_progress.completion_percentage|default:0 }};
+    const advancedProgress = {{ advanced_progress.completion_percentage|default:0 }};
+    
+    // Determine current user level from backend
+    let currentUserLevel = userLevel;
+    let confettiTriggered = false;
+
+    // ========== SINGLE CONFETTI BURST (canvas-based, exactly like reference) ==========
+    // This creates ONE elegant confetti celebration when level unlocks
+    function launchSingleConfetti() {
+        const canvas = document.getElementById('confettiCanvas');
+        if (!canvas) return;
         
-        if (userLevel === 'beginner') {
-            const beginnerCard = document.getElementById('beginnerLevelCard');
-            const beginnerActionDiv = document.getElementById('beginnerAction');
-            const beginnerIcon = document.getElementById('beginnerIcon');
-            
-            setTimeout(function() {
-                const currentLockedBtn = document.getElementById('beginnerLockedBtn');
-                
-                if (beginnerCard && beginnerActionDiv && currentLockedBtn) {
-                    // Hide the original locked button temporarily
-                    currentLockedBtn.style.opacity = '0';
-                    currentLockedBtn.style.pointerEvents = 'none';
-                    
-                    // Create floating lock element with GREY background (locked state)
-                    const floatingLock = document.createElement('div');
-                    floatingLock.className = 'floating-lock-on-card';
-                    floatingLock.id = 'floatingLock';
-                    floatingLock.style.background = '#e2e8f0';
-                    floatingLock.innerHTML = `
-                        <div class="neon-lock" id="cardNeonLock" style="display: inline-block;">🔒</div>
-                        <div class="lock-label" style="color: #64748b; margin-top: 8px; font-weight: 600;">Level Locked</div>
-                        <div class="lock-sub" style="color: #94a3b8; font-size: 11px;">Unlocking in a moment...</div>
-                    `;
-                    beginnerActionDiv.appendChild(floatingLock);
-                    
-                    const neonLockElement = document.getElementById('cardNeonLock');
-                    
-                    // Step 1: Shake the neon lock (only rotates, doesn't move position)
-                    setTimeout(() => {
-                        if (neonLockElement) {
-                            // Stop the neon glow animation temporarily
-                            neonLockElement.style.animation = 'none';
-                            // Apply shake animation that only rotates
-                            neonLockElement.style.animation = 'lockShakeOnly 0.5s ease-in-out';
-                            
-                            // Step 2: Lock to unlock transition
-                            setTimeout(() => {
-                                neonLockElement.style.animation = 'lockToUnlockOnly 0.5s ease-out';
-                                
-                                setTimeout(() => {
-                                    // Change to unlock icon with blue color
-                                    neonLockElement.innerHTML = '🔓';
-                                    neonLockElement.style.color = '#ffffff';
-                                    neonLockElement.style.textShadow = '0 0 10px #ffffff, 0 0 20px #6b7fcb';
-                                    neonLockElement.style.animation = 'none';
-                                    
-                                    // Change text to "Level Unlocked"
-                                    floatingLock.querySelector('.lock-label').innerHTML = 'Level Unlocked! ✨';
-                                    floatingLock.querySelector('.lock-label').style.color = '#ffffff';
-                                    floatingLock.querySelector('.lock-sub').innerHTML = 'Ready to begin!';
-                                    floatingLock.querySelector('.lock-sub').style.color = '#e0e7ff';
-                                    
-                                    // Change background to BLUE (matching Start button)
-                                    floatingLock.style.background = '#4a62b0';
-                                    floatingLock.style.boxShadow = '0 4px 12px rgba(74, 98, 176, 0.3)';
-                                    
-                                    // Step 3: Fade out the floating lock
-                                    setTimeout(() => {
-                                        floatingLock.style.animation = 'fadeOutUp 0.3s ease-out forwards';
-                                        
-                                        // Remove floating lock and show start button
-                                        setTimeout(() => {
-                                            floatingLock.remove();
-                                            
-                                            // Create and show blue start button
-                                            const startButton = document.createElement('a');
-                                            startButton.href = "{% url 'learning:level_overview' level_name='beginner' %}";
-                                            startButton.className = 'btn-level btn-unlocked button-pop-animation';
-                                            startButton.innerHTML = ' Start  <i class="fas fa-arrow-right"></i>';
-                                            beginnerActionDiv.innerHTML = '';
-                                            beginnerActionDiv.appendChild(startButton);
-                                            
-                                            // Add pulse animation to the card
-                                            beginnerCard.classList.add('card-pulse');
-                                            
-                                            // Update card styling
-                                            beginnerCard.classList.remove('initial-locked', 'locked');
-                                            beginnerCard.classList.add('unlocked');
-                                            
-                                            // Animate the level icon with blue pop
-                                            if (beginnerIcon) {
-                                                beginnerIcon.classList.add('icon-pop');
-                                                setTimeout(() => {
-                                                    beginnerIcon.classList.remove('icon-pop');
-                                                }, 400);
-                                            }
-                                            
-                                            // Remove pulse after animation
-                                            setTimeout(() => {
-                                                beginnerCard.classList.remove('card-pulse');
-                                            }, 600);
-                                            
-                                        }, 300);
-                                        
-                                    }, 800);
-                                    
-                                }, 250);
-                                
-                            }, 500);
-                        }
-                    }, 100);
-                }
-            }, 2000);
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Colors: periwinkle, gold, purple, soft lavender (celebratory)
+        const colors = ['#4a62b0', '#6d28d9', '#a78bfa', '#c4b5fd', '#4f46e5', '#8b5cf6', '#f59e0b', '#10b981'];
+        const particles = [];
+        const PARTICLE_COUNT = 150;
+        
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height + 20,
+                r: Math.random() * 8 + 4,
+                d: Math.random() * 140 + 60,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                tilt: Math.random() * 20 - 10,
+                tiltAngle: 0,
+                tiltInc: Math.random() * 0.09 + 0.05,
+                vx: (Math.random() - 0.5) * 2.8,
+                vy: Math.random() * -6 - 4,
+                gravity: 0.25,
+                opacity: 1
+            });
         }
-    })();
+        
+        let frame = 0;
+        let animationId = null;
+        
+        function drawConfetti() {
+            if (!canvas || !ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            let allDead = true;
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                if (p.opacity <= 0.02) continue;
+                allDead = false;
+                
+                p.tiltAngle += p.tiltInc;
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += p.gravity;
+                p.tilt = Math.sin(p.tiltAngle) * 14;
+                p.opacity -= 0.008;
+                
+                if (p.opacity > 0.02) {
+                    ctx.beginPath();
+                    ctx.lineWidth = p.r;
+                    ctx.strokeStyle = p.color;
+                    ctx.globalAlpha = p.opacity;
+                    ctx.moveTo(p.x + p.tilt + p.r / 3, p.y);
+                    ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 3);
+                    ctx.stroke();
+                }
+            }
+            
+            frame++;
+            if (frame < 220 && !allDead) {
+                animationId = requestAnimationFrame(drawConfetti);
+            } else {
+                if (animationId) cancelAnimationFrame(animationId);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+        
+        drawConfetti();
+        
+        // Auto-clean canvas after 3 seconds (safety)
+        setTimeout(() => {
+            if (animationId) cancelAnimationFrame(animationId);
+            if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }, 3000);
+    }
+
+    // Shake card for locked levels
+    function shakeCard(cardElement, btnElement) {
+        if (!cardElement) return;
+        cardElement.classList.add('shake-card');
+        setTimeout(() => cardElement.classList.remove('shake-card'), 500);
+        if (btnElement) {
+            const originalHtml = btnElement.innerHTML;
+            btnElement.innerHTML = '<i class="fas fa-lock"></i> Complete Beginner!';
+            btnElement.style.fontSize = '0.75rem';
+            setTimeout(() => {
+                btnElement.innerHTML = originalHtml;
+                btnElement.style.fontSize = '';
+            }, 1200);
+        }
+    }
+
+    // 3D TILT effect for unlocked cards
+    function applyTiltEffect(card) {
+        card.addEventListener('mousemove', (e) => {
+            if (!card.classList.contains('unlocked')) return;
+            const rect = card.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) - 0.5;
+            const y = ((e.clientY - rect.top) / rect.height) - 0.5;
+            const rotateY = x * 8;
+            const rotateX = y * -6;
+            card.style.transform = `perspective(800px) translateY(-4px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            if (card.classList.contains('unlocked')) card.style.transform = '';
+        });
+    }
+
+    // Quote rotator (carousel)
+    const quoteList = [
+        "Every expert was once a beginner. Keep going!",
+        "The secret of getting ahead is getting started.",
+        "Learning is a treasure that follows its owner everywhere.",
+        "An investment in knowledge pays the best interest.",
+        "The more you read, the more things you will know.",
+        "Progress, not perfection, is the goal.",
+        "Believe you can and you're halfway there."
+    ];
+    let quoteIndex = 0;
+    const quoteElement = document.getElementById('dynamicQuote');
+    if (quoteElement) {
+        setInterval(() => {
+            quoteElement.style.opacity = '0';
+            setTimeout(() => {
+                quoteIndex = (quoteIndex + 1) % quoteList.length;
+                quoteElement.textContent = quoteList[quoteIndex];
+                quoteElement.style.opacity = '1';
+            }, 300);
+        }, 4800);
+    }
+
+    // This function replaces the locked button with the fully functional START button
+    // Preserves the redirect logic exactly as in your original requirement
+    function updateUIAfterUnlock(level) {
+        if (level === 'beginner') {
+            const beginnerCard = document.getElementById('beginnerCard');
+            beginnerCard.classList.remove('locked');
+            beginnerCard.classList.add('unlocked');
+            
+            // Update badge based on progress from backend
+            if (beginnerProgress >= 100) {
+                document.getElementById('beginnerBadge').innerHTML = '✓ Completed';
+                document.getElementById('beginnerBadge').classList.add('completed-badge');
+            } else if (beginnerProgress > 0) {
+                document.getElementById('beginnerBadge').innerHTML = ` ${Math.round(beginnerProgress)}% Complete`;
+                document.getElementById('beginnerBadge').classList.remove('locked-badge');
+                document.getElementById('beginnerBadge').classList.add('level-badge');
+            } else {
+                document.getElementById('beginnerBadge').innerHTML = '● Current level';
+                document.getElementById('beginnerBadge').classList.remove('locked-badge');
+                document.getElementById('beginnerBadge').classList.add('level-badge');
+            }
+            
+            // CREATE THE START BUTTON WITH EXACT REDIRECT (as per original logic)
+            const startButton = document.createElement('a');
+            startButton.href = "/learning/level/beginner/";
+            startButton.className = 'btn-level btn-start';
+            if (beginnerProgress > 0) {
+                startButton.innerHTML = '<i class="fas fa-play"></i> Continue <i class="fas fa-arrow-right"></i>';
+            } else {
+                startButton.innerHTML = '<i class="fas fa-play"></i> Start <i class="fas fa-arrow-right"></i>';
+            }
+            startButton.style.cursor = 'pointer';
+            
+            // Add click handler with animation and redirect (preserves original redirect behaviour)
+            startButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Visual feedback before redirect
+                this.style.transform = 'scale(0.96)';
+                setTimeout(() => {
+                    // ACTUAL REDIRECT to the beginner level overview page
+                    window.location.href = "/learning/level/beginner/";
+                }, 120);
+            });
+            
+            const actionContainer = document.getElementById('beginnerAction');
+            actionContainer.innerHTML = '';
+            actionContainer.appendChild(startButton);
+            
+            // Stepper updates
+            const stepBeginner = document.getElementById('stepBeginner');
+            stepBeginner.classList.add('active');
+            stepBeginner.classList.remove('completed');
+            document.getElementById('stepBeginnerMarker').innerHTML = '1';
+            if (beginnerProgress > 0) {
+                document.getElementById('stepBeginnerStatus').innerText = `${Math.round(beginnerProgress)}% Complete`;
+            } else {
+                document.getElementById('stepBeginnerStatus').innerText = 'Current';
+            }
+            
+            // Update info banner based on other levels
+            if (!intermediateUnlocked) {
+                document.getElementById('infoMessage').innerHTML = "Complete all 30 Beginner tasks to unlock the Intermediate level and advance your learning journey.";
+                document.getElementById('infoIcon').innerHTML = '<i class="fas fa-lock"></i>';
+            } else if (!advancedUnlocked) {
+                document.getElementById('infoMessage').innerHTML = "Complete all 30 Intermediate tasks to unlock the Advanced level and achieve mastery!";
+                document.getElementById('infoIcon').innerHTML = '<i class="fas fa-arrow-up"></i>';
+            } else {
+                document.getElementById('infoMessage').innerHTML = "🏆 All levels unlocked! You're on your way to English mastery. Keep up the great work!";
+                document.getElementById('infoIcon').innerHTML = '<i class="fas fa-trophy"></i>';
+            }
+            
+            applyTiltEffect(beginnerCard);
+        }
+        
+        // Handle intermediate unlock
+        if (level === 'intermediate' && intermediateUnlocked) {
+            const interCard = document.getElementById('intermediateCard');
+            interCard.classList.remove('locked');
+            interCard.classList.add('unlocked');
+            
+            if (intermediateProgress >= 100) {
+                document.getElementById('intermediateBadge').innerHTML = '✓ Completed';
+                document.getElementById('intermediateBadge').classList.add('completed-badge');
+            } else if (intermediateProgress > 0) {
+                document.getElementById('intermediateBadge').innerHTML = ` ${Math.round(intermediateProgress)}% Complete`;
+            } else {
+                document.getElementById('intermediateBadge').innerHTML = '✓ Unlocked';
+            }
+            document.getElementById('intermediateBadge').classList.remove('locked-badge');
+            document.getElementById('intermediateBadge').classList.add('level-badge');
+            
+            const startButton = document.createElement('a');
+            startButton.href = "/learning/level/intermediate/";
+            startButton.className = 'btn-level btn-start';
+            if (intermediateProgress > 0) {
+                startButton.innerHTML = '<i class="fas fa-play"></i> Continue <i class="fas fa-arrow-right"></i>';
+            } else {
+                startButton.innerHTML = '<i class="fas fa-play"></i> Start <i class="fas fa-arrow-right"></i>';
+            }
+            
+            startButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = "/learning/level/intermediate/";
+            });
+            
+            document.getElementById('intermediateAction').innerHTML = '';
+            document.getElementById('intermediateAction').appendChild(startButton);
+            
+            applyTiltEffect(interCard);
+        }
+        
+        // Handle advanced unlock
+        if (level === 'advanced' && advancedUnlocked) {
+            const advCard = document.getElementById('advancedCard');
+            advCard.classList.remove('locked');
+            advCard.classList.add('unlocked');
+            
+            if (advancedProgress >= 100) {
+                document.getElementById('advancedBadge').innerHTML = '✓ Completed';
+                document.getElementById('advancedBadge').classList.add('completed-badge');
+            } else if (advancedProgress > 0) {
+                document.getElementById('advancedBadge').innerHTML = ` ${Math.round(advancedProgress)}% Complete`;
+            } else {
+                document.getElementById('advancedBadge').innerHTML = '✓ Unlocked';
+            }
+            document.getElementById('advancedBadge').classList.remove('locked-badge');
+            document.getElementById('advancedBadge').classList.add('level-badge');
+            
+            const startButton = document.createElement('a');
+            startButton.href = "/learning/level/advanced/";
+            startButton.className = 'btn-level btn-start';
+            if (advancedProgress > 0) {
+                startButton.innerHTML = '<i class="fas fa-play"></i> Continue <i class="fas fa-arrow-right"></i>';
+            } else {
+                startButton.innerHTML = '<i class="fas fa-play"></i> Start <i class="fas fa-arrow-right"></i>';
+            }
+            
+            startButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = "/learning/level/advanced/";
+            });
+            
+            document.getElementById('advancedAction').innerHTML = '';
+            document.getElementById('advancedAction').appendChild(startButton);
+            
+            applyTiltEffect(advCard);
+        }
+    }
+
+    // Unlock sequence with ONE SINGLE confetti burst (no extra confetti after)
+    function startBeginnerUnlock() {
+        const overlay = document.getElementById('beginnerOverlay');
+        const lockEmoji = document.getElementById('beginnerLockEmoji');
+        const lockLabel = document.getElementById('beginnerLockLabel');
+        const lockSub = document.getElementById('beginnerLockSub');
+        const card = document.getElementById('beginnerCard');
+        if (!overlay) return;
+        
+        overlay.classList.add('active');
+        
+        setTimeout(() => {
+            if (lockEmoji) {
+                lockEmoji.style.animation = 'none';
+                lockEmoji.style.transform = 'scale(1.2)';
+                setTimeout(() => lockEmoji.style.transform = '', 200);
+            }
+        }, 800);
+        
+        setTimeout(() => {
+            if (lockEmoji) lockEmoji.textContent = '🔓';
+            if (lockLabel) lockLabel.textContent = 'Level Unlocked!';
+            if (lockSub) lockSub.textContent = 'Ready to begin! ✨';
+            
+            // ========== SINGLE CONFETTI BURST (ONLY ONCE) ==========
+            if (!confettiTriggered) {
+                confettiTriggered = true;
+                launchSingleConfetti();
+            }
+            
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    if (overlay.parentNode) overlay.remove();
+                    updateUIAfterUnlock('beginner');
+                    // No extra confetti here — only the one burst above
+                }, 400);
+            }, 900);
+        }, 2200);
+    }
+
+    // Attach locked button handlers for Intermediate & Advanced (shake & gentle hint)
+    function attachLockedHandlers() {
+        const interCard = document.getElementById('intermediateCard');
+        const interBtn = document.getElementById('intermediateLockedBtn');
+        if (interBtn && !intermediateUnlocked) {
+            interBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                shakeCard(interCard, interBtn);
+                showFloatingHint('🔐 Complete Beginner level first!');
+            });
+        }
+        const advCard = document.getElementById('advancedCard');
+        const advBtn = document.getElementById('advancedLockedBtn');
+        if (advBtn && !advancedUnlocked) {
+            advBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                shakeCard(advCard, advBtn);
+                showFloatingHint('🔐 Complete Intermediate first to unlock Advanced!');
+            });
+        }
+    }
+    
+    // Floating hint message (non-intrusive)
+    function showFloatingHint(message) {
+        const msgDiv = document.createElement('div');
+        msgDiv.textContent = message;
+        msgDiv.style.position = 'fixed';
+        msgDiv.style.bottom = '30px';
+        msgDiv.style.left = '50%';
+        msgDiv.style.transform = 'translateX(-50%)';
+        msgDiv.style.backgroundColor = '#1a1f33';
+        msgDiv.style.color = 'white';
+        msgDiv.style.padding = '10px 20px';
+        msgDiv.style.borderRadius = '40px';
+        msgDiv.style.fontSize = '0.8rem';
+        msgDiv.style.zIndex = '10000';
+        msgDiv.style.fontWeight = '500';
+        msgDiv.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2)';
+        msgDiv.style.opacity = '0';
+        msgDiv.style.transition = 'opacity 0.2s';
+        document.body.appendChild(msgDiv);
+        setTimeout(() => { msgDiv.style.opacity = '1'; }, 10);
+        setTimeout(() => {
+            msgDiv.style.opacity = '0';
+            setTimeout(() => msgDiv.remove(), 300);
+        }, 2200);
+    }
+
+    // Intersection observer for fade-in cards
+    const cardsArray = document.querySelectorAll('.level-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.2 });
+    cardsArray.forEach(card => observer.observe(card));
+
+    // Nav links (preserve redirection)
+    document.getElementById('homeLink')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = "/";
+    });
+    document.getElementById('profileLink')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = "/profile/";
+    });
+
+    // Final initialization
+    window.addEventListener('load', () => {
+        attachLockedHandlers();
+        // Set initial stepper look
+        const stepBeg = document.getElementById('stepBeginner');
+        stepBeg.classList.add('active');
+        document.getElementById('stepBeginnerStatus').innerText = 'Unlocking...';
+        document.getElementById('stepIntermediateStatus').innerText = intermediateUnlocked ? 'Available' : 'Locked';
+        document.getElementById('stepAdvancedStatus').innerText = advancedUnlocked ? 'Available' : 'Locked';
+        document.getElementById('infoIcon').innerHTML = '<i class="fas fa-hourglass-half"></i>';
+        
+        // Show unlock animation based on backend data
+        if (currentUserLevel === 'beginner' && beginnerUnlocked) {
+            setTimeout(() => {
+                startBeginnerUnlock();
+            }, 700);
+        }
+        
+        // Handle intermediate if unlocked
+        if (intermediateUnlocked) {
+            setTimeout(() => {
+                updateUIAfterUnlock('intermediate');
+            }, 3000);
+        }
+        
+        // Handle advanced if unlocked
+        if (advancedUnlocked) {
+            setTimeout(() => {
+                updateUIAfterUnlock('advanced');
+            }, 3500);
+        }
+    });
 </script>
-{% endblock %}
+</body>
+</html>

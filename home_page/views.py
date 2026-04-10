@@ -251,7 +251,6 @@ def profile_view(request):
                 form.save()
                 messages.success(request, "Your profile has been updated successfully!")
                 return redirect('home_page:profile')
-            # If invalid, continue to render with errors
         
         elif 'change_password' in request.POST:
             print("PASSWORD CHANGE FORM SUBMITTED")
@@ -268,18 +267,143 @@ def profile_view(request):
                 update_session_auth_hash(request, user)
                 messages.success(request, "Your password has been changed successfully!")
                 return redirect('home_page:profile')
-            # If invalid, continue to render with errors
     
     # For GET requests or invalid POST, initialize both forms
     form = ProfileUpdateForm(instance=profile)
     password_form = PasswordChangeForm(request.user)
 
-    return render(request, 'home_page/profile.html', {
+    # ========== LEARNING LEVELS LOGIC ==========
+    from learning.models import UserLearningProgress
+    
+    # Get user's pretest result level from profile
+    # Profile.level stores: "Beginner", "Intermediate", "Advanced"
+    user_level = profile.level.lower() if profile.level else 'beginner'
+    pretest_completed = profile.pretest_completed
+    
+    print(f"🔍 DEBUG: User Level = {user_level}")
+    print(f"🔍 DEBUG: Pretest Completed = {pretest_completed}")
+    
+    # Fetch progress objects for all levels
+    beginner_progress = UserLearningProgress.objects.filter(user=request.user, level='beginner').first()
+    intermediate_progress = UserLearningProgress.objects.filter(user=request.user, level='intermediate').first()
+    advanced_progress = UserLearningProgress.objects.filter(user=request.user, level='advanced').first()
+    
+    # Helper function to safely get progress data
+    def get_progress_data(progress_obj):
+        if not progress_obj:
+            return {
+                'exists': False,
+                'completion_percentage': 0,
+                'completed_days_count': 0,
+                'completed_days': [],
+                'is_completed': False,
+                'current_day': 1,
+                'streak_days': 0,
+            }
+        completed_days_list = progress_obj.completed_days if progress_obj.completed_days else []
+        return {
+            'exists': True,
+            'completion_percentage': progress_obj.completion_percentage(),
+            'completed_days_count': len(completed_days_list),
+            'completed_days': completed_days_list,
+            'is_completed': progress_obj.is_completed(),
+            'current_day': progress_obj.current_day,
+            'streak_days': progress_obj.streak_days,
+        }
+    
+    beginner = get_progress_data(beginner_progress)
+    intermediate = get_progress_data(intermediate_progress)
+    advanced = get_progress_data(advanced_progress)
+    
+    # ========== CORRECT UNLOCK LOGIC BASED ON PRETEST RESULT ==========
+    
+    # Beginner: Always unlocked if pretest is completed (regardless of level)
+    beginner_unlocked = pretest_completed
+    
+    # Intermediate unlock logic
+    if pretest_completed:
+        if user_level == 'advanced':
+            # Advanced users get Intermediate unlocked immediately
+            intermediate_unlocked = True
+        elif user_level == 'intermediate':
+            # ✅ FIXED: Intermediate users get Intermediate unlocked immediately
+            intermediate_unlocked = True
+        elif user_level == 'beginner':
+            # Beginner users must complete Beginner level first
+            intermediate_unlocked = beginner['is_completed']
+        else:
+            intermediate_unlocked = False
+    else:
+        intermediate_unlocked = False
+    
+    # Advanced unlock logic
+    if pretest_completed:
+        if user_level == 'advanced':
+            # Advanced users get Advanced unlocked immediately
+            advanced_unlocked = True
+        elif user_level == 'intermediate':
+            # Intermediate users must complete Intermediate level first
+            advanced_unlocked = intermediate['is_completed']
+        elif user_level == 'beginner':
+            # Beginner users must complete Intermediate level first
+            advanced_unlocked = intermediate['is_completed']
+        else:
+            advanced_unlocked = False
+    else:
+        advanced_unlocked = False
+    
+    print(f"🔍 DEBUG: Beginner Unlocked = {beginner_unlocked}")
+    print(f"🔍 DEBUG: Intermediate Unlocked = {intermediate_unlocked}")
+    print(f"🔍 DEBUG: Advanced Unlocked = {advanced_unlocked}")
+    print(f"🔍 DEBUG: Beginner Completed = {beginner['is_completed']}")
+    print(f"🔍 DEBUG: Intermediate Completed = {intermediate['is_completed']}")
+    
+    # Determine which level to highlight as primary (for quick resume)
+    if not pretest_completed:
+        primary_level = None
+    elif user_level == 'advanced':
+        if not advanced['is_completed']:
+            primary_level = 'advanced'
+        elif not intermediate['is_completed']:
+            primary_level = 'intermediate'
+        else:
+            primary_level = 'beginner'
+    elif user_level == 'intermediate':
+        if not intermediate['is_completed']:
+            primary_level = 'intermediate'
+        else:
+            primary_level = 'beginner'
+    else:  # beginner
+        if not beginner['is_completed']:
+            primary_level = 'beginner'
+        elif not intermediate['is_completed']:
+            primary_level = 'intermediate'
+        else:
+            primary_level = 'advanced'
+    
+    context = {
         'form': form,
         'password_form': password_form,
         'profile': profile,
-    })
-
+        
+        # Progress data for template
+        'beginner_progress': beginner,
+        'intermediate_progress': intermediate,
+        'advanced_progress': advanced,
+        
+        # Unlock flags (calculated in backend)
+        'beginner_unlocked': beginner_unlocked,
+        'intermediate_unlocked': intermediate_unlocked,
+        'advanced_unlocked': advanced_unlocked,
+        
+        # User's pretest level
+        'user_level': user_level,
+        
+        # Primary level for quick resume
+        'primary_level': primary_level,
+    }
+    
+    return render(request, 'home_page/profile.html', context)
     
 @login_required
 def test_introduction(request):

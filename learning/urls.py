@@ -1,3 +1,4 @@
+# learning/urls.py
 from django.urls import path
 from . import views
 
@@ -7,17 +8,19 @@ urlpatterns = [
     # Level selection and overview
     path('level-selection/', views.level_selection, name='level_selection'),
     path('level/<str:level_name>/', views.level_overview, name='level_overview'),
+
+    path('<str:level_name>/mark-intro-seen/', views.mark_intro_seen, name='mark_intro_seen'),
     
     # Daily lesson paths
     path('level/<str:level_name>/day/<int:day_number>/', views.day_detail, name='day_detail'),
     path('level/<str:level_name>/day/<int:day_number>/complete/<str:activity_type>/', 
          views.complete_activity, name='complete_activity'),
     path('level/<str:level_name>/day/<int:day_number>/complete/', 
-         views.complete_day, name='complete_day'),
+         views.complete_day, name='complete_day'),  # ✅ THIS IS THE IMPORTANT ONE
     
     # Final test and certificate
     path('level/<str:level_name>/final-test/', views.take_final_test, name='final_test'),
-    path('level/<str:level_name>/take-test/', views.render_test_page, name='take_test'),  # ✅ ADD THIS
+    path('level/<str:level_name>/take-test/', views.render_test_page, name='take_test'),
     path('level/<str:level_name>/result/', views.test_result, name='test_result'),
     path('level/<str:level_name>/certificate/', views.certificate_view, name='certificate'),
     
@@ -33,5 +36,8 @@ urlpatterns = [
     path('certificate/<int:certificate_id>/shared/', views.mark_certificate_shared, name='certificate_shared'),
 
     # API endpoints
-    path('api/progress/<str:level_name>/', views.get_progress_api, name='api_progress'),
+    path('api/progress/<str:level_name>/', views.get_progress_api, name='api_progress'),  # ✅ THIS IS IMPORTANT
+    
+    # ✅ ADD THIS NEW ENDPOINT for checking day completion
+    path('api/check-day/<str:level_name>/<int:day_number>/', views.check_day_completion, name='check_day_completion'),
 ]
