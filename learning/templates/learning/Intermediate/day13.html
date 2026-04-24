@@ -1,0 +1,1309 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 13: Professional Email & Formal Writing | English for Engineers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+</head>
+
+<body>
+    <div class="lesson-container">
+        <div class="lesson-hero">
+            <div class="hero-content">
+                <div class="day-badge">Day 13 • Week 2 • Intermediate</div>
+                <h1 class="hero-title">✉️ PROFESSIONAL EMAIL & FORMAL WRITING</h1>
+                <div class="power-line">💡 "A well-crafted email is a letter of recommendation you send yourself."</div>
+            </div>
+        </div>
+
+        <div class="activities-grid">
+
+            <!-- 1. LISTENING ACTIVITY - WITH AI EVALUATION -->
+            <div class="activity-card" id="listening-card">
+                <div class="card-header listening">
+                    <h2>🎧 1. Listening Activity · Formal Register</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Focus</span></div>
+                        </div>
+                        <div class="task-content">Formal Register — notice the absence of contractions and the measured,
+                            polished tone.</div>
+                    </div>
+
+                    <audio id="listeningAudio" controls>
+                        <source src="{% static 'learning/audio/day13.mp3' %}" type="audio/mpeg">
+                    </audio>
+
+                    <div id="listeningTextSection" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Listening Text</span></div>
+                            </div>
+                            <div class="task-content" style="font-style: italic; background: #fef9e3;">
+                                "I am writing further to our telephone conversation earlier today... Please be advised
+                                that the documents you requested are enclosed herewith... I would be grateful if you
+                                could review the attached schedule at your earliest convenience... I remain available
+                                should you require any further clarification..."
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="postAudioListeningContent" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>🎯</span><span>Task</span></div>
+                            </div>
+                            <div class="task-content">Write a <strong>professional email</strong> and record yourself
+                                reading it, focusing on formal pronunciation and <strong>zero contractions</strong>.
+                            </div>
+                        </div>
+
+                        <!-- Email Writing Area -->
+                        <div style="background: #f8fafc; border-radius: 16px; padding: 1.25rem; margin: 1rem 0;">
+                            <div style="font-weight: 700; margin-bottom: 1rem; color: #1e293b; font-size: 1rem;">✍️
+                                Write Your Professional Email (Minimum 50 words):</div>
+                            <textarea id="professionalEmail" class="email-textarea" rows="8" placeholder="Example:
+Dear Sir/Madam,
+
+I am writing to express my interest in the position of Mechanical Engineer at your esteemed organization. I have enclosed my resume and cover letter for your kind perusal.
+
+I would appreciate the opportunity to discuss my qualifications further. Please do not hesitate to contact me should you require any additional information.
+
+Thank you for your consideration.
+
+Yours sincerely,
+[Your Name]"></textarea>
+                            <div id="emailValidationMsg" style="margin-top: 0.75rem; font-size: 0.85rem;"></div>
+                            <button class="btn-outline" id="validateEmailBtn" style="width: 30%; margin-top: 0.5rem;">✓
+                                Submit for AI Evaluation</button>
+                        </div>
+
+                        <!-- AI Feedback Area -->
+                        <div id="emailAIFeedback" style="margin-top: 0.75rem;"></div>
+                        <div id="emailAttemptCounter" class="attempt-counter">📊 Attempts remaining: <span>3</span>
+                        </div>
+
+                        <div style="font-weight: 600; margin: 1rem 0 0.5rem;">🎙️ Record Your Email Reading</div>
+                        <div class="recording-controls">
+                            <button id="listeningRecordBtn" class="record-btn" disabled>🎙️ Start Recording (Validate
+                                first)</button>
+                            <button id="listeningStopBtn" class="record-btn"
+                                style="background: #64748b; display: none;">⏹️ Stop Recording</button>
+                        </div>
+                        <div id="listeningPlaybackCard" style="display: none;">
+                            <audio id="listeningPlayback" controls style="width: 100%;"></audio>
+                        </div>
+                        <div id="comparisonSection" style="display: none;">
+                            <div class="comparison-message">Did you use formal register with zero contractions?</div>
+                            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                                <button id="yesComparisonBtn" class="yes-btn">✓ Yes, correct</button>
+                                <button id="noComparisonBtn" class="no-btn">✗ No, record again</button>
+                            </div>
+                            <div id="comparisonFeedback" style="margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <div class="quiz-section" style="margin-top: 1rem;">
+                            <p><strong>🧠 Quick Listening Check</strong></p><br>
+                            <div>
+                                <p><strong>1. What is the speaker 'writing with reference to'?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q1" value="phone"> A phone
+                                    call</label>
+                                <label class="quiz-option"><input type="radio" name="q1" value="email"> A previous
+                                    email</label>
+                            </div>
+                            <div>
+                                <p><strong>2. What phrase is used instead of 'please reply soon'?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q2" value="getback"> Get back to
+                                    me</label>
+                                <label class="quiz-option"><input type="radio" name="q2" value="earliest"> At your
+                                    earliest convenience</label>
+                            </div>
+                            <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                        </div>
+
+                        <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answer</button>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeListeningBtn" data-checklist="chk1" disabled>✓
+                            Mark Listening as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SPEAKING ACTIVITY -->
+            <div class="activity-card" id="speaking-card">
+                <div class="card-header speaking">
+                    <h2>🗣️ 2. Speaking Activity · The Client Correspondence</h2>
+                </div>
+                <div class="card-body">
+                    <p>Professional emails require specific phrases. Practice these out loud until they feel natural.
+                    </p>
+
+                    <div class="speaking-unified-box">
+                        <div class="speaking-task-header">
+                            <div class="task-title"><span>🎯</span><span>Task</span></div>
+                            <p class="task-description">Practice these client correspondence sentences with formal tone.
+                            </p>
+                        </div>
+
+                        <div class="speaking-sentences-list">
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">1</div>
+                                <div class="sentence-text-content">"I am writing to inform you that the project
+                                    milestone has been successfully achieved."</div>
+                            </div>
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">2</div>
+                                <div class="sentence-text-content">"I would be grateful if you could provide
+                                    clarification on the revised delivery schedule."</div>
+                            </div>
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">3</div>
+                                <div class="sentence-text-content">"Please find enclosed the amended technical
+                                    specifications as previously requested."</div>
+                            </div>
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">4</div>
+                                <div class="sentence-text-content">"Should you require any further information, please
+                                    do not hesitate to contact me."</div>
+                            </div>
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">5</div>
+                                <div class="sentence-text-content">"I look forward to your confirmation at your earliest
+                                    convenience."</div>
+                            </div>
+                        </div>
+
+                        <div class="speaking-recording-section">
+                            <div class="recording-header"><span>🎙️</span>
+                                <h4>Your Client Correspondence Recording</h4><span class="time-limit">60-90
+                                    seconds</span>
+                            </div>
+                            <div class="recording-controls-group">
+                                <button id="speakingRecordBtn" class="speaking-record-btn"><span>🎤</span> Start
+                                    Recording</button>
+                                <button id="speakingStopBtn" class="speaking-stop-btn"
+                                    style="display: none;"><span>⏹️</span> Stop Recording</button>
+                            </div>
+                            <div id="speakingRecordingStatus" class="recording-status-indicator" style="display: none;">
+                                <div class="recording-dot-live"></div><span class="recording-timer-display"
+                                    id="speakingTimer">00:00</span><span class="recording-hint">Recording in
+                                    progress...</span>
+                            </div>
+                            <div id="speakingPlaybackArea" class="speaking-playback-area" style="display: none;"><audio
+                                    id="speakingPlayback" controls></audio>
+                                <div class="playback-success-msg"><span>✅</span> Recording saved! Listen back to check
+                                    your formal tone.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="speaking-why-works">
+                        <div class="why-works-content"><span class="why-works-icon">👉</span><span
+                                class="why-works-text"><strong>WHY THIS WORKS:</strong> Every email you send creates a
+                                permanent record of your communication standard. One poorly written email can undermine
+                                weeks of professional work.</span></div>
+                    </div>
+
+                    <div class="speaking-complete-wrapper">
+                        <button class="complete-activity-btn" id="completeSpeakingBtn" data-checklist="chk3" disabled>✓
+                            Mark Speaking as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. READING ACTIVITY -->
+            <div class="activity-card" id="reading-card">
+                <div class="card-header reading">
+                    <h2>📖 3. Reading Activity · The Professional Email</h2>
+                </div>
+                <div class="card-body">
+
+                    <div id="interactivePassage" class="interactive-passage"></div>
+                    <div class="instruction-box">
+                        <p>📌 Task 1 Instruction: Click on formal email phrases.</p>
+                    </div>
+
+                    <div class="reading-stats">
+                        <div class="stat">
+                            <div class="stat-number" id="selectedCount">0</div>
+                            <div class="stat-label">Phrases Selected</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number" id="correctCount">0</div>
+                            <div class="stat-label">Correct Phrases</div>
+                            <div style="font-size: 0.7rem;">Need: 5 phrases</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+                        <button id="underlineModeBtn" class="btn-outline"
+                            style="background: #f59e0b; color: white; border: none;"> Underline Mode</button>
+                        <button id="checkFormalPhrasesBtn" class="btn-outline">✓ Check Formal Phrases</button>
+                        <button id="resetReadingBtn" class="btn-outline">⟳ Reset Selections</button>
+                    </div>
+                    <div id="readingUnderlineFeedback" style="margin-top: 0.8rem;"></div>
+
+                    <!-- Task 1: Informal Equivalents -->
+                    <div id="informalEquivalentsSection"
+                        style="display: none; background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0;">
+                        <p><strong> Task 1: Write informal equivalents for each formal phrase:</strong></p>
+
+                        <div class="informal-item" id="informalItem1">
+                            <p><strong>Formal Phrase 1:</strong> "I am writing with reference to"</p>
+                            <input type="text" id="informal1" class="grammar-input" placeholder="Informal version...">
+                            <div id="informal1Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <div class="informal-item" id="informalItem2">
+                            <p><strong>Formal Phrase 2:</strong> "I would like to bring to your attention"</p>
+                            <input type="text" id="informal2" class="grammar-input" placeholder="Informal version...">
+                            <div id="informal2Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <div class="informal-item" id="informalItem3">
+                            <p><strong>Formal Phrase 3:</strong> "I apologize for any inconvenience"</p>
+                            <input type="text" id="informal3" class="grammar-input" placeholder="Informal version...">
+                            <div id="informal3Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <div class="informal-item" id="informalItem4">
+                            <p><strong>Formal Phrase 4:</strong> "Please find attached"</p>
+                            <input type="text" id="informal4" class="grammar-input" placeholder="Informal version...">
+                            <div id="informal4Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <div class="informal-item" id="informalItem5">
+                            <p><strong>Formal Phrase 5:</strong> "Please do not hesitate to contact"</p>
+                            <input type="text" id="informal5" class="grammar-input" placeholder="Informal version...">
+                            <div id="informal5Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <button class="btn-outline" id="checkInformalBtn">✓ Check Informal Equivalents</button>
+                        <div id="informalFeedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Task 2: Circle Mode -->
+                    <div class="instruction-box" style="margin-top: 1rem;">
+                        <p>📌 Task 2 Instruction: Circle the word that means 'to speed up'.</p>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+                        <button id="circleModeBtn" class="btn-outline"
+                            style="background: #3b82f6; color: white; border: none;">Circle Mode</button>
+                        <button id="checkCircleBtn" class="btn-outline">✅ Check Answer</button>
+                        <button id="resetCircleBtn" class="btn-outline">⟳ Reset Circle</button>
+                    </div>
+                    <div id="circleFeedback" style="margin-top: 0.8rem;"></div>
+
+                    <!-- Task 3: Rewrite Subject Line -->
+                    <div style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0;">
+                        <p>📌 Task 3: Rewrite the subject line in your own words without losing the key information.</p>
+                        <br>
+                        <p style="color: #151516; margin-bottom: 0.5rem;">Original Subject: "Revised Project Timeline —
+                            Phase 2 Commencement"</p>
+                        <input type="text" id="task3Subject" class="grammar-input"
+                            placeholder="Type your rewritten subject line here..."
+                            style="width: 100%; margin-bottom: 0.75rem;">
+                        <div id="task3Feedback" class="fix-feedback"></div>
+                        <button class="btn-outline" id="checkSubjectBtn">✅ Check answer</button>
+                        <div id="subjectFeedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeReadingBtn" data-checklist="chk2" disabled>✓
+                            Mark Reading as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. VOCABULARY TABLE -->
+            <div class="activity-card" id="vocabulary-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 4. Vocabulary of the Day</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>🔊</th>
+                                    <th>✅</th>
+                                    <th>Word</th>
+                                    <th>Pronunciation</th>
+                                    <th>Meaning</th>
+                                    <th>Synonym</th>
+                                    <th>Antonym</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Commencement"
+                                            data-checkid="check-commencement">🔊</button></span>
+                                    <td class="check-cell" id="check-commencement">⬜</span>
+                                    <td class="word-cell"><strong>Commencement</strong></span>
+                                    <td><code>/kəˈmens.mənt/</code></span>
+                                    <td>The beginning of something</span>
+                                    <td>Start</span>
+                                    <td>End</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Expedite"
+                                            data-checkid="check-expedite">🔊</button></span>
+                                    <td class="check-cell" id="check-expedite">⬜</span>
+                                    <td class="word-cell"><strong>Expedite</strong></span>
+                                    <td><code>/ˈek.spɪ.daɪt/</code></span>
+                                    <td>To make a process happen sooner</span>
+                                    <td>Accelerate</span>
+                                    <td>Delay</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Procurement"
+                                            data-checkid="check-procurement">🔊</button></span>
+                                    <td class="check-cell" id="check-procurement">⬜</span>
+                                    <td class="word-cell"><strong>Procurement</strong></span>
+                                    <td><code>/prəˈkjʊər.mənt/</code></span>
+                                    <td>The process of obtaining goods</span>
+                                    <td>Acquisition</span>
+                                    <td>Release</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Gantt chart"
+                                            data-checkid="check-gantt">🔊</button></span>
+                                    <td class="check-cell" id="check-gantt">⬜</span>
+                                    <td class="word-cell"><strong>Gantt chart</strong></span>
+                                    <td><code>/ˈɡænt tʃɑːrt/</code></span>
+                                    <td>A bar chart showing a project schedule</span>
+                                    <td>Timeline</span>
+                                    <td>Report</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Coordinator"
+                                            data-checkid="check-coordinator">🔊</button></span>
+                                    <td class="check-cell" id="check-coordinator">⬜</span>
+                                    <td class="word-cell"><strong>Coordinator</strong></span>
+                                    <td><code>/kəʊˈɔː.dɪ.neɪ.tər/</code></span>
+                                    <td>A person who organises activities</span>
+                                    <td>Organiser</span>
+                                    <td>Obstacle</span>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="power-word-section" style="border-left-color: #22c55e;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #166534;">
+                            <span>💡</span><span>IDIOM OF THE DAY: "PUT IT IN WRITING"</span></div>
+                        <p><strong>Marathi Meaning:</strong> लिखित स्वरूपात नोंद करणे</p>
+                        <p><strong>Meaning:</strong> To record something officially in a document</p>
+                        <p><strong>Example:</strong> "The client verbally agreed to the revised terms, but we asked them
+                            to put it in writing before proceeding."</p>
+                    </div>
+
+                    <div class="power-word-section">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
+                            <span>🔥</span><span>POWER WORD: SUCCINCT (Suk-SINKT)</span></div>
+                        <p><strong>Meaning:</strong> Briefly and clearly expressed</p>
+                        <p><strong>Usage:</strong> "Your project report should be succinct — no more than two pages,
+                            with all key findings clearly stated."</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeVocabularyBtn" data-checklist="chk5"
+                            disabled>✓ Mark Vocabulary as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. GRAMMAR HACK -->
+            <div class="grammar-section" id="grammar-card">
+                <h3 style="margin: 0 0 1rem 0;">🧠 Grammar Hack: Formal vs. Informal Register — The Professional Upgrade
+                </h3>
+
+                <table class="grammar-table">
+                    <thead>
+                        <tr>
+                            <th>Informal</th>
+                            <th>Formal Equivalent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sorry for the trouble</span>
+                            <td>I sincerely apologise for any inconvenience caused</span>
+                        </tr>
+                        <tr>
+                            <td>Here is the file</span>
+                            <td>Please find attached / enclosed the document</span>
+                        </tr>
+                        <tr>
+                            <td>Let me know</span>
+                            <td>I would appreciate your response / Please advise</span>
+                        </tr>
+                        <tr>
+                            <td>Get back to me soon</span>
+                            <td>I look forward to hearing from you at your earliest convenience</span>
+                        </tr>
+                        <tr>
+                            <td>About</span>
+                            <td>With regard to / With reference to / Regarding</span>
+                        </tr>
+                        <tr>
+                            <td>I want to know</span>
+                            <td>I would be grateful if you could inform me / Please could you advise</span>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="grammar-rule">
+                    <p><strong>📖 Email Structure:</strong></p><br>
+                    <p>1. <strong>Opening:</strong> Purpose of email</p>
+                    <p>2. <strong>Body:</strong> Details / Request / Action</p>
+                    <p>3. <strong>Attachment mention</strong> (if any)</p>
+                    <p>4. <strong>Query/clarification offer</strong></p>
+                    <p>5. <strong>Closing:</strong> Looking forward + Salutation</p>
+                </div>
+
+                <div class="grammar-rule">
+                    <p><strong>⚠️ Activity:</strong> Rewrite this informal email in formal register:</p>
+                    <div style="background: #f1f5f9; padding: 0.75rem; border-radius: 8px; margin: 0.75rem 0;">
+                        <p><em>"Hi, Just wanted to check if you got my report. Let me know soon because I need your
+                                feedback. Thanks."</em></p>
+                    </div>
+                    <textarea id="grammar1" class="grammar-input" rows="5" placeholder="Type the formal version here..."
+                        style="width: 100%; resize: vertical;"></textarea>
+                    <div id="grammar1Feedback" class="fix-feedback"></div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="btn-outline" id="checkGrammarBtn">✓ Check Answers</button>
+                    <button class="btn-outline" id="resetGrammarBtn">⟳ Reset Grammar</button>
+                </div>
+                <div id="grammarFeedback" class="quiz-feedback"></div>
+                <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                    <button class="complete-activity-btn" id="completeGrammarBtn" data-checklist="chk4" disabled>✓ Mark
+                        Grammar as Complete</button>
+                </div>
+            </div>
+
+            <!-- CHECKLIST -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 13 COMPLETION CHECKLIST</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chk1" disabled><label> I wrote a professional email and recorded
+                                it with formal pronunciation.</label></li>
+                        <li><input type="checkbox" id="chk2" disabled><label> I identified 5 formal phrases and wrote
+                                their informal equivalents.</label></li>
+                        <li><input type="checkbox" id="chk3" disabled><label> I practised reading the professional email
+                                aloud with zero contractions.</label></li>
+                        <li><input type="checkbox" id="chk4" disabled><label> I rewrote the informal email in formal
+                                register correctly.</label></li>
+                        <li><input type="checkbox" id="chk5" disabled><label> I used the Power Word 'Succinct' in a
+                                sentence.</label></li>
+                    </ul>
+                    <div style="text-align:right;"><span class="badge" id="progressCounter">0/5 completed</span></div>
+                    <div style="display:flex; justify-content:center; margin-top:1rem;">
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>🏆 Complete Day 13</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+
+            // ==================== VOCABULARY AUDIO ====================
+            const audioBtns = document.querySelectorAll('.vocab-audio-btn');
+            const completeVocabularyBtn = document.getElementById('completeVocabularyBtn');
+            let vocabularyCompleted = false;
+
+            function checkAllVocabularyListened() {
+                const checkCells = ['check-commencement', 'check-expedite', 'check-procurement', 'check-gantt', 'check-coordinator'];
+                let allListened = true;
+                for (let id of checkCells) {
+                    const cell = document.getElementById(id);
+                    if (cell && cell.innerHTML !== '✅') { allListened = false; break; }
+                }
+                if (allListened && completeVocabularyBtn) { completeVocabularyBtn.disabled = false; vocabularyCompleted = true; }
+                else if (completeVocabularyBtn) { completeVocabularyBtn.disabled = true; vocabularyCompleted = false; }
+            }
+
+            function speakWord(word) {
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+            }
+
+            audioBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const word = this.getAttribute('data-word');
+                    const checkId = this.getAttribute('data-checkid');
+                    speakWord(word);
+                    if (checkId) {
+                        const checkCell = document.getElementById(checkId);
+                        if (checkCell && checkCell.innerHTML === '⬜') { checkCell.innerHTML = '✅'; checkCell.style.color = '#22c55e'; checkCell.style.fontSize = '1rem'; }
+                    }
+                    checkAllVocabularyListened();
+                });
+            });
+
+            if (completeVocabularyBtn) {
+                completeVocabularyBtn.addEventListener('click', function () {
+                    if (vocabularyCompleted && typeof markActivityComplete === 'function') markActivityComplete('vocabulary', 'chk5');
+                    else alert('Please listen to all 5 vocabulary words first.');
+                });
+            }
+
+            // ==================== AI EMAIL EVALUATION FOR LISTENING ====================
+            let aiEvaluationDone = false;
+            let aiCorrect = false;
+            let attemptCount = 0;
+            let maxAttempts = 3;
+            let emailValidated = false;
+            let listeningRecorded = false;
+
+            const validateEmailBtn = document.getElementById('validateEmailBtn');
+            const listenRecordBtn = document.getElementById('listeningRecordBtn');
+            const emailValidationMsg = document.getElementById('emailValidationMsg');
+            const emailAIFeedbackDiv = document.getElementById('emailAIFeedback');
+            const emailAttemptCounterSpan = document.querySelector('#emailAttemptCounter span');
+
+            function updateEmailAttemptDisplay() {
+                const remaining = maxAttempts - attemptCount;
+                if (emailAttemptCounterSpan) emailAttemptCounterSpan.innerText = remaining;
+
+                if (attemptCount >= maxAttempts && validateEmailBtn) {
+                    validateEmailBtn.disabled = true;
+                    validateEmailBtn.textContent = '🔒 No attempts left';
+                }
+            }
+
+            function generateEmailFeedback(result) {
+                let html = `
+                <div class="ai-feedback ${result.correct ? 'correct' : 'incorrect'}">
+                    <strong>📝 ${result.feedback || (result.correct ? 'Excellent! Your email is professionally written.' : 'Your email needs improvement.')}</strong>
+                    <br><br>
+            `;
+
+                if (result.details) {
+                    if (result.details.strengths && result.details.strengths.length > 0) {
+                        html += `<div style="margin-bottom: 0.75rem;"><strong>✅ Strengths:</strong><br>`;
+                        result.details.strengths.forEach(s => { html += `• ${s}<br>`; });
+                        html += `</div>`;
+                    }
+
+                    if (result.details.missing_elements && result.details.missing_elements.length > 0) {
+                        html += `<div style="margin-bottom: 0.75rem;"><strong>⚠️ Missing elements:</strong><br>`;
+                        result.details.missing_elements.forEach(m => { html += `• ${m}<br>`; });
+                        html += `</div>`;
+                    }
+
+                    if (result.details.suggestions && result.details.suggestions.length > 0) {
+                        html += `<div style="margin-bottom: 0.75rem;"><strong>💡 Suggestions for improvement:</strong><br>`;
+                        result.details.suggestions.forEach(s => { html += `• ${s}<br>`; });
+                        html += `</div>`;
+                    }
+                }
+
+                if (result.correct_example) {
+                    html += `<div class="feedback-tip" style="margin-top: 0.75rem; padding: 0.75rem; border-radius: 8px;">
+                            <strong>📚 Example of a professional email:</strong><br>
+                            "${result.correct_example}"
+                         </div>`;
+                }
+
+                html += `</div>`;
+                return html;
+            }
+
+            if (validateEmailBtn) {
+                validateEmailBtn.addEventListener('click', async function () {
+                    if (attemptCount >= maxAttempts) {
+                        emailAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">🔒 You have used all 3 attempts. Please review the feedback below and try again tomorrow.</div>';
+                        emailAIFeedbackDiv.style.display = 'block';
+                        return;
+                    }
+
+                    const email = document.getElementById('professionalEmail').value.trim();
+
+                    if (!email) {
+                        emailAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">❌ Please write your email before submitting.</div>';
+                        emailAIFeedbackDiv.style.display = 'block';
+                        return;
+                    }
+
+                    const wordCount = email.split(/\s+/).length;
+                    if (wordCount < 30) {
+                        emailAIFeedbackDiv.innerHTML = `<div class="ai-feedback incorrect">⚠️ Email is too short (${wordCount}/50 words). Please write at least 50 words for proper evaluation.</div>`;
+                        emailAIFeedbackDiv.style.display = 'block';
+                        return;
+                    }
+
+                    emailAIFeedbackDiv.innerHTML = '<div class="ai-feedback processing">🤖 AI is evaluating your professional email...</div>';
+                    emailAIFeedbackDiv.style.display = 'block';
+
+                    try {
+                        const response = await fetch('/learning/ai/evaluate/', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrftoken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                text: email,
+                                task_type: 'professional_email',
+                                day_number: 13,
+                                level: 'intermediate',
+                                system_prompt: `You are an expert English writing coach evaluating a professional email written by an engineering student.
+
+TASK: The student has written a professional email. Evaluate it based on:
+
+1. Formal greeting (Dear Sir/Madam, Dear Mr./Ms. [Name], etc.)
+2. Professional tone (no contractions like I'm, don't, can't)
+3. Clear purpose statement
+4. Polite request or action item
+5. Formal closing (Yours sincerely, Best regards, Thank you for your consideration)
+6. Proper structure (opening, body, closing)
+7. Grammar and sentence clarity
+8. Professional vocabulary
+
+IMPORTANT RULES:
+- Be SPECIFIC about what is good and what needs improvement
+- Provide actionable suggestions
+- If the email is missing key elements, clearly list them
+- If the email is correct, provide positive feedback with strengths
+- Always include a correct example email for reference
+
+OUTPUT ONLY valid JSON in this format:
+{
+  "correct": true/false,
+  "feedback": "Overall feedback in 40-60 words",
+  "details": {
+    "strengths": ["strength 1", "strength 2"],
+    "missing_elements": ["missing element 1", "missing element 2"],
+    "suggestions": ["suggestion 1", "suggestion 2"]
+  },
+  "correct_example": "Dear Sir/Madam,\n\nI am writing to inquire about the status of my application. I would appreciate it if you could provide an update at your earliest convenience.\n\nThank you for your time and consideration.\n\nYours sincerely,\n[Your Name]"
+}`
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            attemptCount++;
+                            updateEmailAttemptDisplay();
+                            emailValidated = result.correct;
+                            aiEvaluationDone = true;
+                            aiCorrect = result.correct;
+
+                            emailAIFeedbackDiv.innerHTML = generateEmailFeedback(result);
+
+                            if (emailValidated && listenRecordBtn) {
+                                listenRecordBtn.disabled = false;
+                                listenRecordBtn.textContent = '🎙️ Start Recording';
+                                listenRecordBtn.style.opacity = '1';
+                                listenRecordBtn.style.cursor = 'pointer';
+                                emailValidationMsg.innerHTML = '<span style="color: #22c55e; font-weight: 600;">✅ Email validated! You can now record.</span>';
+                            } else if (listenRecordBtn) {
+                                listenRecordBtn.disabled = true;
+                                listenRecordBtn.textContent = '🎙️ Validate email first';
+                                emailValidationMsg.innerHTML = '<span style="color: #dc2626; font-weight: 600;">❌ Please improve your email before recording.</span>';
+                            }
+
+                            if (attemptCount >= maxAttempts && !result.correct) {
+                                emailAIFeedbackDiv.innerHTML += `
+                                <div class="ai-feedback processing" style="margin-top: 0.75rem;">
+                                    <strong>📚 Key elements of a professional email:</strong><br><br>
+                                    • <strong>Greeting:</strong> Dear Sir/Madam, Dear Mr. Smith<br>
+                                    • <strong>Purpose:</strong> Clearly state why you are writing<br>
+                                    • <strong>Body:</strong> Explain details, make requests politely<br>
+                                    • <strong>Closing:</strong> Yours sincerely, Best regards<br>
+                                    • <strong>No contractions:</strong> Use "I am" not "I'm", "do not" not "don't"
+                                </div>
+                            `;
+                            }
+                        } else {
+                            emailAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">⚠️ AI could not evaluate. Please try again.</div>';
+                        }
+
+                    } catch (error) {
+                        console.error('Error:', error);
+                        emailAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">⚠️ Connection error. Please try again.</div>';
+                    }
+                });
+            }
+
+            // ==================== READING ACTIVITY ====================
+            const readingPassageHTML = `Subject: Revised Project Timeline — Phase 2 Commencement
+Dear Mr. Sharma,
+I am writing with reference to our discussion of 12th November regarding the commencement of Phase 2. Following an internal review, I would like to bring to your attention that the commencement date has been revised to 1st December, due to the delayed procurement of specialist equipment. I apologise for any inconvenience this may cause and assure you that every effort is being made to expedite delivery.
+Please find attached the revised Gantt chart for your review. Should you have any queries, please do not hesitate to contact our project coordinator, Ms. Patil, on the details provided below.
+Yours sincerely,
+R. Desai`;
+
+            const formalPhrases = [
+                { words: ['I', 'am', 'writing', 'with', 'reference', 'to'], display: 'I am writing with reference to' },
+                { words: ['I', 'would', 'like', 'to', 'bring', 'to', 'your', 'attention'], display: 'I would like to bring to your attention' },
+                { words: ['I', 'apologise', 'for', 'any', 'inconvenience'], display: 'I apologise for any inconvenience' },
+                { words: ['Please', 'find', 'attached'], display: 'Please find attached' },
+                { words: ['please', 'do', 'not', 'hesitate', 'to', 'contact'], display: 'please do not hesitate to contact' }
+            ];
+
+            let readingAllSpans = [], selectedPhraseIndices = new Set(), underlineCheckDone = false;
+            let phraseMap = [], phraseStartIndices = [];
+
+            // Variables to track reading task completion
+            let readingTask1Complete = false; // Underline task
+            let readingTask2Complete = false; // Informal equivalents
+            let readingTask3Complete = false; // Circle task
+            let readingTask4Complete = false; // Subject line task
+
+            const completeReadingBtn = document.getElementById('completeReadingBtn');
+
+            function updateReadingCompleteButton() {
+                // Enable button only when ALL reading tasks are complete
+                const allTasksComplete = readingTask1Complete && readingTask2Complete && readingTask3Complete && readingTask4Complete;
+                if (completeReadingBtn) {
+                    completeReadingBtn.disabled = !allTasksComplete;
+                }
+                return allTasksComplete;
+            }
+
+            function buildInteractivePassage() {
+                const container = document.getElementById('interactivePassage');
+                const words = readingPassageHTML.split(/\s+/);
+                container.innerHTML = '';
+                readingAllSpans = []; selectedPhraseIndices.clear(); phraseMap = new Array(words.length).fill(null); phraseStartIndices = [];
+
+                for (let pIdx = 0; pIdx < formalPhrases.length; pIdx++) {
+                    const phrase = formalPhrases[pIdx];
+                    const phraseWords = phrase.words;
+                    for (let i = 0; i <= words.length - phraseWords.length; i++) {
+                        let match = true;
+                        for (let j = 0; j < phraseWords.length; j++) {
+                            const cleanWord = words[i + j].toLowerCase().replace(/[.,!?;]/g, '');
+                            if (cleanWord !== phraseWords[j].toLowerCase()) { match = false; break; }
+                        }
+                        if (match) {
+                            phraseStartIndices.push({ start: i, end: i + phraseWords.length - 1, phraseIdx: pIdx, phrase: phrase });
+                            for (let j = i; j < i + phraseWords.length; j++) phraseMap[j] = i;
+                            break;
+                        }
+                    }
+                }
+
+                words.forEach((word, idx) => {
+                    const cleanWord = word.toLowerCase().replace(/[.,!?;]/g, '');
+                    const span = document.createElement('span');
+                    span.className = 'clickable-word';
+                    span.textContent = word + ' ';
+                    span.dataset.index = idx;
+                    span.dataset.word = cleanWord;
+                    span.onclick = () => togglePhraseSelection(idx);
+                    container.appendChild(span);
+                    readingAllSpans.push(span);
+                });
+                updateReadingVisuals();
+                updateReadingStats();
+            }
+
+            function togglePhraseSelection(clickedIndex) {
+                const phraseStartIndex = phraseMap[clickedIndex];
+                if (phraseStartIndex !== null) {
+                    if (selectedPhraseIndices.has(phraseStartIndex)) selectedPhraseIndices.delete(phraseStartIndex);
+                    else selectedPhraseIndices.add(phraseStartIndex);
+                } else {
+                    if (selectedPhraseIndices.has(clickedIndex)) selectedPhraseIndices.delete(clickedIndex);
+                    else selectedPhraseIndices.add(clickedIndex);
+                }
+                updateReadingVisuals();
+                updateReadingStats();
+            }
+
+            function updateReadingVisuals() {
+                readingAllSpans.forEach(span => span.classList.remove('underline-temp', 'underline-correct', 'underline-incorrect'));
+                if (!underlineCheckDone) {
+                    for (let startIdx of selectedPhraseIndices) {
+                        const phraseInfo = phraseStartIndices.find(p => p.start === startIdx);
+                        if (phraseInfo) {
+                            for (let i = phraseInfo.start; i <= phraseInfo.end; i++) readingAllSpans[i].classList.add('underline-temp');
+                        } else if (readingAllSpans[startIdx]) readingAllSpans[startIdx].classList.add('underline-temp');
+                    }
+                } else {
+                    for (let startIdx of selectedPhraseIndices) {
+                        const phraseInfo = phraseStartIndices.find(p => p.start === startIdx);
+                        if (phraseInfo) {
+                            const isCorrect = formalPhrases.some(p => p.words.join(' ') === phraseInfo.phrase.words.join(' '));
+                            for (let i = phraseInfo.start; i <= phraseInfo.end; i++) {
+                                if (isCorrect) readingAllSpans[i].classList.add('underline-correct');
+                                else readingAllSpans[i].classList.add('underline-incorrect');
+                            }
+                        } else if (readingAllSpans[startIdx]) readingAllSpans[startIdx].classList.add('underline-incorrect');
+                    }
+                }
+            }
+
+            function updateReadingStats() {
+                document.getElementById('selectedCount').innerText = selectedPhraseIndices.size;
+                if (underlineCheckDone) {
+                    let correctCount = 0;
+                    for (let startIdx of selectedPhraseIndices) {
+                        const phraseInfo = phraseStartIndices.find(p => p.start === startIdx);
+                        if (phraseInfo && formalPhrases.some(p => p.words.join(' ') === phraseInfo.phrase.words.join(' '))) correctCount++;
+                    }
+                    document.getElementById('correctCount').innerText = correctCount;
+                } else document.getElementById('correctCount').innerText = '0';
+            }
+
+            function checkFormalPhrases() {
+                if (selectedPhraseIndices.size === 0) {
+                    document.getElementById('readingUnderlineFeedback').innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ Please select formal phrases first.</p></div>';
+                    return;
+                }
+                underlineCheckDone = true;
+                let correctCount = 0;
+                for (let startIdx of selectedPhraseIndices) {
+                    const phraseInfo = phraseStartIndices.find(p => p.start === startIdx);
+                    if (phraseInfo && formalPhrases.some(p => p.words.join(' ') === phraseInfo.phrase.words.join(' '))) correctCount++;
+                }
+                document.getElementById('correctCount').innerText = correctCount;
+                updateReadingVisuals();
+                if (correctCount === formalPhrases.length) {
+                    document.getElementById('readingUnderlineFeedback').innerHTML = '<div style="background:#d1fae5;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">✅ Perfect! You found all 5 formal phrases! Now write their informal equivalents.</p></div>';
+                    document.getElementById('informalEquivalentsSection').style.display = 'block';
+                    readingTask1Complete = true;
+                    updateReadingCompleteButton();
+                } else {
+                    document.getElementById('readingUnderlineFeedback').innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ You found ' + correctCount + ' out of ' + formalPhrases.length + ' formal phrases.</p></div>';
+                    readingTask1Complete = false;
+                    updateReadingCompleteButton();
+                }
+            }
+
+            function resetReadingSelections() {
+                selectedPhraseIndices.clear(); underlineCheckDone = false;
+                updateReadingVisuals(); updateReadingStats();
+                document.getElementById('readingUnderlineFeedback').innerHTML = '';
+                document.getElementById('informalEquivalentsSection').style.display = 'none';
+                readingTask1Complete = false;
+                updateReadingCompleteButton();
+            }
+
+            // ==================== CIRCLE MODE ====================
+            let circleModeActive = false;
+            let circleSelectedIndices = new Set();
+            let circleCheckDone = false;
+
+            function toggleCircleMode() {
+                circleModeActive = true;
+                document.getElementById('circleModeBtn').style.background = '#3b82f6';
+                document.getElementById('circleModeBtn').style.opacity = '1';
+                document.getElementById('underlineModeBtn').style.background = '#f59e0b';
+                document.getElementById('underlineModeBtn').style.opacity = '0.5';
+            }
+
+            function toggleCircleSelection(clickedIndex) {
+                if (!circleModeActive) return;
+                if (circleSelectedIndices.has(clickedIndex)) circleSelectedIndices.delete(clickedIndex);
+                else circleSelectedIndices.add(clickedIndex);
+                updateCircleVisuals();
+            }
+
+            function updateCircleVisuals() {
+                readingAllSpans.forEach(span => span.classList.remove('circle-temp', 'circle-correct', 'circle-incorrect'));
+                if (!circleCheckDone) {
+                    for (let idx of circleSelectedIndices) readingAllSpans[idx]?.classList.add('circle-temp');
+                } else {
+                    for (let idx of circleSelectedIndices) {
+                        const word = readingAllSpans[idx]?.dataset.word?.toLowerCase() || '';
+                        if (word === 'expedite') readingAllSpans[idx]?.classList.add('circle-correct');
+                        else readingAllSpans[idx]?.classList.add('circle-incorrect');
+                    }
+                }
+            }
+
+            function checkCircleAnswer() {
+                if (circleSelectedIndices.size === 0) {
+                    document.getElementById('circleFeedback').innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ Please select a word first.</p></div>';
+                    return;
+                }
+                circleCheckDone = true;
+                let isCorrect = false;
+                for (let idx of circleSelectedIndices) {
+                    const word = readingAllSpans[idx]?.dataset.word?.toLowerCase() || '';
+                    if (word === 'expedite') isCorrect = true;
+                }
+                updateCircleVisuals();
+                if (isCorrect) {
+                    document.getElementById('circleFeedback').innerHTML = '<div style="background:#d1fae5;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">✅ Correct! "Expedite" means to speed up.</p></div>';
+                    readingTask3Complete = true;
+                    updateReadingCompleteButton();
+                } else {
+                    document.getElementById('circleFeedback').innerHTML = '<div style="background:#fee2e2;padding:0.75rem;border-radius:12px;"><p style="color:#dc2626;">❌ Incorrect. The correct word is "expedite".</p></div>';
+                    readingTask3Complete = false;
+                    updateReadingCompleteButton();
+                }
+            }
+
+            function resetCircleSelection() {
+                circleSelectedIndices.clear(); circleCheckDone = false;
+                updateCircleVisuals();
+                document.getElementById('circleFeedback').innerHTML = '';
+                readingTask3Complete = false;
+                updateReadingCompleteButton();
+            }
+
+            // Override click handlers for both modes
+            function rebuildWithClickHandlers() {
+                readingAllSpans.forEach((span, idx) => {
+                    const newSpan = span.cloneNode(true);
+                    newSpan.onclick = () => {
+                        if (circleModeActive) toggleCircleSelection(idx);
+                        else togglePhraseSelection(idx);
+                    };
+                    span.parentNode.replaceChild(newSpan, span);
+                    readingAllSpans[idx] = newSpan;
+                });
+            }
+
+            // ==================== TASK 1 INFORMAL EQUIVALENTS INDIVIDUAL VALIDATION ====================
+            let informalAnswersCorrect = [false, false, false, false, false];
+
+            function validateSingleInformal(inputId, feedbackId, pattern, index) {
+                const answer = document.getElementById(inputId).value.trim().toLowerCase();
+                const feedback = document.getElementById(feedbackId);
+                const parentItem = document.getElementById(feedbackId.replace('Feedback', 'Item'));
+
+                if (!answer) {
+                    feedback.innerHTML = '⚠️ Please write an informal equivalent.';
+                    feedback.className = 'fix-feedback warning';
+                    feedback.style.display = 'block';
+                    if (parentItem) parentItem.classList.remove('correct-item', 'incorrect-item');
+                    informalAnswersCorrect[index] = false;
+                    return false;
+                }
+
+                if (pattern.test(answer)) {
+                    feedback.innerHTML = '✅ Correct!';
+                    feedback.className = 'fix-feedback correct';
+                    feedback.style.display = 'block';
+                    if (parentItem) { parentItem.classList.add('correct-item'); parentItem.classList.remove('incorrect-item'); }
+                    informalAnswersCorrect[index] = true;
+                    return true;
+                } else {
+                    feedback.innerHTML = '❌ Incorrect. Try again!';
+                    feedback.className = 'fix-feedback incorrect';
+                    feedback.style.display = 'block';
+                    if (parentItem) { parentItem.classList.add('incorrect-item'); parentItem.classList.remove('correct-item'); }
+                    informalAnswersCorrect[index] = false;
+                    return false;
+                }
+            }
+
+            function validateAllInformalEquivalents() {
+                const patterns = [
+                    /writing about|regarding|about|with regard to/,
+                    /want to tell|let you know|inform you|tell you/,
+                    /sorry|apologize|my apologies/,
+                    /attached|here is|file enclosed|enclosed|i've attached/,
+                    /contact|reach out|feel free to contact|get in touch/
+                ];
+
+                for (let i = 1; i <= 5; i++) {
+                    validateSingleInformal(`informal${i}`, `informal${i}Feedback`, patterns[i - 1], i - 1);
+                }
+
+                const allValid = informalAnswersCorrect.every(v => v === true);
+                const feedbackDiv = document.getElementById('informalFeedback');
+                if (allValid) {
+                    feedbackDiv.innerHTML = '<span style="color: #22c55e;">✅ Excellent! All informal equivalents are correct!</span>';
+                    readingTask2Complete = true;
+                    updateReadingCompleteButton();
+                } else {
+                    const correctCount = informalAnswersCorrect.filter(v => v === true).length;
+                    feedbackDiv.innerHTML = `<span style="color: #dc2626;">⚠️ You got ${correctCount} out of 5 correct. Please correct the marked ones.</span>`;
+                    readingTask2Complete = false;
+                    updateReadingCompleteButton();
+                }
+            }
+
+            // ==================== TASK 3 SUBJECT LINE VALIDATION ====================
+            function validateSubjectRewrite(answer) {
+                const lower = answer.toLowerCase().trim();
+                if (!answer.trim()) return { valid: false, message: '⚠️ Please rewrite the subject line.' };
+                if (lower.split(/\s+/).length < 4) return { valid: false, message: '⚠️ Write a proper subject line (minimum 4 words).' };
+                const hasPhase = /\bphase 2\b|\bsecond phase\b/.test(lower);
+                const hasUpdate = /\brevised|updated|changed|delayed|rescheduled|new|modified/.test(lower);
+                const hasTimeline = /\bcommencement|start|starting|beginning|timeline|schedule|date/.test(lower);
+                if (!hasPhase) return { valid: false, message: '❌ Mention "Phase 2" in your rewritten subject.' };
+                if (!hasUpdate) return { valid: false, message: '❌ Mention that the timeline/start date has changed or been updated.' };
+                if (!hasTimeline) return { valid: false, message: '❌ Mention start / commencement / timeline / schedule.' };
+                return { valid: true, message: '✅ Good job! Your rewritten subject keeps the key information.' };
+            }
+
+            // Grammar validation
+            function validateFormalEmail(answer) {
+                const lower = answer.toLowerCase().trim();
+                if (!answer.trim()) return { valid: false, message: '⚠️ Please rewrite the email in formal style.' };
+                if (lower.split(/\s+/).length < 10) return { valid: false, message: '⚠️ Write a complete formal email (minimum 10 words).' };
+                const hasGreeting = /dear\s+(sir|madam|ma'am|mr|ms|team)/.test(lower);
+                const hasFormalTone = /i am writing|kindly confirm|i would like|following up|request/.test(lower);
+                const hasReport = /report|document|submission/.test(lower);
+                const hasFeedback = /feedback|response|review|confirm|receipt/.test(lower);
+                const hasPoliteness = /kindly|please|at your earliest convenience/.test(lower);
+                const hasClosing = /regards|sincerely|thank you/.test(lower);
+                if (!hasGreeting) return { valid: false, message: '❌ Add a formal greeting (e.g., Dear Sir/Madam).' };
+                if (!hasFormalTone) return { valid: false, message: '❌ Use formal request phrases (e.g., "I am writing to...").' };
+                if (!hasReport) return { valid: false, message: '❌ Mention the report / submission clearly.' };
+                if (!hasFeedback) return { valid: false, message: '❌ Mention feedback / confirmation politely.' };
+                if (!hasPoliteness) return { valid: false, message: '❌ Add polite words like kindly / please.' };
+                if (!hasClosing) return { valid: false, message: '❌ Add a formal closing (Regards / Sincerely).' };
+                return { valid: true, message: '✅ Excellent! Your email is written in a formal register.' };
+            }
+
+            // Event Listeners
+            document.getElementById('underlineModeBtn')?.addEventListener('click', () => { circleModeActive = false; document.getElementById('underlineModeBtn').style.background = '#f59e0b'; document.getElementById('underlineModeBtn').style.opacity = '1'; document.getElementById('circleModeBtn').style.background = '#3b82f6'; document.getElementById('circleModeBtn').style.opacity = '0.5'; });
+            document.getElementById('circleModeBtn')?.addEventListener('click', toggleCircleMode);
+            document.getElementById('checkFormalPhrasesBtn')?.addEventListener('click', checkFormalPhrases);
+            document.getElementById('resetReadingBtn')?.addEventListener('click', resetReadingSelections);
+            document.getElementById('checkCircleBtn')?.addEventListener('click', checkCircleAnswer);
+            document.getElementById('resetCircleBtn')?.addEventListener('click', resetCircleSelection);
+            document.getElementById('checkInformalBtn')?.addEventListener('click', validateAllInformalEquivalents);
+            document.getElementById('checkSubjectBtn')?.addEventListener('click', function () {
+                const subject = document.getElementById('task3Subject').value;
+                const result = validateSubjectRewrite(subject);
+                document.getElementById('task3Feedback').innerHTML = result.message;
+                document.getElementById('task3Feedback').className = result.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+                document.getElementById('task3Feedback').style.display = 'block';
+                readingTask4Complete = result.valid;
+                updateReadingCompleteButton();
+            });
+
+            buildInteractivePassage();
+            rebuildWithClickHandlers();
+
+            // Grammar Button
+            const checkGrammarBtn = document.getElementById('checkGrammarBtn');
+            const resetGrammarBtn = document.getElementById('resetGrammarBtn');
+            const completeGrammarBtn = document.getElementById('completeGrammarBtn');
+            let grammarCompleted = false;
+
+            if (checkGrammarBtn) {
+                checkGrammarBtn.addEventListener('click', function () {
+                    const g1 = document.getElementById('grammar1').value;
+                    const result = validateFormalEmail(g1);
+                    const fb1 = document.getElementById('grammar1Feedback');
+                    const grammarFeedback = document.getElementById('grammarFeedback');
+                    if (fb1) { fb1.innerHTML = result.message; fb1.className = result.valid ? 'fix-feedback correct' : 'fix-feedback incorrect'; fb1.style.display = 'block'; }
+                    grammarCompleted = result.valid;
+                    if (grammarCompleted) {
+                        if (grammarFeedback) { grammarFeedback.innerHTML = '✅ All answers correct! Great job with formal writing!'; grammarFeedback.className = 'quiz-feedback correct'; grammarFeedback.style.display = 'block'; }
+                        if (completeGrammarBtn) completeGrammarBtn.disabled = false;
+                    } else {
+                        if (grammarFeedback) { grammarFeedback.innerHTML = '❌ Please correct the errors above.'; grammarFeedback.className = 'quiz-feedback incorrect'; grammarFeedback.style.display = 'block'; }
+                    }
+                });
+            }
+
+            if (resetGrammarBtn) {
+                resetGrammarBtn.addEventListener('click', function () {
+                    document.getElementById('grammar1').value = '';
+                    document.getElementById('grammar1Feedback').innerHTML = '';
+                    document.getElementById('grammarFeedback').innerHTML = '';
+                    grammarCompleted = false;
+                    if (completeGrammarBtn) completeGrammarBtn.disabled = true;
+                });
+            }
+
+            if (completeGrammarBtn) {
+                completeGrammarBtn.addEventListener('click', function () { if (grammarCompleted && typeof markActivityComplete === 'function') markActivityComplete('grammar', 'chk4'); });
+            }
+
+            // ==================== SPEAKING RECORDING ====================
+            let speakingRecorded = false;
+            const speakRecordBtn = document.getElementById('speakingRecordBtn');
+            const speakStopBtn = document.getElementById('speakingStopBtn');
+            const speakPlaybackArea = document.getElementById('speakingPlaybackArea');
+            const speakPlaybackAudio = document.getElementById('speakingPlayback');
+            const speakRecordingStatus = document.getElementById('speakingRecordingStatus');
+            const speakTimer = document.getElementById('speakingTimer');
+            const completeSpeakingBtn = document.getElementById('completeSpeakingBtn');
+            let speakMediaRecorder, speakChunks = [], speakIsRecording = false, timerInterval, seconds = 0;
+
+            function updateTimerDisplay() { if (speakTimer) { const mins = Math.floor(seconds / 60); const secs = seconds % 60; speakTimer.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`; } }
+
+            if (speakRecordBtn) {
+                speakRecordBtn.addEventListener('click', async function () {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        speakMediaRecorder = new MediaRecorder(stream); speakChunks = []; seconds = 0; updateTimerDisplay();
+                        if (speakRecordingStatus) speakRecordingStatus.style.display = 'flex';
+                        if (timerInterval) clearInterval(timerInterval);
+                        timerInterval = setInterval(() => { seconds++; updateTimerDisplay(); }, 1000);
+                        speakMediaRecorder.ondataavailable = e => speakChunks.push(e.data);
+                        speakMediaRecorder.onstop = () => {
+                            clearInterval(timerInterval);
+                            const blob = new Blob(speakChunks, { type: 'audio/webm' });
+                            if (speakPlaybackAudio) speakPlaybackAudio.src = URL.createObjectURL(blob);
+                            if (speakPlaybackArea) speakPlaybackArea.style.display = 'block';
+                            speakingRecorded = true;
+                            stream.getTracks().forEach(t => t.stop());
+                            if (completeSpeakingBtn) completeSpeakingBtn.disabled = false;
+                        };
+                        speakMediaRecorder.start(); speakIsRecording = true;
+                        speakRecordBtn.style.display = 'none';
+                        if (speakStopBtn) speakStopBtn.style.display = 'inline-flex';
+                    } catch (e) { console.error('Microphone error'); }
+                });
+            }
+            if (speakStopBtn) { speakStopBtn.addEventListener('click', function () { if (speakMediaRecorder && speakIsRecording) { speakMediaRecorder.stop(); speakIsRecording = false; speakRecordBtn.style.display = 'inline-flex'; speakStopBtn.style.display = 'none'; if (speakRecordingStatus) speakRecordingStatus.style.display = 'none'; } }); }
+            if (completeSpeakingBtn) { completeSpeakingBtn.addEventListener('click', function () { if (!completeSpeakingBtn.disabled && speakingRecorded && typeof markActivityComplete === 'function') markActivityComplete('speaking', 'chk3'); }); }
+
+            // ==================== LISTENING RECORDING ====================
+            const listenStopBtn = document.getElementById('listeningStopBtn');
+            const listenPlaybackCard = document.getElementById('listeningPlaybackCard');
+            const listenPlaybackAudio = document.getElementById('listeningPlayback');
+            const comparisonSection = document.getElementById('comparisonSection');
+            const yesComparisonBtn = document.getElementById('yesComparisonBtn');
+            const noComparisonBtn = document.getElementById('noComparisonBtn');
+            const completeListeningBtn = document.getElementById('completeListeningBtn');
+            const comparisonFeedbackDiv = document.getElementById('comparisonFeedback');
+            let listeningMediaRecorder, listeningChunks = [], listeningIsRecording = false;
+
+            if (listenRecordBtn) {
+                listenRecordBtn.addEventListener('click', async function () {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        listeningMediaRecorder = new MediaRecorder(stream);
+                        listeningChunks = [];
+                        listeningMediaRecorder.ondataavailable = e => listeningChunks.push(e.data);
+                        listeningMediaRecorder.onstop = () => {
+                            const blob = new Blob(listeningChunks, { type: 'audio/webm' });
+                            if (listenPlaybackAudio) listenPlaybackAudio.src = URL.createObjectURL(blob);
+                            if (listenPlaybackCard) listenPlaybackCard.style.display = 'block';
+                            if (comparisonSection) comparisonSection.style.display = 'block';
+                            listeningRecorded = true;
+                            stream.getTracks().forEach(t => t.stop());
+                        };
+                        listeningMediaRecorder.start();
+                        listeningIsRecording = true;
+                        listenRecordBtn.style.display = 'none';
+                        if (listenStopBtn) listenStopBtn.style.display = 'inline-flex';
+                    } catch (e) { console.error('Microphone error'); }
+                });
+            }
+
+            if (listenStopBtn) {
+                listenStopBtn.addEventListener('click', function () {
+                    if (listeningMediaRecorder && listeningIsRecording) {
+                        listeningMediaRecorder.stop();
+                        listeningIsRecording = false;
+                        listenRecordBtn.style.display = 'inline-flex';
+                        listenStopBtn.style.display = 'none';
+                    }
+                });
+            }
+
+            if (yesComparisonBtn) {
+                yesComparisonBtn.addEventListener('click', function () {
+                    if (completeListeningBtn) {
+                        completeListeningBtn.disabled = false;
+                        if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #22c55e;">✅ Great! You have confirmed your recording is correct.</span>';
+                    }
+                });
+            }
+
+            if (noComparisonBtn) {
+                noComparisonBtn.addEventListener('click', function () {
+                    if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #dc2626;">⚠️ Please record again and ensure your email is professional.</span>';
+                    listeningRecorded = false;
+                    if (listenPlaybackCard) listenPlaybackCard.style.display = 'none';
+                    if (comparisonSection) comparisonSection.style.display = 'none';
+                    if (listenRecordBtn) { listenRecordBtn.style.display = 'inline-flex'; listenRecordBtn.disabled = false; }
+                    if (listenStopBtn) listenStopBtn.style.display = 'none';
+                });
+            }
+
+            if (completeListeningBtn) {
+                completeListeningBtn.addEventListener('click', function () {
+                    if (listeningRecorded && emailValidated && typeof markActivityComplete === 'function') markActivityComplete('listening', 'chk1');
+                });
+            }
+
+            // ==================== READING COMPLETE BUTTON FIX ====================
+            if (completeReadingBtn) {
+                completeReadingBtn.addEventListener('click', function () {
+                    if (!completeReadingBtn.disabled && updateReadingCompleteButton()) {
+                        if (typeof markActivityComplete === 'function') {
+                            markActivityComplete('reading', 'chk2');
+                        } else {
+                            console.warn("markActivityComplete is not defined");
+                            alert("Reading activity completed! (Demo mode)");
+                        }
+                    } else {
+                        alert("Please complete all reading tasks first:\n1. Find 5 formal phrases\n2. Write informal equivalents\n3. Circle 'expedite'\n4. Rewrite subject line");
+                    }
+                });
+            }
+
+            // ==================== LISTENING QUIZ VALIDATION ====================
+            const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
+            if (checkListeningWorkBtn) {
+                checkListeningWorkBtn.addEventListener('click', function () {
+                    const q1 = document.querySelector('input[name="q1"]:checked');
+                    const q2 = document.querySelector('input[name="q2"]:checked');
+                    const feedback = document.getElementById('listeningQuizFeedback');
+                    if (!q1 || !q2) { feedback.innerHTML = '⚠️ Please answer both questions.'; feedback.className = 'quiz-feedback warning'; feedback.style.display = 'block'; return; }
+                    const q1Valid = q1.value === 'phone';
+                    const q2Valid = q2.value === 'earliest';
+                    if (q1Valid && q2Valid) { feedback.innerHTML = '✅ Correct! Great job!'; feedback.className = 'quiz-feedback correct'; feedback.style.display = 'block'; }
+                    else { feedback.innerHTML = '❌ Incorrect. Q1: A phone call. Q2: At your earliest convenience.'; feedback.className = 'quiz-feedback incorrect'; feedback.style.display = 'block'; }
+                });
+            }
+
+            // ==================== AUDIO REVEAL ====================
+            const listeningAudio = document.getElementById('listeningAudio');
+            const listeningTextSection = document.getElementById('listeningTextSection');
+            const postAudioContent = document.getElementById('postAudioListeningContent');
+            if (listeningAudio && listeningTextSection && postAudioContent) { listeningAudio.addEventListener('ended', function () { listeningTextSection.style.display = 'block'; postAudioContent.style.display = 'block'; }); }
+
+            // ==================== PROGRESS TRACKING ====================
+            if (typeof updateChecklistProgress === 'function') { updateChecklistProgress(); }
+        });
+    </script>
+</body>
+
+</html>

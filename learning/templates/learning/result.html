@@ -11,6 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
+  /* Your existing CSS remains exactly the same */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
@@ -50,7 +51,6 @@
     line-height: 1.6;
   }
 
-  /* ── STICKY HEADER ───────────────────────────────── */
   .exam-header {
     position: sticky;
     top: 0;
@@ -86,14 +86,12 @@
     opacity: 0.95;
   }
 
-  /* ── PAGE LAYOUT ─────────────────────────────────── */
   .page-wrap {
     max-width: 680px;
     margin: 0 auto;
     padding: 3rem 1.25rem 5rem;
   }
 
-  /* ── HERO ─────────────────────────────────────────── */
   .result-hero {
     text-align: center;
     padding: 2.5rem 0 2rem;
@@ -128,7 +126,6 @@
 
   .hero-title span { color: var(--ember); }
 
-  /* ── SCORE RING ───────────────────────────────────── */
   .score-ring-wrap {
     display: flex;
     flex-direction: column;
@@ -155,13 +152,6 @@
 
   .ring-fill-pass { stroke: var(--ember); }
   .ring-fill-fail { stroke: #94a3b8; }
-
-  .ring-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
 
   .score-number {
     font-family: 'Playfair Display', serif;
@@ -190,7 +180,6 @@
     margin-top: 6px;
   }
 
-  /* ── STATUS BANNER ────────────────────────────────── */
   .status-banner {
     width: 100%;
     padding: 1.25rem 1.75rem;
@@ -234,7 +223,6 @@
     opacity: 0.8;
   }
 
-  /* ── STATS ROW ────────────────────────────────────── */
   .stats-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -270,7 +258,6 @@
     color: var(--ink-muted);
   }
 
-  /* ── PROGRESS BAR ─────────────────────────────────── */
   .mastery-section {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -342,7 +329,6 @@
     flex-shrink: 0;
   }
 
-  /* ── QUOTE CARD ───────────────────────────────────── */
   .quote-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -377,7 +363,6 @@
     margin-top: 0.75rem;
   }
 
-  /* ── NO DATA WARNING ─────────────────────────────── */
   .no-data-card {
     background: var(--surface);
     border: 1.5px dashed var(--border-strong);
@@ -402,7 +387,6 @@
     margin-bottom: 1.5rem;
   }
 
-  /* ── CTA BUTTONS ───────────────────────────────────── */
   .cta-wrap { text-align: center; padding: 1rem 0; }
 
   .cta-btn {
@@ -443,7 +427,6 @@
     transform: translateY(-1px);
   }
 
-  /* ── FEEDBACK MODAL ───────────────────────────────── */
   .feedback-modal {
     display: none;
     position: fixed;
@@ -557,7 +540,6 @@
     transform: translateY(-1px);
   }
 
-  /* ── CERTIFICATE MODAL ────────────────────────────── */
   .certificate-modal {
     display: none;
     position: fixed;
@@ -662,7 +644,6 @@
     transform: translateY(-1px);
   }
 
-  /* ── TOAST ───────────────────────────────────────── */
   .completion-toast {
     position: fixed;
     bottom: 28px;
@@ -690,7 +671,6 @@
     opacity: 1;
   }
 
-  /* ── CONFETTI CANVAS ─────────────────────────────── */
   #confettiCanvas {
     position: fixed;
     top: 0; left: 0;
@@ -699,7 +679,6 @@
     z-index: 999;
   }
 
-  /* ── MOBILE ──────────────────────────────────────── */
   @media (max-width: 520px) {
     .exam-header { padding: 0 1rem; }
     .header-title { display: none; }
@@ -790,9 +769,15 @@
 </div>
 
 <script>
+  // ==================== DYNAMIC VALUES FROM BACKEND ====================
   const levelName   = "{{ level }}";
   const levelDisplay = "{{ level_display }}";
   const userName    = "{{ user.get_full_name|default:user.username }}";
+  
+  // Dynamic values from Django context
+  const totalQuestions = {{ total_questions|default:20 }};
+  const passingScore   = {{ passing_score|default:15 }};
+  const passingPercentage = Math.round((passingScore / totalQuestions) * 100);
 
   const urlParams     = new URLSearchParams(window.location.search);
   let userScore       = parseInt(urlParams.get('score'));
@@ -805,8 +790,6 @@
     } catch(e) { userScore = 0; }
   }
 
-  const totalQuestions = 20;  // Changed from 25
-  const passingScore   = 15;
   const percentage     = Math.round((userScore / totalQuestions) * 100);
   const isPassed       = userScore >= passingScore;
   const hasData        = !isNaN(userScore) && urlParams.get('score') !== null || userScore > 0;
@@ -816,17 +799,21 @@
   let selectedRating = 0;
 
   function getQuote() {
-    if (isPassed && userScore >= 23) return {
+    const excellentThreshold = Math.round(totalQuestions * 0.9); // 90%
+    const goodThreshold = Math.round(totalQuestions * 0.7);      // 70%
+    const closeThreshold = Math.round(totalQuestions * 0.5);     // 50%
+    
+    if (isPassed && userScore >= excellentThreshold) return {
       icon: "🏆",
       text: "Outstanding! You have demonstrated exceptional command over professional English. You are ready to lead global conversations.",
       author: "Master Mentor · English for Engineers"
     };
-    if (isPassed && userScore >= 18) return {
+    if (isPassed && userScore >= goodThreshold) return {
       icon: "🎉",
       text: "Congratulations! You've successfully cleared the certification. Keep practising to reach the top 5% of communicators.",
       author: "English for Engineers"
     };
-    if (!isPassed && userScore >= 12) return {
+    if (!isPassed && userScore >= closeThreshold) return {
       icon: "📚",
       text: "Great effort — you're very close to passing. Review the smart vocabulary and Indianism-fix modules, then give it another shot.",
       author: "Keep Growing"
@@ -891,7 +878,23 @@
   }
 
   function submitFeedback() {
-    // Here you can send feedback to backend if needed
+    // Send feedback to backend
+    const feedbackData = {
+      rating: selectedRating,
+      feedback: document.getElementById('feedbackText').value,
+      level: levelName,
+      score: userScore
+    };
+    
+    fetch('/learning/api/submit-feedback/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify(feedbackData)
+    }).catch(e => console.log('Feedback not saved:', e));
+    
     closeFeedbackModal();
     showToast('📝 Generating your certificate...');
     generateCertificateAndShow();
@@ -939,6 +942,12 @@
     a.download = `certificate_${levelName}_${userName.replace(/\s/g,'_')}.png`;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     showToast('📸 Certificate downloaded!', true);
+    
+    // Track download
+    fetch(`/learning/level/${levelName}/certificate/track-download/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': getCookie('csrftoken') }
+    }).catch(e => console.log('Download tracking failed'));
   }
 
   function shareCertificateFromModal() {
@@ -952,6 +961,12 @@
       navigator.clipboard.writeText(window.location.href);
       showToast('🔗 Link copied!');
     }
+    
+    // Track share
+    fetch(`/learning/level/${levelName}/certificate/track-share/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': getCookie('csrftoken') }
+    }).catch(e => console.log('Share tracking failed'));
   }
 
   function closeCertificateModal() {
@@ -969,7 +984,7 @@
     const statusIcon  = isPassed ? '✅' : '❌';
     const statusLabel = isPassed ? 'Assessment Passed' : 'Not Passed This Time';
     const statusSub   = isPassed
-      ? `You scored ${userScore} out of ${totalQuestions} — well above the passing mark.`
+      ? `You scored ${userScore} out of ${totalQuestions} — well above the passing mark (${passingScore}/${totalQuestions}).`
       : `You scored ${userScore} out of ${totalQuestions}. You need ${passingScore} to pass.`;
 
     const wrong    = totalQuestions - userScore;
@@ -1042,7 +1057,7 @@
           <span>0%</span>
           <span class="passing-marker">
             <span class="passing-dot"></span>
-            Passing mark: 75% (15/20)  // Changed from 72% (18/25)
+            Passing mark: ${passingPercentage}% (${passingScore}/${totalQuestions})
           </span>
           <span>100%</span>
         </div>
@@ -1146,6 +1161,16 @@
     }
     draw();
   }
+
+  // Debug log to verify values
+  console.log('Result Page Configuration:', {
+    level: levelName,
+    totalQuestions: totalQuestions,
+    passingScore: passingScore,
+    passingPercentage: passingPercentage,
+    userScore: userScore,
+    isPassed: isPassed
+  });
 
   // Init
   if (!urlParams.get('score') && userScore === 0) {

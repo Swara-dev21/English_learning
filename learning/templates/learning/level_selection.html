@@ -47,7 +47,6 @@
             overflow-x: hidden;
         }
 
-        /* --- MAIN WRAPPER --- */
         .lp-wrapper {
             min-height: 100vh;
             width: 100%;
@@ -58,7 +57,6 @@
             margin: 0 auto;
         }
 
-        /* --- ACTION LINKS --- */
         .action-top {
             display: flex;
             justify-content: space-between;
@@ -88,7 +86,6 @@
             box-shadow: var(--shadow-md);
         }
 
-        /* --- HEADER & QUOTE CAROUSEL --- */
         .hero h1 {
             font-family: 'Syne', sans-serif;
             font-size: clamp(2rem, 6vw, 3rem);
@@ -131,7 +128,6 @@
             margin: 0 1rem;
         }
 
-        /* --- PROGRESS STEPPER --- */
         .stepper-card {
             background: var(--bg-white);
             border-radius: var(--radius-md);
@@ -198,7 +194,6 @@
             100% { box-shadow: 0 0 0 0 rgba(74,98,176,0); }
         }
 
-        /* --- LEVEL CARDS (modern glassmorph + 3D tilt) --- */
         .levels-stack {
             display: flex;
             flex-direction: column;
@@ -224,7 +219,6 @@
             opacity: 1;
             transform: translateY(0);
         }
-        /* unlocked style */
         .level-card.unlocked {
             border-left: 5px solid var(--primary);
         }
@@ -319,7 +313,6 @@
             cursor: pointer;
         }
 
-        /* --- INFO BANNER --- */
         .info-banner {
             background: var(--primary-light);
             border-radius: var(--radius-md);
@@ -346,7 +339,6 @@
             color: var(--text-primary);
         }
 
-        /* --- SHAKE ANIMATION --- */
         @keyframes shakeEffect {
             0%,100% { transform: translateX(0); }
             20% { transform: translateX(-6px); }
@@ -358,7 +350,6 @@
             animation: shakeEffect 0.4s ease-in-out;
         }
 
-        /* --- UNLOCK OVERLAY (beginner specific) --- */
         .unlock-overlay {
             position: absolute;
             inset: 0;
@@ -401,7 +392,6 @@
             75% { transform: rotate(8deg); }
         }
 
-        /* --- CONFETTI CANVAS (single burst, full window) --- */
         #confettiCanvas {
             position: fixed;
             top: 0;
@@ -412,7 +402,6 @@
             z-index: 9999;
         }
 
-        /* --- ANIMATED BUTTON GLOW (for start button) --- */
         @keyframes softGlow {
             0% { box-shadow: 0 0 0 0 rgba(74,98,176,0.4); }
             70% { box-shadow: 0 0 0 6px rgba(74,98,176,0); }
@@ -422,13 +411,11 @@
             animation: softGlow 1.8s infinite;
         }
 
-        /* --- FLOATING ENTRY ANIMATIONS --- */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Responsive */
         @media (max-width: 650px) {
             .level-card { flex-direction: column; text-align: center; padding: 1.5rem; }
             .card-action { width: 100%; margin-top: 0.6rem; }
@@ -440,18 +427,15 @@
 </head>
 <body>
 
-<!-- Confetti Canvas (single burst) -->
 <canvas id="confettiCanvas"></canvas>
 
 <div class="lp-wrapper">
     <div class="lp-container">
-        <!-- Top Navigation (preserve redirects) -->
         <div class="action-top">
             <a href="#" class="nav-link" id="homeLink"><i class="fas fa-home"></i> Home</a>
             <a href="#" class="nav-link" id="profileLink"><i class="fas fa-user"></i> Profile</a>
         </div>
 
-        <!-- Hero + Quote Carousel -->
         <div class="hero">
             <h1>Your Learning Journey</h1>
         </div>
@@ -461,7 +445,6 @@
             <i class="fas fa-quote-right"></i>
         </div>
 
-        <!-- Progress Stepper -->
         <div class="stepper-card">
             <div class="steps-row">
                 <div class="step-item" id="stepBeginner">
@@ -482,10 +465,9 @@
             </div>
         </div>
 
-        <!-- Level Cards -->
         <div class="levels-stack" id="levelsStack">
             <!-- BEGINNER CARD -->
-            <div id="beginnerCard" class="level-card locked" data-level="beginner">
+            <div id="beginnerCard" class="level-card" data-level="beginner">
                 <div class="unlock-overlay" id="beginnerOverlay">
                     <div class="unlock-card">
                         <span class="lock-emoji" id="beginnerLockEmoji">🔒</span>
@@ -505,35 +487,48 @@
             </div>
 
             <!-- INTERMEDIATE CARD -->
-            <div id="intermediateCard" class="level-card locked" data-level="intermediate">
+            <div id="intermediateCard" class="level-card" data-level="intermediate">
+                <div class="unlock-overlay" id="intermediateOverlay">
+                    <div class="unlock-card">
+                        <span class="lock-emoji" id="intermediateLockEmoji">🔒</span>
+                        <div style="font-weight:700; margin-top:4px;" id="intermediateLockLabel">Level Locked</div>
+                        <div style="font-size:12px; color:#64748b;" id="intermediateLockSub">Unlocking shortly...</div>
+                    </div>
+                </div>
                 <div class="card-icon"><i class="fas fa-chart-line"></i></div>
                 <div class="card-content">
                     <span class="level-badge locked-badge" id="intermediateBadge">🔒 Locked</span>
                     <div class="level-title">Intermediate</div>
                     <div class="level-desc">Build fluency and confidence in conversations with more complex topics and expressions.</div>
                 </div>
-                <div class="card-action">
+                <div class="card-action" id="intermediateAction">
                     <button class="btn-level btn-locked" id="intermediateLockedBtn"><i class="fas fa-lock"></i> Locked</button>
                 </div>
             </div>
 
             <!-- ADVANCED CARD -->
-            <div id="advancedCard" class="level-card locked" data-level="advanced">
+            <div id="advancedCard" class="level-card" data-level="advanced">
+                <div class="unlock-overlay" id="advancedOverlay">
+                    <div class="unlock-card">
+                        <span class="lock-emoji" id="advancedLockEmoji">🔒</span>
+                        <div style="font-weight:700; margin-top:4px;" id="advancedLockLabel">Level Locked</div>
+                        <div style="font-size:12px; color:#64748b;" id="advancedLockSub">Unlocking shortly...</div>
+                    </div>
+                </div>
                 <div class="card-icon"><i class="fas fa-crown"></i></div>
                 <div class="card-content">
                     <span class="level-badge locked-badge" id="advancedBadge">🔒 Locked</span>
                     <div class="level-title">Advanced</div>
                     <div class="level-desc">Achieve mastery and fluency with sophisticated language and nuanced communication.</div>
                 </div>
-                <div class="card-action">
+                <div class="card-action" id="advancedAction">
                     <button class="btn-level btn-locked" id="advancedLockedBtn"><i class="fas fa-lock"></i> Locked</button>
                 </div>
             </div>
         </div>
 
-        <!-- Info Banner -->
         <div class="info-banner">
-            <div class="info-icon"><i class="fas fa-lock" id="infoIcon"></i></div>
+            <div class="info-icon" id="infoIcon"><i class="fas fa-lock"></i></div>
             <p class="info-text" id="infoMessage">Complete all 30 Beginner tasks to unlock the Intermediate level and advance your learning journey.</p>
         </div>
     </div>
@@ -549,12 +544,10 @@
     const intermediateProgress = {{ intermediate_progress.completion_percentage|default:0 }};
     const advancedProgress = {{ advanced_progress.completion_percentage|default:0 }};
     
-    // Determine current user level from backend
-    let currentUserLevel = userLevel;
     let confettiTriggered = false;
+    let unlockedLevels = [];
 
-    // ========== SINGLE CONFETTI BURST (canvas-based, exactly like reference) ==========
-    // This creates ONE elegant confetti celebration when level unlocks
+    // ========== SINGLE CONFETTI BURST ==========
     function launchSingleConfetti() {
         const canvas = document.getElementById('confettiCanvas');
         if (!canvas) return;
@@ -563,7 +556,6 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         
-        // Colors: periwinkle, gold, purple, soft lavender (celebratory)
         const colors = ['#4a62b0', '#6d28d9', '#a78bfa', '#c4b5fd', '#4f46e5', '#8b5cf6', '#f59e0b', '#10b981'];
         const particles = [];
         const PARTICLE_COUNT = 150;
@@ -627,22 +619,20 @@
         
         drawConfetti();
         
-        // Auto-clean canvas after 3 seconds (safety)
         setTimeout(() => {
             if (animationId) cancelAnimationFrame(animationId);
             if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
         }, 3000);
     }
 
-    // Shake card for locked levels
     function shakeCard(cardElement, btnElement) {
         if (!cardElement) return;
         cardElement.classList.add('shake-card');
         setTimeout(() => cardElement.classList.remove('shake-card'), 500);
         if (btnElement) {
             const originalHtml = btnElement.innerHTML;
-            btnElement.innerHTML = '<i class="fas fa-lock"></i> Complete Beginner!';
-            btnElement.style.fontSize = '0.75rem';
+            btnElement.innerHTML = '<i class="fas fa-lock"></i> Complete previous level!';
+            btnElement.style.fontSize = '0.7rem';
             setTimeout(() => {
                 btnElement.innerHTML = originalHtml;
                 btnElement.style.fontSize = '';
@@ -650,7 +640,6 @@
         }
     }
 
-    // 3D TILT effect for unlocked cards
     function applyTiltEffect(card) {
         card.addEventListener('mousemove', (e) => {
             if (!card.classList.contains('unlocked')) return;
@@ -666,7 +655,7 @@
         });
     }
 
-    // Quote rotator (carousel)
+    // Quote rotator
     const quoteList = [
         "Every expert was once a beginner. Keep going!",
         "The secret of getting ahead is getting started.",
@@ -689,220 +678,177 @@
         }, 4800);
     }
 
-    // This function replaces the locked button with the fully functional START button
-    // Preserves the redirect logic exactly as in your original requirement
-    function updateUIAfterUnlock(level) {
-        if (level === 'beginner') {
-            const beginnerCard = document.getElementById('beginnerCard');
-            beginnerCard.classList.remove('locked');
-            beginnerCard.classList.add('unlocked');
+    // Generic unlock animation function for ANY level
+    function unlockLevelWithAnimation(level, levelData, skipAnimation = false) {
+        return new Promise((resolve) => {
+            const card = document.getElementById(`${level}Card`);
+            const overlay = document.getElementById(`${level}Overlay`);
+            const lockEmoji = document.getElementById(`${level}LockEmoji`);
+            const lockLabel = document.getElementById(`${level}LockLabel`);
+            const lockSub = document.getElementById(`${level}LockSub`);
             
-            // Update badge based on progress from backend
-            if (beginnerProgress >= 100) {
-                document.getElementById('beginnerBadge').innerHTML = '✓ Completed';
-                document.getElementById('beginnerBadge').classList.add('completed-badge');
-            } else if (beginnerProgress > 0) {
-                document.getElementById('beginnerBadge').innerHTML = ` ${Math.round(beginnerProgress)}% Complete`;
-                document.getElementById('beginnerBadge').classList.remove('locked-badge');
-                document.getElementById('beginnerBadge').classList.add('level-badge');
-            } else {
-                document.getElementById('beginnerBadge').innerHTML = '● Current level';
-                document.getElementById('beginnerBadge').classList.remove('locked-badge');
-                document.getElementById('beginnerBadge').classList.add('level-badge');
+            if (skipAnimation || !overlay || !card) {
+                updateUIAfterUnlock(level, levelData);
+                resolve();
+                return;
             }
             
-            // CREATE THE START BUTTON WITH EXACT REDIRECT (as per original logic)
-            const startButton = document.createElement('a');
-            startButton.href = "/learning/level/beginner/";
-            startButton.className = 'btn-level btn-start';
-            if (beginnerProgress > 0) {
-                startButton.innerHTML = '<i class="fas fa-play"></i> Continue <i class="fas fa-arrow-right"></i>';
-            } else {
-                startButton.innerHTML = '<i class="fas fa-play"></i> Start <i class="fas fa-arrow-right"></i>';
-            }
-            startButton.style.cursor = 'pointer';
-            
-            // Add click handler with animation and redirect (preserves original redirect behaviour)
-            startButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                // Visual feedback before redirect
-                this.style.transform = 'scale(0.96)';
-                setTimeout(() => {
-                    // ACTUAL REDIRECT to the beginner level overview page
-                    window.location.href = "/learning/level/beginner/";
-                }, 120);
-            });
-            
-            const actionContainer = document.getElementById('beginnerAction');
-            actionContainer.innerHTML = '';
-            actionContainer.appendChild(startButton);
-            
-            // Stepper updates
-            const stepBeginner = document.getElementById('stepBeginner');
-            stepBeginner.classList.add('active');
-            stepBeginner.classList.remove('completed');
-            document.getElementById('stepBeginnerMarker').innerHTML = '1';
-            if (beginnerProgress > 0) {
-                document.getElementById('stepBeginnerStatus').innerText = `${Math.round(beginnerProgress)}% Complete`;
-            } else {
-                document.getElementById('stepBeginnerStatus').innerText = 'Current';
-            }
-            
-            // Update info banner based on other levels
-            if (!intermediateUnlocked) {
-                document.getElementById('infoMessage').innerHTML = "Complete all 30 Beginner tasks to unlock the Intermediate level and advance your learning journey.";
-                document.getElementById('infoIcon').innerHTML = '<i class="fas fa-lock"></i>';
-            } else if (!advancedUnlocked) {
-                document.getElementById('infoMessage').innerHTML = "Complete all 30 Intermediate tasks to unlock the Advanced level and achieve mastery!";
-                document.getElementById('infoIcon').innerHTML = '<i class="fas fa-arrow-up"></i>';
-            } else {
-                document.getElementById('infoMessage').innerHTML = "🏆 All levels unlocked! You're on your way to English mastery. Keep up the great work!";
-                document.getElementById('infoIcon').innerHTML = '<i class="fas fa-trophy"></i>';
-            }
-            
-            applyTiltEffect(beginnerCard);
-        }
-        
-        // Handle intermediate unlock
-        if (level === 'intermediate' && intermediateUnlocked) {
-            const interCard = document.getElementById('intermediateCard');
-            interCard.classList.remove('locked');
-            interCard.classList.add('unlocked');
-            
-            if (intermediateProgress >= 100) {
-                document.getElementById('intermediateBadge').innerHTML = '✓ Completed';
-                document.getElementById('intermediateBadge').classList.add('completed-badge');
-            } else if (intermediateProgress > 0) {
-                document.getElementById('intermediateBadge').innerHTML = ` ${Math.round(intermediateProgress)}% Complete`;
-            } else {
-                document.getElementById('intermediateBadge').innerHTML = '✓ Unlocked';
-            }
-            document.getElementById('intermediateBadge').classList.remove('locked-badge');
-            document.getElementById('intermediateBadge').classList.add('level-badge');
-            
-            const startButton = document.createElement('a');
-            startButton.href = "/learning/level/intermediate/";
-            startButton.className = 'btn-level btn-start';
-            if (intermediateProgress > 0) {
-                startButton.innerHTML = '<i class="fas fa-play"></i> Continue <i class="fas fa-arrow-right"></i>';
-            } else {
-                startButton.innerHTML = '<i class="fas fa-play"></i> Start <i class="fas fa-arrow-right"></i>';
-            }
-            
-            startButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = "/learning/level/intermediate/";
-            });
-            
-            document.getElementById('intermediateAction').innerHTML = '';
-            document.getElementById('intermediateAction').appendChild(startButton);
-            
-            applyTiltEffect(interCard);
-        }
-        
-        // Handle advanced unlock
-        if (level === 'advanced' && advancedUnlocked) {
-            const advCard = document.getElementById('advancedCard');
-            advCard.classList.remove('locked');
-            advCard.classList.add('unlocked');
-            
-            if (advancedProgress >= 100) {
-                document.getElementById('advancedBadge').innerHTML = '✓ Completed';
-                document.getElementById('advancedBadge').classList.add('completed-badge');
-            } else if (advancedProgress > 0) {
-                document.getElementById('advancedBadge').innerHTML = ` ${Math.round(advancedProgress)}% Complete`;
-            } else {
-                document.getElementById('advancedBadge').innerHTML = '✓ Unlocked';
-            }
-            document.getElementById('advancedBadge').classList.remove('locked-badge');
-            document.getElementById('advancedBadge').classList.add('level-badge');
-            
-            const startButton = document.createElement('a');
-            startButton.href = "/learning/level/advanced/";
-            startButton.className = 'btn-level btn-start';
-            if (advancedProgress > 0) {
-                startButton.innerHTML = '<i class="fas fa-play"></i> Continue <i class="fas fa-arrow-right"></i>';
-            } else {
-                startButton.innerHTML = '<i class="fas fa-play"></i> Start <i class="fas fa-arrow-right"></i>';
-            }
-            
-            startButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = "/learning/level/advanced/";
-            });
-            
-            document.getElementById('advancedAction').innerHTML = '';
-            document.getElementById('advancedAction').appendChild(startButton);
-            
-            applyTiltEffect(advCard);
-        }
-    }
-
-    // Unlock sequence with ONE SINGLE confetti burst (no extra confetti after)
-    function startBeginnerUnlock() {
-        const overlay = document.getElementById('beginnerOverlay');
-        const lockEmoji = document.getElementById('beginnerLockEmoji');
-        const lockLabel = document.getElementById('beginnerLockLabel');
-        const lockSub = document.getElementById('beginnerLockSub');
-        const card = document.getElementById('beginnerCard');
-        if (!overlay) return;
-        
-        overlay.classList.add('active');
-        
-        setTimeout(() => {
-            if (lockEmoji) {
-                lockEmoji.style.animation = 'none';
-                lockEmoji.style.transform = 'scale(1.2)';
-                setTimeout(() => lockEmoji.style.transform = '', 200);
-            }
-        }, 800);
-        
-        setTimeout(() => {
-            if (lockEmoji) lockEmoji.textContent = '🔓';
-            if (lockLabel) lockLabel.textContent = 'Level Unlocked!';
-            if (lockSub) lockSub.textContent = 'Ready to begin! ✨';
-            
-            // ========== SINGLE CONFETTI BURST (ONLY ONCE) ==========
-            if (!confettiTriggered) {
-                confettiTriggered = true;
-                launchSingleConfetti();
-            }
+            overlay.classList.add('active');
             
             setTimeout(() => {
-                overlay.style.opacity = '0';
-                overlay.style.pointerEvents = 'none';
+                if (lockEmoji) {
+                    lockEmoji.style.animation = 'none';
+                    lockEmoji.style.transform = 'scale(1.2)';
+                    setTimeout(() => lockEmoji.style.transform = '', 200);
+                }
+            }, 800);
+            
+            setTimeout(() => {
+                if (lockEmoji) lockEmoji.textContent = '🔓';
+                if (lockLabel) lockLabel.textContent = `${level.charAt(0).toUpperCase() + level.slice(1)} Unlocked!`;
+                if (lockSub) lockSub.textContent = 'Ready to begin! ✨';
+                
+                if (!confettiTriggered) {
+                    confettiTriggered = true;
+                    launchSingleConfetti();
+                }
+                
                 setTimeout(() => {
-                    if (overlay.parentNode) overlay.remove();
-                    updateUIAfterUnlock('beginner');
-                    // No extra confetti here — only the one burst above
-                }, 400);
-            }, 900);
-        }, 2200);
+                    overlay.style.opacity = '0';
+                    overlay.style.pointerEvents = 'none';
+                    setTimeout(() => {
+                        if (overlay.parentNode) overlay.remove();
+                        updateUIAfterUnlock(level, levelData);
+                        resolve();
+                    }, 400);
+                }, 900);
+            }, 2200);
+        });
     }
 
-    // Attach locked button handlers for Intermediate & Advanced (shake & gentle hint)
-    function attachLockedHandlers() {
-        const interCard = document.getElementById('intermediateCard');
-        const interBtn = document.getElementById('intermediateLockedBtn');
-        if (interBtn && !intermediateUnlocked) {
-            interBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                shakeCard(interCard, interBtn);
-                showFloatingHint('🔐 Complete Beginner level first!');
-            });
+    function updateUIAfterUnlock(level, levelData) {
+        const card = document.getElementById(`${level}Card`);
+        const badge = document.getElementById(`${level}Badge`);
+        const actionContainer = document.getElementById(`${level}Action`);
+        const progress = levelData.progress;
+        const isCompleted = progress >= 100;
+        
+        card.classList.remove('locked');
+        card.classList.add('unlocked');
+        
+        if (isCompleted) {
+            badge.innerHTML = '✓ Completed';
+            badge.classList.add('completed-badge');
+            badge.classList.remove('locked-badge');
+            card.classList.add('completed');
+        } else if (progress > 0) {
+            badge.innerHTML = `${Math.round(progress)}% Complete`;
+            badge.classList.remove('locked-badge');
+            badge.classList.add('level-badge');
+        } else {
+            badge.innerHTML = '✓ Unlocked';
+            badge.classList.remove('locked-badge');
+            badge.classList.add('level-badge');
         }
-        const advCard = document.getElementById('advancedCard');
-        const advBtn = document.getElementById('advancedLockedBtn');
-        if (advBtn && !advancedUnlocked) {
-            advBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                shakeCard(advCard, advBtn);
-                showFloatingHint('🔐 Complete Intermediate first to unlock Advanced!');
-            });
+        
+        const startButton = document.createElement('a');
+        startButton.href = `/learning/level/${level}/`;
+        startButton.className = 'btn-level btn-start';
+        if (progress > 0) {
+            startButton.innerHTML = '<i class="fas fa-play"></i> Continue <i class="fas fa-arrow-right"></i>';
+        } else {
+            startButton.innerHTML = '<i class="fas fa-play"></i> Start <i class="fas fa-arrow-right"></i>';
+        }
+        
+        startButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.transform = 'scale(0.96)';
+            setTimeout(() => {
+                window.location.href = `/learning/level/${level}/`;
+            }, 120);
+        });
+        
+        actionContainer.innerHTML = '';
+        actionContainer.appendChild(startButton);
+        
+        // Update stepper
+        const stepElement = document.getElementById(`step${level.charAt(0).toUpperCase() + level.slice(1)}`);
+        const stepMarker = document.getElementById(`step${level.charAt(0).toUpperCase() + level.slice(1)}Marker`);
+        const stepStatus = document.getElementById(`step${level.charAt(0).toUpperCase() + level.slice(1)}Status`);
+        
+        stepElement.classList.add('active');
+        if (isCompleted) {
+            stepElement.classList.add('completed');
+        }
+        if (progress > 0) {
+            stepStatus.innerText = `${Math.round(progress)}% Complete`;
+        } else {
+            stepStatus.innerText = 'Available';
+        }
+        
+        applyTiltEffect(card);
+        
+        // Update info banner
+        updateInfoBanner();
+    }
+
+    function updateInfoBanner() {
+        const infoMessage = document.getElementById('infoMessage');
+        const infoIcon = document.getElementById('infoIcon');
+        
+        if (!beginnerUnlocked) {
+            infoMessage.innerHTML = "Complete all 30 Beginner tasks to unlock the Intermediate level and advance your learning journey.";
+            infoIcon.innerHTML = '<i class="fas fa-lock"></i>';
+        } else if (beginnerUnlocked && !intermediateUnlocked) {
+            infoMessage.innerHTML = "✨ Beginner level is unlocked! Complete all 30 tasks to unlock Intermediate.";
+            infoIcon.innerHTML = '<i class="fas fa-hourglass-half"></i>';
+        } else if (intermediateUnlocked && !advancedUnlocked) {
+            infoMessage.innerHTML = "🎯 Intermediate is unlocked! Complete all 30 tasks to reach Advanced mastery.";
+            infoIcon.innerHTML = '<i class="fas fa-arrow-up"></i>';
+        } else if (advancedUnlocked) {
+            infoMessage.innerHTML = "🏆 All levels unlocked! You're on your way to English mastery. Keep up the great work!";
+            infoIcon.innerHTML = '<i class="fas fa-trophy"></i>';
+        }
+    }
+
+    function attachLockedHandlers() {
+        if (!beginnerUnlocked) {
+            const beginnerCard = document.getElementById('beginnerCard');
+            const beginnerBtn = document.getElementById('beginnerLockedBtn');
+            if (beginnerBtn) {
+                beginnerBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    shakeCard(beginnerCard, beginnerBtn);
+                    showFloatingHint('🔐 Complete the pretest first!');
+                });
+            }
+        }
+        
+        if (!intermediateUnlocked) {
+            const interCard = document.getElementById('intermediateCard');
+            const interBtn = document.getElementById('intermediateLockedBtn');
+            if (interBtn) {
+                interBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    shakeCard(interCard, interBtn);
+                    showFloatingHint('🔐 Complete Beginner level first!');
+                });
+            }
+        }
+        
+        if (!advancedUnlocked) {
+            const advCard = document.getElementById('advancedCard');
+            const advBtn = document.getElementById('advancedLockedBtn');
+            if (advBtn) {
+                advBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    shakeCard(advCard, advBtn);
+                    showFloatingHint('🔐 Complete Intermediate level first!');
+                });
+            }
         }
     }
     
-    // Floating hint message (non-intrusive)
     function showFloatingHint(message) {
         const msgDiv = document.createElement('div');
         msgDiv.textContent = message;
@@ -940,7 +886,7 @@
     }, { threshold: 0.2 });
     cardsArray.forEach(card => observer.observe(card));
 
-    // Nav links (preserve redirection)
+    // Nav links
     document.getElementById('homeLink')?.addEventListener('click', (e) => {
         e.preventDefault();
         window.location.href = "/";
@@ -950,37 +896,75 @@
         window.location.href = "/profile/";
     });
 
-    // Final initialization
-    window.addEventListener('load', () => {
+    // DYNAMIC UNLOCK SEQUENCE - based on backend unlock flags
+    window.addEventListener('load', async () => {
         attachLockedHandlers();
-        // Set initial stepper look
-        const stepBeg = document.getElementById('stepBeginner');
-        stepBeg.classList.add('active');
-        document.getElementById('stepBeginnerStatus').innerText = 'Unlocking...';
-        document.getElementById('stepIntermediateStatus').innerText = intermediateUnlocked ? 'Available' : 'Locked';
-        document.getElementById('stepAdvancedStatus').innerText = advancedUnlocked ? 'Available' : 'Locked';
-        document.getElementById('infoIcon').innerHTML = '<i class="fas fa-hourglass-half"></i>';
         
-        // Show unlock animation based on backend data
-        if (currentUserLevel === 'beginner' && beginnerUnlocked) {
-            setTimeout(() => {
-                startBeginnerUnlock();
-            }, 700);
+        // Set initial stepper text based on actual unlock status
+        document.getElementById('stepBeginnerStatus').innerText = beginnerUnlocked ? (beginnerProgress > 0 ? `${Math.round(beginnerProgress)}%` : 'Available') : 'Locked';
+        document.getElementById('stepIntermediateStatus').innerText = intermediateUnlocked ? (intermediateProgress > 0 ? `${Math.round(intermediateProgress)}%` : 'Available') : 'Locked';
+        document.getElementById('stepAdvancedStatus').innerText = advancedUnlocked ? (advancedProgress > 0 ? `${Math.round(advancedProgress)}%` : 'Available') : 'Locked';
+        
+        // ========== CORRECT UNLOCK SEQUENCE BASED ON BACKEND LOGIC ==========
+        // This matches the logic from profile_view:
+        // - Beginner: Always unlocked if pretest completed
+        // - Intermediate: Unlocked if user_level is intermediate/advanced OR beginner completed
+        // - Advanced: Unlocked if user_level is advanced OR intermediate completed
+        
+        // 1. Handle Beginner Level (always unlocked if pretest completed)
+        if (beginnerUnlocked) {
+            const hasProgress = beginnerProgress > 0;
+            const levelData = { progress: beginnerProgress };
+            
+            if (!hasProgress && userLevel === 'beginner') {
+                // Show unlock animation for new Beginner users
+                await unlockLevelWithAnimation('beginner', levelData, false);
+            } else {
+                // Just update UI without animation (already unlocked or has progress)
+                updateUIAfterUnlock('beginner', levelData);
+            }
         }
         
-        // Handle intermediate if unlocked
+        // 2. Handle Intermediate Level (unlocked based on user level or beginner completion)
         if (intermediateUnlocked) {
-            setTimeout(() => {
-                updateUIAfterUnlock('intermediate');
-            }, 3000);
+            const hasProgress = intermediateProgress > 0;
+            const levelData = { progress: intermediateProgress };
+            
+            // Show unlock animation for Intermediate users who haven't started yet
+            if (!hasProgress && (userLevel === 'intermediate' || userLevel === 'advanced')) {
+                setTimeout(async () => {
+                    await unlockLevelWithAnimation('intermediate', levelData, false);
+                }, 1500);
+            } else if (hasProgress) {
+                setTimeout(() => {
+                    updateUIAfterUnlock('intermediate', levelData);
+                }, 500);
+            } else if (beginnerUnlocked && beginnerProgress >= 100 && !intermediateUnlocked) {
+                // This case shouldn't happen if backend logic is correct, but handle anyway
+                setTimeout(() => {
+                    updateUIAfterUnlock('intermediate', levelData);
+                }, 500);
+            }
         }
         
-        // Handle advanced if unlocked
+        // 3. Handle Advanced Level (unlocked only for advanced users)
         if (advancedUnlocked) {
-            setTimeout(() => {
-                updateUIAfterUnlock('advanced');
-            }, 3500);
+            const hasProgress = advancedProgress > 0;
+            const levelData = { progress: advancedProgress };
+            
+            if (!hasProgress && userLevel === 'advanced') {
+                setTimeout(async () => {
+                    await unlockLevelWithAnimation('advanced', levelData, false);
+                }, 2500);
+            } else if (hasProgress) {
+                setTimeout(() => {
+                    updateUIAfterUnlock('advanced', levelData);
+                }, 1000);
+            }
         }
+        
+        // Update info banner after all unlocks
+        updateInfoBanner();
     });
 </script>
 </body>

@@ -10,11 +10,16 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 import json
 import uuid
+import random
 import os
 import io
 from datetime import datetime, date
 from PIL import Image, ImageDraw, ImageFont
-from .models import UserLearningProgress, DailyActivity, SavedVocabulary, UserCertificate
+from .models import (
+    UserLearningProgress, DailyActivity, SavedVocabulary, UserCertificate,
+    LevelAssessment, AssessmentQuestion, UserAssessmentAttempt  # Add these 3
+)
+import requests
 
 def get_user_progress(user, level):
     """Helper function to get or create user progress"""
@@ -35,53 +40,64 @@ def level_selection(request):
     """Display level selection page based on pretest results"""
     profile = request.user.profile
     
-    # Convert profile.level to lowercase for consistent comparison
-    # profile.level stores: "Beginner", "Intermediate", "Advanced"
-    # We need: "beginner", "intermediate", "advanced"
-    user_level_from_profile = profile.level.lower() if profile.level else 'beginner'
+    # Normalize level from profile
+    user_level_from_profile = profile.level.strip().lower() if profile.level else 'beginner'
+    pretest_completed = profile.pretest_completed
     
     # Get pretest score if available
     overall_percentage = 0
     if hasattr(profile, 'get_overall_pretest_score'):
         overall_percentage = profile.get_overall_pretest_score()
     
-    # Determine unlocked levels based on pretest score
-    if overall_percentage >= 80:
-        # User qualifies for Advanced
-        user_level = 'advanced'
-        beginner_unlocked = True
-        intermediate_unlocked = True
-        advanced_unlocked = True
-    elif overall_percentage >= 60:
-        # User qualifies for Intermediate
-        user_level = 'intermediate'
-        beginner_unlocked = True
-        intermediate_unlocked = True
-        advanced_unlocked = False
-    else:
-        # User is Beginner
-        user_level = 'beginner'
-        beginner_unlocked = True
+    # ========== CLEAN UNLOCK LOGIC (SAME AS PROFILE VIEW) ==========
+    
+    # Step 1: Pretest must be completed to unlock anything
+    if not pretest_completed and overall_percentage == 0:
+        # No pretest taken yet
+        beginner_unlocked = False
         intermediate_unlocked = False
         advanced_unlocked = False
+        user_level = 'beginner'
     
-    # If no pretest was taken (score is 0), use the profile.level to determine unlocks
-    if overall_percentage == 0:
-        if user_level_from_profile == 'beginner':
-            beginner_unlocked = True
-            intermediate_unlocked = False
-            advanced_unlocked = False
-            user_level = 'beginner'
-        elif user_level_from_profile == 'intermediate':
-            beginner_unlocked = True
-            intermediate_unlocked = True
-            advanced_unlocked = False
-            user_level = 'intermediate'
-        elif user_level_from_profile == 'advanced':
-            beginner_unlocked = True
-            intermediate_unlocked = True
-            advanced_unlocked = True
+    else:
+        # Determine user's level based on pretest score (if available) or profile level
+        if overall_percentage >= 80:
             user_level = 'advanced'
+        elif overall_percentage >= 60:
+            user_level = 'intermediate'
+        else:
+            # Use profile level if score is 0 or below 60
+            if overall_percentage == 0 and user_level_from_profile in ['intermediate', 'advanced']:
+                user_level = user_level_from_profile
+            else:
+                user_level = 'beginner'
+        
+        # Beginner always unlocked after pretest
+        beginner_unlocked = True
+        
+        # Intermediate logic
+        if user_level in ['intermediate', 'advanced']:
+            intermediate_unlocked = True
+        else:  # beginner user
+            # Get beginner progress to check if completed
+            from learning.models import UserLearningProgress
+            beginner_progress = UserLearningProgress.objects.filter(
+                user=request.user, level='beginner'
+            ).first()
+            beginner_completed = beginner_progress.is_completed() if beginner_progress else False
+            intermediate_unlocked = beginner_completed
+        
+        # Advanced logic
+        if user_level == 'advanced':
+            advanced_unlocked = True
+        else:
+            # Get intermediate progress to check if completed
+            from learning.models import UserLearningProgress
+            intermediate_progress = UserLearningProgress.objects.filter(
+                user=request.user, level='intermediate'
+            ).first()
+            intermediate_completed = intermediate_progress.is_completed() if intermediate_progress else False
+            advanced_unlocked = intermediate_completed
     
     # Get or create progress for each level (only if unlocked)
     beginner_progress = get_user_progress(request.user, 'beginner') if beginner_unlocked else None
@@ -108,6 +124,27 @@ def level_overview(request, level_name):
         return redirect('learning:level_selection')
     
     progress = get_user_progress(request.user, level_name)
+
+    from .models import LevelAssessment
+    try:
+        assessment = LevelAssessment.objects.get(level=level_name)
+        assessment_total_questions = assessment.total_questions
+        assessment_passing_score = assessment.passing_score
+        assessment_time_limit = assessment.time_limit_minutes
+    except LevelAssessment.DoesNotExist:
+        # Fallback defaults based on level
+        if level_name == 'beginner':
+            assessment_total_questions = 20
+            assessment_passing_score = 15
+            assessment_time_limit = 30
+        elif level_name == 'intermediate':
+            assessment_total_questions = 25
+            assessment_passing_score = 20
+            assessment_time_limit = 30
+        else:  # advanced
+            assessment_total_questions = 25
+            assessment_passing_score = 18
+            assessment_time_limit = 45
     
     celebrate_day = request.GET.get('completed')
     if celebrate_day:
@@ -135,51 +172,12 @@ def level_overview(request, level_name):
 
     certificate = UserCertificate.objects.filter(user=request.user, level=level_name).first()
 
+
     day_titles = {}
-    for day in range(1, 31):
-        day_titles[day] = get_day_title(level_name, day)
-
-    # ─────────────────────────────────────────────────────────────
-    # POWER LINES COLLECTION - 30 Motivational Quotes
-    # ─────────────────────────────────────────────────────────────
-    power_lines_collection = [
-        "🌱 You don't have to be a master to start, but you have to start to become a master.",
-        "🌞 Every new morning is a fresh chance—what you do today builds who you become tomorrow.",
-        "💪 Confidence is not being perfect; it is the courage to start even when you are nervous.",
-        "👂 To speak well, you must first learn to hear what is not being said.",
-        "🔥 Fear is a reaction; courage is a decision. Every mistake is just data for your future success.",
-        "✨ You never get a second chance to make a first impression. Speak with clarity, lead with confidence.",
-        "🏃‍♀️ Transformation is a marathon, not a sprint. Celebrate the small wins, for they are the building blocks of a masterpiece.",
-        "📚 He who asks a question is a fool for five minutes; he who does not ask a question remains a fool forever.",
-        "🗣️ Communication is not about speaking more; it is about understanding better.",
-        "🔍 Clarity begins when confusion ends—ask, learn, and grow.",
-        "🎤 Your voice matters—use it with confidence.",
-        "🤝 Small conversations create big opportunities.",
-        "📈 Every interaction is a chance to improve your communication.",
-        "🪓 Reviewing what you have learned is like sharpening a saw; it makes the next cut much easier.",
-        "🔑 Consistency is the key that unlocks mastery.",
-        "📅 Practice daily, even when you don't feel like it—that's where growth happens.",
-        "🚀 Confidence grows when you step outside your comfort zone.",
-        "🧠 Clear thinking leads to clear speaking.",
-        "🌟 Nature gave us two ears and one mouth so that we can listen twice as much as we speak.",
-        "🏆 Success is built on discipline, not motivation.",
-        "🎯 You don't have to be perfect to start, but you have to start to be perfect.",
-        "🧠 Setting goals is the first step in turning the invisible into the visible.",
-        "⏳ A clear vision creates a strong direction.",
-        "💼 Professional communication builds professional identity.",
-        "👑 Leadership begins with the way you express yourself.",
-        "💎 Your words define your value.",
-        "🌿 Personal development is the conviction that you can learn, grow, and transcend your current limits.",
-        "🧘‍♀️ Confidence is not 'they will like me,' it is 'I will be fine if they don't.'",
-        "⚡ Consistency turns effort into excellence.",
-        "🚗 Your words are the vehicle of your leadership; drive them with precision and purpose."
-    ]
-
-    # Map power lines to days (1-30)
     day_power_lines = {}
     for day in range(1, 31):
-        # Cycle through the collection if needed (though we have exactly 30)
-        day_power_lines[day] = power_lines_collection[(day - 1) % len(power_lines_collection)]
+        day_titles[day] = get_day_title(level_name, day)
+        day_power_lines[day] = get_day_power_line(level_name, day)
 
     is_completed = progress.is_completed()
     certificate_issued = progress.certificate_issued
@@ -196,80 +194,84 @@ def level_overview(request, level_name):
         'certificate_issued': certificate_issued,
         'certificate_id': certificate.id if certificate else None,
         'day_titles': day_titles,
-        'day_power_lines': day_power_lines,  # Added power lines to context
+        'day_power_lines': day_power_lines,
         'user': request.user,
         'show_intro': show_intro,
         'is_assessment': is_assessment,
+        # Assessment details - CRITICAL: These must be for the correct level
+        'assessment_total_questions': assessment_total_questions,
+        'assessment_passing_score': assessment_passing_score,
+        'assessment_time_limit': assessment_time_limit,
+        'collected_rewards': progress.collected_rewards,
     }
-
     return render(request, 'learning/level_overview.html', context)
 
 def get_day_title(level, day):
-    """Get title for each day based on level"""
+    """Get title for each day based on level with dynamic themes"""
     titles = {
         'beginner': {
-            1: "Introduction to English Basics",
-            2: "Greetings and Introductions",
-            3: "Basic Vocabulary - Family",
-            4: "Basic Vocabulary - Daily Routines",
-            5: "Simple Present Tense",
-            6: "Present Continuous Tense",
-            7: "Review Week 1",
-            8: "Numbers and Counting",
-            9: "Colors and Shapes",
-            10: "Food and Drinks",
-            11: "Weather and Seasons",
-            12: "Simple Past Tense",
-            13: "Past Continuous Tense",
-            14: "Future Tense",
-            15: "Modal Verbs",
-            16: "Prepositions of Place",
-            17: "Prepositions of Time",
-            18: "Question Formation",
-            19: "Making Requests",
-            20: "Giving Directions",
-            21: "Telephone English",
-            22: "Email Writing Basics",
-            23: "Review Week 3",
-            24: "Describing People",
-            25: "Describing Places",
-            26: "Telling Stories",
-            27: "Expressing Opinions",
-            28: "Making Suggestions",
-            29: "Apologizing and Thanking",
-            30: "Final Review & Celebration",
+            1: "POWER ON: THE FOUNDATION",
+            2: "THE MORNING ROUTINE",
+            3: "BUILDING CONFIDENCE",
+            4: "THE POWER OF LISTENING",
+            5: "COURAGE & COMMUNICATION",
+            6: "THE ART OF INTRODUCTION",
+            7: "THE POWER OF PROGRESS",
+            8: "THE ART OF ASKING",
+            9: "THE POWER OF PARTICIPATION",
+            10: "THE CLARITY CHECK",
+            11: "THE GRATITUDE LOOP",
+            12: "THE RESILIENCE ROUTINE",
+            13: "THE CONSISTENCY CODE",
+            14: "THE WEEK 2 REVIEW & RECOVERY",
+            15: "THE SILENT COMMUNICATOR",
+            16: "THE RADIANT CONNECTOR",
+            17: "THE VISIONARY LEADER",
+            18: "THE ARTICULATE ENGINEER",
+            19: "THE ACTIVE LISTENER",
+            20: "THE CONSISTENCY ARCHITECT",
+            21: "THE CONFIDENT COMMUNICATOR",
+            22: "THE STRATEGIC VISIONARY",
+            23: "THE MOMENTUM BUILDER",
+            24: "THE RESILIENT EXPERT",
+            25: "THE ART OF PERSUASION",
+            26: "THE STRATEGIC INQUIRY",
+            27: "THE PUBLIC FORUM",
+            28: "THE GRAND FINALE",
+            29: "THE CONFIDENCE PEAK",
+            30: "THE MASTERPIECE",
         },
         'intermediate': {
-            1: "Advanced Greetings & Small Talk",
-            2: "Professional Email Writing",
-            3: "Idioms and Expressions",
-            4: "Present Perfect Tense",
-            5: "Business Vocabulary",
-            6: "Reported Speech",
-            7: "Week 1 Review",
-            8: "Conditional Sentences",
-            9: "Passive Voice",
-            10: "Presentation Skills",
-            11: "Negotiation Language",
-            12: "Phrasal Verbs",
-            13: "Complex Sentences",
-            14: "Argumentation & Debate",
-            15: "Formal Letter Writing",
-            16: "Interview Preparation",
-            17: "Technical Documentation",
-            18: "Meeting Participation",
-            19: "Cross-cultural Communication",
-            20: "Project Management Terms",
-            21: "Week 3 Review",
-            22: "Abstract Thinking",
-            23: "Persuasive Writing",
-            24: "Leadership Communication",
-            25: "Critical Analysis",
-            26: "Storytelling Techniques",
-            27: "Public Speaking",
-            28: "Networking Skills",
-            29: "Professional Etiquette",
-            30: "Final Project & Review",
+            1: "FROM BASIC TO INTERMEDIATE",
+            2: "THE LOGIC ENGINE OF ENGLISH",
+            3: "THE ART OF PROFESSIONAL RELAY",
+            4: "MODALS OF DEDUCTION & PROBABILITY",
+            5: "BUILDING COMPLEX SENTENCES",
+            6: "THE LANGUAGE OF ANALYSIS",
+            7: "WEEK 1 REVIEW & THE PRECISION AUDIT",
+            8: "ADVANCED ACTIVE & PASSIVE VOICE",
+            9: "THE SUBTLE ART",
+            10: "COLLOCATIONS & WORD FAMILIES",
+            11: "THE FLOW ARCHITECT",
+            12: "THE DIPLOMAT'S TOOLKIT",
+            13: "PROFESSIONAL EMAIL & FORMAL WRITING",
+            14: "THE INTERMEDIATE AUDIT",
+            15: "STRESS, INTONATION & CHUNKING",
+            16: "PARAPHRASING & SUMMARISING",
+            17: "INFERENCE & IMPLICATION",
+            18: "GROUP DISCUSSIONS & DEBATES",
+            19: "YOUR ENGINEERING DOMAIN",
+            20: "CRITICAL ANALYSIS",
+            21: "THE SYNTHESIS TEST",
+            22: "THE ARGUMENT ESSAY",
+            23: "STRUCTURE, DELIVERY & IMPACT",
+            24: "COMPETENCY-BASED ANSWERS",
+            25: "CLEFT SENTENCES & EMPHASIS",
+            26: "REPORTS & PROPOSALS",
+            27: "NEGOTIATION & CONFLICT RESOLUTION LANGUAGE",
+            28: "THE ADVANCED INTEGRATION",
+            29: "THE INTERMEDIATE CERTIFICATION TEST PREP",
+            30: "THE FULL MASTERPIECE",
         },
         'advanced': {
             1: "Mastering Nuance",
@@ -305,6 +307,108 @@ def get_day_title(level, day):
         }
     }
     return titles.get(level, {}).get(day, f"Day {day}")
+
+def get_day_power_line(level, day):
+    """Get power line/motivational quote for each day based on level"""
+    power_lines = {
+        'beginner': {
+            1: "You don't have to be a master to start, but you have to start to become a master.",
+            2: "Every new morning is a fresh chance—what you do today builds who you become tomorrow.",
+            3: "Confidence is not being perfect; it is the courage to start even when you are nervous.",
+            4: "To speak well, you must first learn to hear what is not being said.",
+            5: "Fear is a reaction; courage is a decision. Every mistake is just data for your future success.",
+            6: "You never get a second chance to make a first impression. Speak with clarity, lead with confidence.",
+            7: "Transformation is a marathon, not a sprint. Celebrate the small wins, for they are the building blocks of a masterpiece.",
+            8: "He who asks a question is a fool for five minutes; he who does not ask a question remains a fool forever.",
+            9: "The only bad question is the one that remains unasked.",
+            10: "The single biggest problem in communication is the illusion that it has taken place.",
+            11: "Gratitude is the most exquisite form of courtesy.",
+            12: "Fall seven times, stand up eight. Success is not final, failure is not fatal: it is the courage to continue that counts.",
+            13: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.",
+            14: "Reviewing what you have learned is like sharpening a saw; it makes the next cut much easier.",
+            15: "Your posture is the first sentence you speak to a room.",
+            16: "Peace begins with a smile, and so does a successful conversation.",
+            17: "Confidence is not 'they will like me.' Confidence is 'I will be fine if they don't.'",
+            18: "Clear speech is the mirror of a clear mind.",
+            19: "Nature gave us two ears and one mouth so that we can listen twice as much as we speak.",
+            20: "Small daily improvements over time lead to stunning results.",
+            21: "You don't have to be perfect to start, but you have to start to be perfect.",
+            22: "Setting goals is the first step in turning the invisible into the visible.",
+            23: "Success is a series of small wins that eventually lead to a massive victory.",
+            24: "Failure is simply the opportunity to begin again, this time more intelligently.",
+            25: "To be clear is to be kind. To be vague is to be unkind.",
+            26: "The quality of your life is determined by the quality of the questions you ask.",
+            27: "Personal development is the conviction that you can learn, grow, and transcend your current limits.",
+            28: "The way we communicate with others and with ourselves ultimately determines the quality of our lives.",
+            29: "Confidence is built on delivered results, not on promises.",
+            30: "Your words are the vehicle of your leadership; drive them with precision and purpose.",
+        },
+        'intermediate': {
+            1: "You have already crossed the first bridge. Now let's build a highway.",
+            2: "If you master conditionals, you master the art of possibility.",
+            3: "A great communicator doesn't just speak --- they accurately convey what others have said.",
+            4: "The ability to express degrees of certainty is the mark of a critical thinker.",
+            5: "A complex sentence does not mean a confusing sentence --- it means a complete one.",
+            6: "Analysis is the bridge between observation and understanding.",
+            7: "Week 1 is complete. You have laid the grammar architecture. Now inspect it for cracks.",
+            8: "The Passive Voice is not weakness --- it is a tool of precision and diplomacy.",
+            9: "The choice between -ing and 'to' is not random --- it reveals your mastery of nuance.",
+            10: "Knowing a word is useful. Knowing how to combine it with others is power.",
+            11: "Without discourse markers, your ideas are bricks. With them, they become a building.",
+            12: "To hedge is not to hide --- it is to be honest about the limits of what you know.",
+            13: "A well-crafted email is a letter of recommendation you send yourself.",
+            14: "Two weeks in. You are no longer a basic speaker. But are you ready to prove it?",
+            15: "It is not WHAT you say but WHERE you place the stress that changes the meaning.",
+            16: "To paraphrase well is to prove you understood. To summarise well is to prove you can lead.",
+            17: "What is left unsaid often carries more weight than what is spoken aloud.",
+            18: "The ability to think and speak simultaneously is a skill --- and like all skills, it can be trained.",
+            19: "The engineer who can explain a technical concept to a non-expert is worth ten who cannot.",
+            20: "Reading critically is not about finding flaws --- it is about understanding the argument being made.",
+            21: "Three weeks. You have moved from grammar drills to genuine intellectual communication.",
+            22: "An argument essay is not a fight --- it is an organised exploration of a complex question.",
+            23: "A presentation is not a report read aloud --- it is a performance with a purpose.",
+            24: "Preparation is not cheating --- it is the difference between a good answer and a great one.",
+            25: "Emphasis is not about volume --- it is about architecture.",
+            26: "A well-written report changes decisions. A poorly written one is ignored.",
+            27: "Negotiation is not about winning --- it is about finding the most workable solution.",
+            28: "Four weeks. You are no longer learning English --- you are using it to think.",
+            29: "Revision is not repetition --- it is the transformation of learned knowledge into permanent skill.",
+            30: "You came here to improve your English. You leave with the language of a professional.",
+        },
+        'advanced': {
+            1: "Mastery is not about knowing everything — it's about knowing what matters.",
+            2: "The most powerful communicators make the complex feel simple.",
+            3: "Academic writing is clarity dressed in precision.",
+            4: "A great presentation doesn't inform — it transforms.",
+            5: "In debate, the goal isn't to win — it's to find the truth.",
+            6: "Strategy without communication is just a plan that never happens.",
+            7: "Synthesis is the highest form of understanding.",
+            8: "Literature teaches us the grammar of the human heart.",
+            9: "Technical writing is the art of making the invisible visible.",
+            10: "An executive summary respects everyone's time while delivering value.",
+            11: "In crisis, clarity is compassion.",
+            12: "Persuasion is the intersection of logic, emotion, and credibility.",
+            13: "True negotiation creates value — it doesn't just divide it.",
+            14: "Leadership communication is about alignment, not authority.",
+            15: "Advanced grammar isn't about rules — it's about choices.",
+            16: "Editing is where good writing becomes great writing.",
+            17: "Translation is the art of carrying meaning across cultural bridges.",
+            18: "A conference presentation is your ideas in their best light.",
+            19: "Mentoring language builds capacity, not dependency.",
+            20: "Strategic planning is storytelling with deadlines.",
+            21: "Review is where reflection meets action.",
+            22: "An innovation pitch is a promise of a better future.",
+            23: "Change management communication turns resistance into readiness.",
+            24: "Global communication respects difference while finding common ground.",
+            25: "Thought leadership is having opinions that matter, backed by expertise.",
+            26: "Publishing is how expertise becomes legacy.",
+            27: "Executive presence is earned, not declared.",
+            28: "Boardroom communication is precision under pressure.",
+            29: "Legacy building is what you build that outlasts you.",
+            30: "A capstone project proves you've transformed from learner to leader.",
+        }
+    }
+    return power_lines.get(level, {}).get(day, "Keep pushing forward! Every day is a step toward mastery.")
 
 @login_required
 def day_detail(request, level_name, day_number):
@@ -395,7 +499,7 @@ def complete_activity(request, level_name, day_number, activity_type):
 @login_required
 @require_http_methods(["POST"])
 def complete_day(request, level_name, day_number):
-    """Mark an entire day as complete and unlock next day"""
+    """Mark an entire day as complete (NO STAR ADDED HERE)"""
     progress = get_user_progress(request.user, level_name)
     
     all_activities = ['listening', 'speaking', 'reading', 'writing', 'vocabulary', 'grammar', 'game']
@@ -414,18 +518,41 @@ def complete_day(request, level_name, day_number):
             'total': len(all_activities)
         }, status=400)
     
-    if progress.complete_day(day_number):
-        level_completed = progress.is_completed()
+    # ✅ ONLY mark day as completed - NO STAR ADDED HERE
+    if day_number not in progress.completed_days:
+        progress.completed_days.append(day_number)
+        progress.completed_days.sort()
         
-        # Calculate total stars (completed days count)
-        total_stars = len(progress.completed_days)
+        # Update current day
+        next_day = progress.get_next_day()
+        if next_day:
+            progress.current_day = next_day
+        
+        # Update streak
+        today = date.today()
+        if progress.last_completed_date:
+            days_diff = (today - progress.last_completed_date).days
+            if days_diff == 1:
+                progress.streak_days += 1
+            elif days_diff > 1:
+                progress.streak_days = 1
+        else:
+            progress.streak_days = 1
+        
+        progress.last_completed_date = today
+        
+        # Check if all days completed
+        if progress.is_completed() and not progress.completed_at:
+            progress.completed_at = timezone.now()
+        
+        progress.save()  # ✅ NO STAR ADDED HERE
         
         return JsonResponse({
             'success': True,
             'day_completed': day_number,
-            'next_day': progress.current_day if not level_completed else None,
-            'level_completed': level_completed,
-            'completed_days': total_stars,  # This is the star count!
+            'next_day': progress.current_day if not progress.is_completed() else None,
+            'level_completed': progress.is_completed(),
+            'completed_days': len(progress.completed_days),
             'percentage': progress.completion_percentage(),
             'streak': progress.streak_days,
         })
@@ -498,44 +625,118 @@ def take_final_test(request, level_name):
     """Display and process final test before certificate"""
     progress = get_user_progress(request.user, level_name)
     
-    TESTING_MODE = True
+    # ✅ FIX: Get the assessment for the specific level
+    # Try to get existing assessment first
+    try:
+        assessment = LevelAssessment.objects.get(level=level_name)
+    except LevelAssessment.DoesNotExist:
+        # Create default assessment if it doesn't exist
+        if level_name == 'beginner':
+            passing_score = 15
+            total_q = 20
+        elif level_name == 'intermediate':
+            passing_score = 20
+            total_q = 25
+        else:  # advanced
+            passing_score = 18
+            total_q = 25
+            
+        assessment = LevelAssessment.objects.create(
+            level=level_name,
+            title=f'{level_name.capitalize()} Final Assessment',
+            passing_score=passing_score,
+            time_limit_minutes=30 if level_name != 'advanced' else 45,
+            total_questions=total_q,
+            is_active=True
+        )
+    
+    # Check if assessment has questions
+    question_count = assessment.get_question_count()
+    
+    # ✅ If no questions exist for this level, show error
+    if question_count == 0:
+        messages.error(request, f'No questions found for {level_name} level assessment. Please contact support.')
+        return redirect('learning:level_overview', level_name=level_name)
+    
+    TESTING_MODE = settings.DEBUG
     
     if TESTING_MODE:
         if not progress.is_completed():
-            messages.info(request, '⚠️ TESTING MODE: Assessment taken before completing all days.')
+            messages.info(request, f'⚠️ TESTING MODE: {level_name.capitalize()} assessment taken before completing all days.')
         
         if request.method == 'POST':
-            score, total_questions = process_final_test_answers(request.POST, level_name)
+            score, total_questions = process_assessment_answers(request.POST, assessment)
             percentage = (score / total_questions) * 100
             
-            messages.success(request, f'🎉 TESTING MODE: Assessment passed! Score: {score}/{total_questions} ({percentage:.1f}%) 🎉')
-            
-            progress.certificate_issued = True
-            progress.certificate_issued_at = timezone.now()
-            progress.save()
-            
-            certificate, created = UserCertificate.objects.get_or_create(
+            # Save attempt
+            attempt = UserAssessmentAttempt.objects.create(
                 user=request.user,
+                assessment=assessment,
                 level=level_name,
-                defaults={
-                    'certificate_code': generate_certificate_code(request.user, level_name)
-                }
+                score=score,
+                total_questions=total_questions,
+                percentage=percentage,
+                passed=percentage >= assessment.passing_score,
+                answers=dict(request.POST),
+                completed_at=timezone.now()
             )
             
-            return redirect(f'/learning/level/{level_name}/result/?score={score}')
+            if percentage >= assessment.passing_score:
+                messages.success(request, f'🎉 TESTING MODE: {level_name.capitalize()} assessment passed! Score: {score}/{total_questions} ({percentage:.1f}%) 🎉')
+                
+                progress.certificate_issued = True
+                progress.certificate_issued_at = timezone.now()
+                progress.save()
+                
+                certificate, created = UserCertificate.objects.get_or_create(
+                    user=request.user,
+                    level=level_name,
+                    defaults={
+                        'certificate_code': generate_certificate_code(request.user, level_name)
+                    }
+                )
+                
+                return redirect(f'/learning/level/{level_name}/result/?score={score}')
+            else:
+                messages.error(request, f'❌ TESTING MODE: Failed! Score: {score}/{total_questions} ({percentage:.1f}%). Need {assessment.passing_score}/{total_questions} to pass.')
+                return redirect('learning:final_test', level_name=level_name)
         
-        return redirect(f'/learning/level/{level_name}/?assessment=true')
+        return render_test_page(request, level_name, assessment)
     
+    # Production mode logic
     if not progress.is_completed():
         messages.warning(request, '⚠️ You must complete all 30 days before taking the final test.')
         return redirect('learning:level_overview', level_name=level_name)
     
+    # Check if user has already passed
+    existing_attempt = UserAssessmentAttempt.objects.filter(
+        user=request.user,
+        assessment=assessment,
+        passed=True
+    ).first()
+    
+    if existing_attempt:
+        messages.info(request, f'✅ You have already passed this assessment with {existing_attempt.score}/{existing_attempt.total_questions}.')
+        return redirect('learning:certificate_view', level_name=level_name)
+    
     if request.method == 'POST':
-        score, total_questions = process_final_test_answers(request.POST, level_name)
+        score, total_questions = process_assessment_answers(request.POST, assessment)
         percentage = (score / total_questions) * 100
-        passing_percentage = 75
         
-        if percentage >= passing_percentage:
+        # Save attempt
+        attempt = UserAssessmentAttempt.objects.create(
+            user=request.user,
+            assessment=assessment,
+            level=level_name,
+            score=score,
+            total_questions=total_questions,
+            percentage=percentage,
+            passed=percentage >= assessment.passing_score,
+            answers=dict(request.POST),
+            completed_at=timezone.now()
+        )
+        
+        if percentage >= assessment.passing_score:
             certificate, created = UserCertificate.objects.get_or_create(
                 user=request.user,
                 level=level_name,
@@ -549,27 +750,73 @@ def take_final_test(request, level_name):
             progress.save()
             
             messages.success(request, f'🎉 Congratulations! You passed with {score}/{total_questions} ({percentage:.1f}%)! 🎉')
-            
             return redirect(f'/learning/level/{level_name}/result/?score={score}')
         else:
-            messages.error(request, f'❌ You scored {score}/{total_questions} ({percentage:.1f}%). Minimum passing score is {passing_percentage}%. Please review and try again.')
+            messages.error(request, f'❌ You scored {score}/{total_questions} ({percentage:.1f}%). Minimum passing score is {assessment.passing_score}/{total_questions} ({assessment.passing_score/total_questions*100:.0f}%). Please review and try again.')
             return redirect('learning:final_test', level_name=level_name)
     
-    return redirect(f'/learning/level/{level_name}/?assessment=true')
+    return render_test_page(request, level_name, assessment)
 
-@login_required
-def render_test_page(request, level_name):
-    """Render the actual test page"""
-    progress = get_user_progress(request.user, level_name)
+# Then replace your existing render_test_page function with this:
+def render_test_page(request, level_name, assessment):
+    """Render the dynamic test page with shuffled questions"""
+    questions = assessment.get_questions()
+    
+    # Safety check for empty assessment
+    if not questions.exists():
+        messages.error(request, 'No questions found for this assessment. Please contact support.')
+        return redirect('learning:level_overview', level_name=level_name)
+    
+    # Get or create session seed for consistent shuffling (optional)
+    session_seed_key = f'assessment_{level_name}_seed'
+    if session_seed_key not in request.session:
+        # Generate random seed for this user's session
+        request.session[session_seed_key] = random.randint(1, 10000)
+        request.session.modified = True
+    
+    # Use session seed for reproducible shuffling (same order on page refresh)
+    seed = request.session[session_seed_key]
+    random.seed(seed)
+    
+    # Convert to list and shuffle questions
+    questions_list = list(questions)
+    random.shuffle(questions_list)  # 👈 THIS IS THE MAIN CHANGE
+    
+    # Convert questions to JSON for the template (options remain in original order)
+    questions_data = []
+    for q in questions_list:
+        questions_data.append({
+            'id': q.id,
+            'text': q.text,
+            'options': [{'letter': opt[0], 'text': opt[1]} for opt in q.get_options()],
+            'correct': q.correct_answer  # Original correct answer (a, b, c, d)
+        })
+    
+    # Reset random seed
+    random.seed()
     
     context = {
         'level': level_name,
         'level_display': level_name.capitalize(),
-        'progress': progress,
-        'testing_mode': True if settings.DEBUG else False,
+        'assessment': assessment,
+        'questions': questions_list,
+        'questions_json': json.dumps(questions_data),
+        'testing_mode': settings.DEBUG,
     }
-    template_path = f'learning/{level_name}/final_test.html'
-    return render(request, template_path, context)
+    return render(request, 'learning/final_test.html', context)
+
+def process_assessment_answers(post_data, assessment):
+    """Process assessment answers and return score"""
+    questions = assessment.get_questions()
+    score = 0
+    
+    for question in questions:
+        # Look for answer with key format 'q_{question.id}'
+        user_answer = post_data.get(f'q_{question.id}', '').lower()
+        if user_answer == question.correct_answer:
+            score += 1
+    
+    return score, questions.count()
 
 @login_required
 def certificate_view(request, level_name):
@@ -844,24 +1091,6 @@ def generate_certificate_code(user, level):
     unique_string = f"{user.id}_{level}_{time.time()}_{user.username}"
     return hashlib.md5(unique_string.encode()).hexdigest()[:12].upper()
 
-def process_final_test_answers(post_data, level_name):
-    """Process final test answers and return score and total questions"""
-    answer_key = {
-        'q1': 'b', 'q2': 'b', 'q4': 'b', 'q5': 'a', 'q6': 'b',
-        'q9': 'b', 'q10': 'b', 'q11': 'b', 'q12': 'c', 'q13': 'b',
-        'q15': 'b', 'q16': 'b', 'q17': 'b', 'q18': 'b', 'q19': 'b',
-        'q20': 'b', 'q21': 'b', 'q23': 'b', 'q24': 'b', 'q25': 'b'
-    }
-    
-    total_questions = len(answer_key)
-    score = 0
-    
-    for question, correct_answer in answer_key.items():
-        user_answer = post_data.get(question, '').lower()
-        if user_answer == correct_answer:
-            score += 1
-    
-    return score, total_questions
 
 @login_required
 def get_progress_api(request, level_name):
@@ -909,12 +1138,21 @@ def mark_certificate_shared(request, certificate_id):
 
 @login_required
 def test_result(request, level_name):
-    """Display test results"""
+    """Display test results with dynamic values"""
+    # Get the assessment for this level
+    assessment = LevelAssessment.objects.filter(level=level_name).first()
+    
+    # Get score from URL parameter
+    score = request.GET.get('score', 0)
+    
     context = {
         'level': level_name,
         'level_display': level_name.capitalize(),
+        'total_questions': assessment.total_questions if assessment else 20,
+        'passing_score': assessment.passing_score if assessment else 15,
+        'user_score': score,
     }
-    return render(request, f'learning/{level_name}/result.html', context)
+    return render(request, 'learning/result.html', context)
 
 @login_required
 def reset_test_status(request, level_name):
@@ -938,7 +1176,128 @@ def reset_test_status(request, level_name):
 @require_http_methods(["POST"])
 def mark_intro_seen(request, level_name):
     """Mark that the user has seen the intro for a specific level"""
+    try:
+        progress = get_user_progress(request.user, level_name)
+        progress.has_seen_intro = True
+        progress.save()
+        
+        return JsonResponse({
+            'success': True, 
+            'message': f'Intro marked as seen for {level_name} level'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False, 
+            'error': str(e)
+        }, status=500)
+
+@login_required
+@require_http_methods(["POST"])
+def collect_reward(request, level_name, day_number):
+    """Claim a star reward for a completed day (stars only increase when user explicitly claims)"""
     progress = get_user_progress(request.user, level_name)
-    progress.has_seen_intro = True
-    progress.save()
-    return JsonResponse({'success': True})
+
+    if progress.claim_reward(day_number):
+        return JsonResponse({
+            'success': True,
+            'stars': len(progress.collected_rewards),
+            'day': day_number,
+            'message': f'⭐ Star collected for Day {day_number}!'
+        })
+
+    # Determine why it failed
+    if day_number not in progress.completed_days:
+        return JsonResponse({'success': False, 'error': 'Day not completed yet'}, status=400)
+
+    return JsonResponse({
+        'success': False,
+        'error': 'Reward already collected for this day',
+        'already_collected': True
+    }, status=400)
+
+GROQ_API_KEY = "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"
+
+@login_required
+@csrf_exempt
+def ai_evaluate(request):
+    """
+    Generic AI evaluation endpoint for all days.
+    Receives text and system prompt from frontend, calls Groq API, returns score and feedback.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'POST required'}, status=400)
+    
+    try:
+        data = json.loads(request.body)
+        user_text = data.get('text', '')
+        task_type = data.get('task_type', 'general')
+        day_number = data.get('day_number', 0)
+        level = data.get('level', 'intermediate')
+        
+        # Get custom system prompt from frontend, or use default
+        system_prompt = data.get('system_prompt', None)
+        
+        if not user_text:
+            return JsonResponse({
+                'success': False,
+                'feedback': 'No text provided for evaluation.',
+                'suggestion': 'Please speak clearly and try again.'
+            })
+        
+        # Default system prompt if not provided
+        if not system_prompt:
+            system_prompt = f"""You are an English teacher evaluating a student's response for Day {day_number} ({level} level).
+                Task type: {task_type}
+                Evaluate based on grammar, vocabulary, and clarity.
+                Return ONLY a JSON object with:
+                {{"score": 0-100, "correct": true/false, "feedback": "short feedback (max 15 words)", "suggestion": "improvement tip (max 15 words)"}}
+                Be encouraging. Keep feedback VERY SHORT."""
+        
+        # Call Groq API
+        headers = {
+            'Authorization': f'Bearer {GROQ_API_KEY}',
+            'Content-Type': 'application/json'
+        }
+        
+        payload = {
+            'model':'llama-3.3-70b-versatile',
+            'messages': [
+                {'role': 'system', 'content': system_prompt},
+                {'role': 'user', 'content': f"Student's response: {user_text}\n\nEvaluate this response."}
+            ],
+            'temperature': 0.3,
+            'max_tokens': 300,
+            'response_format': {'type': 'json_object'}
+        }
+        
+        response = requests.post(
+            'https://api.groq.com/openai/v1/chat/completions',
+            headers=headers,
+            json=payload,
+            timeout=30
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            ai_output = json.loads(result['choices'][0]['message']['content'])
+            
+            return JsonResponse({
+                'success': True,
+                'score': ai_output.get('score', 50),
+                'correct': ai_output.get('correct', False),
+                'feedback': ai_output.get('feedback', 'Good attempt!'),
+                'suggestion': ai_output.get('suggestion', 'Keep practicing!')
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'feedback': 'AI service error. Please try again.',
+                'suggestion': 'Check your connection and retry.'
+            }, status=500)
+            
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'feedback': f'Error: {str(e)[:100]}',
+            'suggestion': 'Please try again.'
+        }, status=500)

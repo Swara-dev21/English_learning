@@ -1,0 +1,1390 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 25: Advanced Grammar · Cleft Sentences & Emphasis | English for Engineers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+</head>
+
+<body>
+    <div class="lesson-container">
+        <div class="lesson-hero">
+            <div class="hero-content">
+                <div class="day-badge">Day 25 • Week 4 • Advanced</div>
+                <h1 class="hero-title">🎯 ADVANCED GRAMMAR: CLEFT SENTENCES & EMPHASIS</h1>
+                <div class="power-line">💡 "Emphasis is not about volume — it is about architecture."</div>
+            </div>
+        </div>
+
+        <div class="activities-grid">
+
+            <!-- 1. LISTENING ACTIVITY - WITH IMPROVED AI EVALUATION -->
+            <div class="activity-card" id="listening-card">
+                <div class="card-header listening">
+                    <h2>🎧 1. Listening Activity · Cleft Structure Stress</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Focus</span></div>
+                        </div>
+                        <div class="task-content">Cleft Structure Stress — in 'It is X that Y', the stress always falls
+                            on X. Practice this pattern.</div>
+                    </div>
+
+                    <audio id="listeningAudio" controls>
+                        <source src="{% static 'learning/audio/day25.mp3' %}" type="audio/mpeg">
+                    </audio>
+
+                    <div id="listeningTextSection" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Listening Text</span></div>
+                            </div>
+                            <div class="task-content" style="font-style: italic; background: #fef9e3;">
+                                "What the data reveals is a pattern we cannot afford to ignore... It is the timing of
+                                the intervention, not its scale, that will determine the outcome... It was the absence
+                                of clear documentation, not a shortage of resources, that led to the dispute..."
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="postAudioListeningContent" style="display: none;">
+                        <div class="listening-container">
+                            <div class="task-header">
+                                <div class="title"><span>🎯</span><span>Task</span></div>
+                            </div>
+                            <div class="task-content">Rewrite <strong>5 sentences</strong> from your week's work as
+                                <strong>cleft sentences</strong> and record them. Focus on where the stress falls.</div>
+                        </div>
+
+                        <!-- Cleft Sentences Input Area -->
+                        <div style="background: #f8fafc; border-radius: 16px; padding: 1rem; margin: 1rem 0;">
+                            <div style="font-weight: 700; margin-bottom: 0.5rem;">✍️ Write your 5 Cleft Sentences:</div>
+
+                            <div class="sentence-card">
+                                <label>Sentence 1:</label>
+                                <input type="text" id="cleft1" class="cleft-input"
+                                    placeholder="Example: It was the engineer who identified the flaw.">
+                                <div id="cleft1Feedback" class="fix-feedback"></div>
+                            </div>
+
+                            <div class="sentence-card">
+                                <label>Sentence 2:</label>
+                                <input type="text" id="cleft2" class="cleft-input"
+                                    placeholder="Example: What the team needs is better communication.">
+                                <div id="cleft2Feedback" class="fix-feedback"></div>
+                            </div>
+
+                            <div class="sentence-card">
+                                <label>Sentence 3:</label>
+                                <input type="text" id="cleft3" class="cleft-input"
+                                    placeholder="Example: The reason the project failed was poor planning.">
+                                <div id="cleft3Feedback" class="fix-feedback"></div>
+                            </div>
+
+                            <div class="sentence-card">
+                                <label>Sentence 4:</label>
+                                <input type="text" id="cleft4" class="cleft-input"
+                                    placeholder="Example: It is the quality that matters most.">
+                                <div id="cleft4Feedback" class="fix-feedback"></div>
+                            </div>
+
+                            <div class="sentence-card">
+                                <label>Sentence 5:</label>
+                                <input type="text" id="cleft5" class="cleft-input"
+                                    placeholder="Example: All that is required is a final review.">
+                                <div id="cleft5Feedback" class="fix-feedback"></div>
+                            </div>
+
+                            <button class="btn-outline" id="validateCleftBtn" style="width: 50%; margin-top: 0.5rem;">✓
+                                Submit Cleft Sentences for Evaluation</button>
+                        </div>
+
+                        <div id="cleftAIFeedback" style="margin-top: 0.75rem;"></div>
+                        <div id="cleftAttemptCounter" class="attempt-counter">📊 Attempts remaining: <span>3</span>
+                        </div>
+
+                        <div style="font-weight: 600; margin: 1rem 0 0.5rem;">🎙️ Record Your Cleft Sentences</div>
+                        <div class="recording-controls">
+                            <button id="listeningRecordBtn" class="modern-record-btn" disabled>🎙️ Start Recording
+                                (Submit sentences first)</button>
+                            <button id="listeningStopBtn" class="modern-record-btn"
+                                style="background: #64748b; display: none;">⏹️ Stop Recording</button>
+                        </div>
+                        <div id="listeningPlaybackCard" style="display: none;">
+                            <audio id="listeningPlayback" controls style="width: 100%;"></audio>
+                        </div>
+                        <div id="comparisonSection" style="display: none;">
+                            <div class="comparison-message">Did you place correct stress on the emphasised element?
+                            </div>
+                            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                                <button id="yesComparisonBtn" class="yes-btn">✓ Yes, correct</button>
+                                <button id="noComparisonBtn" class="no-btn">✗ No, record again</button>
+                            </div>
+                            <div id="comparisonFeedback" style="margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <div class="quiz-section" style="margin-top: 1rem;">
+                            <p><strong>🧠 Quick Listening Check</strong></p><br>
+                            <div>
+                                <p><strong>1. In 'It is the quality that matters', what is being emphasised?</strong>
+                                </p>
+                                <label class="quiz-option"><input type="radio" name="q1" value="speed"> Speed</label>
+                                <label class="quiz-option"><input type="radio" name="q1" value="quality">
+                                    Quality</label>
+                            </div>
+                            <div>
+                                <p><strong>2. What does the cleft structure help the listener do?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q2" value="ignore"> Ignore the
+                                    sentence</label>
+                                <label class="quiz-option"><input type="radio" name="q2" value="identify"> Identify the
+                                    key point</label>
+                            </div>
+                            <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                        </div>
+
+                        <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answer</button>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeListeningBtn" data-checklist="chk2" disabled>✓
+                            Mark Listening as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SPEAKING ACTIVITY -->
+            <div class="activity-card" id="speaking-card">
+                <div class="card-header speaking">
+                    <h2>🗣️ 2. Speaking Activity · The Emphasis Masterclass</h2>
+                </div>
+                <div class="card-body">
+                    <p>Cleft sentences are used in formal reports, presentations, and high-stakes discussions to direct
+                        the listener's attention.</p>
+
+                    <div class="speaking-sentences-list">
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">1</div>
+                            <div class="sentence-text-content">"It is the structural integrity of the foundation, not
+                                the architectural design, that is our primary concern."</div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">2</div>
+                            <div class="sentence-text-content">"What the client requires is not a cheaper solution but a
+                                more durable one."</div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">3</div>
+                            <div class="sentence-text-content">"It was the inadequate insulation of the wiring that
+                                precipitated the short circuit."</div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">4</div>
+                            <div class="sentence-text-content">"The reason we exceeded the budget is that the raw
+                                material costs were underestimated at the planning stage."</div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">5</div>
+                            <div class="sentence-text-content">"All that is required at this stage is a comprehensive
+                                feasibility assessment."</div>
+                        </div>
+                    </div>
+
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎙️</span><span>Your Emphasis Masterclass Recording</span></div>
+                        </div>
+                        <div class="task-content">
+                            <div class="recording-controls-group">
+                                <button id="speakingRecordBtn" class="speaking-record-btn"><span>🎤</span> Start
+                                    Recording</button>
+                                <button id="speakingStopBtn" class="speaking-stop-btn"
+                                    style="display: none;"><span>⏹️</span> Stop Recording</button>
+                            </div>
+                            <div id="speakingRecordingStatus" class="recording-status-indicator" style="display: none;">
+                                <div class="recording-dot-live"></div><span class="recording-timer-display"
+                                    id="speakingTimer">00:00</span><span class="recording-hint">Recording in
+                                    progress...</span>
+                            </div>
+                            <div id="speakingPlaybackArea" class="speaking-playback-area" style="display: none;"><audio
+                                    id="speakingPlayback" controls></audio>
+                                <div class="playback-success-msg"><span>✅</span> Recording saved! Listen back to check
+                                    your stress placement.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeSpeakingBtn" data-checklist="chk3" disabled>✓
+                            Mark Speaking as Complete</button>
+                    </div>
+
+                    <div class="speaking-why-works">
+                        <div class="why-works-content"><span class="why-works-icon">👉</span><span
+                                class="why-works-text"><strong>WHY THIS WORKS:</strong> Cleft sentences are a marker of
+                                C1-level English proficiency. They demonstrate syntactic control and allow you to direct
+                                the listener's attention with surgical precision.</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. READING ACTIVITY - IMPROVED VALIDATION -->
+            <div class="activity-card" id="reading-card">
+                <div class="card-header reading">
+                    <h2>📖 3. Reading Activity · The Design Review</h2>
+                </div>
+                <div class="card-body">
+
+                    <div class="reading-passage">
+                        <p><strong>What distinguishes a great engineer from a merely competent one</strong> is not the
+                            ability to perform calculations, but the capacity to communicate the implications of those
+                            calculations to decision-makers. <strong>It is this translational skill</strong> —
+                            converting technical data into actionable insight — that is in shortest supply in the
+                            profession. <strong>The reason many engineering projects fail</strong> is not technical
+                            incompetence but a breakdown in communication between engineers and stakeholders.
+                            <strong>What is needed, therefore,</strong> is a curriculum that treats communication as a
+                            core engineering competency.</p>
+                    </div>
+
+                    <div style="background: #e0f2fe; border-radius: 16px; padding: 1rem; margin: 1rem 0;">
+                        <strong>🔍 Analysis Tasks:</strong>
+                        <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>Identify every cleft structure in the passage (It is..., What..., The reason...).</li>
+                            <li>What is being emphasised in each cleft sentence?</li>
+                            <li>Rewrite the first sentence using a normal word order (without cleft structure).</li>
+                        </ol>
+                    </div>
+
+                    <!-- Task 1: Identify Cleft Structures - IMPROVED VALIDATION -->
+                    <div class="reading-answer-box">
+                        <p><strong>📝 Task 1: Identify the 3 cleft structures from the passage</strong></p><br>
+                        <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.5rem;">💡 Write the sentence that
+                            starts with "What distinguishes..."</p>
+                        <textarea id="cleft1Reading" class="reading-textarea" rows="2"
+                            placeholder="paste sentence starting with from passage'"></textarea>
+                        <div id="cleft1ReadingFeedback" class="fix-feedback"></div>
+
+                        <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.75rem; margin-bottom: 0.5rem;">💡
+                            Write the sentence that starts with "It is this translational skill..."</p>
+                        <textarea id="cleft2Reading" class="reading-textarea" rows="2"
+                            placeholder="paste sentence starting with from passage'"></textarea>
+                        <div id="cleft2ReadingFeedback" class="fix-feedback"></div>
+
+                        <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.75rem; margin-bottom: 0.5rem;">💡
+                            Write the sentence that starts with "The reason many engineering projects fail..."</p>
+                        <textarea id="cleft3Reading" class="reading-textarea" rows="2"
+                            placeholder="paste sentence starting with from passage"></textarea>
+                        <div id="cleft3ReadingFeedback" class="fix-feedback"></div>
+                    </div>
+
+                    <!-- Task 2: Emphasis - IMPROVED VALIDATION -->
+                    <div class="reading-answer-box">
+                        <p><strong>🎯 Task 2: What is being emphasised in each cleft sentence?</strong></p><br>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="font-weight: 600;">For "What distinguishes..." sentence:<br></label><br>
+                            <input type="text" id="emphasis1" class="reading-input"
+                                placeholder="Example: The contrast between calculation ability and communication skill">
+                            <div id="emphasis1Feedback" class="fix-feedback"></div>
+                            <div class="emphasis-badge">💡 Hint: Translational skill / converting technical data into
+                                actionable insight</div>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="font-weight: 600;">For "It is this translational skill..."
+                                sentence:<br></label><br>
+                            <input type="text" id="emphasis2" class="reading-input"
+                                placeholder="Example: Translational skill">
+                            <div id="emphasis2Feedback" class="fix-feedback"></div>
+                            <div class="emphasis-badge">💡 Hint: Translational skill / converting technical data into
+                                actionable insight</div>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="font-weight: 600;">For "The reason many engineering projects fail..."
+                                sentence:<br></label><br>
+                            <input type="text" id="emphasis3" class="reading-input"
+                                placeholder="Example: Breakdown in communication between engineers and stakeholders">
+                            <div id="emphasis3Feedback" class="fix-feedback"></div>
+                            <div class="emphasis-badge">💡 Hint: Communication breakdown, not technical incompetence
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task 3: Rewrite -->
+                    <div class="reading-answer-box">
+                        <p><strong>✍️ Task 3: Rewrite the first sentence using normal word order</strong></p><br>
+                        <textarea id="rewriteSentence" class="reading-textarea" rows="3"
+                            placeholder="Rewrite: 'What distinguishes a great engineer from a merely competent one...' without cleft structure"></textarea>
+                        <div id="rewriteFeedback" class="fix-feedback"></div>
+                    </div>
+
+                    <button class="btn-outline" id="checkReadingAnswersBtn" style="width: 26%;">✅ Check All Reading
+                        Answers</button>
+                    <div id="readingFeedback" style="margin-top: 0.5rem;"></div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeReadingBtn" data-checklist="chk1" disabled>✓
+                            Mark Reading as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. VOCABULARY TABLE -->
+            <div class="activity-card" id="vocabulary-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 4. Vocabulary of the Day</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>🔊</th>
+                                    <th>✅</th>
+                                    <th>Word</th>
+                                    <th>Pronunciation</th>
+                                    <th>Meaning</th>
+                                    <th>Synonym</th>
+                                    <th>Antonym</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Translational"
+                                            data-checkid="check-translational">🔊</button></td>
+                                    <td class="check-cell" id="check-translational">⬜</span>
+                                    <td class="word-cell"><strong>Translational</strong></span>
+                                    <td><code>/trænsˈleɪ.ʃən.əl/</code></span>
+                                    <td>Relating to converting one form to another</span>
+                                    <td>Interpretive</span>
+                                    <td>Technical</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Actionable"
+                                            data-checkid="check-actionable">🔊</button></span>
+                                    <td class="check-cell" id="check-actionable">⬜</span>
+                                    <td class="word-cell"><strong>Actionable</strong></span>
+                                    <td><code>/ˈæk.ʃən.ə.bəl/</code><br>(AK-shun-uh-bul)</span>
+                                    <td>Able to be acted upon</span>
+                                    <td>Practical</span>
+                                    <td>Theoretical</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Syntactic"
+                                            data-checkid="check-syntactic">🔊</button></span>
+                                    <td class="check-cell" id="check-syntactic">⬜</span>
+                                    <td class="word-cell"><strong>Syntactic</strong></span>
+                                    <td><code>/sɪnˈtæk.tɪk/</code><br>(Sin-TAK-tik)</span>
+                                    <td>Relating to sentence structure</span>
+                                    <td>Grammatical</span>
+                                    <td>Semantic</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Curriculum"
+                                            data-checkid="check-curriculum">🔊</button></span>
+                                    <td class="check-cell" id="check-curriculum">⬜</span>
+                                    <td class="word-cell"><strong>Curriculum</strong></span>
+                                    <td><code>/kəˈrɪk.jə.ləm/</code><br>(Kuh-RIK-yoo-lum)</span>
+                                    <td>A set of courses or programme of study</span>
+                                    <td>Syllabus</span>
+                                    <td>Individual lesson</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Surgical"
+                                            data-checkid="check-surgical">🔊</button></span>
+                                    <td class="check-cell" id="check-surgical">⬜</span>
+                                    <td class="word-cell"><strong>Surgical</strong></span>
+                                    <td><code>/ˈsɜː.dʒɪ.kəl/</code><br>(SUR-ji-kul)</span>
+                                    <td>Precise and skilful</span>
+                                    <td>Precise</span>
+                                    <td>Broad</span>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="power-word-section" style="border-left-color: #22c55e;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #166534;">
+                            <span>💡</span><span>IDIOM OF THE DAY: "NAIL IT"</span></div>
+                        <p><strong>Marathi Meaning:</strong> एखादी गोष्ट अगदी परिपूर्णपणे करणे</p>
+                        <p><strong>Meaning:</strong> To do something perfectly</p>
+                        <p><strong>Example:</strong> "She nailed the presentation — every answer was structured,
+                            confident, and backed by data."</p>
+                    </div>
+
+                    <div class="power-word-section">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
+                            <span>🔥</span><span>POWER WORD: PIVOTAL (PIV-uh-tul)</span></div>
+                        <p><strong>Meaning:</strong> Of crucial importance in relation to the development of something
+                        </p>
+                        <p><strong>Usage:</strong> "The discovery of the crack was pivotal — it changed the entire
+                            direction of the investigation."</p>
+                    </div>
+
+                    <div class="writing-prompt" style="margin-top: 1rem;">
+                        <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">✍️ Use "Pivotal" in a sentence:</h3>
+                        <input type="text" id="powerWordSentence" class="grammar-input"
+                            placeholder="Write your sentence here...">
+                        <div id="powerWordFeedback" class="fix-feedback"></div>
+                        <button class="btn-outline" id="checkPowerWordBtn" style="margin-top: 0.5rem;">✓ Check
+                            Sentence</button>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeVocabularyBtn" data-checklist="chk5"
+                            disabled>✓ Mark Vocabulary as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. GRAMMAR HACK - STRICT VALIDATION -->
+            <div class="grammar-section" id="grammar-card">
+                <h3 style="margin: 0 0 1rem 0;">🧠 Grammar Hack: Cleft Sentences — 4 Types</h3>
+
+                <table class="grammar-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Structure</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>It-cleft</strong></td>
+                            <td>It + is/was + emphasis + that/who + rest</span>
+                            <td>It is the design that needs revision.</span>
+                        </tr>
+                        <tr>
+                            <td><strong>What-cleft</strong></span>
+                            <td>What + clause + is/was + emphasis</span>
+                            <td>What we need is more testing time.</span>
+                        </tr>
+                        <tr>}<strong>All that-cleft</strong></span>
+                            <td>All that + clause + is/was + emphasis</span>
+                            <td>All that is required is a brief review.</span>
+                        </tr>
+                        <tr>}<strong>The reason-cleft</strong></span>
+                            <td>The reason + result + is that + cause</span>
+                            <td>The reason the project succeeded is that the team communicated effectively.</span>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="grammar-rule">
+                    <p><strong>⚠️ Activity:</strong> Rewrite these as cleft sentences (each using a different type):</p>
+
+                    <div class="sentence-card">
+                        <p><strong>1. 'The project manager solved the problem.'</strong> <span
+                                style="color:#64748b;">(Use It-cleft: It was + person + who + action)</span></p>
+                        <input type="text" id="grammar1" class="grammar-input"
+                            placeholder="Example: It was the project manager who solved the problem.">
+                        <div id="grammar1Feedback" class="fix-feedback"></div>
+                    </div>
+
+                    <div class="sentence-card">
+                        <p><strong>2. 'We need more data before deciding.'</strong> <span style="color:#64748b;">(Use
+                                What-cleft: What + we need + is + more data)</span></p>
+                        <input type="text" id="grammar2" class="grammar-input"
+                            placeholder="Example: What we need before deciding is more data.">
+                        <div id="grammar2Feedback" class="fix-feedback"></div>
+                    </div>
+
+                    <div class="sentence-card">
+                        <p><strong>3. 'The insulation failed. That caused the fire.'</strong> <span
+                                style="color:#64748b;">(Use The reason-cleft: The reason + fire + was that + insulation
+                                failed)</span></p>
+                        <input type="text" id="grammar3" class="grammar-input"
+                            placeholder="Example: The reason the fire occurred was that the insulation failed.">
+                        <div id="grammar3Feedback" class="fix-feedback"></div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="btn-outline" id="checkGrammarBtn">✓ Check Answers</button>
+                    <button class="btn-outline" id="resetGrammarBtn">⟳ Reset Grammar</button>
+                </div>
+                <div id="grammarFeedback" class="quiz-feedback"></div>
+                <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                    <button class="complete-activity-btn" id="completeGrammarBtn" data-checklist="chk4" disabled>✓ Mark
+                        Grammar as Complete</button>
+                </div>
+            </div>
+
+            <!-- CHECKLIST -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 25 COMPLETION CHECKLIST</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chk1" class="day-check" disabled><label> I identified all 3 cleft
+                                structures in the reading passage.</label></li>
+                        <li><input type="checkbox" id="chk2" class="day-check" disabled><label> I rewrote 5 sentences as
+                                cleft sentences and recorded them.</label></li>
+                        <li><input type="checkbox" id="chk3" class="day-check" disabled><label> I practised the
+                                'Emphasis Masterclass' lines with surgical precision.</label></li>
+                        <li><input type="checkbox" id="chk4" class="day-check" disabled><label> I rewrote 3 sentences as
+                                cleft sentences (It is..., What..., The reason...).</label></li>
+                        <li><input type="checkbox" id="chk5" class="day-check" disabled><label> I used the Power Word
+                                'Pivotal' in a sentence.</label></li>
+                    </ul>
+                    <div style="text-align:right;"><span class="badge" id="progressCounter">0/5 completed</span></div>
+                    <div style="display:flex; justify-content:center; margin-top:1rem;">
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>🏆 Complete Day 25</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
+
+    <script>
+        // ==================== DAY 25 - COMPLETE FUNCTIONALITY ====================
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+
+            // ========== GLOBAL VARIABLES ==========
+            let listeningQuizCorrect = false;
+            let listeningQuizAnswers = { q1: null, q2: null };
+            let masterAudioFinished = false;
+            let aiEvaluationDone = false;
+            let aiCorrect = false;
+            let attemptCount = 0;
+            let maxAttempts = 3;
+            let cleftSubmitted = false;
+            let listeningRecorded = false;
+            let speakingRecorded = false;
+            let readingTaskValid = false;
+            let grammarCompleted = false;
+            let vocabularyCompleted = false;
+            let powerWordCompleted = false;
+
+            // ========== HELPER FUNCTIONS ==========
+            function updateDayProgress() {
+                const checkboxes = document.querySelectorAll('.checklist input.day-check');
+                let completed = 0;
+                checkboxes.forEach(cb => { if (cb.checked) completed++; });
+                const counter = document.getElementById('progressCounter');
+                if (counter) counter.innerText = `${completed}/5 completed`;
+                const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+                if (dayCompleteBtn) {
+                    dayCompleteBtn.disabled = (completed !== 5);
+                    dayCompleteBtn.style.opacity = (completed === 5) ? '1' : '0.5';
+                }
+            }
+
+            if (typeof markActivityComplete === 'function') {
+                const originalMarkComplete = window.markActivityComplete;
+                window.markActivityComplete = function (activityId, checklistId) {
+                    originalMarkComplete(activityId, checklistId);
+                    const checkbox = document.getElementById(checklistId);
+                    if (checkbox) checkbox.checked = true;
+                    setTimeout(updateDayProgress, 100);
+                };
+            } else {
+                window.markActivityComplete = function (activityId, checklistId) {
+                    const checkbox = document.getElementById(checklistId);
+                    if (checkbox) checkbox.checked = true;
+                    const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.textContent = '✓ Completed';
+                    }
+                    setTimeout(updateDayProgress, 100);
+                };
+            }
+
+            // ==================== VOCABULARY AUDIO ====================
+            const vocabChecks = document.querySelectorAll('.check-cell');
+            const completeVocabularyBtn = document.getElementById('completeVocabularyBtn');
+
+            function checkVocabularyCompletion() {
+                let allCompleted = true;
+                vocabChecks.forEach(cell => { if (cell.innerHTML !== '✅') allCompleted = false; });
+                vocabularyCompleted = allCompleted;
+                if (completeVocabularyBtn && vocabularyCompleted && powerWordCompleted) {
+                    completeVocabularyBtn.disabled = false;
+                } else if (completeVocabularyBtn) {
+                    completeVocabularyBtn.disabled = true;
+                }
+            }
+
+            document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const word = this.getAttribute('data-word');
+                    const checkId = this.getAttribute('data-checkid');
+                    const cell = document.getElementById(checkId);
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const utterance = new SpeechSynthesisUtterance(word);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.9;
+                        utterance.onend = () => {
+                            if (cell && cell.innerHTML !== '✅') {
+                                cell.innerHTML = '✅';
+                                cell.style.color = 'green';
+                                checkVocabularyCompletion();
+                            }
+                        };
+                        window.speechSynthesis.speak(utterance);
+                    }
+                });
+            });
+
+            // Power Word Validation
+            const powerWordInput = document.getElementById('powerWordSentence');
+            const checkPowerWordBtn = document.getElementById('checkPowerWordBtn');
+
+            if (checkPowerWordBtn) {
+                checkPowerWordBtn.addEventListener('click', function () {
+                    const sentence = powerWordInput.value.trim().toLowerCase();
+                    const isValid = sentence.includes('pivotal') && sentence.length > 15;
+                    const feedback = document.getElementById('powerWordFeedback');
+                    if (isValid) {
+                        feedback.innerHTML = '✅ Correct! Great sentence with "pivotal"!';
+                        feedback.className = 'fix-feedback correct';
+                        feedback.style.display = 'block';
+                        powerWordCompleted = true;
+                    } else {
+                        feedback.innerHTML = '❌ Please write a sentence using the word "pivotal".';
+                        feedback.className = 'fix-feedback incorrect';
+                        feedback.style.display = 'block';
+                        powerWordCompleted = false;
+                    }
+                    checkVocabularyCompletion();
+                });
+            }
+
+            if (completeVocabularyBtn) {
+                completeVocabularyBtn.addEventListener('click', function () {
+                    if (vocabularyCompleted && powerWordCompleted && typeof markActivityComplete === 'function') {
+                        markActivityComplete('vocabulary', 'chk5');
+                    } else {
+                        alert('Please listen to all 5 vocabulary words and use "Pivotal" in a sentence.');
+                    }
+                });
+            }
+
+            // ==================== IMPROVED CLEFT SENTENCE EVALUATION ====================
+            function evaluateCleftSentencesLocally(sentences) {
+                let validCount = 0;
+                let mistakes = [];
+                let feedbackDetails = [];
+
+                const cleftPatterns = [
+                    { pattern: /^it (is|was) .+ (who|that) .+$/i, type: 'It-cleft', example: 'It was the engineer who solved the problem.' },
+                    { pattern: /^what .+ (is|was) .+$/i, type: 'What-cleft', example: 'What we need is more time.' },
+                    { pattern: /^the reason .+ (is|was) that .+$/i, type: 'Reason-cleft', example: 'The reason the project failed was poor planning.' },
+                    { pattern: /^all that .+ (is|was) .+$/i, type: 'All that-cleft', example: 'All that is required is a final review.' }
+                ];
+
+                sentences.forEach((sentence, idx) => {
+                    const trimmed = sentence.trim();
+                    if (!trimmed) {
+                        mistakes.push(`Sentence ${idx + 1}: Empty`);
+                        feedbackDetails.push(`Sentence ${idx + 1} is empty.`);
+                        return;
+                    }
+
+                    const lowerTrimmed = trimmed.toLowerCase();
+                    let isCleft = false;
+                    let matchedType = '';
+
+                    for (let cp of cleftPatterns) {
+                        if (cp.pattern.test(lowerTrimmed)) {
+                            isCleft = true;
+                            matchedType = cp.type;
+                            break;
+                        }
+                    }
+
+                    // Additional check for common valid cleft patterns
+                    const hasItWas = /^it (was|is) .+ (who|that) /.test(lowerTrimmed);
+                    const hasWhat = /^what .+ (is|was) /.test(lowerTrimmed);
+                    const hasReason = /^the reason .+ (is|was) that /.test(lowerTrimmed);
+                    const hasAllThat = /^all that .+ (is|was) /.test(lowerTrimmed);
+
+                    if (hasItWas || hasWhat || hasReason || hasAllThat) {
+                        isCleft = true;
+                    }
+
+                    if (!isCleft) {
+                        mistakes.push(`Sentence ${idx + 1}: Not a proper cleft sentence`);
+                        feedbackDetails.push(`Sentence ${idx + 1}: Use "It is...that...", "What...is...", or "The reason...is that..."`);
+                    } else {
+                        validCount++;
+                        feedbackDetails.push(`Sentence ${idx + 1}: Valid cleft sentence ✓`);
+                    }
+                });
+
+                const isCorrect = validCount >= 4;
+
+                let feedback = '';
+                let suggestion = '';
+
+                if (isCorrect) {
+                    feedback = `Excellent! You wrote ${validCount} valid cleft sentences out of 5. Your understanding of cleft structures is good.`;
+                    suggestion = `Keep practicing the stress pattern: the emphasised word should be spoken with more force.`;
+                } else if (validCount >= 3) {
+                    feedback = `Good effort! You have ${validCount} correct cleft sentences. ${5 - validCount} sentence(s) need proper cleft structure.`;
+                    suggestion = `Try starting with "It was...who...", "What...is...", or "The reason...is that..."`;
+                } else if (validCount >= 1) {
+                    feedback = `You have ${validCount} correct cleft sentence(s). Most sentences need to follow the cleft pattern.`;
+                    suggestion = `Example: "It was the engineer who designed the bridge." Start with "It is/was" or "What" followed by the emphasised element.`;
+                } else {
+                    feedback = `None of your sentences use proper cleft structure. Cleft sentences should begin with "It is...that..." or "What...is..." to create emphasis.`;
+                    suggestion = `Try: "It is communication that engineers need most." or "What engineers need is better communication skills."`;
+                }
+
+                return { correct: isCorrect, feedback: feedback, mistakes: mistakes, suggestion: suggestion, validCount: validCount };
+            }
+
+            // ==================== LISTENING ACTIVITY ====================
+            const listeningAudioElem = document.getElementById('listeningAudio');
+            const listeningTextSection = document.getElementById('listeningTextSection');
+            const postAudioListeningContent = document.getElementById('postAudioListeningContent');
+            const cleftAIFeedbackDiv = document.getElementById('cleftAIFeedback');
+            const listeningCompleteBtn = document.getElementById('completeListeningBtn');
+            const listeningQuizFeedbackDiv = document.getElementById('listeningQuizFeedback');
+            const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
+            const cleftAttemptCounterSpan = document.querySelector('#cleftAttemptCounter span');
+            const validateCleftBtn = document.getElementById('validateCleftBtn');
+            const listenRecordBtn = document.getElementById('listeningRecordBtn');
+
+            if (listeningAudioElem) {
+                listeningAudioElem.addEventListener('ended', function () {
+                    if (!masterAudioFinished) {
+                        masterAudioFinished = true;
+                        if (listeningTextSection) listeningTextSection.style.display = 'block';
+                        if (postAudioListeningContent) postAudioListeningContent.style.display = 'block';
+                    }
+                });
+            }
+
+            function updateCleftAttemptDisplay() {
+                const remaining = maxAttempts - attemptCount;
+                if (cleftAttemptCounterSpan) cleftAttemptCounterSpan.innerText = remaining;
+
+                if (attemptCount >= maxAttempts) {
+                    validateCleftBtn.disabled = true;
+                    validateCleftBtn.textContent = '🔒 No attempts left. Please review the feedback.';
+                }
+            }
+
+            function showCorrectCleftExamples() {
+                const exampleSentences = `
+            <div style="background: white; padding: 1rem; border-radius: 8px; margin-top: 0.5rem;">
+                <strong>✅ Example 1 (It-cleft):</strong> It was the engineer who identified the structural flaw.<br>
+                <strong>✅ Example 2 (What-cleft):</strong> What the team needs is better communication with stakeholders.<br>
+                <strong>✅ Example 3 (The reason-cleft):</strong> The reason the project was delayed was that the materials arrived late.<br>
+                <strong>✅ Example 4 (It-cleft):</strong> It is the quality of the data that matters most.<br>
+                <strong>✅ Example 5 (What-cleft):</strong> What we discovered was a pattern of recurring errors.
+            </div>
+        `;
+                cleftAIFeedbackDiv.innerHTML += `
+            <div class="ai-feedback processing" style="margin-top: 0.75rem;">
+                <strong>📚 Here are correct cleft sentence examples for you to learn from:</strong>
+                ${exampleSentences}
+                <br><strong>🎯 Study these and try again tomorrow!</strong>
+            </div>
+        `;
+            }
+
+            if (validateCleftBtn) {
+                validateCleftBtn.addEventListener('click', function () {
+                    if (attemptCount >= maxAttempts) {
+                        cleftAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">🔒 You have used all 3 attempts. Please review the examples below and try again tomorrow.</div>';
+                        cleftAIFeedbackDiv.style.display = 'block';
+                        showCorrectCleftExamples();
+                        return;
+                    }
+
+                    const cleftSentences = [
+                        document.getElementById('cleft1').value.trim(),
+                        document.getElementById('cleft2').value.trim(),
+                        document.getElementById('cleft3').value.trim(),
+                        document.getElementById('cleft4').value.trim(),
+                        document.getElementById('cleft5').value.trim()
+                    ];
+
+                    const allFilled = cleftSentences.every(s => s.length > 0);
+                    if (!allFilled) {
+                        cleftAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">⚠️ Please write all 5 cleft sentences before submitting.</div>';
+                        cleftAIFeedbackDiv.style.display = 'block';
+                        return;
+                    }
+
+                    cleftAIFeedbackDiv.innerHTML = '<div class="ai-feedback processing">🤖 Evaluating your cleft sentences...</div>';
+                    cleftAIFeedbackDiv.style.display = 'block';
+
+                    setTimeout(() => {
+                        const result = evaluateCleftSentencesLocally(cleftSentences);
+                        attemptCount++;
+                        updateCleftAttemptDisplay();
+                        cleftSubmitted = true;
+                        aiCorrect = result.correct;
+                        aiEvaluationDone = true;
+
+                        let feedbackHtml = `
+                    <div class="ai-feedback ${result.correct ? 'correct' : 'incorrect'}">
+                        <strong>📝 ${result.feedback}</strong>
+                `;
+
+                        if (result.mistakes && result.mistakes.length > 0 && !result.correct) {
+                            feedbackHtml += `<div style="margin-top: 0.5rem;"><strong>⚠️ Issues identified:</strong><br>`;
+                            result.mistakes.forEach(m => { feedbackHtml += `• ${m}<br>`; });
+                            feedbackHtml += `</div>`;
+                        }
+
+                        feedbackHtml += `<div style="margin-top: 0.5rem;"><strong>💡 Suggestion:</strong> ${result.suggestion}</div>`;
+                        feedbackHtml += `</div>`;
+
+                        cleftAIFeedbackDiv.innerHTML = feedbackHtml;
+
+                        if (listenRecordBtn) {
+                            listenRecordBtn.disabled = false;
+                            listenRecordBtn.textContent = '🎙️ Start Recording';
+                            listenRecordBtn.style.opacity = '1';
+                        }
+
+                        if (attemptCount >= maxAttempts && !result.correct) {
+                            showCorrectCleftExamples();
+                        }
+                    }, 800);
+                });
+            }
+
+            // Listening recording
+            const listenStopBtn = document.getElementById('listeningStopBtn');
+            const listenPlaybackCard = document.getElementById('listeningPlaybackCard');
+            const listenPlaybackAudio = document.getElementById('listeningPlayback');
+            const comparisonSection = document.getElementById('comparisonSection');
+            const yesComparisonBtn = document.getElementById('yesComparisonBtn');
+            const noComparisonBtn = document.getElementById('noComparisonBtn');
+            const comparisonFeedbackDiv = document.getElementById('comparisonFeedback');
+            let listeningMediaRecorder, listeningChunks = [], listeningIsRecording = false;
+
+            if (listenRecordBtn) {
+                listenRecordBtn.addEventListener('click', async function () {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        listeningMediaRecorder = new MediaRecorder(stream);
+                        listeningChunks = [];
+                        listeningMediaRecorder.ondataavailable = e => listeningChunks.push(e.data);
+                        listeningMediaRecorder.onstop = () => {
+                            const blob = new Blob(listeningChunks, { type: 'audio/webm' });
+                            if (listenPlaybackAudio) listenPlaybackAudio.src = URL.createObjectURL(blob);
+                            if (listenPlaybackCard) listenPlaybackCard.style.display = 'block';
+                            if (comparisonSection) comparisonSection.style.display = 'block';
+                            listeningRecorded = true;
+                            stream.getTracks().forEach(t => t.stop());
+                        };
+                        listeningMediaRecorder.start();
+                        listeningIsRecording = true;
+                        listenRecordBtn.style.display = 'none';
+                        if (listenStopBtn) listenStopBtn.style.display = 'inline-flex';
+                    } catch (e) { console.error('Microphone error'); }
+                });
+            }
+
+            if (listenStopBtn) {
+                listenStopBtn.addEventListener('click', function () {
+                    if (listeningMediaRecorder && listeningIsRecording) {
+                        listeningMediaRecorder.stop();
+                        listeningIsRecording = false;
+                        listenRecordBtn.style.display = 'inline-flex';
+                        listenStopBtn.style.display = 'none';
+                    }
+                });
+            }
+
+            if (yesComparisonBtn) {
+                yesComparisonBtn.addEventListener('click', function () {
+                    if (listeningCompleteBtn) {
+                        listeningCompleteBtn.disabled = false;
+                        if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #22c55e;">✅ Great! You have confirmed your recording is correct.</span>';
+                    }
+                });
+            }
+
+            if (noComparisonBtn) {
+                noComparisonBtn.addEventListener('click', function () {
+                    if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #dc2626;">⚠️ Please record again and ensure correct stress placement.</span>';
+                    listeningRecorded = false;
+                    if (listenPlaybackCard) listenPlaybackCard.style.display = 'none';
+                    if (comparisonSection) comparisonSection.style.display = 'none';
+                    if (listenRecordBtn) { listenRecordBtn.style.display = 'inline-flex'; listenRecordBtn.disabled = false; }
+                    if (listenStopBtn) listenStopBtn.style.display = 'none';
+                });
+            }
+
+            // Quiz validation
+            document.querySelectorAll('input[name="q1"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q1 = e.target.value; updateListeningCompleteButton(); }));
+            document.querySelectorAll('input[name="q2"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q2 = e.target.value; updateListeningCompleteButton(); }));
+
+            if (checkListeningWorkBtn) {
+                checkListeningWorkBtn.addEventListener('click', () => {
+                    if (!listeningQuizAnswers.q1 || !listeningQuizAnswers.q2) {
+                        listeningQuizFeedbackDiv.innerHTML = '⚠️ Please answer both questions.';
+                        listeningQuizFeedbackDiv.className = 'quiz-feedback warning';
+                        listeningQuizFeedbackDiv.style.display = 'block';
+                        return;
+                    }
+                    let q1Correct = (listeningQuizAnswers.q1 === 'quality');
+                    let q2Correct = (listeningQuizAnswers.q2 === 'identify');
+
+                    if (q1Correct && q2Correct) {
+                        listeningQuizFeedbackDiv.innerHTML = '✅ Correct! Great job!';
+                        listeningQuizFeedbackDiv.className = 'quiz-feedback correct';
+                        listeningQuizCorrect = true;
+                    } else {
+                        listeningQuizFeedbackDiv.innerHTML = '📚 Some answers need review. Q1: Quality is emphasised. Q2: Cleft structure helps identify the key point.';
+                        listeningQuizFeedbackDiv.className = 'quiz-feedback incorrect';
+                        listeningQuizCorrect = false;
+                    }
+                    listeningQuizFeedbackDiv.style.display = 'block';
+                    updateListeningCompleteButton();
+                });
+            }
+
+            function updateListeningCompleteButton() {
+                if (listeningCompleteBtn) {
+                    const canComplete = masterAudioFinished && aiEvaluationDone && listeningQuizCorrect && listeningRecorded;
+                    listeningCompleteBtn.disabled = !canComplete;
+                }
+            }
+
+            if (listeningCompleteBtn) {
+                listeningCompleteBtn.onclick = () => {
+                    if (!masterAudioFinished) { alert('⚠️ Please listen to the complete master audio first.'); return; }
+                    if (!aiEvaluationDone) { alert('⚠️ Please write and submit your cleft sentences for evaluation.'); return; }
+                    if (!listeningQuizCorrect) { alert('⚠️ Please answer both quiz questions correctly.'); return; }
+                    if (!listeningRecorded) { alert('⚠️ Please record your cleft sentences.'); return; }
+                    markActivityComplete('listening', 'chk2');
+                };
+                listeningCompleteBtn.disabled = true;
+            }
+
+            // ========== 2. SPEAKING ACTIVITY ==========
+            const speakRecordBtn = document.getElementById('speakingRecordBtn');
+            const speakStopBtn = document.getElementById('speakingStopBtn');
+            const speakPlaybackArea = document.getElementById('speakingPlaybackArea');
+            const speakPlaybackAudio = document.getElementById('speakingPlayback');
+            const speakRecordingStatus = document.getElementById('speakingRecordingStatus');
+            const speakTimer = document.getElementById('speakingTimer');
+            const completeSpeakingBtn = document.getElementById('completeSpeakingBtn');
+            let speakMediaRecorder, speakChunks = [], speakIsRecording = false;
+            let timerInterval, seconds = 0;
+
+            function updateSpeakingTimerDisplay() {
+                if (speakTimer) {
+                    const mins = Math.floor(seconds / 60);
+                    const secs = seconds % 60;
+                    speakTimer.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                }
+            }
+
+            if (speakRecordBtn) {
+                speakRecordBtn.addEventListener('click', async function () {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        speakMediaRecorder = new MediaRecorder(stream);
+                        speakChunks = [];
+                        seconds = 0;
+                        updateSpeakingTimerDisplay();
+                        if (speakRecordingStatus) speakRecordingStatus.style.display = 'flex';
+                        if (timerInterval) clearInterval(timerInterval);
+                        timerInterval = setInterval(() => { seconds++; updateSpeakingTimerDisplay(); }, 1000);
+
+                        speakMediaRecorder.ondataavailable = e => speakChunks.push(e.data);
+                        speakMediaRecorder.onstop = () => {
+                            clearInterval(timerInterval);
+                            const blob = new Blob(speakChunks, { type: 'audio/webm' });
+                            if (speakPlaybackAudio) speakPlaybackAudio.src = URL.createObjectURL(blob);
+                            if (speakPlaybackArea) speakPlaybackArea.style.display = 'block';
+                            speakingRecorded = true;
+                            stream.getTracks().forEach(t => t.stop());
+                            if (completeSpeakingBtn) completeSpeakingBtn.disabled = false;
+                        };
+                        speakMediaRecorder.start();
+                        speakIsRecording = true;
+                        speakRecordBtn.style.display = 'none';
+                        if (speakStopBtn) speakStopBtn.style.display = 'inline-flex';
+                        speakRecordBtn.classList.add('recording-active');
+                    } catch (e) { console.error('Microphone error'); }
+                });
+            }
+
+            if (speakStopBtn) {
+                speakStopBtn.addEventListener('click', function () {
+                    if (speakMediaRecorder && speakIsRecording) {
+                        speakMediaRecorder.stop();
+                        speakIsRecording = false;
+                        speakRecordBtn.style.display = 'inline-flex';
+                        speakStopBtn.style.display = 'none';
+                        speakRecordBtn.classList.remove('recording-active');
+                        if (speakRecordingStatus) speakRecordingStatus.style.display = 'none';
+                    }
+                });
+            }
+
+            if (completeSpeakingBtn) {
+                completeSpeakingBtn.addEventListener('click', function () {
+                    if (!completeSpeakingBtn.disabled && speakingRecorded && typeof markActivityComplete === 'function') {
+                        markActivityComplete('speaking', 'chk3');
+                    }
+                });
+            }
+
+            // ========== 3. READING ACTIVITY - IMPROVED VALIDATION ==========
+
+            // Helper function to normalize text for comparison
+            function normalizeText(text) {
+                return text.toLowerCase().trim().replace(/\s+/g, ' ').replace(/[.,!?;]/g, '');
+            }
+
+            // Validate Cleft Identification with flexible matching
+            function validateCleftIdentification(userAnswer, expectedKeywords, expectedStart) {
+                const normalized = normalizeText(userAnswer);
+                if (!normalized) return { valid: false, message: '⚠️ Please write the cleft sentence.' };
+
+                // Check if starts with expected start
+                if (expectedStart && !normalized.startsWith(expectedStart.toLowerCase())) {
+                    return { valid: false, message: `❌ The sentence should start with "${expectedStart}".` };
+                }
+
+                // Check for keywords
+                let missingKeywords = [];
+                for (let keyword of expectedKeywords) {
+                    if (!normalized.includes(keyword.toLowerCase())) {
+                        missingKeywords.push(keyword);
+                    }
+                }
+
+                if (missingKeywords.length > 0) {
+                    return { valid: false, message: `❌ Missing key elements: ${missingKeywords.join(', ')}` };
+                }
+
+                return { valid: true, message: '✅ Correct!' };
+            }
+
+            // Validate Emphasis
+            function validateEmphasis(userAnswer, expectedKeywords) {
+                const normalized = normalizeText(userAnswer);
+                if (!normalized) return { valid: false, message: '⚠️ Please write what is emphasised.' };
+
+                let foundKeywords = [];
+                for (let keyword of expectedKeywords) {
+                    if (normalized.includes(keyword.toLowerCase())) {
+                        foundKeywords.push(keyword);
+                    }
+                }
+
+                if (foundKeywords.length === 0) {
+                    return { valid: false, message: `❌ Incorrect. Expected keywords: ${expectedKeywords.join(', ')}` };
+                }
+
+                return { valid: true, message: '✅ Correct!' };
+            }
+
+            // Validate Rewrite
+            function validateRewrite(userAnswer) {
+                const normalized = normalizeText(userAnswer);
+                if (!normalized) return { valid: false, message: '⚠️ Please rewrite the sentence.' };
+
+                if (normalized.length < 50) return { valid: false, message: '❌ Sentence is too short.' };
+
+                // Check for cleft indicators - should NOT have them
+                if (normalized.includes('what distinguishes') || normalized.includes('it is')) {
+                    return { valid: false, message: '❌ The sentence still has cleft structure. Remove "What distinguishes" or "It is".' };
+                }
+
+                // Check for key content
+                const hasEngineer = /great engineer|engineer is distinguished/.test(normalized);
+                const hasCalculations = /calculations/.test(normalized);
+                const hasCommunicate = /communicate/.test(normalized);
+
+                if (!hasEngineer) return { valid: false, message: '❌ Missing "great engineer" or similar.' };
+                if (!hasCalculations) return { valid: false, message: '❌ Missing "calculations".' };
+                if (!hasCommunicate) return { valid: false, message: '❌ Missing "communicate".' };
+
+                return { valid: true, message: '✅ Correct rewrite! The emphasis has shifted from contrast to a neutral statement.' };
+            }
+
+            // Expected keywords for each cleft sentence
+            const cleft1Keywords = ['what distinguishes', 'great engineer', 'merely competent', 'ability to perform calculations', 'capacity to communicate'];
+            const cleft2Keywords = ['it is this translational skill', 'converting technical data', 'actionable insight', 'shortest supply'];
+            const cleft3Keywords = ['the reason many engineering projects fail', 'technical incompetence', 'breakdown in communication', 'engineers and stakeholders'];
+
+            const emphasis2Keywords = ['translational skill', 'converting technical data', 'actionable insight'];
+            const emphasis3Keywords = ['breakdown in communication', 'poor communication', 'communication between engineers and stakeholders'];
+
+            const checkReadingBtn = document.getElementById('checkReadingAnswersBtn');
+            const completeReadingBtn = document.getElementById('completeReadingBtn');
+            let readingTaskCompleted = false;
+
+            if (checkReadingBtn) {
+                checkReadingBtn.addEventListener('click', function () {
+                    const cleft1 = document.getElementById('cleft1Reading').value;
+                    const cleft2 = document.getElementById('cleft2Reading').value;
+                    const cleft3 = document.getElementById('cleft3Reading').value;
+                    const emphasis1 = document.getElementById('emphasis1').value;
+                    const emphasis2 = document.getElementById('emphasis2').value;
+                    const emphasis3 = document.getElementById('emphasis3').value;
+                    const rewrite = document.getElementById('rewriteSentence').value;
+
+                    // For emphasis1 (first cleft), any reasonable answer about contrast between calculation and communication is accepted
+                    const emphasis1Valid = emphasis1.trim().length > 10;
+
+                    const r1 = validateCleftIdentification(cleft1, cleft1Keywords, 'What distinguishes');
+                    const r2 = validateCleftIdentification(cleft2, cleft2Keywords, 'It is');
+                    const r3 = validateCleftIdentification(cleft3, cleft3Keywords, 'The reason');
+                    const e1 = { valid: emphasis1Valid, message: emphasis1Valid ? '✅ Correct!' : '❌ Please describe the emphasis (the contrast between calculation ability and communication skill).' };
+                    const e2 = validateEmphasis(emphasis2, emphasis2Keywords);
+                    const e3 = validateEmphasis(emphasis3, emphasis3Keywords);
+                    const rw = validateRewrite(rewrite);
+
+                    document.getElementById('cleft1ReadingFeedback').innerHTML = r1.message;
+                    document.getElementById('cleft1ReadingFeedback').className = r1.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+                    document.getElementById('cleft2ReadingFeedback').innerHTML = r2.message;
+                    document.getElementById('cleft2ReadingFeedback').className = r2.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+                    document.getElementById('cleft3ReadingFeedback').innerHTML = r3.message;
+                    document.getElementById('cleft3ReadingFeedback').className = r3.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+                    document.getElementById('emphasis1Feedback').innerHTML = e1.message;
+                    document.getElementById('emphasis1Feedback').className = e1.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+                    document.getElementById('emphasis2Feedback').innerHTML = e2.message;
+                    document.getElementById('emphasis2Feedback').className = e2.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+                    document.getElementById('emphasis3Feedback').innerHTML = e3.message;
+                    document.getElementById('emphasis3Feedback').className = e3.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+                    document.getElementById('rewriteFeedback').innerHTML = rw.message;
+                    document.getElementById('rewriteFeedback').className = rw.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+
+                    readingTaskCompleted = r1.valid && r2.valid && r3.valid && e1.valid && e2.valid && e3.valid && rw.valid;
+                    const readingFeedbackDiv = document.getElementById('readingFeedback');
+                    if (readingTaskCompleted) {
+                        readingFeedbackDiv.innerHTML = '<span style="color: #22c55e;">✅ Excellent! All reading answers are correct.</span>';
+                        if (completeReadingBtn) completeReadingBtn.disabled = false;
+                    } else {
+                        readingFeedbackDiv.innerHTML = '<span style="color: #dc2626;">❌ Please correct the errors above. Read the hints carefully.</span>';
+                        if (completeReadingBtn) completeReadingBtn.disabled = true;
+                    }
+                });
+            }
+
+            if (completeReadingBtn) {
+                completeReadingBtn.addEventListener('click', function () {
+                    if (readingTaskCompleted && typeof markActivityComplete === 'function') {
+                        markActivityComplete('reading', 'chk1');
+                    } else {
+                        alert('Please correct all reading answers first.');
+                    }
+                });
+            }
+
+            // ========== 5. GRAMMAR ACTIVITY - STRICT VALIDATION ==========
+
+            function validateItCleftStrict(answer) {
+                const normalized = answer.toLowerCase().trim().replace(/\s+/g, ' ').replace(/[.,!?;]$/, '');
+
+                if (!normalized) return { valid: false, message: '⚠️ Please write the cleft sentence.' };
+
+                // Check if starts correctly
+                if (!normalized.startsWith('it was') && !normalized.startsWith('it is')) {
+                    return { valid: false, message: '❌ Must start with "It was" or "It is".' };
+                }
+
+                // Check for required elements
+                if (!normalized.includes('project manager')) {
+                    return { valid: false, message: '❌ Must include "project manager".' };
+                }
+
+                if (!normalized.includes('who') && !normalized.includes('that')) {
+                    return { valid: false, message: '❌ Must include "who" or "that".' };
+                }
+
+                if (!normalized.includes('solved')) {
+                    return { valid: false, message: '❌ Must include "solved".' };
+                }
+
+                if (!normalized.includes('problem')) {
+                    return { valid: false, message: '❌ Must include "problem".' };
+                }
+
+                // Check that subject and object are not swapped
+                if (normalized.includes('problem that solved')) {
+                    return { valid: false, message: '❌ Subject and object are swapped. Use "It was the project manager who solved the problem."' };
+                }
+
+                return { valid: true, message: '✅ Correct! Perfect It-cleft sentence.' };
+            }
+
+            function validateWhatCleftStrict(answer) {
+                const normalized = answer.toLowerCase().trim().replace(/\s+/g, ' ').replace(/[.,!?;]$/, '');
+
+                if (!normalized) return { valid: false, message: '⚠️ Please write the cleft sentence.' };
+
+                if (!normalized.startsWith('what')) {
+                    return { valid: false, message: '❌ Must start with "What".' };
+                }
+
+                if (!normalized.includes('we need')) {
+                    return { valid: false, message: '❌ Must include "we need".' };
+                }
+
+                if (!normalized.includes('is')) {
+                    return { valid: false, message: '❌ Must include "is".' };
+                }
+
+                if (!normalized.includes('more data')) {
+                    return { valid: false, message: '❌ Must include "more data".' };
+                }
+
+                // "before deciding" can be before or after "is"
+                const hasBeforeDeciding = normalized.includes('before deciding');
+                if (!hasBeforeDeciding) {
+                    // Check if the meaning is still clear
+                    if (!normalized.includes('deciding')) {
+                        return { valid: false, message: '❌ Missing "before deciding" or the idea of deciding.' };
+                    }
+                }
+
+                return { valid: true, message: '✅ Correct! Perfect What-cleft sentence.' };
+            }
+
+            function validateReasonCleftStrict(answer) {
+                const normalized = answer.toLowerCase().trim().replace(/\s+/g, ' ').replace(/[.,!?;]$/, '');
+
+                if (!normalized) return { valid: false, message: '⚠️ Please write the cleft sentence.' };
+
+                if (!normalized.startsWith('the reason')) {
+                    return { valid: false, message: '❌ Must start with "The reason".' };
+                }
+
+                if (!normalized.includes('fire')) {
+                    return { valid: false, message: '❌ Must include "fire".' };
+                }
+
+                // Check for cause-effect (insulation failed should be the cause)
+                if (normalized.includes('insulation failed')) {
+                    // Good - cause is correctly identified
+                } else if (normalized.includes('insulation failure')) {
+                    // Also acceptable
+                } else {
+                    return { valid: false, message: '❌ Must mention "insulation failed" or "insulation failure".' };
+                }
+
+                // Check that cause and effect are not reversed
+                if (normalized.includes('reason the insulation failed was the fire')) {
+                    return { valid: false, message: '❌ Cause and effect are reversed. The insulation failure caused the fire, not the other way.' };
+                }
+
+                if (!normalized.includes('was that') && !normalized.includes('was because')) {
+                    return { valid: false, message: '❌ Use "was that" to connect the cause.' };
+                }
+
+                return { valid: true, message: '✅ Correct! Perfect Reason-cleft sentence.' };
+            }
+
+            const checkGrammarBtn = document.getElementById('checkGrammarBtn');
+            const resetGrammarBtn = document.getElementById('resetGrammarBtn');
+            const completeGrammarBtn = document.getElementById('completeGrammarBtn');
+
+            if (checkGrammarBtn) {
+                checkGrammarBtn.addEventListener('click', function () {
+                    const g1 = document.getElementById('grammar1').value;
+                    const g2 = document.getElementById('grammar2').value;
+                    const g3 = document.getElementById('grammar3').value;
+
+                    const result1 = validateItCleftStrict(g1);
+                    const result2 = validateWhatCleftStrict(g2);
+                    const result3 = validateReasonCleftStrict(g3);
+
+                    const fb1 = document.getElementById('grammar1Feedback');
+                    const fb2 = document.getElementById('grammar2Feedback');
+                    const fb3 = document.getElementById('grammar3Feedback');
+                    const grammarFeedback = document.getElementById('grammarFeedback');
+
+                    if (fb1) { fb1.innerHTML = result1.message; fb1.className = result1.valid ? 'fix-feedback correct' : 'fix-feedback incorrect'; fb1.style.display = 'block'; }
+                    if (fb2) { fb2.innerHTML = result2.message; fb2.className = result2.valid ? 'fix-feedback correct' : 'fix-feedback incorrect'; fb2.style.display = 'block'; }
+                    if (fb3) { fb3.innerHTML = result3.message; fb3.className = result3.valid ? 'fix-feedback correct' : 'fix-feedback incorrect'; fb3.style.display = 'block'; }
+
+                    grammarCompleted = result1.valid && result2.valid && result3.valid;
+
+                    if (grammarCompleted) {
+                        if (grammarFeedback) { grammarFeedback.innerHTML = '✅ All cleft sentences are correct! Great job!'; grammarFeedback.className = 'quiz-feedback correct'; grammarFeedback.style.display = 'block'; }
+                        if (completeGrammarBtn) completeGrammarBtn.disabled = false;
+                    } else {
+                        if (grammarFeedback) { grammarFeedback.innerHTML = '❌ Please correct the errors above. Follow the examples shown.'; grammarFeedback.className = 'quiz-feedback incorrect'; grammarFeedback.style.display = 'block'; }
+                    }
+                });
+            }
+
+            if (resetGrammarBtn) {
+                resetGrammarBtn.addEventListener('click', function () {
+                    document.getElementById('grammar1').value = '';
+                    document.getElementById('grammar2').value = '';
+                    document.getElementById('grammar3').value = '';
+                    document.getElementById('grammar1Feedback').innerHTML = '';
+                    document.getElementById('grammar2Feedback').innerHTML = '';
+                    document.getElementById('grammar3Feedback').innerHTML = '';
+                    document.getElementById('grammarFeedback').innerHTML = '';
+                    grammarCompleted = false;
+                    if (completeGrammarBtn) completeGrammarBtn.disabled = true;
+                });
+            }
+
+            if (completeGrammarBtn) {
+                completeGrammarBtn.addEventListener('click', function () {
+                    if (grammarCompleted && typeof markActivityComplete === 'function') {
+                        markActivityComplete('grammar', 'chk4');
+                    }
+                });
+            }
+
+            // ========== DAY COMPLETION ==========
+            const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+            if (dayCompleteBtn) {
+                dayCompleteBtn.addEventListener('click', function () {
+                    const checkboxes = document.querySelectorAll('.checklist input.day-check');
+                    let allCompleted = true;
+                    checkboxes.forEach(cb => { if (!cb.checked) allCompleted = false; });
+                    if (!allCompleted) { alert('⚠️ Please complete all activities first!'); return; }
+                    this.innerHTML = '✨ Completing day...';
+                    this.disabled = true;
+                    if (typeof confetti !== 'undefined') confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                    setTimeout(() => { window.location.href = '/learning/level/advanced/?celebrate=true&completed=25'; }, 500);
+                });
+            }
+
+            setTimeout(updateDayProgress, 500);
+        });
+    </script>
+</body>
+
+</html>

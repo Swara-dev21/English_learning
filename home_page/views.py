@@ -275,9 +275,8 @@ def profile_view(request):
     # ========== LEARNING LEVELS LOGIC ==========
     from learning.models import UserLearningProgress
     
-    # Get user's pretest result level from profile
-    # Profile.level stores: "Beginner", "Intermediate", "Advanced"
-    user_level = profile.level.lower() if profile.level else 'beginner'
+    # Normalize level
+    user_level = profile.level.strip().lower() if profile.level else 'beginner'
     pretest_completed = profile.pretest_completed
     
     print(f"🔍 DEBUG: User Level = {user_level}")
@@ -315,42 +314,29 @@ def profile_view(request):
     intermediate = get_progress_data(intermediate_progress)
     advanced = get_progress_data(advanced_progress)
     
-    # ========== CORRECT UNLOCK LOGIC BASED ON PRETEST RESULT ==========
+    # ========== CLEAN UNLOCK LOGIC ==========
     
-    # Beginner: Always unlocked if pretest is completed (regardless of level)
-    beginner_unlocked = pretest_completed
-    
-    # Intermediate unlock logic
-    if pretest_completed:
-        if user_level == 'advanced':
-            # Advanced users get Intermediate unlocked immediately
-            intermediate_unlocked = True
-        elif user_level == 'intermediate':
-            # ✅ FIXED: Intermediate users get Intermediate unlocked immediately
-            intermediate_unlocked = True
-        elif user_level == 'beginner':
-            # Beginner users must complete Beginner level first
-            intermediate_unlocked = beginner['is_completed']
-        else:
-            intermediate_unlocked = False
-    else:
+    # Step 1: Pretest must be completed to unlock anything
+    if not pretest_completed:
+        beginner_unlocked = False
         intermediate_unlocked = False
-    
-    # Advanced unlock logic
-    if pretest_completed:
-        if user_level == 'advanced':
-            # Advanced users get Advanced unlocked immediately
-            advanced_unlocked = True
-        elif user_level == 'intermediate':
-            # Intermediate users must complete Intermediate level first
-            advanced_unlocked = intermediate['is_completed']
-        elif user_level == 'beginner':
-            # Beginner users must complete Intermediate level first
-            advanced_unlocked = intermediate['is_completed']
-        else:
-            advanced_unlocked = False
-    else:
         advanced_unlocked = False
+    
+    else:
+        # Beginner always unlocked after pretest
+        beginner_unlocked = True
+        
+        # Intermediate logic
+        if user_level in ['intermediate', 'advanced']:
+            intermediate_unlocked = True
+        else:  # beginner user
+            intermediate_unlocked = beginner['is_completed']
+        
+        # Advanced logic
+        if user_level == 'advanced':
+            advanced_unlocked = True
+        else:
+            advanced_unlocked = intermediate['is_completed']
     
     print(f"🔍 DEBUG: Beginner Unlocked = {beginner_unlocked}")
     print(f"🔍 DEBUG: Intermediate Unlocked = {intermediate_unlocked}")
@@ -489,28 +475,14 @@ def pretest_results(request):
     print(f"Profile reading_completed: {profile.reading_completed}")
     print(f"Profile pretest_completed: {profile.pretest_completed}")
     
-    if not profile.pretest_completed:
-        if all([profile.listening_completed, profile.reading_completed, 
-                profile.speaking_completed, profile.writing_completed]):
-            profile.pretest_completed = True
-            profile.pretest_completed_at = timezone.now()
-            profile.save()
-            print("✅ Profile marked as pretest_completed")
-        else:
-            # Don't redirect - show what's completed and what's not
-            messages.warning(request, "Complete all sections to see full results.")
-            # Continue to show partial results
-    
     # Get latest results with debugging
     print("\n--- FETCHING RESULTS ---")
     
     listening_result = ListeningResult.objects.filter(user=request.user).first()
     print(f"Listening result: {'✅ Found' if listening_result else '❌ Not found'}")
     
-    # FIXED: Better reading result fetching
     reading_result = ReadingResult.objects.filter(user=request.user).first()
     if not reading_result:
-        # Try to find by session key as fallback
         session_key = request.session.session_key
         if session_key:
             reading_result = ReadingResult.objects.filter(
@@ -528,7 +500,6 @@ def pretest_results(request):
     writing_result = WritingResult.objects.filter(user=request.user).first()
     print(f"Writing result: {'✅ Found' if writing_result else '❌ Not found'}")
     
-    # If reading_result exists, print its details
     if reading_result:
         print(f"Reading Result ID: {reading_result.id}")
         print(f"Reading Score: {reading_result.score}/{reading_result.total}")
@@ -582,11 +553,40 @@ def pretest_results(request):
     else:
         overall_percentage = 0
     
+    # ========== FIX: Calculate and SAVE the user's level ==========
+    # Determine level based on overall percentage
+    if overall_percentage < 60:
+        calculated_level = 'Beginner'
+    elif overall_percentage < 80:
+        calculated_level = 'Intermediate'
+    else:
+        calculated_level = 'Advanced'
+    
+    # Save the calculated level to profile if pretest is completed
+    if not profile.pretest_completed:
+        # Check if all tests are completed
+        if all([profile.listening_completed, profile.reading_completed, 
+                profile.speaking_completed, profile.writing_completed]):
+            profile.pretest_completed = True
+            profile.pretest_completed_at = timezone.now()
+            profile.level = calculated_level  # ✅ SAVE THE LEVEL HERE
+            profile.save()
+            print(f"✅ Profile marked as pretest_completed with level: {calculated_level}")
+        else:
+            print("⚠️ Not all tests completed yet")
+            messages.warning(request, "Complete all sections to see full results.")
+    else:
+        # If pretest already completed but level might be wrong, update it
+        if profile.level != calculated_level:
+            profile.level = calculated_level
+            profile.save()
+            print(f"✅ Updated profile level from {profile.level} to {calculated_level}")
+    
     print(f"\n{'='*50}")
     print(f"FINAL CONTEXT:")
-    print(f"reading_result: {'✅ Present' if reading_result else '❌ None'}")
-    print(f"reading_percentage: {reading_percentage}%")
-    print(f"is_timeout: {is_timeout}")
+    print(f"Overall Percentage: {overall_percentage}%")
+    print(f"Calculated Level: {calculated_level}")
+    print(f"Profile Level: {profile.level}")
     print(f"{'='*50}\n")
     
     context = {
@@ -595,18 +595,18 @@ def pretest_results(request):
         'reading_result': reading_result,
         'speaking_result': speaking_result,
         'writing_result': writing_result,
-        'overall_score': overall_percentage,  # Using percentage for overall
+        'overall_score': overall_percentage,
         'overall_percentage': round(overall_percentage, 1),
         'listening_percentage': round(listening_percentage, 1),
         'reading_percentage': round(reading_percentage, 1),
         'speaking_percentage': round(speaking_percentage, 1),
         'writing_percentage': round(writing_percentage, 1),
         'completion_date': completion_date,
-        'is_timeout': is_timeout,  # ADDED: Pass to template
+        'is_timeout': is_timeout,
+        'calculated_level': calculated_level,  # Pass to template for display
     }
     
     return render(request, 'home_page/pretest_results.html', context)
-
 
 def password_reset_request(request):
     """View for requesting password reset"""

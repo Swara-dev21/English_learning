@@ -22,6 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-*+ksmi)lsz$dqlwqtocyxc$&f7tz!zmrf&2^)lq6_d)tj+$sn)'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -92,7 +93,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
-        'USER': 'postgres.pbxufsucwjrstltgwziv',  # ✅ important
+        'USER': 'postgres.pbxufsucwjrstltgwziv',
         'PASSWORD': '5exvzfpyC9VKRWWp',
         'HOST': 'aws-1-ap-south-1.pooler.supabase.com',
         'PORT': '5432',
@@ -132,16 +133,30 @@ USE_TZ = True
 
 USE_L10N = True
 
+# ========== STATIC FILES CONFIGURATION (FIXED - NO WARNINGS) ==========
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Only include directories that actually exist
+STATICFILES_DIRS = [
+    # BASE_DIR / 'static',  # Commented out - this directory doesn't exist
+    BASE_DIR / 'learning' / 'static',  # This is where your static files are
+]
+
+# Directory where Django will collect all static files for production
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Storage backend for static files in production
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# =========================================================
+
 LOGIN_URL = '/login/'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR,"media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-VOSK_MODEL_PATH = str( BASE_DIR/"speaking"/"model"/"vosk-model-small-en-us-0.15")
+VOSK_MODEL_PATH = str(BASE_DIR / "speaking" / "model" / "vosk-model-small-en-us-0.15")
 
-REFERENCE_AUDIO_PATH = BASE_DIR/"speaking"/"reference_audio"/"reference.wav"
+REFERENCE_AUDIO_PATH = BASE_DIR / "speaking" / "reference_audio" / "reference.wav"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -161,8 +176,6 @@ CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_arcs', 'captcha.helpers.noise_
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CSRF_TRUSTED_ORIGINS = [
     "https://*.ngrok-free.app",

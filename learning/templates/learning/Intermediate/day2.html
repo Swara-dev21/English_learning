@@ -1,0 +1,1247 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 2: Conditionals · The Logic Engine of English | English for Engineers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+</head>
+
+<body>
+    <div class="lesson-container">
+        <div class="lesson-hero">
+            <div class="hero-content">
+                <div class="day-badge">Day 2 • Week 1 • Intermediate</div>
+                <h1 class="hero-title">⚙️ CONDITIONALS: THE LOGIC ENGINE OF ENGLISH</h1>
+                <div class="power-line">💡 "If you master conditionals, you master the art of possibility."</div>
+            </div>
+        </div>
+
+        <div class="activities-grid">
+
+            <!-- ==================== 1. LISTENING ACTIVITY ==================== -->
+            <div class="activity-card" id="listening-card">
+                <div class="card-header listening">
+                    <h2>🎧 1. Listening Activity · Conditional Intonation</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Focus</span></div>
+                        </div>
+                        <div class="task-content">Conditional Intonation — notice how the 'if' clause uses a rising tone
+                            and the result clause falls.</div>
+                    </div>
+
+                    <div class="audio-player">
+                        <audio id="listeningAudio" controls>
+                            <source src="{% static 'learning/audio/Beginner/day2.mp3' %}" type="audio/mpeg">
+                        </audio>
+                    </div>
+
+                    <div id="listeningTextSection" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Listening Text</span></div>
+                            </div>
+                            <div class="task-content" style="font-style: italic; background: #fef9e3;">
+                                "Suppose we test the system today... and it fails... What would we do next?... If we had
+                                prepared a backup plan... we would not be in this situation... But if we act now... we
+                                can still recover the timeline..."
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="postAudioListeningContent" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>🎯</span><span>Task</span></div>
+                            </div>
+                            <div class="task-content">Shadow the audio <strong>twice</strong>: once for
+                                <strong>rhythm</strong> and once for the <strong>if-then intonation pattern</strong>.
+                            </div>
+                        </div>
+
+                        <div class="two-recordings">
+                            <div class="recording-item">
+                                <div class="recording-item-title">
+                                    <span>🎵</span> Recording 1: Rhythm Shadowing
+                                </div>
+                                <div class="recording-controls">
+                                    <button id="rhythmRecordBtn" class="record-btn">🎙️ Record Rhythm</button>
+                                    <button id="rhythmStopBtn" class="record-btn"
+                                        style="background: #64748b; display: none;">⏹️ Stop</button>
+                                </div>
+                                <div id="rhythmPlaybackCard" style="display: none; margin-top: 0.5rem;">
+                                    <audio id="rhythmPlayback" controls style="width: 100%;"></audio>
+                                    <div id="rhythmStatus" style="font-size: 0.8rem; margin-top: 0.25rem;"></div>
+                                </div>
+                            </div>
+
+                            <div class="recording-item">
+                                <div class="recording-item-title">
+                                    <span>🎵📈</span> Recording 2: If-Then Intonation Pattern
+                                </div>
+                                <div class="recording-controls">
+                                    <button id="intonationRecordBtn" class="record-btn">🎙️ Record Intonation</button>
+                                    <button id="intonationStopBtn" class="record-btn"
+                                        style="background: #64748b; display: none;">⏹️ Stop</button>
+                                </div>
+                                <div id="intonationPlaybackCard" style="display: none; margin-top: 0.5rem;">
+                                    <audio id="intonationPlayback" controls style="width: 100%;"></audio>
+                                    <div id="intonationStatus" style="font-size: 0.8rem; margin-top: 0.25rem;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="bothRecordingsConfirm" style="display: none; margin-top: 1rem;">
+                            <div class="comparison-message">✓ Both recordings completed! Did you follow the rhythm and
+                                intonation patterns correctly?</div>
+                            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                <button id="yesBothBtn" class="yes-btn">✓ Yes, both correct</button>
+                                <button id="noBothBtn" class="no-btn">✗ No, record again</button>
+                            </div>
+                            <div id="bothFeedback" style="margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <div class="quiz-section" style="margin-top: 1.5rem;">
+                            <p><strong>🧠 Quick Listening Check</strong></p>
+                            <div>
+                                <p><strong>1. What does the speaker say about starting now?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q1" value="too_late"> It's too
+                                    late</label>
+                                <label class="quiz-option"><input type="radio" name="q1" value="different"> The future
+                                    will be different</label>
+                                <div id="q1Feedback" class="ind-quiz-feedback"></div>
+                            </div>
+                            <div>
+                                <p><strong>2. What tense is used with 'If I had started'?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q2" value="Present">
+                                    Present</label>
+                                <label class="quiz-option"><input type="radio" name="q2" value="Past Perfect"> Past
+                                    Perfect</label>
+                                <div id="q2Feedback" class="ind-quiz-feedback"></div>
+                            </div>
+                            <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                        </div>
+
+                        <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answer</button>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeListeningBtn" disabled>✓ Mark Listening as
+                            Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 2. SPEAKING ACTIVITY ==================== -->
+            <div class="activity-card" id="speaking-card">
+                <div class="card-header speaking">
+                    <h2>🗣️ 2. Speaking Activity · The Technical Problem Solver</h2>
+                </div>
+                <div class="card-body">
+                    <p>Engineers solve problems using conditional reasoning. Practise these professional 'if-then'
+                        statements aloud.</p>
+
+                    <div style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0;">
+                        <p><strong>📢 Practice Sentences (Speak these aloud):</strong></p>
+                        <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                            <li>"If the voltage exceeds the threshold, the circuit breaker will trip automatically."
+                            </li>
+                            <li>"If we had calibrated the sensor earlier, we would have avoided this error."</li>
+                            <li>"If the client approves the design, we will commence the fabrication phase."</li>
+                            <li>"Even if the budget is constrained, we can still mitigate the primary risks."</li>
+                        </ul>
+                    </div>
+
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎙️</span><span>Your Conditional Practice Recording</span></div>
+                        </div>
+                        <div class="task-content">
+                            <div class="recording-controls">
+                                <button id="speakingRecordBtn" class="modern-record-btn">🎙️ Start Recording</button>
+                                <button id="speakingStopBtn" class="modern-record-btn"
+                                    style="background: #64748b; display: none;">⏹️ Stop Recording</button>
+                            </div>
+                            <div id="speakingPlaybackCard" style="display: none; margin-top: 1rem;">
+                                <audio id="speakingPlayback" controls></audio>
+                                <div class="comparison-message" style="margin-top: 0.5rem;">✅ Recording saved! Listen
+                                    back to check your conditional intonation.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeSpeakingBtn" disabled>✓ Mark Speaking as
+                            Complete</button>
+                    </div>
+
+                    <div
+                        style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 16px; padding: 1rem 1.25rem; margin-top: 1.5rem; border-left: 4px solid #22c55e;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <span style="font-size: 1.2rem;">👉</span>
+                            <span style="font-weight: 700; color: #166534; font-size: 0.9rem;">WHY THIS WORKS</span>
+                        </div>
+                        <p style="color: #14532d; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                            Technical problem-solving requires conditional logic. Mastering this makes you sound like a
+                            senior professional, not a trainee.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 3. READING ACTIVITY ==================== -->
+            <div class="activity-card" id="reading-card">
+                <div class="card-header reading">
+                    <h2>📖 3. Reading Activity · The Engineer's Dilemma</h2>
+                </div>
+                <div class="card-body">
+
+                    <!-- Reading Passage First -->
+                    <div class="reading-passage">
+                        <strong>📖 Read the passage carefully:</strong>
+                    </div>
+                    <div id="interactivePassage" class="interactive-passage"></div>
+
+                    <!-- Analysis Tasks Instruction -->
+                    <div class="analysis-instruction">
+                        <strong>🔍 Analysis Tasks:</strong><br><br>
+                        • <strong>Task 1:</strong> Underline all conditional <strong>"if"</strong> clauses in the
+                        passage.<br>
+                        • <strong>Task 2:</strong> Identify which sentence uses the <strong>3rd Conditional</strong>
+                        (past unreal situation).<br>
+                        • <strong>Task 3:</strong> Circle the word that means <strong>'backup plans'</strong><br><br>
+                        <em style="font-size: 0.85rem;">💡 Click "Underline Mode" → Click on each "if" word → Click
+                            "Check Task 1"<br>
+                            💡 Click "Circle Mode" → Click on the word "contingencies" → Click "Check Task 3"</em>
+                    </div>
+
+                    <!-- Mode Selection Buttons -->
+                    <div style="display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap; justify-content: center;">
+                        <button id="underlineModeBtn" class="btn-outline mode-btn"
+                            style="background:#f59e0b; color:white; border:none; padding: 0.6rem 1.2rem;">
+                            Underline Mode <span style="font-size: 0.7rem;"></span>
+                        </button>
+                        <button id="circleModeBtn" class="btn-outline mode-btn"
+                            style="background:#3b82f6; color:white; border:none; padding: 0.6rem 1.2rem;">
+                            Circle Mode <span style="font-size: 0.7rem;"></span>
+                        </button>
+                    </div>
+
+                    <!-- Task 2: 3rd Conditional Sentence Input -->
+                    <div style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0;">
+                        <p><strong>📝 Task 2: Identify the 3rd Conditional Sentence</strong></p>
+                        <p>Which sentence from the passage uses the <strong>3rd Conditional</strong> (past unreal
+                            situation)? Write the complete sentence below:</p>
+                        <textarea id="thirdConditionalInput" rows="3" class="grammar-input"
+                            placeholder="Type the complete 3rd conditional sentence from the passage..."
+                            style="width: 100%; resize: vertical;"></textarea>
+                        <div id="task2Feedback" style="margin-top: 0.5rem; font-size: 0.8rem;"></div>
+                        <button id="checkTask2Btn" class="btn-outline" style="margin-top: 0.5rem;">✅ Check Task
+                            2</button>
+                        <div id="task2Status" style="margin-top: 0.5rem; font-size: 0.8rem; font-weight: 500;"></div>
+                    </div>
+
+                    <!-- Task Buttons for Task 1 and Task 3 -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin: 1rem 0;">
+                        <div style="flex: 1;">
+                            <button id="checkTask1Btn" class="btn-outline"
+                                style="width: 50%; justify-content: center;">✅ Check Task 1</button>
+                            <div id="task1Feedback" style="margin-top: 0.5rem; font-size: 0.8rem;"></div>
+                        </div>
+                        <div style="flex: 1;">
+                            <button id="checkTask3Btn" class="btn-outline"
+                                style="width: 50%; justify-content: center;">✅ Check Task 3</button>
+                            <div id="task3Feedback" style="margin-top: 0.5rem; font-size: 0.8rem;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Task Completion Status -->
+                    <div
+                        style="background: #f1f5f9; border-radius: 12px; padding: 0.75rem; margin: 1rem 0; text-align: center;">
+                        <span style="font-weight: 600;">Task Status: </span>
+                        <span id="task1StatusIcon" style="font-size: 1.2rem;">⬜</span> Task 1 &nbsp;&nbsp;
+                        <span id="task2StatusIcon" style="font-size: 1.2rem;">⬜</span> Task 2 &nbsp;&nbsp;
+                        <span id="task3StatusIcon" style="font-size: 1.2rem;">⬜</span> Task 3
+                    </div>
+
+                    <div style="display:flex; justify-content:center; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeReadingBtn" disabled>✓ Mark Reading as
+                            Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 4. VOCABULARY TABLE ==================== -->
+            <div class="activity-card" id="vocabulary-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 4. Vocabulary of the Day</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>🔊</th>
+                                    <th>✅</th>
+                                    <th>Word</th>
+                                    <th>Pronunciation</th>
+                                    <th>Meaning</th>
+                                    <th>Synonym</th>
+                                    <th>Antonym</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Contingency"
+                                            data-checkid="check-contingency">🔊</button></td>
+                                    <td class="check-cell" id="check-contingency">⬜</span>
+                                    <td class="word-cell"><strong>Contingency</strong></span>
+                                    <td class="word-cell"><code>/kənˈtɪn.dʒən.si/</code></span>
+                                    <td class="word-cell">A future event that may occur</span>
+                                    <td class="word-cell">Backup plan</span>
+                                    <td class="word-cell">Certainty</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Threshold"
+                                            data-checkid="check-threshold">🔊</button></span>
+                                    <td class="check-cell" id="check-threshold">⬜</span>
+                                    <td class="word-cell"><strong>Threshold</strong></span>
+                                    <td class="word-cell"><code>/ˈθreʃ.həʊld/</code></span>
+                                    <td class="word-cell">The point at which something begins</span>
+                                    <td class="word-cell">Limit</span>
+                                    <td class="word-cell">Starting point</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Calibrate"
+                                            data-checkid="check-calibrate">🔊</button></span>
+                                    <td class="check-cell" id="check-calibrate">⬜</span>
+                                    <td class="word-cell"><strong>Calibrate</strong></span>
+                                    <td class="word-cell"><code>/ˈkæl.ɪ.breɪt/</code></span>
+                                    <td class="word-cell">To adjust for accuracy</span>
+                                    <td class="word-cell">Fine-tune</span>
+                                    <td class="word-cell">Neglect</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Fabrication"
+                                            data-checkid="check-fabrication">🔊</button></span>
+                                    <td class="check-cell" id="check-fabrication">⬜</span>
+                                    <td class="word-cell"><strong>Fabrication</strong></span>
+                                    <td class="word-cell"><code>/ˌfæb.rɪˈkeɪ.ʃən/</code></span>
+                                    <td class="word-cell">The process of making something</span>
+                                    <td class="word-cell">Manufacturing</span>
+                                    <td class="word-cell">Destruction</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Constrained"
+                                            data-checkid="check-constrained">🔊</button></span>
+                                    <td class="check-cell" id="check-constrained">⬜</span>
+                                    <td class="word-cell"><strong>Constrained</strong></span>
+                                    <td class="word-cell"><code>/kənˈstreɪnd/</code></span>
+                                    <td class="word-cell">Restricted or limited</span>
+                                    <td class="word-cell">Limited</span>
+                                    <td class="word-cell">Unrestricted</span>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="power-word-section">
+                        <div
+                            style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e; flex-wrap: wrap;">
+                            <span>🔥</span><span>POWER WORD: CONTINGENT (Con-TIN-jent)</span>
+                        </div>
+                        <p><strong>Meaning:</strong> Dependent on certain conditions</p>
+                        <p><strong>Usage:</strong> "The project's success is contingent on receiving the materials on
+                            time."</p>
+                        <div style="margin-top: 0.75rem;">
+                            <p style="font-weight: 500; margin-bottom: 0.25rem;">✍️ Your turn: Write a sentence using
+                                "contingent"</p>
+                            <input type="text" id="powerWordSentence" class="grammar-input"
+                                placeholder="Type your sentence here...">
+                            <div id="powerWordFeedback" class="fix-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div class="power-word-section" style="border-left-color: #22c55e;">
+                        <div
+                            style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #166534; flex-wrap: wrap;">
+                            <span>💡</span><span>IDIOM OF THE DAY: "CROSS THAT BRIDGE WHEN YOU COME TO IT"</span>
+                        </div>
+                        <p><strong>Marathi Meaning:</strong> वेळ आल्यावर त्या समस्येचा सामना करणे</p>
+                        <p><strong>Meaning:</strong> To deal with a problem when it arises, not before</p>
+                        <p><strong>Example:</strong> "We don't know if the client will reject the design — let's cross
+                            that bridge when we come to it."</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeVocabularyBtn" disabled>✓ Mark Vocabulary as
+                            Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 5. GRAMMAR HACK SECTION (Clean - No Boxes) ==================== -->
+            <div class="grammar-section" id="grammar-card">
+                <h3 style="margin: 0 0 1rem 0;">🧠 Grammar Hack: The 4 Conditionals — The Complete System</h3>
+                <p style="margin-bottom: 1rem;">Conditionals are the logic engine of professional English communication.
+                </p>
+
+                <div class="conditional-grid">
+                    <div class="conditional-card zero">
+                        <div class="type">🔹 Zero Conditional</div>
+                        <div class="formula">If + present simple, ... present simple</div>
+                        <div class="example">"If you heat water to 100°C, it boils."</div>
+                        <div class="example">"If the motor overheats, the alarm activates."</div>
+                    </div>
+                    <div class="conditional-card first">
+                        <div class="type">🔹 1st Conditional (Real Future)</div>
+                        <div class="formula">If + present simple, ... will + verb</div>
+                        <div class="example">"If I study tonight, I will pass tomorrow."</div>
+                        <div class="example">"If the test passes, we will deploy the system."</div>
+                    </div>
+                    <div class="conditional-card second">
+                        <div class="type">🔹 2nd Conditional (Unreal Present)</div>
+                        <div class="formula">If + past simple, ... would + verb</div>
+                        <div class="example">"If I were fluent, I would give a TED talk."</div>
+                        <div class="example">"If I were the lead engineer, I would redesign this component."</div>
+                        <div style="font-size: 0.8rem; color: #dc2626; margin-top: 0.25rem;">⚠️ Note: Use 'were' for ALL
+                            subjects in formal writing</div>
+                    </div>
+                    <div class="conditional-card third">
+                        <div class="type">🔹 3rd Conditional (Unreal Past)</div>
+                        <div class="formula">If + had + V3, ... would have + V3</div>
+                        <div class="example">"If I had started earlier, I would have finished by now."</div>
+                        <div class="example">"If we had calibrated the sensor, we would have avoided the error."</div>
+                    </div>
+                </div>
+
+                <div class="grammar-info">
+                    <h4>📖 Mixed Conditional (Past cause, present result)</h4>
+                    <div class="formula-example">"If I had studied harder (past), I would be more confident now
+                        (present)."</div>
+                </div>
+
+                <div class="grammar-info">
+                    <h4>⚠️ Activity: Write one sentence for each conditional about your engineering subject</h4>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <p><strong>1. Zero Conditional (If + present, ... present):</strong></p>
+                        <input type="text" id="grammar1" class="grammar-input"
+                            placeholder="e.g., If you increase voltage, current increases...">
+                        <div id="grammar1Feedback" class="fix-feedback"></div>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <p><strong>2. 1st Conditional (If + present, ... will + verb):</strong></p>
+                        <input type="text" id="grammar2" class="grammar-input"
+                            placeholder="e.g., If the test passes, we will deploy...">
+                        <div id="grammar2Feedback" class="fix-feedback"></div>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <p><strong>3. 2nd Conditional (If + past, ... would + verb — use 'were'):</strong></p>
+                        <input type="text" id="grammar3" class="grammar-input"
+                            placeholder="e.g., If I were the project lead, I would...">
+                        <div id="grammar3Feedback" class="fix-feedback"></div>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <p><strong>4. 3rd Conditional (If + had + V3, ... would have + V3):</strong></p>
+                        <input type="text" id="grammar4" class="grammar-input"
+                            placeholder="e.g., If we had checked earlier, we would have fixed it...">
+                        <div id="grammar4Feedback" class="fix-feedback"></div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                    <button class="btn-outline" id="checkGrammarBtn">✓ Check Answers</button>
+                    <button class="btn-outline" id="resetGrammarBtn">⟳ Reset Grammar</button>
+                </div>
+                <div id="grammarFeedback" class="quiz-feedback"></div>
+                <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                    <button class="complete-activity-btn" id="completeGrammarBtn" disabled>✓ Mark Grammar as
+                        Complete</button>
+                </div>
+            </div>
+
+            <!-- ==================== 6. COMPLETION CHECKLIST ==================== -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 2 COMPLETION CHECKLIST</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chk1" disabled><label> I practised the 4 conditional sentences
+                                about my engineering subject.</label></li>
+                        <li><input type="checkbox" id="chk2" disabled><label> I identified the 3rd Conditional in the
+                                reading passage.</label></li>
+                        <li><input type="checkbox" id="chk3" disabled><label> I shadowed the audio twice: once for
+                                rhythm and once for if-then intonation.</label></li>
+                        <li><input type="checkbox" id="chk4" disabled><label> I used 'were' (not 'was') correctly in a
+                                2nd Conditional sentence.</label></li>
+                        <li><input type="checkbox" id="chk5" disabled><label> I used the Power Word 'Contingent' in a
+                                sentence.</label></li>
+                    </ul>
+                    <div style="text-align:right; margin:1rem 0;"><span class="badge" id="progressCounter">0/5
+                            completed</span></div>
+                    <div style="display:flex; justify-content:center;">
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>🏆 Complete Day 2</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        // ==================== Global State ====================
+// ==================== Vocabulary Activity ====================
+        const vocabCompleteBtn = document.getElementById('completeVocabularyBtn');
+        const audioBtns = document.querySelectorAll('.vocab-audio-btn');
+        const vocabCheckStatus = {
+            'check-contingency': false, 'check-threshold': false, 'check-calibrate': false,
+            'check-fabrication': false, 'check-constrained': false
+        };
+
+        function checkAllVocabularyCompleted() {
+            const allChecked = Object.values(vocabCheckStatus).every(status => status === true);
+            const powerWordInput = document.getElementById('powerWordSentence');
+            const powerWordValid = powerWordInput && powerWordInput.value.trim().toLowerCase().includes('contingent') && powerWordInput.value.trim().length > 10;
+
+            if (allChecked && powerWordValid && vocabCompleteBtn) {
+                vocabCompleteBtn.disabled = false;
+            } else if (vocabCompleteBtn) {
+                vocabCompleteBtn.disabled = true;
+            }
+        }
+
+        function updateVocabularyCheckMark(checkId) {
+            const checkCell = document.getElementById(checkId);
+            if (checkCell && !vocabCheckStatus[checkId]) {
+                vocabCheckStatus[checkId] = true;
+                checkCell.innerHTML = '✅';
+                checkCell.style.color = 'green';
+                checkAllVocabularyCompleted();
+            }
+        }
+
+        audioBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const word = this.getAttribute('data-word');
+                const checkId = this.getAttribute('data-checkid');
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    utterance.onend = () => { if (checkId) updateVocabularyCheckMark(checkId); };
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    if (checkId) updateVocabularyCheckMark(checkId);
+                }
+            });
+        });
+
+        const powerWordInput = document.getElementById('powerWordSentence');
+        if (powerWordInput) powerWordInput.addEventListener('input', checkAllVocabularyCompleted);
+
+        if (vocabCompleteBtn) {
+            vocabCompleteBtn.addEventListener('click', () => {
+                if (!vocabCompleteBtn.disabled) markActivityComplete('vocabulary', 'chk5');
+                else alert('Please click each vocabulary word\'s 🔊 button and write a sentence using "contingent".');
+            });
+        }
+
+        // ==================== Listening Activity (Two Recordings) ====================
+        const listeningAudio = document.getElementById('listeningAudio');
+        const listeningTextSection = document.getElementById('listeningTextSection');
+        const postAudioContent = document.getElementById('postAudioListeningContent');
+        const listeningCompleteBtn = document.getElementById('completeListeningBtn');
+
+        let rhythmRecorded = false, intonationRecorded = false, bothConfirmed = false;
+        let listeningQuizCorrect = false;
+        let listeningQuizAnswers = { q1: null, q2: null };
+
+        function updateListeningCompletion() {
+            if (listeningCompleteBtn) {
+                listeningCompleteBtn.disabled = !(rhythmRecorded && intonationRecorded && bothConfirmed && listeningQuizCorrect);
+            }
+        }
+
+        if (listeningAudio && listeningTextSection && postAudioContent) {
+            listeningAudio.addEventListener('ended', function () {
+                listeningTextSection.style.display = 'block';
+                postAudioContent.style.display = 'block';
+            });
+        }
+
+        // Rhythm Recording
+        let rhythmMediaRecorder, rhythmChunks = [];
+        const rhythmRecordBtn = document.getElementById('rhythmRecordBtn');
+        const rhythmStopBtn = document.getElementById('rhythmStopBtn');
+        const rhythmPlaybackCard = document.getElementById('rhythmPlaybackCard');
+        const rhythmPlayback = document.getElementById('rhythmPlayback');
+        const rhythmStatus = document.getElementById('rhythmStatus');
+
+        if (rhythmRecordBtn) {
+            rhythmRecordBtn.addEventListener('click', async () => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    rhythmMediaRecorder = new MediaRecorder(stream);
+                    rhythmChunks = [];
+                    rhythmMediaRecorder.ondataavailable = e => rhythmChunks.push(e.data);
+                    rhythmMediaRecorder.onstop = () => {
+                        const blob = new Blob(rhythmChunks, { type: 'audio/webm' });
+                        rhythmPlayback.src = URL.createObjectURL(blob);
+                        rhythmPlaybackCard.style.display = 'block';
+                        rhythmRecorded = true;
+                        rhythmStatus.innerHTML = '✓ Rhythm recording saved!';
+                        rhythmStatus.style.color = '#22c55e';
+                        stream.getTracks().forEach(t => t.stop());
+                        checkBothRecordings();
+                    };
+                    rhythmMediaRecorder.start();
+                    rhythmRecordBtn.style.display = 'none';
+                    rhythmStopBtn.style.display = 'inline-flex';
+                } catch (e) { alert('Microphone access needed for rhythm recording'); }
+            });
+        }
+
+        if (rhythmStopBtn) {
+            rhythmStopBtn.addEventListener('click', () => {
+                if (rhythmMediaRecorder?.state === 'recording') rhythmMediaRecorder.stop();
+                rhythmRecordBtn.style.display = 'inline-flex';
+                rhythmStopBtn.style.display = 'none';
+            });
+        }
+
+        // Intonation Recording
+        let intonationMediaRecorder, intonationChunks = [];
+        const intonationRecordBtn = document.getElementById('intonationRecordBtn');
+        const intonationStopBtn = document.getElementById('intonationStopBtn');
+        const intonationPlaybackCard = document.getElementById('intonationPlaybackCard');
+        const intonationPlayback = document.getElementById('intonationPlayback');
+        const intonationStatus = document.getElementById('intonationStatus');
+
+        if (intonationRecordBtn) {
+            intonationRecordBtn.addEventListener('click', async () => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    intonationMediaRecorder = new MediaRecorder(stream);
+                    intonationChunks = [];
+                    intonationMediaRecorder.ondataavailable = e => intonationChunks.push(e.data);
+                    intonationMediaRecorder.onstop = () => {
+                        const blob = new Blob(intonationChunks, { type: 'audio/webm' });
+                        intonationPlayback.src = URL.createObjectURL(blob);
+                        intonationPlaybackCard.style.display = 'block';
+                        intonationRecorded = true;
+                        intonationStatus.innerHTML = '✓ Intonation recording saved!';
+                        intonationStatus.style.color = '#22c55e';
+                        stream.getTracks().forEach(t => t.stop());
+                        checkBothRecordings();
+                    };
+                    intonationMediaRecorder.start();
+                    intonationRecordBtn.style.display = 'none';
+                    intonationStopBtn.style.display = 'inline-flex';
+                } catch (e) { alert('Microphone access needed for intonation recording'); }
+            });
+        }
+
+        if (intonationStopBtn) {
+            intonationStopBtn.addEventListener('click', () => {
+                if (intonationMediaRecorder?.state === 'recording') intonationMediaRecorder.stop();
+                intonationRecordBtn.style.display = 'inline-flex';
+                intonationStopBtn.style.display = 'none';
+            });
+        }
+
+        function checkBothRecordings() {
+            const bothConfirmDiv = document.getElementById('bothRecordingsConfirm');
+            if (rhythmRecorded && intonationRecorded && bothConfirmDiv) {
+                bothConfirmDiv.style.display = 'block';
+            }
+        }
+
+        const yesBothBtn = document.getElementById('yesBothBtn');
+        const noBothBtn = document.getElementById('noBothBtn');
+        const bothFeedback = document.getElementById('bothFeedback');
+
+        if (yesBothBtn) {
+            yesBothBtn.addEventListener('click', () => {
+                bothConfirmed = true;
+                bothFeedback.innerHTML = '<div style="background: #d1fae5; color: #065f46; padding: 0.5rem; border-radius: 8px;">✓ Great! Both recordings confirmed.</div>';
+                updateListeningCompletion();
+            });
+        }
+
+        if (noBothBtn) {
+            noBothBtn.addEventListener('click', () => {
+                rhythmRecorded = false;
+                intonationRecorded = false;
+                bothConfirmed = false;
+                rhythmPlaybackCard.style.display = 'none';
+                intonationPlaybackCard.style.display = 'none';
+                document.getElementById('bothRecordingsConfirm').style.display = 'none';
+                rhythmStatus.innerHTML = '';
+                intonationStatus.innerHTML = '';
+                updateListeningCompletion();
+            });
+        }
+
+        // Listening Quiz
+        document.querySelectorAll('input[name="q1"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q1 = e.target.value; }));
+        document.querySelectorAll('input[name="q2"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q2 = e.target.value; }));
+
+        const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
+        const listeningQuizFeedback = document.getElementById('listeningQuizFeedback');
+
+        if (checkListeningWorkBtn) {
+            checkListeningWorkBtn.addEventListener('click', () => {
+                if (!rhythmRecorded || !intonationRecorded) {
+                    listeningQuizFeedback.innerHTML = '⚠️ Please complete both recordings first.';
+                    listeningQuizFeedback.className = 'quiz-feedback warning';
+                    listeningQuizFeedback.style.display = 'block';
+                    return;
+                }
+                if (!listeningQuizAnswers.q1 || !listeningQuizAnswers.q2) {
+                    listeningQuizFeedback.innerHTML = '⚠️ Please answer both questions.';
+                    listeningQuizFeedback.className = 'quiz-feedback warning';
+                    listeningQuizFeedback.style.display = 'block';
+                    return;
+                }
+                const q1Correct = (listeningQuizAnswers.q1 === 'different');
+                const q2Correct = (listeningQuizAnswers.q2 === 'Past Perfect');
+                listeningQuizCorrect = (q1Correct && q2Correct);
+                if (listeningQuizCorrect) {
+                    listeningQuizFeedback.innerHTML = '✅ Correct! The future will be different, and "If I had started" uses Past Perfect.';
+                    listeningQuizFeedback.className = 'quiz-feedback correct';
+                } else {
+                    listeningQuizFeedback.innerHTML = '❌ Incorrect. The speaker says "we can still recover" (future different), and "had started" is Past Perfect.';
+                    listeningQuizFeedback.className = 'quiz-feedback incorrect';
+                }
+                listeningQuizFeedback.style.display = 'block';
+                updateListeningCompletion();
+            });
+        }
+
+        if (listeningCompleteBtn) {
+            listeningCompleteBtn.addEventListener('click', () => {
+                if (rhythmRecorded && intonationRecorded && bothConfirmed && listeningQuizCorrect) {
+                    markActivityComplete('listening', 'chk3');
+                } else {
+                    alert('Please complete all listening steps:\n1. Listen to audio\n2. Record Rhythm\n3. Record Intonation\n4. Confirm both recordings\n5. Answer quiz correctly');
+                }
+            });
+            listeningCompleteBtn.disabled = true;
+        }
+
+        // ==================== Speaking Activity ====================
+        let speakingRecorded = false;
+        const speakingBtn = document.getElementById('completeSpeakingBtn');
+        const speakRecordBtn = document.getElementById('speakingRecordBtn');
+        const speakStopBtn = document.getElementById('speakingStopBtn');
+        const speakPlaybackCard = document.getElementById('speakingPlaybackCard');
+        const speakPlaybackAudio = document.getElementById('speakingPlayback');
+        let speakMediaRecorder, speakChunks = [], speakIsRecording = false;
+
+        if (speakRecordBtn) {
+            speakRecordBtn.addEventListener('click', async () => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    speakMediaRecorder = new MediaRecorder(stream);
+                    speakChunks = [];
+                    speakMediaRecorder.ondataavailable = e => speakChunks.push(e.data);
+                    speakMediaRecorder.onstop = () => {
+                        const blob = new Blob(speakChunks, { type: 'audio/webm' });
+                        speakPlaybackAudio.src = URL.createObjectURL(blob);
+                        speakPlaybackCard.style.display = 'block';
+                        speakingRecorded = true;
+                        if (speakingBtn) speakingBtn.disabled = false;
+                        stream.getTracks().forEach(t => t.stop());
+                    };
+                    speakMediaRecorder.start();
+                    speakIsRecording = true;
+                    speakRecordBtn.style.display = 'none';
+                    speakStopBtn.style.display = 'inline-flex';
+                } catch (e) { alert('Microphone access needed'); }
+            });
+        }
+
+        if (speakStopBtn) {
+            speakStopBtn.addEventListener('click', () => {
+                if (speakMediaRecorder && speakIsRecording) {
+                    speakMediaRecorder.stop();
+                    speakIsRecording = false;
+                    speakRecordBtn.style.display = 'inline-flex';
+                    speakStopBtn.style.display = 'none';
+                }
+            });
+        }
+
+        if (speakingBtn) {
+            speakingBtn.addEventListener('click', () => {
+                if (speakingRecorded) markActivityComplete('speaking', 'chk1');
+                else alert('Please record your conditional practice first.');
+            });
+            speakingBtn.disabled = true;
+        }
+
+        // ==================== Reading Activity (FIXED) ====================
+        const readingText = "If the team had reviewed the structural calculations more carefully, the design flaw would have been identified early. Now, if they work overtime this week, they will meet the deadline. However, if the weather worsens, the site visit will have to be rescheduled. A good engineer always plans for contingencies: what would happen if the primary plan fails? Conditional thinking is not pessimism — it is professionalism.";
+        const targetWord = "contingencies";
+
+        let readingSpansArray = [];
+        let currentMode = 'underline';
+        let selectedUnderlineWords = new Set();
+        let selectedCircleWords = new Set();
+        let task1Completed = false, task2Completed = false, task3Completed = false;
+        let task1Checked = false, task2Checked = false, task3Checked = false;
+
+        function updateReadingCompletion() {
+            const completeReadingBtn = document.getElementById('completeReadingBtn');
+            if (completeReadingBtn) {
+                completeReadingBtn.disabled = !(task1Completed && task2Completed && task3Completed);
+            }
+
+            // Update status icons
+            const task1Icon = document.getElementById('task1StatusIcon');
+            const task2Icon = document.getElementById('task2StatusIcon');
+            const task3Icon = document.getElementById('task3StatusIcon');
+            if (task1Icon) task1Icon.innerHTML = task1Completed ? '✅' : '⬜';
+            if (task2Icon) task2Icon.innerHTML = task2Completed ? '✅' : '⬜';
+            if (task3Icon) task3Icon.innerHTML = task3Completed ? '✅' : '⬜';
+        }
+
+        function buildReadingInteractive() {
+            const container = document.getElementById('interactivePassage');
+            if (!container) return;
+            // Split by spaces but keep punctuation attached to words
+            const words = readingText.split(/\s+/);
+            container.innerHTML = '';
+            readingSpansArray = [];
+
+            words.forEach((word, idx) => {
+                // Store the FULL word including punctuation for display
+                const cleanWord = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
+                const span = document.createElement('span');
+                span.className = 'clickable-word';
+                span.textContent = word + ' ';
+                span.setAttribute('data-word', cleanWord);
+                span.setAttribute('data-fullword', word);
+                span.setAttribute('data-index', idx);
+                span.onclick = () => toggleWordSelection(idx);
+                container.appendChild(span);
+                readingSpansArray.push(span);
+            });
+            updateReadingVisuals();
+        }
+
+        function toggleWordSelection(index) {
+            if (currentMode === 'underline') {
+                if (selectedUnderlineWords.has(index)) {
+                    selectedUnderlineWords.delete(index);
+                } else {
+                    selectedUnderlineWords.add(index);
+                }
+                task1Completed = false;
+                task1Checked = false;
+                document.getElementById('task1Feedback').innerHTML = '';
+            } else if (currentMode === 'circle') {
+                if (selectedCircleWords.has(index)) {
+                    selectedCircleWords.delete(index);
+                } else {
+                    // For circle mode, allow only one selection at a time
+                    selectedCircleWords.clear();
+                    selectedCircleWords.add(index);
+                }
+                task3Completed = false;
+                task3Checked = false;
+                document.getElementById('task3Feedback').innerHTML = '';
+            }
+            updateReadingVisuals();
+            updateReadingCompletion();
+        }
+
+        function updateReadingVisuals() {
+            readingSpansArray.forEach((span, idx) => {
+                const wordVal = span.getAttribute('data-word');
+                span.classList.remove('temp-underline', 'underline-correct', 'underline-incorrect', 'temp-circle', 'circle-correct', 'circle-incorrect');
+                span.style.textDecoration = '';
+                span.style.border = '';
+                span.style.backgroundColor = '';
+
+                if (selectedUnderlineWords.has(idx)) {
+                    if (task1Checked) {
+                        if (wordVal === 'if') {
+                            span.classList.add('underline-correct');
+                        } else {
+                            span.classList.add('underline-incorrect');
+                        }
+                    } else {
+                        span.classList.add('temp-underline');
+                    }
+                }
+
+                if (selectedCircleWords.has(idx)) {
+                    if (task3Checked) {
+                        // Check if the word (without punctuation) matches targetWord
+                        if (wordVal === targetWord) {
+                            span.classList.add('circle-correct');
+                        } else {
+                            span.classList.add('circle-incorrect');
+                        }
+                    } else {
+                        span.classList.add('temp-circle');
+                    }
+                }
+            });
+        }
+
+        function checkTask1() {
+            let ifClauseIndexes = [];
+            readingSpansArray.forEach((span, idx) => {
+                if (span.getAttribute('data-word') === 'if') ifClauseIndexes.push(idx);
+            });
+
+            let hasAllIfClauses = ifClauseIndexes.every(idx => selectedUnderlineWords.has(idx));
+            let hasNoExtra = Array.from(selectedUnderlineWords).every(idx => ifClauseIndexes.includes(idx));
+
+            if (hasAllIfClauses && hasNoExtra && selectedUnderlineWords.size === ifClauseIndexes.length) {
+                task1Completed = true;
+                document.getElementById('task1Feedback').innerHTML = '<span style="color: #22c55e;">✅ Correct! You underlined all "if" clauses.</span>';
+            } else {
+                task1Completed = false;
+                let missing = ifClauseIndexes.filter(idx => !selectedUnderlineWords.has(idx)).length;
+                let extra = selectedUnderlineWords.size - ifClauseIndexes.length;
+                if (extra > 0) {
+                    document.getElementById('task1Feedback').innerHTML = `<span style="color: #dc2626;">❌ You have ${extra} extra word(s) underlined. Please only underline the word "if".</span>`;
+                } else {
+                    document.getElementById('task1Feedback').innerHTML = `<span style="color: #dc2626;">❌ You missed ${missing} "if" clause(s). There are 5 "if" words in the passage.</span>`;
+                }
+            }
+            task1Checked = true;
+            updateReadingVisuals();
+            updateReadingCompletion();
+        }
+
+        function checkTask3() {
+            // Find the index of the word "contingencies" (without punctuation)
+            let targetIndex = -1;
+            readingSpansArray.forEach((span, idx) => {
+                const wordVal = span.getAttribute('data-word');
+                if (wordVal === targetWord) targetIndex = idx;
+            });
+
+            if (targetIndex === -1) {
+                document.getElementById('task3Feedback').innerHTML = '<span style="color: #dc2626;">❌ Error: Could not find the word "contingencies" in the passage.</span>';
+                task3Completed = false;
+                task3Checked = true;
+                updateReadingCompletion();
+                return;
+            }
+
+            // Check if the correct word is selected AND only that word is selected
+            const hasCorrectWord = selectedCircleWords.has(targetIndex);
+            const hasNoExtra = selectedCircleWords.size === 1;
+
+            if (hasCorrectWord && hasNoExtra) {
+                task3Completed = true;
+                document.getElementById('task3Feedback').innerHTML = '<span style="color: #22c55e;">✅ Correct! "Contingencies" means backup plans.</span>';
+            } else if (!hasCorrectWord && selectedCircleWords.size > 0) {
+                task3Completed = false;
+                document.getElementById('task3Feedback').innerHTML = '<span style="color: #dc2626;">❌ You circled the wrong word. Please click on "contingencies" only.</span>';
+            } else if (selectedCircleWords.size === 0) {
+                task3Completed = false;
+                document.getElementById('task3Feedback').innerHTML = '<span style="color: #dc2626;">❌ Please click on the word "contingencies" to circle it.</span>';
+            } else if (selectedCircleWords.size > 1) {
+                task3Completed = false;
+                document.getElementById('task3Feedback').innerHTML = '<span style="color: #dc2626;">❌ Please circle ONLY the word "contingencies". Click again to unselect extra words.</span>';
+            }
+            task3Checked = true;
+            updateReadingVisuals();
+            updateReadingCompletion();
+        }
+
+        // Task 2: 3rd Conditional Sentence Check
+        const thirdConditionalInput = document.getElementById('thirdConditionalInput');
+        const checkTask2Btn = document.getElementById('checkTask2Btn');
+        const task2Feedback = document.getElementById('task2Feedback');
+        const task2StatusDiv = document.getElementById('task2Status');
+
+        function checkTask2() {
+            const userSentence = thirdConditionalInput ? thirdConditionalInput.value.trim() : '';
+            const expectedSentence = "If the team had reviewed the structural calculations more carefully, the design flaw would have been identified early.";
+            const normalizedUser = userSentence.toLowerCase().replace(/\s+/g, ' ').replace(/[.,!?]$/, '').trim();
+            const normalizedExpected = expectedSentence.toLowerCase().replace(/\s+/g, ' ').trim();
+
+            const hasIfHad = normalizedUser.includes('if the team had reviewed');
+            const hasWouldHave = normalizedUser.includes('would have been identified');
+
+            if ((hasIfHad && hasWouldHave) || normalizedUser === normalizedExpected) {
+                task2Completed = true;
+                task2Feedback.innerHTML = '<span style="color: #22c55e;">✅ Correct! That is the 3rd Conditional sentence.</span>';
+                task2StatusDiv.innerHTML = '<span style="color: #22c55e;">✓ Task 2 Completed!</span>';
+            } else {
+                task2Completed = false;
+                task2Feedback.innerHTML = '<span style="color: #dc2626;">❌ Incorrect. The 3rd Conditional sentence is: "If the team had reviewed the structural calculations more carefully, the design flaw would have been identified early."</span>';
+                task2StatusDiv.innerHTML = '<span style="color: #dc2626;">✗ Task 2 not yet completed</span>';
+            }
+            updateReadingCompletion();
+        }
+
+        document.getElementById('checkTask1Btn')?.addEventListener('click', checkTask1);
+        document.getElementById('checkTask2Btn')?.addEventListener('click', checkTask2);
+        document.getElementById('checkTask3Btn')?.addEventListener('click', checkTask3);
+
+        document.getElementById('completeReadingBtn')?.addEventListener('click', () => {
+            if (task1Completed && task2Completed && task3Completed) {
+                markActivityComplete('reading', 'chk2');
+            } else {
+                let msg = 'Please complete all reading tasks:\n';
+                if (!task1Completed) msg += '- Underline all "if" clauses and click "Check Task 1"\n';
+                if (!task2Completed) msg += '- Identify the 3rd Conditional sentence and click "Check Task 2"\n';
+                if (!task3Completed) msg += '- Circle the word "contingencies" and click "Check Task 3"\n';
+                alert(msg);
+            }
+        });
+
+        // Mode switching
+        const underlineBtn = document.getElementById('underlineModeBtn');
+        const circleModeBtn = document.getElementById('circleModeBtn');
+
+        function setActiveMode(activeBtn) {
+            [underlineBtn, circleModeBtn].forEach(btn => {
+                if (btn) btn.classList.remove('mode-btn-active');
+            });
+            if (activeBtn) activeBtn.classList.add('mode-btn-active');
+        }
+
+        if (underlineBtn) {
+            underlineBtn.addEventListener('click', () => {
+                currentMode = 'underline';
+                setActiveMode(underlineBtn);
+                updateReadingVisuals();
+            });
+        }
+        if (circleModeBtn) {
+            circleModeBtn.addEventListener('click', () => {
+                currentMode = 'circle';
+                setActiveMode(circleModeBtn);
+                updateReadingVisuals();
+            });
+        }
+
+        // ==================== Grammar Validation ====================
+        let grammarAllCorrect = false;
+
+        function validateConditional(sentence, type) {
+            if (!sentence || sentence.trim() === '') return false;
+
+            const s = sentence.toLowerCase().trim();
+
+            // Basic check: must contain "if"
+            if (!s.includes('if')) return false;
+
+            switch (type) {
+
+                // ================= ZERO =================
+                case 'zero':
+                    // If + present, present (no will/would/had)
+                    if (s.includes('will') || s.includes('would') || s.includes('had')) return false;
+
+                    // Basic structure: if ..., ...
+                    return /if\s+[^,]+,\s*[^,]+/.test(s);
+
+                // ================= FIRST =================
+                case 'first':
+                    // Must contain "will"
+                    if (!s.includes('will')) return false;
+
+                    // ❌ Reject: "if I will..."
+                    if (/if\s+[^,]*will/.test(s)) return false;
+
+                    return /if\s+[^,]+,\s*[^,]*will\s+\w+/.test(s);
+
+                // ================= SECOND =================
+                case 'second':
+                    // Must contain "would"
+                    if (!s.includes('would')) return false;
+
+                    // ❌ Reject if "had" (this becomes 3rd conditional)
+                    if (s.includes('had')) return false;
+
+                    // ❌ Reject: "if I will..."
+                    if (s.includes('will')) return false;
+
+                    // Must be past tense (simple check: "were" OR past verb like "studied")
+                    const hasPast = /\b(were|was|did|had|went|made|studied|worked|built)\b/.test(s);
+
+                    return /if\s+[^,]+,\s*[^,]*would\s+\w+/.test(s) && hasPast;
+
+                // ================= THIRD =================
+                case 'third':
+                    // Must contain BOTH
+                    if (!(s.includes('had') && s.includes('would have'))) return false;
+
+                    // ❌ Reject wrong verb: "had study"
+                    if (/had\s+\b(study|go|eat|make|do)\b/.test(s)) return false;
+
+                    // Must follow structure
+                    return /if\s+[^,]*had\s+\w+ed[^,]*,\s*[^,]*would have\s+\w+ed/.test(s);
+
+                default:
+                    return false;
+            }
+        }
+
+        function checkGrammarAnswers() {
+            const g1 = document.getElementById('grammar1').value.trim();
+            const g2 = document.getElementById('grammar2').value.trim();
+            const g3 = document.getElementById('grammar3').value.trim();
+            const g4 = document.getElementById('grammar4').value.trim();
+            let allValid = true;
+
+            // Zero Conditional
+            if (!g1) {
+                document.getElementById('grammar1Feedback').innerHTML = '⚠️ Please write a Zero Conditional sentence.';
+                document.getElementById('grammar1Feedback').className = 'fix-feedback warning';
+                document.getElementById('grammar1').classList.add('invalid');
+                allValid = false;
+            } else if (validateConditional(g1, 'zero')) {
+                document.getElementById('grammar1Feedback').innerHTML = '✅ Correct Zero Conditional!';
+                document.getElementById('grammar1Feedback').className = 'fix-feedback correct';
+                document.getElementById('grammar1').classList.remove('invalid');
+                document.getElementById('grammar1').classList.add('valid');
+            } else {
+                document.getElementById('grammar1Feedback').innerHTML = '❌ Zero Conditional: If + present, ... present (e.g., If you heat ice, it melts.)';
+                document.getElementById('grammar1Feedback').className = 'fix-feedback incorrect';
+                document.getElementById('grammar1').classList.add('invalid');
+                allValid = false;
+            }
+
+            // 1st Conditional
+            if (!g2) {
+                document.getElementById('grammar2Feedback').innerHTML = '⚠️ Please write a 1st Conditional sentence.';
+                document.getElementById('grammar2Feedback').className = 'fix-feedback warning';
+                document.getElementById('grammar2').classList.add('invalid');
+                allValid = false;
+            } else if (validateConditional(g2, 'first')) {
+                document.getElementById('grammar2Feedback').innerHTML = '✅ Correct 1st Conditional!';
+                document.getElementById('grammar2Feedback').className = 'fix-feedback correct';
+                document.getElementById('grammar2').classList.remove('invalid');
+                document.getElementById('grammar2').classList.add('valid');
+            } else {
+                document.getElementById('grammar2Feedback').innerHTML = '❌ 1st Conditional: If + present, ... will + verb (e.g., If it rains, we will cancel.)';
+                document.getElementById('grammar2Feedback').className = 'fix-feedback incorrect';
+                document.getElementById('grammar2').classList.add('invalid');
+                allValid = false;
+            }
+
+            // 2nd Conditional (must use 'were')
+            if (!g3) {
+                document.getElementById('grammar3Feedback').innerHTML = '⚠️ Please write a 2nd Conditional sentence using "were".';
+                document.getElementById('grammar3Feedback').className = 'fix-feedback warning';
+                document.getElementById('grammar3').classList.add('invalid');
+                allValid = false;
+            } else if (validateConditional(g3, 'second')) {
+                if (g3.toLowerCase().includes('were')) {
+                    document.getElementById('grammar3Feedback').innerHTML = '✅ Correct 2nd Conditional with "were"!';
+                    document.getElementById('grammar3Feedback').className = 'fix-feedback correct';
+                    document.getElementById('grammar3').classList.remove('invalid');
+                    document.getElementById('grammar3').classList.add('valid');
+                } else {
+                    document.getElementById('grammar3Feedback').innerHTML = '⚠️ Good 2nd Conditional, but use "were" for all subjects.';
+                    document.getElementById('grammar3Feedback').className = 'fix-feedback warning';
+                    document.getElementById('grammar3').classList.add('invalid');
+                    allValid = false;
+                }
+            } else {
+                document.getElementById('grammar3Feedback').innerHTML = '❌ 2nd Conditional: If + past, ... would + verb (e.g., If I were rich, I would travel.)';
+                document.getElementById('grammar3Feedback').className = 'fix-feedback incorrect';
+                document.getElementById('grammar3').classList.add('invalid');
+                allValid = false;
+            }
+
+            // 3rd Conditional
+            if (!g4) {
+                document.getElementById('grammar4Feedback').innerHTML = '⚠️ Please write a 3rd Conditional sentence.';
+                document.getElementById('grammar4Feedback').className = 'fix-feedback warning';
+                document.getElementById('grammar4').classList.add('invalid');
+                allValid = false;
+            } else if (validateConditional(g4, 'third')) {
+                document.getElementById('grammar4Feedback').innerHTML = '✅ Correct 3rd Conditional!';
+                document.getElementById('grammar4Feedback').className = 'fix-feedback correct';
+                document.getElementById('grammar4').classList.remove('invalid');
+                document.getElementById('grammar4').classList.add('valid');
+            } else {
+                document.getElementById('grammar4Feedback').innerHTML = '❌ 3rd Conditional: If + had + V3, ... would have + V3 (e.g., If I had studied, I would have passed.)';
+                document.getElementById('grammar4Feedback').className = 'fix-feedback incorrect';
+                document.getElementById('grammar4').classList.add('invalid');
+                allValid = false;
+            }
+
+            grammarAllCorrect = allValid;
+            const grammarFeedback = document.getElementById('grammarFeedback');
+            const grammarCompleteBtn = document.getElementById('completeGrammarBtn');
+            if (grammarAllCorrect) {
+                grammarFeedback.innerHTML = '✅ Perfect! All conditional sentences are correct!';
+                grammarFeedback.className = 'quiz-feedback correct';
+                if (grammarCompleteBtn) grammarCompleteBtn.disabled = false;
+            } else {
+                grammarFeedback.innerHTML = '⚠️ Please correct the sentences marked in red. Review the conditional rules above.';
+                grammarFeedback.className = 'quiz-feedback warning';
+                if (grammarCompleteBtn) grammarCompleteBtn.disabled = true;
+            }
+        }
+
+        function resetGrammarAnswers() {
+            ['grammar1', 'grammar2', 'grammar3', 'grammar4'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.value = '';
+                    input.classList.remove('valid', 'invalid');
+                }
+                const fb = document.getElementById(`${id}Feedback`);
+                if (fb) { fb.innerHTML = ''; fb.className = 'fix-feedback'; }
+            });
+            const grammarFeedback = document.getElementById('grammarFeedback');
+            if (grammarFeedback) { grammarFeedback.innerHTML = ''; grammarFeedback.className = 'quiz-feedback'; }
+            grammarAllCorrect = false;
+            const grammarCompleteBtn = document.getElementById('completeGrammarBtn');
+            if (grammarCompleteBtn) grammarCompleteBtn.disabled = true;
+        }
+
+        document.getElementById('checkGrammarBtn')?.addEventListener('click', checkGrammarAnswers);
+        document.getElementById('resetGrammarBtn')?.addEventListener('click', resetGrammarAnswers);
+
+        document.getElementById('completeGrammarBtn')?.addEventListener('click', () => {
+            if (grammarAllCorrect) {
+                markActivityComplete('grammar', 'chk4');
+            } else {
+                alert('Please correct all grammar answers first. Click "Check Answers" to see feedback.');
+            }
+        });
+
+        // ==================== Initialize ====================
+        document.addEventListener('DOMContentLoaded', function () {
+            buildReadingInteractive();
+            setActiveMode(underlineBtn);
+            updateChecklistProgress();
+            document.getElementById('completeSpeakingBtn').disabled = true;
+            document.getElementById('completeReadingBtn').disabled = true;
+            document.getElementById('completeGrammarBtn').disabled = true;
+            document.getElementById('completeVocabularyBtn').disabled = true;
+            document.getElementById('completeListeningBtn').disabled = true;
+            document.getElementById('dayCompleteBtn')?.addEventListener('click', completeDay);
+        });
+    </script>
+</body>
+
+</html>

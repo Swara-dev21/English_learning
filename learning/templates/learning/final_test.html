@@ -232,6 +232,7 @@
   }
   .alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
   .alert-warning { background: var(--gold-light); border: 1px solid #fde68a; color: #92400e; }
+  .alert-info { background: #e0f2fe; border: 1px solid #bae6fd; color: #075985; }
 
   /* ── QUESTION CARDS ──────────────────────────────── */
   .question-card {
@@ -296,7 +297,7 @@
   }
 
   .question-text {
-    font-size: 0.975rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--ink);
     line-height: 1.55;
@@ -461,7 +462,6 @@
     .exam-hero { padding: 1.75rem 0 1.5rem; }
   }
 </style>
-
 {% endblock %}
 
 {% block content %}
@@ -469,17 +469,17 @@
 <header class="exam-header">
   <div class="header-left">
     <span class="header-badge">{{ level_display }}</span>
-    <span class="header-title">English Certification</span>
+    <span class="header-title">{{ assessment.title }}</span>
   </div>
   <div class="header-right">
     <div class="progress-pill">
       <span class="label-text">Answered</span>
       <span class="count-badge" id="completedCount">0</span>
-      <span style="opacity:0.6">/ 20</span>  <!-- Changed from 25 to 20 -->
+      <span style="opacity:0.6">/ {{ assessment.total_questions }}</span>
     </div>
     <div class="timer-pill" id="timerPill">
       <span>⏱</span>
-      <span id="timerDisplay">30:00</span>
+      <span id="timerDisplay">{{ assessment.time_limit_minutes }}:00</span>
     </div>
   </div>
 </header>
@@ -491,14 +491,15 @@
   <div class="exam-hero">
     <div class="hero-eyebrow">🏆 Final Assessment</div>
     <h1 class="hero-title">{{ level_display }} <span>English</span> Certification</h1>
-    <p class="hero-sub">20 questions · 30 minutes · Passing score: 15/20</p>  <!-- Changed from 25 to 20, and 18/25 to 15/20 -->  </div>
+    <p class="hero-sub">{{ assessment.total_questions }} questions · {{ assessment.time_limit_minutes }} minutes · Passing score: {{ assessment.passing_score }}/{{ assessment.total_questions }}</p>
+  </div>
 
   <!-- Progress Bar -->
   <div class="progress-bar-wrap">
     <div class="progress-bar-track">
       <div class="progress-bar-fill" id="progressFill"></div>
     </div>
-    <div class="progress-label" id="progressLabel">0 of 20</div>
+    <div class="progress-label" id="progressLabel">0 of {{ assessment.total_questions }}</div>
   </div>
 
   <!-- Alerts -->
@@ -508,8 +509,16 @@
         <div class="alert alert-error">⚠ {{ message }}</div>
       {% elif message.tags == 'warning' %}
         <div class="alert alert-warning">ℹ {{ message }}</div>
+      {% elif message.tags == 'info' %}
+        <div class="alert alert-info">ℹ {{ message }}</div>
       {% endif %}
     {% endfor %}
+  {% endif %}
+
+  {% if testing_mode %}
+  <div class="alert alert-warning">
+    🔧 TESTING MODE: Assessment can be taken without completing all days.
+  </div>
   {% endif %}
 
   <!-- Test Form -->
@@ -532,158 +541,184 @@
 </div>
 
 <script>
-const questionsData = [
-    { text: "If a leader wants to make a process happen faster, they should _________ it.", options: ["Circumvent", "Expedite", "Ameliorate", "Scrutinize"], correct: "b" },
-    { text: "Which word describes a person who is tireless and never gives up?", options: ["Ephemeral", "Indefatigable", "Pragmatic", "Tangible"], correct: "b" },
-    // REMOVED: Q3 - Unambiguous (too obvious)
-    { text: "To 'Manifest' a result means to:", options: ["Hide it", "Display or show it through actions", "Delay it", "Forget it"], correct: "b" },
-    { text: "Which word is the 'Smart' version of 'Highest Level' or 'Extremely Skilled'?", options: ["Consummate", "Cohesive", "Resilient", "Feasible"], correct: "a" },
-    { text: "What is the global professional alternative for 'Prepone'?", options: ["Before-pone", "Advance or bring forward", "Back-date", "Early-fix"], correct: "b" },
-    // REMOVED: Q7 - "I am Rahul..." (basic grammar)
-    // REMOVED: Q8 - "I graduated in 2020." (common knowledge)
-    { text: "Choose the correct preposition: 'The manager is angry ______ me.'", options: ["On", "With", "At", "For"], correct: "b" },
-    { text: "Instead of saying 'Do one thing,' what should you say to a global client?", options: ["Take one thing...", "I suggest that...", "One thing do...", "Do this..."], correct: "b" },
-    { text: "Which sentence is more diplomatic and professional?", options: ["You didn't send the report.", "The report has not been received yet."], correct: "b" },
-    { text: "Which word is used for 'Signposting' to show a result or consequence?", options: ["Initially", "Furthermore", "Consequently", "Additionally"], correct: "c" },
-    { text: "Which sentence uses the 'Power of Passive' correctly for diplomacy?", options: ["You made a mistake.", "A mistake was made."], correct: "b" },
-    // REMOVED: Q14 - Ameliorate = make better (straight vocabulary)
-    { text: "If a solution is 'Feasible,' it means it is:", options: ["Impossible", "Possible to do easily or conveniently", "Very expensive", "Very loud"], correct: "b" },
-    { text: "'Initially, we analysed the data. Furthermore, we found the bug.' What does 'Furthermore' indicate?", options: ["A contradiction", "Adding more information", "The end of the story", "A question"], correct: "b" },
-    { text: "A 'Cohesive' team is one that:", options: ["Fights often", "Works well together as a whole", "Works in different buildings", "Has no leader"], correct: "b" },
-    { text: "'The impact of the training was profound.' What does 'Profound' mean?", options: ["Very small", "Very deep or significant", "Very funny", "Very loud"], correct: "b" },
-    { text: "When you use 'Signposting,' you are helping the listener to:", options: ["Find a physical location", "Follow the structure of your speech", "Improve their spelling", "Speak faster"], correct: "b" },
-    { text: "An 'Enduring' legacy is one that:", options: ["Ends quickly", "Lasts for a long time", "Is forgotten", "Is very cheap"], correct: "b" },
-    { text: "'I advocate for a better environment.' What does 'Advocate' mean?", options: ["To oppose", "To publicly support or recommend", "To ignore", "To destroy"], correct: "b" },
-    // REMOVED: Q22 - Lucid = clear (very common word)
-    { text: "'We must mitigate the risks.' Mitigate means:", options: ["To increase", "To make less severe or serious", "To celebrate", "To ignore"], correct: "b" },
-    { text: "'She has an autonomous role.' Autonomous means:", options: ["Working under heavy supervision", "Having the freedom to act independently", "Working in a factory", "Having no job"], correct: "b" },
-    { text: "'Confidence is not \"they will like me,\" it is...' (Finish the Power Line)", options: ["...they must like me.", "...I will be fine if they don't.", "...I am the best.", "...everyone is watching me."], correct: "b" }
-];
+// ==================== DYNAMIC VALUES FROM BACKEND ====================
+const questionsData = {{ questions_json|safe }};
+const timeLimitMinutes = {{ assessment.time_limit_minutes }};
+const totalQuestions = {{ assessment.total_questions }};  // ✅ DYNAMIC - 20 for Beginner, 25 for Intermediate
+const passingScore = {{ assessment.passing_score }};      // ✅ DYNAMIC - 15 for Beginner, 20 for Intermediate
+const levelName = "{{ level }}";
 
-  function shuffleArray(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+const LETTERS = ['A', 'B', 'C', 'D'];
+let userAnswers = {};
+let timeLeft = timeLimitMinutes * 60;
+let timerInterval;
+let isSubmitted = false;
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function buildQuestions() {
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+  
+  questionsData.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `qcard-${i}`;
+
+    const optionsHtml = q.options.map((opt, oi) => {
+      const letter = opt.letter;
+      return `
+        <li class="option-item" id="opt-${i}-${letter}" onclick="selectOption(${i},'${letter}')">
+          <input type="radio" name="q_${q.id}" value="${letter}" id="radio-${i}-${letter}">
+          <div class="option-dot"></div>
+          <span class="option-letter">${LETTERS[oi]}</span>
+          <span class="option-text">${escapeHtml(opt.text)}</span>
+        </li>`;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="question-meta">
+        <div class="q-num">${i + 1}</div>
+        <span class="q-status" id="qstatus-${i}">Unanswered</span>
+      </div>
+      <p class="question-text">${escapeHtml(q.text)}</p>
+      <ul class="options-list">${optionsHtml}</ul>`;
+
+    container.appendChild(card);
+  });
+}
+
+function selectOption(qi, letter) {
+  if (isSubmitted) return;
+  userAnswers[qi] = letter;
+
+  const card = document.getElementById(`qcard-${qi}`);
+  card.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
+  const selectedOption = document.getElementById(`opt-${qi}-${letter}`);
+  selectedOption.classList.add('selected');
+  
+  // Check the radio button
+  const radio = document.getElementById(`radio-${qi}-${letter}`);
+  if (radio) radio.checked = true;
+
+  card.classList.add('answered');
+  document.getElementById(`qstatus-${qi}`).textContent = 'Answered ✓';
+
+  updateProgress();
+  saveAnswersToLocal();
+}
+
+function updateProgress() {
+  const count = Object.keys(userAnswers).length;
+  const total = totalQuestions;
+  document.getElementById('completedCount').textContent = count;
+  const percent = (count / total) * 100;
+  document.getElementById('progressFill').style.width = `${percent}%`;
+  document.getElementById('progressLabel').textContent = `${count} of ${total}`;
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    if (isSubmitted) return;
+    if (timeLeft <= 0) { 
+      clearInterval(timerInterval); 
+      autoSubmit(); 
+      return; 
     }
-    return arr;
-  }
+    timeLeft--;
+    const m = Math.floor(timeLeft / 60);
+    const s = timeLeft % 60;
+    document.getElementById('timerDisplay').textContent = 
+      `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 
-  const shuffled = shuffleArray([...questionsData]);
-  const LETTERS = ['A', 'B', 'C', 'D'];
-  let userAnswers = {};
-  let timeLeft = 30 * 60;
-  let timerInterval;
-  let isSubmitted = false;
-  const levelName = "{{ level }}";
+    const pill = document.getElementById('timerPill');
+    pill.classList.remove('warning', 'critical');
+    if (timeLeft <= 60) pill.classList.add('critical');
+    else if (timeLeft <= 300) pill.classList.add('warning');
+  }, 1000);
+}
 
-  function buildQuestions() {
-    const container = document.getElementById('questionsContainer');
-    container.innerHTML = '';
-    shuffled.forEach((q, i) => {
-      const card = document.createElement('div');
-      card.className = 'question-card';
-      card.id = `qcard-${i}`;
+function autoSubmit() {
+  if (isSubmitted) return;
+  alert("⏰ Time's up! Submitting your assessment...");
+  submitAssessment();
+}
 
-      const optionsHtml = q.options.map((opt, oi) => {
-        const letter = String.fromCharCode(97 + oi);
-        return `
-          <li class="option-item" id="opt-${i}-${letter}" onclick="selectOption(${i},'${letter}')">
-            <input type="radio" name="q${i}" value="${letter}">
-            <div class="option-dot"></div>
-            <span class="option-letter">${LETTERS[oi]}</span>
-            <span class="option-text">${opt}</span>
-          </li>`;
-      }).join('');
+function submitAssessment() {
+  if (isSubmitted) return;
+  isSubmitted = true;
+  
+  // Calculate score
+  let score = 0;
+  questionsData.forEach((q, i) => {
+    if (userAnswers[i] === q.correct) score++;
+  });
+  
+  // Store results and redirect
+  localStorage.setItem('certificationScore', score);
+  localStorage.setItem('totalQuestions', totalQuestions);
+  localStorage.setItem('passingScore', passingScore);
+  
+  // Submit the form
+  document.getElementById('mcqTestForm').submit();
+}
 
-      card.innerHTML = `
-        <div class="question-meta">
-          <div class="q-num">${i + 1}</div>
-          <span class="q-status" id="qstatus-${i}">Unanswered</span>
-        </div>
-        <p class="question-text">${q.text}</p>
-        <ul class="options-list">${optionsHtml}</ul>`;
+function saveAnswersToLocal() {
+  localStorage.setItem(`assessment_${levelName}_answers`, JSON.stringify(userAnswers));
+}
 
-      container.appendChild(card);
+function loadSavedAnswers() {
+  const saved = localStorage.getItem(`assessment_${levelName}_answers`);
+  if (saved) {
+    const answers = JSON.parse(saved);
+    Object.keys(answers).forEach(qi => {
+      if (answers[qi]) selectOption(parseInt(qi), answers[qi]);
     });
   }
+}
 
-  function selectOption(qi, letter) {
-    if (isSubmitted) return;
-    userAnswers[qi] = letter;
+// Auto-save answers periodically
+setInterval(saveAnswersToLocal, 30000);
 
-    const card = document.getElementById(`qcard-${qi}`);
-    card.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
-    document.getElementById(`opt-${qi}-${letter}`).classList.add('selected');
-
-    card.classList.add('answered');
-    document.getElementById(`qstatus-${qi}`).textContent = 'Answered ✓';
-
-    updateProgress();
-  }
-
-  function updateProgress() {
-    const count = Object.keys(userAnswers).length;
-    const total = shuffled.length;
-    document.getElementById('completedCount').textContent = count;
-    document.getElementById('progressFill').style.width = `${(count / total) * 100}%`;
-    document.getElementById('progressLabel').textContent = `${count} of ${total}`;
-  }
-
-  function startTimer() {
-    timerInterval = setInterval(() => {
-      if (isSubmitted) return;
-      if (timeLeft <= 0) { clearInterval(timerInterval); autoSubmit(); return; }
-      timeLeft--;
-      const m = Math.floor(timeLeft / 60);
-      const s = timeLeft % 60;
-      document.getElementById('timerDisplay').textContent =
-        `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-
-      const pill = document.getElementById('timerPill');
-      pill.classList.remove('warning', 'critical');
-      if (timeLeft <= 60) pill.classList.add('critical');
-      else if (timeLeft <= 300) pill.classList.add('warning');
-    }, 1000);
-  }
-
-  function autoSubmit() {
-    if (isSubmitted) return;
-    alert("⏰ Time's up! Submitting your assessment...");
-    submit();
-  }
-
-  function submit() {
-    if (isSubmitted) return;
-    isSubmitted = true;
-    let score = 0;
-    shuffled.forEach((q, i) => { if (userAnswers[i] === q.correct) score++; });
-    localStorage.setItem('certificationScore', score);
-    localStorage.setItem('totalQuestions', shuffled.length);
-    localStorage.setItem('passingScore', 18);
-    window.location.href = `/learning/level/${levelName}/result/?score=${score}`;
-  }
-
-  document.getElementById('submitBtn').addEventListener('click', function () {
-    const answered = Object.keys(userAnswers).length;
-    const total = shuffled.length;
-    if (answered < total) {
-      const rem = total - answered;
-      if (!confirm(`⚠️ You still have ${rem} unanswered question${rem > 1 ? 's' : ''}. Submit anyway?`)) return;
+document.getElementById('submitBtn').addEventListener('click', function () {
+  const answered = Object.keys(userAnswers).length;
+  const total = totalQuestions;
+  if (answered < total) {
+    const rem = total - answered;
+    if (!confirm(`⚠️ You still have ${rem} unanswered question${rem > 1 ? 's' : ''}. Submit anyway?`)) {
+      return;
     }
-    this.disabled = true;
-    this.innerHTML = '<span>⏳</span><span>Submitting...</span>';
-    submit();
-  });
+  }
+  this.disabled = true;
+  this.innerHTML = '<span>⏳</span><span>Submitting...</span>';
+  submitAssessment();
+});
 
-  document.addEventListener('DOMContentLoaded', () => {
-    buildQuestions();
-    startTimer();
-    window.addEventListener('beforeunload', (e) => {
-      if (!isSubmitted && Object.keys(userAnswers).length > 0) {
-        e.preventDefault();
-        e.returnValue = 'You have unsaved answers. Leave anyway?';
-      }
-    });
+document.addEventListener('DOMContentLoaded', () => {
+  buildQuestions();
+  startTimer();
+  loadSavedAnswers();
+  
+  window.addEventListener('beforeunload', (e) => {
+    if (!isSubmitted && Object.keys(userAnswers).length > 0) {
+      saveAnswersToLocal();
+      e.preventDefault();
+      e.returnValue = 'You have unsaved answers. Leave anyway?';
+    }
   });
+});
+
+// Debug log to verify values
+console.log('Assessment Configuration:', {
+  level: levelName,
+  totalQuestions: totalQuestions,
+  passingScore: passingScore,
+  timeLimitMinutes: timeLimitMinutes,
+  questionsCount: questionsData.length
+});
 </script>
 {% endblock %}
