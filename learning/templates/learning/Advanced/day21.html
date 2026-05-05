@@ -1,0 +1,1829 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 21: Advanced Speaking — Impromptu Delivery | English for Engineers - Advanced</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'learning/css/advance.css' %}">
+    <style>
+        .impromptu-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .position-badge { background: #d1fae5; color: #065f46; }
+        .point-badge { background: #e0e7ff; color: #3730a3; }
+        .conclusion-badge { background: #f3e8ff; color: #6d28d9; }
+        .topic-card {
+            background: linear-gradient(135deg, #f5f3ed 0%, #f0efec 100%);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1rem 0; 
+            text-align: center;
+        }
+        .speaking-feedback {
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin: 0.5rem 0;
+        }
+        .speaking-feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #22c55e;
+        }
+        .speaking-feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #dc2626;
+        }
+        .speaking-feedback.processing {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+        .filler-examples {
+            background: #fef9e3;
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lesson-container">
+        <div class="lesson-hero">
+            <div class="hero-content">
+                <div class="day-badge">
+                    <span class="advanced-badge">Advanced Level</span> Day 21 • Week 4 • Advanced
+                </div>
+                <h1 class="hero-title">🎙️ ADVANCED SPEAKING — IMPROMPTU DELIVERY</h1>
+                <div class="power-line">💡 "The ability to think on your feet is the rarest professional skill. Develop it deliberately."</div>
+            </div>
+        </div>
+
+        <!-- TIP OF THE DAY BANNER -->
+        <div class="tip-of-day-banner">
+            <div class="tip-icon">💡</div>
+            <div class="tip-content">
+                <h3>TIP OF THE DAY</h3>
+                <p>The secret to great impromptu speaking is having <strong>pre-loaded structures, not pre-loaded content</strong>. If you know the PREP framework, the Three-Point Rule, and the Problem-Solution-Benefit frame, you can speak fluently on any topic — because the structure does the heavy lifting.</p>
+            </div>
+        </div>
+
+        <div class="activities-grid">
+
+            <!-- 1. LISTENING ACTIVITY -->
+            <div class="activity-card" id="listening-card">
+                <div class="card-header listening">
+                    <h2>🎧 1. Listening Activity · Impromptu Structure</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Focus</span></div>
+                        </div>
+                        <div class="task-content">Impromptu Structure — noticing how skilled speakers organise unrehearsed responses.</div>
+                    </div>
+
+                    <audio id="listeningAudio" controls style="width: 100%; margin: 0.5rem 0;">
+                        <source src="{% static 'learning/audio/Advanced/day21.mp3' %}" type="audio/mpeg">
+                    </audio>
+
+                    <div id="listeningTextSection" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Listening Text</span></div>
+                            </div>
+                            <div class="task-content" style="font-style: italic; background: #fef9e3; line-height: 1.8;">
+                                "You ask whether automation will eliminate engineering jobs. I would say no — and here is why. First, automation handles repetitive tasks; engineers create and maintain automation systems. Second, India's infrastructure deficit means engineering demand will grow for decades regardless. And third — perhaps most importantly — the engineers who understand both the technical and human dimensions of automation will be indispensable. So the future is not fewer engineers. It is differently skilled engineers."
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="postAudioListeningContent" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Task: Map the Structure</span></div>
+                            </div>
+                            <div class="task-content">
+                                Identify: Opening Position, Point 1, Point 2, Point 3, Conclusion.
+                            </div>
+                        </div>
+
+                        <!-- Opening Position -->
+                        <div class="argument-section">
+                            <label style="font-weight: 700;">📌 OPENING POSITION</label>
+                            <input type="text" id="openingPosition" class="grammar-input" placeholder="What is the speaker's initial position?" style="width: 100%; margin-top: 0.5rem;">
+                            <div id="openingPositionFeedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <!-- Point 1 -->
+                        <div class="argument-section">
+                            <label style="font-weight: 700;">📌 POINT 1</label>
+                            <input type="text" id="point1" class="grammar-input" placeholder="First reason/evidence..." style="width: 100%; margin-top: 0.5rem;">
+                            <div id="point1Feedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <!-- Point 2 -->
+                        <div class="argument-section">
+                            <label style="font-weight: 700;">📌 POINT 2</label>
+                            <input type="text" id="point2" class="grammar-input" placeholder="Second reason/evidence..." style="width: 100%; margin-top: 0.5rem;">
+                            <div id="point2Feedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <!-- Point 3 -->
+                        <div class="argument-section">
+                            <label style="font-weight: 700;">📌 POINT 3</label>
+                            <input type="text" id="point3" class="grammar-input" placeholder="Third reason/evidence..." style="width: 100%; margin-top: 0.5rem;">
+                            <div id="point3Feedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <!-- Conclusion -->
+                        <div class="argument-section">
+                            <label style="font-weight: 700;">📌 CONCLUSION</label>
+                            <input type="text" id="conclusion" class="grammar-input" placeholder="How does the speaker conclude?" style="width: 100%; margin-top: 0.5rem;">
+                            <div id="conclusionFeedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <button class="btn-outline" id="checkListeningTaskBtn" style="background: #8b5cf6; color: white;">✓ Check My Structure Mapping</button>
+                        <div id="listeningAttemptCounter" class="attempt-counter" style="display: none;">📊 Attempts remaining: <span>3</span></div>
+                        <div id="listeningOverallFeedback" style="margin-top: 1rem;"></div>
+
+                        <!-- Quiz Section -->
+                        <div class="quiz-section" style="margin-top: 1rem;">
+                            <p><strong>🧠 Quick Listening Check</strong></p><br>
+                            <div>
+                                <p><strong>1. Does the speaker have a clear position from the start?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q1" value="yes"> Yes</label>
+                                <label class="quiz-option"><input type="radio" name="q1" value="no"> No, they are unsure</label>
+                            </div>
+                            <div>
+                                <p><strong>2. What transition signals the most important point?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q2" value="first"> 'First'</label>
+                                <label class="quiz-option"><input type="radio" name="q2" value="third"> 'And third — perhaps most importantly'</label>
+                            </div>
+                            <div id="listeningQuizFeedback" class="quiz-feedback" style="display: none;"></div>
+                            <button class="btn-outline" id="checkListeningWorkBtn" style="margin-top: 0.5rem;">✓ Check Answers</button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeListeningBtn" data-checklist="chk1" disabled>✓ Mark Listening as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SPEAKING ACTIVITY - Impromptu Challenge (UPDATED) -->
+<div class="activity-card" id="speaking-card">
+    <div class="card-header speaking">
+        <h2>🗣️ 2. Speaking Activity · The Impromptu Challenge</h2>
+    </div>
+    <div class="card-body">
+        <div class="task-box">
+            <div class="task-header">
+                <div class="title"><span>🎯</span><span>Task</span></div>
+            </div>
+            <div class="task-content">
+                Choose a topic and speak for <strong>90 seconds</strong> without preparation notes.
+            </div>
+        </div>
+
+        <div class="topic-card">
+            <strong>📋 Topic Options:</strong><br>
+            <span class="bridge-part">"The most important skill an engineer needs in 2025"</span>
+            <span class="bridge-part">"Why communication matters more than technology"</span>
+            <span class="bridge-part">"One engineering problem India needs to solve this decade"</span>
+        </div>
+
+        <div class="speaking-sentences-list">
+            <div class="speaking-sentence-item">
+                <div class="sentence-number-badge">Structure</div>
+                <div class="sentence-text-content">
+                    <span class="position-badge impromptu-badge">Position</span> → 
+                    <span class="point-badge impromptu-badge">Point 1 (First...)</span> → 
+                    <span class="point-badge impromptu-badge">Point 2 (Additionally...)</span> → 
+                    <span class="point-badge impromptu-badge">Point 3 (Most importantly...)</span> → 
+                    <span class="conclusion-badge impromptu-badge">Conclusion (Therefore...)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Selected Topic -->
+        <div class="word-pair-group">
+            <label style="font-weight: 700;">📌 Select your topic:</label>
+            <select id="selectedTopic" class="grammar-input" style="width: 100%; margin-top: 0.5rem;">
+                <option value="">-- Select a topic --</option>
+                <option value="skill">The most important skill an engineer needs in 2025</option>
+                <option value="communication">Why communication matters more than technology</option>
+                <option value="problem">One engineering problem India needs to solve this decade</option>
+            </select>
+        </div>
+
+        <!-- Speech to Text Section -->
+        <div class="word-pair-group">
+            <label style="font-weight: 700;">🎤 Click the button below and speak your impromptu response (90 seconds):</label>
+            <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+                <button id="startSpeechBtn" class="speaking-record-btn" style="background: #22c55e;">🎤 Start Speaking</button>
+                <button id="stopSpeechBtn" class="speaking-stop-btn" style="display: none;">⏹️ Stop Speaking</button>
+            </div>
+            <div id="speechTimerDisplay" class="timer-display" style="display: none; margin: 0.5rem 0;">⏱️ Speaking: <span id="speechTimer">00:00</span></div>
+            <textarea id="speechTranscript" class="writing-textarea" rows="8" placeholder="Your speech will appear here after you click 'Stop Speaking'..." readonly style="background: #f8fafc;"></textarea>
+            <div id="speechFeedback" class="speaking-feedback" style="display: none;"></div>
+        </div>
+
+        <!-- Self Evaluation Questions -->
+        <div class="word-pair-group">
+            <label style="font-weight: 700;">📝 Self Evaluation (After recording):</label>
+            <div style="margin: 0.5rem 0;">
+                <label><strong>1. Was your position clear from the start?</strong></label><br>
+                <label class="quiz-option"><input type="radio" name="selfQ1" value="yes"> Yes</label>
+                <label class="quiz-option"><input type="radio" name="selfQ1" value="no"> No</label>
+                <label class="quiz-option"><input type="radio" name="selfQ1" value="somewhat"> Somewhat</label>
+            </div>
+            <div style="margin: 0.5rem 0;">
+                <label><strong>2. Did you use signposting (First, Additionally, Most importantly)?</strong></label><br>
+                <label class="quiz-option"><input type="radio" name="selfQ2" value="yes"> Yes</label>
+                <label class="quiz-option"><input type="radio" name="selfQ2" value="no"> No</label>
+                <label class="quiz-option"><input type="radio" name="selfQ2" value="some"> Some</label>
+            </div>
+            <div style="margin: 0.5rem 0;">
+                <label><strong>3. Was your conclusion strong?</strong></label><br>
+                <label class="quiz-option"><input type="radio" name="selfQ3" value="yes"> Yes</label>
+                <label class="quiz-option"><input type="radio" name="selfQ3" value="no"> No</label>
+                <label class="quiz-option"><input type="radio" name="selfQ3" value="ok"> Okay</label>
+            </div>
+        </div>
+
+        <div id="speakingAnswerFeedback" class="writing-feedback" style="display: none;"></div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+            <button class="btn-outline" id="checkSpeakingAnswersBtn" style="background: #8b5cf6; color: white;">✓ Evaluate My Speech</button>
+            <button class="btn-outline" id="resetSpeakingAnswersBtn">⟳ Reset</button>
+        </div>
+
+        <div class="speaking-complete-wrapper" style="margin-top: 1rem;">
+            <button class="complete-activity-btn" id="completeSpeakingBtn" data-checklist="chk2" disabled>✓ Mark Speaking as Complete</button>
+        </div>
+    </div>
+</div>
+
+            <!-- 3. READING ACTIVITY WITH STRICT VALIDATION -->
+            <div class="activity-card" id="reading-card">
+                <div class="card-header reading">
+                    <h2>📖 3. Reading Activity · Structured Spontaneity</h2>
+                </div>
+                <div class="card-body">
+                    <div class="reading-passage" style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                        <p><strong>Reading Passage:</strong></p>
+                        <p style="line-height: 1.8;">Impromptu speaking is a practised skill, not an innate talent. Research at Toastmasters International shows that professionals who practise structured impromptu speaking for 15 minutes per day for 90 days become significantly more confident and coherent in unplanned speaking situations. The key is deliberate practice: not just speaking spontaneously, but practising <strong>structured spontaneity</strong> — knowing your frameworks so well that you apply them automatically. The mind that has a structure to reach for when under pressure never goes blank. Silence in impromptu speaking is not failure — it is a thinking pause. The most confident speakers in the world pause deliberately before major points. They are not struggling; they are demonstrating that their ideas are worth waiting for.</p>
+                    </div>
+
+                    <!-- Q1: Structured spontaneity -->
+                    <div class="grammar-input-group" style="margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; background: white;">
+                        <label style="font-weight: 700;">1. What does the author mean by 'structured spontaneity'?</label>
+                        <textarea id="readingQ1" class="writing-textarea" rows="3" placeholder="Write your answer here..."></textarea>
+                        <div id="readingQ1Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Q2: Silence is not failure -->
+                    <div class="grammar-input-group" style="margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; background: white;">
+                        <label style="font-weight: 700;">2. Why does the author say silence is not failure in impromptu speaking?</label>
+                        <textarea id="readingQ2" class="writing-textarea" rows="3" placeholder="Write your answer here..."></textarea>
+                        <div id="readingQ2Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Q3: Self-evaluation after speaking -->
+                    <div class="grammar-input-group" style="margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; background: white;">
+                        <label style="font-weight: 700;">3. After you complete the speaking activity, come back here and answer: Did you meet all 3 criteria? (Position clear? Signposting used? Strong conclusion?)</label>
+                        <textarea id="readingQ3" class="writing-textarea" rows="2" placeholder="Write your self-evaluation here..."></textarea>
+                        <div id="readingQ3Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+                        <button class="btn-outline" id="checkReadingBtn">✓ Check Answers</button>
+                        <button class="btn-outline" id="resetReadingBtn">⟳ Reset</button>
+                    </div>
+
+                    <div id="readingOverallFeedback" class="quiz-feedback" style="display: none;"></div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeReadingBtn" data-checklist="chk3" disabled>✓ Mark Reading as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. WRITING ACTIVITY - Topic Card -->
+            <div class="activity-card" id="writing-card">
+                <div class="card-header vocabulary">
+                    <h2>✍️ 4. Writing Activity · Topic Card & Self-Evaluation</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>📝</span><span>Task</span></div>
+                        </div>
+                        <div class="task-content">
+                            Write a <strong>3-point outline</strong> for a topic card, then deliver a 90-second speech.
+                        </div>
+                    </div>
+
+                    <div class="writing-tip" style="background: #e0f2fe; border-radius: 12px; padding: 0.75rem; margin: 1rem 0;">
+                        <strong>💡 Writing Tip</strong>
+                        <p>The difference between a good impromptu response and an excellent one is the closing sentence. 'So that is what I think' is weak. 'Therefore, the evidence points to one clear conclusion: [restate your position in a new way]' is memorable.</p>
+                    </div>
+
+                    <!-- Topic Card -->
+                    <div class="word-pair-group">
+                        <label style="font-weight: 700;">📋 Topic Card (Choose your own technical topic):</label>
+                        <input type="text" id="topicCard" class="grammar-input" placeholder="Write your topic here..." style="width: 100%; margin-top: 0.5rem;">
+                        <div id="topicCardFeedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- 3-Point Outline -->
+                    <div class="word-pair-group">
+                        <label style="font-weight: 700;">📌 Point 1:</label>
+                        <input type="text" id="outline1" class="grammar-input" placeholder="First main point..." style="width: 100%; margin-top: 0.5rem;">
+                        <div id="outline1Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                        
+                        <label style="font-weight: 700; margin-top: 1rem;">📌 Point 2:</label>
+                        <input type="text" id="outline2" class="grammar-input" placeholder="Second main point..." style="width: 100%; margin-top: 0.5rem;">
+                        <div id="outline2Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                        
+                        <label style="font-weight: 700; margin-top: 1rem;">📌 Point 3:</label>
+                        <input type="text" id="outline3" class="grammar-input" placeholder="Third main point..." style="width: 100%; margin-top: 0.5rem;">
+                        <div id="outline3Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- 50-word Self-evaluation -->
+                    <div class="word-pair-group">
+                        <label style="font-weight: 700;">📝 Self-Evaluation (50 words minimum):</label>
+                        <textarea id="writingSelfEval" class="writing-textarea" rows="4" placeholder="Evaluate your speech performance: Was your position clear? Did you use signposting? Was your conclusion strong? What would you improve?"></textarea>
+                        <div id="writingSelfEvalFeedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                        <div id="selfEvalWordCount" style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem; text-align: right;"></div>
+                    </div>
+
+                    <div id="writingFeedback" class="writing-feedback" style="display: none;"></div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button class="btn-outline" id="checkWritingBtn" style="background: #8b5cf6; color: white;">✓ Submit Activity</button>
+                        <button class="btn-outline" id="resetWritingBtn">⟳ Reset</button>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeWritingBtn" data-checklist="chk4" disabled>✓ Mark Writing as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. VOCABULARY TABLE -->
+            <div class="activity-card" id="vocabulary-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 5. Vocabulary of the Day</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr><th>🔊</th><th>✅</th><th>Word</th><th>Pronunciation</th><th>Meaning</th><th>Synonym</th><th>Antonym</th></tr></thead>
+                            <tbody>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Extemporaneous" data-checkid="check-extemporaneous">🔊</button></span><td class="check-cell" id="check-extemporaneous">⬜</span><td class="word-cell"><strong>Extemporaneous</strong></span><td><code>/ɪkˌstem.pəˈreɪ.ni.əs/</code></span><td>Spoken without preparation</span><td>Unrehearsed</span><td>Scripted</span></tr>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Coherent" data-checkid="check-coherent">🔊</button></span><td class="check-cell" id="check-coherent">⬜</span><td class="word-cell"><strong>Coherent</strong></span><td><code>/kəʊˈhɪər.ənt/</code></span><td>Logical and clearly expressed</span><td>Logical</span><td>Incoherent</span></tr>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Spontaneous" data-checkid="check-spontaneous">🔊</button></span><td class="check-cell" id="check-spontaneous">⬜</span><td class="word-cell"><strong>Spontaneous</strong></span><td><code>/spɒnˈteɪ.ni.əs/</code></span><td>Performed without planning</span><td>Impulsive</span><td>Deliberate</span></tr>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Cogent" data-checkid="check-cogent">🔊</button></span><td class="check-cell" id="check-cogent">⬜</span><td class="word-cell"><strong>Cogent</strong></span><td><code>/ˈkəʊ.dʒənt/</code></span><td>Clear, logical, and convincing</span><td>Persuasive</span><td>Unconvincing</span></tr>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Fluent" data-checkid="check-fluent">🔊</button></span><td class="check-cell" id="check-fluent">⬜</span><td class="word-cell"><strong>Fluent</strong></span><td><code>/ˈfluː.ənt/</code></span><td>Able to express oneself naturally</span><td>Articulate</span><td>Hesitant</span></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="filler-examples">
+                        <strong>🧠 Grammar Hack: Remove Filler Words</strong>
+                        <p>❌ "The, um, the system, basically, you know, failed."</p>
+                        <p>✅ "The system failed — [pause] — specifically in the power regulation module."</p>
+                        <p><strong>Replace 'na'</strong> with: "Does that make sense?" or "Would you agree?"</p>
+                    </div>
+
+                    <div class="idiom-section">
+                        <div><span>💡</span><span>IDIOM: "THINK ON YOUR FEET"</span></div>
+                        <p><strong>Meaning:</strong> Respond quickly and intelligently without preparation</p>
+                        <p><strong>Example:</strong> "The ability to think on your feet in client meetings is what separates good engineers from great communicators."</p>
+                    </div>
+
+                    <div class="power-word-section">
+                        <div><span>🔥</span><span>POWER WORD: EXTEMPORANEOUS (ex-tem-por-AY-nee-us)</span></div>
+                        <p><strong>Meaning:</strong> Spoken without preparation; impromptu</p>
+                        <p><strong>Usage:</strong> "His extemporaneous response to the client's question revealed his deep expertise."</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeVocabularyBtn" data-checklist="chk5" disabled>✓ Mark Vocabulary as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. GRAMMAR HACK - Remove Filler Words (Information Only) -->
+<div class="grammar-section" id="grammar-card">
+    <h3>🧠 6. Grammar Hack: Remove Filler Words</h3>
+    
+    <div class="grammar-info-only" style="background: #f0fdf4; padding: 1rem; border-radius: 12px; margin: 1rem 0; border-left: 4px solid #22c55e;">
+        <p><strong>📖 Why to avoid filler words:</strong></p>
+        <p>Filler words like <strong>'um', 'uh', 'like', 'basically', 'you know', 'na'</strong> make you sound less confident and professional. Replace them with deliberate pauses.</p>
+    </div>
+
+    <div class="grammar-rule">
+        <p>❌ <strong>Weak (with fillers):</strong> "The, um, the system, basically, you know, failed."</p>
+        <p>✅ <strong>Strong:</strong> "The system failed — [pause] — specifically in the power regulation module."</p><br>
+        
+        <p>❌ <strong>Weak (Indian English filler):</strong> "It works, na?"</p>
+        <p>✅ <strong>Strong:</strong> "Does that make sense?" or "Would you agree?"</p><br>
+        
+        <p><strong>Exercise:</strong> Record a 60-second monologue. Count your filler words. Try to reduce them by 50% over the next 7 days.</p>
+        <p><strong>Tip:</strong> The most common Indian English filler is 'na' at the end of sentences. Replace 'it works, na?' with 'Does that make sense?' or 'Would you agree?'</p>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+        <button class="complete-activity-btn" id="completeGrammarBtn" data-checklist="chk6">✓ Mark Grammar as Complete</button>
+    </div>
+</div>
+            <!-- CHECKLIST -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 21 COMPLETION CHECKLIST</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chk1" disabled><label> I mapped the structure of the impromptu response (Listening).</label></li>
+                        <li><input type="checkbox" id="chk2" disabled><label> I delivered a 90-second impromptu speech and self-evaluated.</label></li>
+                        <li><input type="checkbox" id="chk3" disabled><label> I explained 'structured spontaneity' from the reading.</label></li>
+                        <li><input type="checkbox" id="chk4" disabled><label> I wrote a topic card, outline, and 50-word self-evaluation.</label></li>
+                        <li><input type="checkbox" id="chk5" disabled><label> I listened to all vocabulary words.</label></li>
+                        <li><input type="checkbox" id="chk6" disabled><label> I fixed the filler words sentence (Grammar).</label></li>
+                    </ul>
+                    <div style="text-align:right;"><span class="badge" id="progressCounter">0/6 completed</span></div>
+                    <div style="display:flex; justify-content:center; margin-top:1rem;">
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>🏆 Complete Day 21</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+
+            function updateProgressCounter() {
+                const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6'];
+                let completed = 0;
+                checkboxes.forEach(id => {
+                    const cb = document.getElementById(id);
+                    if (cb && cb.checked) completed++;
+                });
+                document.getElementById('progressCounter').innerText = `${completed}/6 completed`;
+                const dayBtn = document.getElementById('dayCompleteBtn');
+                if (dayBtn) {
+                    dayBtn.disabled = (completed !== 6);
+                    dayBtn.style.background = (completed === 6) ? '#16a34a' : '#94a3b8';
+                    dayBtn.style.cursor = (completed === 6) ? 'pointer' : 'not-allowed';
+                    dayBtn.style.opacity = (completed === 6) ? '1' : '0.6';
+                }
+            }
+
+            window.markActivityComplete = function (activityId, checklistId) {
+                const checkbox = document.getElementById(checklistId);
+                if (checkbox) checkbox.checked = true;
+                const completeBtn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+                if (completeBtn) {
+                    completeBtn.disabled = true;
+                    completeBtn.textContent = '✓ Completed';
+                }
+                updateProgressCounter();
+            };
+
+// ==================== LISTENING ACTIVITY WITH AI (Impromptu Structure) ====================
+const listeningAudio = document.getElementById('listeningAudio');
+const listeningTextSection = document.getElementById('listeningTextSection');
+const postAudioContent = document.getElementById('postAudioListeningContent');
+let masterAudioFinished = false;
+let listeningTaskCompleted = false;
+let listeningQuizCompleted = false;
+let listeningAttemptCount = 0;
+let maxListeningAttempts = 3;
+
+// Expected keywords for fallback validation (flexible)
+const expectedKeywords = {
+    openingPosition: ['automation', 'not eliminate', 'engineering jobs', 'would say no'],
+    point1: ['automation handles', 'repetitive tasks', 'engineers create', 'maintain automation'],
+    point2: ['infrastructure deficit', 'engineering demand', 'grow for decades', 'regardless'],
+    point3: ['technical and human', 'dimensions of automation', 'indispensable', 'understand both'],
+    conclusion: ['future is not fewer', 'differently skilled', 'not fewer engineers']
+};
+
+if (listeningAudio && listeningTextSection && postAudioContent) {
+    listeningAudio.addEventListener('ended', function () {
+        if (!masterAudioFinished) {
+            masterAudioFinished = true;
+            listeningTextSection.style.display = 'block';
+            postAudioContent.style.display = 'block';
+        }
+    });
+}
+
+function showListeningCorrectAnswer() {
+    document.getElementById('listeningOverallFeedback').innerHTML = `
+        <div class="correct-answer-box">
+            <h4>📚 Correct Answers:</h4>
+            <p><strong>Opening Position:</strong> Automation will not eliminate engineering jobs.</p>
+            <p><strong>Point 1:</strong> Automation handles repetitive tasks; engineers create and maintain automation systems.</p>
+            <p><strong>Point 2:</strong> India's infrastructure deficit means engineering demand will grow for decades regardless.</p>
+            <p><strong>Point 3:</strong> Engineers who understand both the technical and human dimensions of automation will be indispensable.</p>
+            <p><strong>Conclusion:</strong> The future is not fewer engineers. It is differently skilled engineers.</p>
+        </div>`;
+}
+
+// ========== LOCAL VALIDATION FUNCTION (FLEXIBLE FALLBACK) ==========
+function validateListeningLocal(answer, keywords, fieldName) {
+    const trimmed = answer.trim();
+    const lower = trimmed.toLowerCase();
+    
+    if (!trimmed) {
+        return { valid: false, message: `⚠️ Please write the ${fieldName}.` };
+    }
+    
+    // Check for capital letter at start
+    const firstChar = trimmed.charAt(0);
+    if (firstChar !== firstChar.toUpperCase()) {
+        return { valid: false, message: `❌ ${fieldName} must start with a capital letter.` };
+    }
+    
+    // Check for period at the end
+    if (!trimmed.endsWith('.')) {
+        return { valid: false, message: `❌ ${fieldName} must end with a period (.).` };
+    }
+    
+    if (trimmed.length < 10) {
+        return { valid: false, message: `❌ ${fieldName} too short.` };
+    }
+    
+    // Check for keywords (flexible matching)
+    let matchedKeywords = 0;
+    for (let keyword of keywords) {
+        if (lower.includes(keyword.toLowerCase())) {
+            matchedKeywords++;
+        }
+    }
+    
+    const wordCount = trimmed.split(/\s+/).length;
+    
+    // Accept if contains at least 2 key keywords
+    if (matchedKeywords >= 2 && wordCount >= 5) {
+        return { valid: true, message: `✅ Correct ${fieldName}!` };
+    } else if (matchedKeywords >= 1) {
+        return { valid: false, message: `❌ ${fieldName} needs more detail.` };
+    } else {
+        return { valid: false, message: `❌ Incorrect ${fieldName}.` };
+    }
+}
+
+// ========== AI VALIDATION (Primary) ==========
+async function evaluateListening() {
+    const openingPosition = document.getElementById('openingPosition').value;
+    const point1 = document.getElementById('point1').value;
+    const point2 = document.getElementById('point2').value;
+    const point3 = document.getElementById('point3').value;
+    const conclusion = document.getElementById('conclusion').value;
+
+    if (!openingPosition || !point1 || !point2 || !point3 || !conclusion) {
+        document.getElementById('listeningOverallFeedback').innerHTML = '<div class="listening-feedback-item incorrect">⚠️ Fill all 5 fields</div>';
+        return;
+    }
+
+    if (listeningAttemptCount >= maxListeningAttempts) {
+        showListeningCorrectAnswer();
+        listeningTaskCompleted = true;
+        document.getElementById('completeListeningBtn').disabled = false;
+        return;
+    }
+
+    listeningAttemptCount++;
+    document.getElementById('listeningAttemptCounter').style.display = 'block';
+    document.getElementById('listeningAttemptCounter').querySelector('span').innerText = maxListeningAttempts - listeningAttemptCount;
+
+    const checkBtn = document.getElementById('checkListeningTaskBtn');
+    checkBtn.disabled = true;
+    checkBtn.textContent = '⏳ AI Evaluating...';
+    document.getElementById('listeningOverallFeedback').innerHTML = '<div class="ai-feedback processing">🤖 Checking your answers...</div>';
+    document.getElementById('listeningOverallFeedback').style.display = 'block';
+
+    let resultOP, resultP1, resultP2, resultP3, resultCon;
+    let aiSuccess = false;
+
+    try {
+        const listeningData = `Opening Position: ${openingPosition}
+Point 1: ${point1}
+Point 2: ${point2}
+Point 3: ${point3}
+Conclusion: ${conclusion}`;
+
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({
+                text: listeningData,
+                task_type: 'impromptu_structure',
+                day_number: 21,
+                level: 'advanced',
+                system_prompt: `You are evaluating a student's comprehension of an impromptu speech about automation and engineering jobs.
+
+LISTENING SCRIPT:
+"Speaker: You ask whether automation will eliminate engineering jobs. I would say no — and here is why. First, automation handles repetitive tasks; engineers create and maintain automation systems. Second, India's infrastructure deficit means engineering demand will grow for decades regardless. And third — perhaps most importantly — the engineers who understand both the technical and human dimensions of automation will be indispensable. So the future is not fewer engineers. It is differently skilled engineers."
+
+STUDENT'S ANSWERS:
+Opening Position: "${openingPosition}"
+Point 1: "${point1}"
+Point 2: "${point2}"
+Point 3: "${point3}"
+Conclusion: "${conclusion}"
+
+EVALUATE each answer (Be GENEROUS - accept different wording that captures the same meaning):
+
+Opening Position: Should convey that automation will NOT eliminate engineering jobs.
+- ACCEPT: "Automation will not eliminate engineering jobs", "No, automation won't eliminate jobs", "I would say no"
+- REJECT: Anything suggesting automation will eliminate jobs
+
+Point 1: Should convey that automation handles repetitive tasks AND engineers create/maintain systems
+- ACCEPT: "Automation does repetitive work; engineers build and maintain it"
+- REJECT: Missing the role of engineers
+
+Point 2: Should mention India's infrastructure deficit OR demand growing for decades
+- ACCEPT: "India's infrastructure needs will keep engineering demand high", "Demand for engineers will grow"
+- REJECT: Missing the growth/demand aspect
+
+Point 3: Should mention engineers who understand BOTH technical AND human dimensions
+- ACCEPT: "Engineers with both technical and soft skills will be valuable", "Understanding both tech and people aspects"
+- REJECT: Missing the "both" aspect
+
+Conclusion: Should convey not fewer engineers, just differently skilled
+- ACCEPT: "Not fewer engineers, but differently skilled", "Different skills needed, not less engineers"
+- REJECT: Suggests fewer engineers
+
+Return JSON with short feedback:
+{
+"openingPosition_correct": true/false,
+"point1_correct": true/false,
+"point2_correct": true/false,
+"point3_correct": true/false,
+"conclusion_correct": true/false,
+"feedback_opening": "short (max 12 words)",
+"feedback_point1": "short (max 12 words)",
+"feedback_point2": "short (max 12 words)",
+"feedback_point3": "short (max 12 words)",
+"feedback_conclusion": "short (max 12 words)",
+"overall": "short summary"
+}`
+            })
+        });
+        
+        const data = await response.json();
+        aiSuccess = true;
+        
+        resultOP = { valid: data.openingPosition_correct, message: data.feedback_opening || (data.openingPosition_correct ? '✅ Correct' : '❌ Needs work') };
+        resultP1 = { valid: data.point1_correct, message: data.feedback_point1 || (data.point1_correct ? '✅ Correct' : '❌ Needs work') };
+        resultP2 = { valid: data.point2_correct, message: data.feedback_point2 || (data.point2_correct ? '✅ Correct' : '❌ Needs work') };
+        resultP3 = { valid: data.point3_correct, message: data.feedback_point3 || (data.point3_correct ? '✅ Correct' : '❌ Needs work') };
+        resultCon = { valid: data.conclusion_correct, message: data.feedback_conclusion || (data.conclusion_correct ? '✅ Correct' : '❌ Needs work') };
+        
+    } catch (error) {
+        console.error('AI Error:', error);
+        aiSuccess = false;
+        
+        // Fallback to local validation
+        resultOP = validateListeningLocal(openingPosition, expectedKeywords.openingPosition, 'opening position');
+        resultP1 = validateListeningLocal(point1, expectedKeywords.point1, 'point 1');
+        resultP2 = validateListeningLocal(point2, expectedKeywords.point2, 'point 2');
+        resultP3 = validateListeningLocal(point3, expectedKeywords.point3, 'point 3');
+        resultCon = validateListeningLocal(conclusion, expectedKeywords.conclusion, 'conclusion');
+    }
+    
+    // Update UI
+    const fbOP = document.getElementById('openingPositionFeedback');
+    const fbP1 = document.getElementById('point1Feedback');
+    const fbP2 = document.getElementById('point2Feedback');
+    const fbP3 = document.getElementById('point3Feedback');
+    const fbCon = document.getElementById('conclusionFeedback');
+    const overallFb = document.getElementById('listeningOverallFeedback');
+    
+    if (fbOP) { fbOP.innerHTML = resultOP.message; fbOP.className = resultOP.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbOP.style.display = 'block'; }
+    if (fbP1) { fbP1.innerHTML = resultP1.message; fbP1.className = resultP1.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbP1.style.display = 'block'; }
+    if (fbP2) { fbP2.innerHTML = resultP2.message; fbP2.className = resultP2.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbP2.style.display = 'block'; }
+    if (fbP3) { fbP3.innerHTML = resultP3.message; fbP3.className = resultP3.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbP3.style.display = 'block'; }
+    if (fbCon) { fbCon.innerHTML = resultCon.message; fbCon.className = resultCon.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbCon.style.display = 'block'; }
+    
+    const allCorrect = resultOP.valid && resultP1.valid && resultP2.valid && resultP3.valid && resultCon.valid;
+    
+    if (allCorrect) {
+        listeningTaskCompleted = true;
+        overallFb.innerHTML = '<div class="listening-feedback-item correct">🎉 All answers correct!</div>';
+        document.getElementById('completeListeningBtn').disabled = false;
+    } else if (listeningAttemptCount >= maxListeningAttempts) {
+        showListeningCorrectAnswer();
+        listeningTaskCompleted = true;
+        document.getElementById('completeListeningBtn').disabled = false;
+    } else {
+        overallFb.innerHTML = `<div class="listening-feedback-item incorrect">📚 ${maxListeningAttempts - listeningAttemptCount} attempts left</div>`;
+    }
+    
+    checkBtn.disabled = false;
+    checkBtn.textContent = '✓ Check My Structure Mapping';
+}
+
+document.getElementById('checkListeningTaskBtn')?.addEventListener('click', evaluateListening);
+
+// Quick listening quiz
+document.getElementById('checkListeningWorkBtn')?.addEventListener('click', function () {
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    const feedback = document.getElementById('listeningQuizFeedback');
+    
+    if (!q1 || !q2) {
+        feedback.innerHTML = '⚠️ Answer both questions';
+        feedback.className = 'quiz-feedback warning';
+        feedback.style.display = 'block';
+        return;
+    }
+    
+    const q1Valid = q1.value === 'yes';
+    const q2Valid = q2.value === 'third';
+    
+    if (q1Valid && q2Valid) {
+        feedback.innerHTML = '✅ Correct!';
+        feedback.className = 'quiz-feedback correct';
+        listeningQuizCompleted = true;
+    } else {
+        feedback.innerHTML = q1Valid ? '❌ Q2: "And third — perhaps most importantly"' : '❌ Q1: Speaker has clear position from start';
+        feedback.className = 'quiz-feedback incorrect';
+        listeningQuizCompleted = false;
+    }
+    feedback.style.display = 'block';
+    
+    if (listeningTaskCompleted && listeningQuizCompleted && masterAudioFinished) {
+        document.getElementById('completeListeningBtn').disabled = false;
+    }
+});
+
+document.getElementById('completeListeningBtn')?.addEventListener('click', function () {
+    if (masterAudioFinished && listeningTaskCompleted && listeningQuizCompleted) {
+        markActivityComplete('listening', 'chk1');
+    }
+});
+            // ==================== SPEAKING ACTIVITY - Impromptu Challenge ====================
+let speakingValid = false;
+let speakingAttemptCount = 0;
+let maxSpeakingAttempts = 3;
+let recognition = null;
+let speechSeconds = 0;
+let speechTimerInterval = null;
+let currentTranscript = '';
+
+const startSpeechBtn = document.getElementById('startSpeechBtn');
+const stopSpeechBtn = document.getElementById('stopSpeechBtn');
+const speechTranscript = document.getElementById('speechTranscript');
+const speechTimerDisplay = document.getElementById('speechTimerDisplay');
+const speechTimerSpan = document.getElementById('speechTimer');
+const selectedTopic = document.getElementById('selectedTopic');
+
+// Speech recognition setup
+if (startSpeechBtn) {
+    startSpeechBtn.addEventListener('click', function () {
+        if (!selectedTopic.value) {
+            document.getElementById('speechFeedback').innerHTML = '<div class="speaking-feedback incorrect">❌ Please select a topic first.</div>';
+            document.getElementById('speechFeedback').style.display = 'block';
+            return;
+        }
+        
+        if (!('webkitSpeechRecognition' in window)) {
+            document.getElementById('speechFeedback').innerHTML = '<div class="speaking-feedback incorrect">❌ Speech recognition not supported. Please use Chrome browser.</div>';
+            document.getElementById('speechFeedback').style.display = 'block';
+            return;
+        }
+
+        // Reset for new recording
+        currentTranscript = '';
+        speechTranscript.value = '';
+        speechSeconds = 0;
+        speechTimerSpan.textContent = '00:00';
+        speechTimerDisplay.style.display = 'flex';
+        startSpeechBtn.style.display = 'none';
+        stopSpeechBtn.style.display = 'inline-flex';
+        document.getElementById('speechFeedback').style.display = 'none';
+        document.getElementById('speakingAnswerFeedback').style.display = 'none';
+
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        if (speechTimerInterval) clearInterval(speechTimerInterval);
+        speechTimerInterval = setInterval(() => {
+            speechSeconds++;
+            const mins = Math.floor(speechSeconds / 60);
+            const secs = speechSeconds % 60;
+            speechTimerSpan.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            if (speechSeconds >= 90) {
+                if (recognition) recognition.stop();
+            }
+        }, 1000);
+
+        recognition.onresult = (event) => {
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i].isFinal) {
+                    currentTranscript += event.results[i][0].transcript + ' ';
+                    speechTranscript.value = currentTranscript;
+                }
+            }
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            clearInterval(speechTimerInterval);
+            startSpeechBtn.style.display = 'inline-flex';
+            stopSpeechBtn.style.display = 'none';
+            document.getElementById('speechFeedback').innerHTML = '<div class="speaking-feedback incorrect">❌ Error: ' + event.error + '. Please try again.</div>';
+            document.getElementById('speechFeedback').style.display = 'block';
+            recognition = null;
+        };
+
+        recognition.onend = () => {
+            clearInterval(speechTimerInterval);
+            startSpeechBtn.style.display = 'inline-flex';
+            stopSpeechBtn.style.display = 'none';
+            
+            if (speechSeconds < 30) {
+                document.getElementById('speechFeedback').innerHTML = '<div class="speaking-feedback incorrect">❌ Speech too short! Please speak for at least 50 seconds.</div>';
+                document.getElementById('speechFeedback').style.display = 'block';
+            } else {
+                document.getElementById('speechFeedback').innerHTML = '<div class="speaking-feedback correct">✅ Speech recorded! Complete the self-evaluation and click "Evaluate My Speech".</div>';
+                document.getElementById('speechFeedback').style.display = 'block';
+            }
+            recognition = null;
+        };
+
+        recognition.start();
+    });
+}
+
+if (stopSpeechBtn) {
+    stopSpeechBtn.addEventListener('click', function () {
+        if (recognition) {
+            recognition.stop();
+        }
+    });
+}
+
+// Function to evaluate the speech
+async function evaluateSpeaking() {
+    const transcript = speechTranscript.value.trim();
+    const selfQ1 = document.querySelector('input[name="selfQ1"]:checked');
+    const selfQ2 = document.querySelector('input[name="selfQ2"]:checked');
+    const selfQ3 = document.querySelector('input[name="selfQ3"]:checked');
+
+    if (!transcript) {
+        document.getElementById('speakingAnswerFeedback').innerHTML = '<div class="writing-feedback incorrect">⚠️ Please record your speech first using the microphone button.</div>';
+        document.getElementById('speakingAnswerFeedback').style.display = 'block';
+        return;
+    }
+
+    if (!selfQ1 || !selfQ2 || !selfQ3) {
+        document.getElementById('speakingAnswerFeedback').innerHTML = '<div class="writing-feedback incorrect">⚠️ Please complete all 3 self-evaluation questions.</div>';
+        document.getElementById('speakingAnswerFeedback').style.display = 'block';
+        return;
+    }
+
+    if (speakingAttemptCount >= maxSpeakingAttempts) {
+        document.getElementById('speakingAnswerFeedback').innerHTML = `
+            <div class="correct-answer-box">
+                <h4>📚 Sample Impromptu Speech:</h4>
+                <p><strong>Position:</strong> I believe communication is the most important skill for engineers in 2025.</p>
+                <p><strong>Point 1:</strong> First, technical knowledge alone cannot convince clients or stakeholders without clear explanation.</p>
+                <p><strong>Point 2:</strong> Additionally, modern engineering teams are cross-disciplinary, requiring effective collaboration across fields.</p>
+                <p><strong>Point 3:</strong> Most importantly, leadership roles demand persuasive communication to drive innovation and change.</p>
+                <p><strong>Conclusion:</strong> Therefore, engineers must develop communication skills alongside technical expertise to succeed.</p>
+                <hr>
+                <p><strong>Self Evaluation:</strong> Position clear? Yes. Signposting used? Yes. Conclusion strong? Yes.</p>
+            </div>`;
+        document.getElementById('speakingAnswerFeedback').style.display = 'block';
+        speakingValid = true;
+        document.getElementById('completeSpeakingBtn').disabled = false;
+        return;
+    }
+
+    speakingAttemptCount++;
+    const checkBtn = document.getElementById('checkSpeakingAnswersBtn');
+    checkBtn.disabled = true;
+    checkBtn.textContent = '⏳ Evaluating with AI...';
+
+    // Check self-evaluation answers
+    const hasClearPosition = selfQ1.value === 'yes';
+    const hasSignposting = selfQ2.value === 'yes' || selfQ2.value === 'some';
+    const hasStrongConclusion = selfQ3.value === 'yes';
+
+    try {
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({
+                text: transcript,
+                task_type: 'impromptu_speech',
+                day_number: 21,
+                level: 'advanced',
+                system_prompt: `Evaluate this impromptu speech. Check for:
+1. Clear position statement at the beginning
+2. Three supporting points with signposting words (First, Additionally, Most importantly)
+3. Strong conclusion (Therefore, In conclusion)
+
+Student's speech: "${transcript.substring(0, 800)}"
+
+Return JSON: {"correct": true/false, "hasPosition": true/false, "hasPoints": true/false, "hasConclusion": true/false, "feedback": "short feedback (max 20 words)"}`
+            })
+        });
+        const data = await response.json();
+
+        let feedbackMessage = '';
+        let allCriteriaMet = data.correct;
+
+        if (allCriteriaMet && hasClearPosition && hasStrongConclusion) {
+            speakingValid = true;
+            feedbackMessage = `✅ ${data.feedback || 'Excellent impromptu speech!'} You met all criteria.`;
+            document.getElementById('completeSpeakingBtn').disabled = false;
+        } else {
+            speakingValid = false;
+            let missing = [];
+            if (!data.hasPosition) missing.push('clear position at start');
+            if (!data.hasPoints) missing.push('3 points with signposting');
+            if (!data.hasConclusion) missing.push('strong conclusion');
+            if (!hasClearPosition) missing.push('self-evaluation: position not clear');
+            if (!hasStrongConclusion) missing.push('self-evaluation: conclusion weak');
+            
+            if (missing.length > 0) {
+                feedbackMessage = `❌ Missing: ${missing.join(', ')}. ${data.feedback || 'Review the structure and try again.'}`;
+            } else {
+                feedbackMessage = `⚠️ ${data.feedback || 'Good effort! Review the sample above for improvement.'}`;
+            }
+        }
+        
+        document.getElementById('speakingAnswerFeedback').innerHTML = `<div class="writing-feedback ${speakingValid ? 'correct' : 'incorrect'}">${feedbackMessage}</div>`;
+        
+        if (!speakingValid && speakingAttemptCount >= maxSpeakingAttempts) {
+            document.getElementById('speakingAnswerFeedback').innerHTML = `
+                <div class="correct-answer-box">
+                    <h4>📚 Sample Impromptu Speech:</h4>
+                    <p><strong>Position:</strong> I believe communication is the most important skill for engineers in 2025.</p>
+                    <p><strong>Point 1:</strong> First, technical knowledge alone cannot convince clients or stakeholders without clear explanation.</p>
+                    <p><strong>Point 2:</strong> Additionally, modern engineering teams are cross-disciplinary, requiring effective collaboration across fields.</p>
+                    <p><strong>Point 3:</strong> Most importantly, leadership roles demand persuasive communication to drive innovation and change.</p>
+                    <p><strong>Conclusion:</strong> Therefore, engineers must develop communication skills alongside technical expertise to succeed.</p>
+                </div>`;
+            speakingValid = true;
+            document.getElementById('completeSpeakingBtn').disabled = false;
+        }
+    } catch (error) {
+        // Fallback validation
+        const lower = transcript.toLowerCase();
+        const hasPosition = lower.includes('believe') || lower.includes('think') || lower.includes('important');
+        const hasFirst = lower.includes('first');
+        const hasAdditionally = lower.includes('additionally') || lower.includes('second');
+        const hasMostImportant = lower.includes('most importantly') || lower.includes('third');
+        const hasConclusion = lower.includes('therefore') || lower.includes('conclusion') || lower.includes('so');
+        
+        const hasAllStructure = hasPosition && hasFirst && hasAdditionally && hasMostImportant && hasConclusion;
+        
+        if (hasAllStructure && hasClearPosition && hasStrongConclusion) {
+            speakingValid = true;
+            document.getElementById('speakingAnswerFeedback').innerHTML = '<div class="writing-feedback correct">✅ Good impromptu speech! All structural elements present.</div>';
+            document.getElementById('completeSpeakingBtn').disabled = false;
+        } else {
+            let missing = [];
+            if (!hasPosition) missing.push('clear position');
+            if (!hasFirst) missing.push('"First" point');
+            if (!hasAdditionally) missing.push('"Additionally" point');
+            if (!hasMostImportant) missing.push('"Most importantly" point');
+            if (!hasConclusion) missing.push('conclusion');
+            
+            if (missing.length > 0 && speakingAttemptCount >= maxSpeakingAttempts) {
+                document.getElementById('speakingAnswerFeedback').innerHTML = `
+                    <div class="correct-answer-box">
+                        <h4>📚 Sample Impromptu Speech:</h4>
+                        <p><strong>Position:</strong> I believe communication is the most important skill for engineers in 2025.</p>
+                        <p><strong>Point 1:</strong> First, technical knowledge alone cannot convince clients...</p>
+                        <p><strong>Point 2:</strong> Additionally, teams need clear collaboration...</p>
+                        <p><strong>Point 3:</strong> Most importantly, leaders must communicate vision...</p>
+                        <p><strong>Conclusion:</strong> Therefore, communication is essential.</p>
+                    </div>`;
+                speakingValid = true;
+                document.getElementById('completeSpeakingBtn').disabled = false;
+            } else {
+                document.getElementById('speakingAnswerFeedback').innerHTML = `<div class="writing-feedback incorrect">❌ Missing: ${missing.join(', ')}. ${maxSpeakingAttempts - speakingAttemptCount} attempts left.</div>`;
+                speakingValid = false;
+            }
+        }
+    }
+    
+    checkBtn.disabled = false;
+    checkBtn.textContent = '✓ Evaluate My Impromptu Speech';
+    document.getElementById('speakingAnswerFeedback').style.display = 'block';
+}
+
+function resetSpeaking() {
+    selectedTopic.value = '';
+    speechTranscript.value = '';
+    currentTranscript = '';
+    speechSeconds = 0;
+    speechTimerSpan.textContent = '00:00';
+    speechTimerDisplay.style.display = 'none';
+    document.querySelectorAll('input[name="selfQ1"], input[name="selfQ2"], input[name="selfQ3"]').forEach(r => r.checked = false);
+    document.getElementById('speechFeedback').innerHTML = '';
+    document.getElementById('speakingAnswerFeedback').innerHTML = '';
+    document.getElementById('speakingAnswerFeedback').style.display = 'none';
+    speakingValid = false;
+    speakingAttemptCount = 0;
+    document.getElementById('completeSpeakingBtn').disabled = true;
+    
+    if (recognition) {
+        recognition.stop();
+        recognition = null;
+    }
+    if (speechTimerInterval) clearInterval(speechTimerInterval);
+}
+
+document.getElementById('checkSpeakingAnswersBtn')?.addEventListener('click', evaluateSpeaking);
+document.getElementById('resetSpeakingAnswersBtn')?.addEventListener('click', resetSpeaking);
+document.getElementById('completeSpeakingBtn')?.addEventListener('click', function () {
+    if (speakingValid) {
+        markActivityComplete('speaking', 'chk2');
+    } else {
+        document.getElementById('speakingAnswerFeedback').innerHTML = '<div class="writing-feedback warning">⚠️ Please evaluate your speech first.</div>';
+        document.getElementById('speakingAnswerFeedback').style.display = 'block';
+    }
+});
+// ==================== READING ACTIVITY WITH AI (Speed Reading Techniques) ====================
+let readingResults = { q1: false, q2: false, q3: false };
+let readingAttemptCount = 0;
+let maxReadingAttempts = 3;
+
+// ========== LOCAL VALIDATION FUNCTIONS (STRONG FALLBACK) ==========
+
+function validateReadingQ1Local(answer) {
+    const trimmed = answer.trim().toLowerCase();
+    
+    if (!trimmed) {
+        return { valid: false, message: '⚠️ Please write your answer.' };
+    }
+    
+    if (trimmed.length < 20) {
+        return { valid: false, message: '❌ Answer too short.' };
+    }
+    
+    // Check for key concepts
+    const hasFrameworks = trimmed.includes('framework') || trimmed.includes('structure') || trimmed.includes('template') || trimmed.includes('pattern');
+    const hasAutomatic = trimmed.includes('automatic') || trimmed.includes('automatically') || trimmed.includes('natural') || trimmed.includes('ready');
+    
+    // Check for incorrect answers (memorization)
+    const hasMemorize = trimmed.includes('memoriz') || trimmed.includes('same way every time');
+    
+    if (hasMemorize) {
+        return { valid: false, message: '❌ Not about memorizing. Structured spontaneity means having frameworks ready to use automatically.' };
+    }
+    
+    if (hasFrameworks && hasAutomatic) {
+        return { valid: true, message: '✅ Correct! Structured spontaneity means having frameworks ready to use automatically.' };
+    }
+    
+    return { valid: false, message: '❌ Structured spontaneity means having frameworks ready so you can speak naturally.' };
+}
+
+function validateReadingQ2Local(answer) {
+    const trimmed = answer.trim().toLowerCase();
+    
+    if (!trimmed) {
+        return { valid: false, message: '⚠️ Please write your answer.' };
+    }
+    
+    if (trimmed.length < 15) {
+        return { valid: false, message: '❌ Answer too short.' };
+    }
+    
+    const isPause = trimmed.includes('thinking pause') || trimmed.includes('pause') || trimmed.includes('think');
+    const isNotFailure = trimmed.includes('not failure') || (trimmed.includes('not') && trimmed.includes('fail'));
+    
+    if (isPause && isNotFailure) {
+        return { valid: true, message: '✅ Correct! Silence is a thinking pause, not failure.' };
+    }
+    
+    if (isPause) {
+        return { valid: true, message: '✅ Correct! Silence is a thinking pause.' };
+    }
+    
+    return { valid: false, message: '❌ Silence is a "thinking pause" — it shows confidence, not failure.' };
+}
+
+function validateReadingQ3Local(answer) {
+    const trimmed = answer.trim().toLowerCase();
+    
+    if (!trimmed) {
+        return { valid: false, message: '⚠️ Please write your self-evaluation.' };
+    }
+    
+    if (trimmed.length < 20) {
+        return { valid: false, message: '❌ Write at least 20 words.' };
+    }
+    
+    const hasPosition = trimmed.includes('position') || trimmed.includes('clear') || trimmed.includes('start');
+    const hasSignposting = trimmed.includes('signpost') || trimmed.includes('first') || trimmed.includes('additionally') || trimmed.includes('most importantly');
+    const hasConclusion = trimmed.includes('conclusion') || trimmed.includes('strong') || trimmed.includes('therefore');
+    
+    if (hasPosition && hasSignposting && hasConclusion) {
+        return { valid: true, message: '✅ Good self-evaluation! You addressed all three criteria.' };
+    }
+    
+    if ((hasPosition || hasSignposting || hasConclusion) && trimmed.length > 30) {
+        return { valid: true, message: '✅ Honest self-evaluation!' };
+    }
+    
+    return { valid: false, message: '❌ Answer: Was your position clear? Did you use signposting? Was your conclusion strong?' };
+}
+
+function showReadingCorrectAnswer() {
+    document.getElementById('readingOverallFeedback').innerHTML = `
+        <div class="correct-answer-box">
+            <p><strong>Q1:</strong> Structured spontaneity means having frameworks ready to use automatically while speaking naturally.</p>
+            <p><strong>Q2:</strong> Silence is a thinking pause — confident speakers pause deliberately.</p>
+            <p><strong>Q3:</strong> "My position was clear, I used signposting (First, Additionally, Most importantly), and my conclusion was strong."</p>
+        </div>`;
+}
+
+// ========== AI VALIDATION ==========
+async function evaluateReading() {
+    const q1 = document.getElementById('readingQ1').value;
+    const q2 = document.getElementById('readingQ2').value;
+    const q3 = document.getElementById('readingQ3').value;
+
+    if (!q1 || !q2 || !q3) {
+        document.getElementById('readingOverallFeedback').innerHTML = '<div class="quiz-feedback warning">⚠️ Answer all 3 questions</div>';
+        document.getElementById('readingOverallFeedback').style.display = 'block';
+        return;
+    }
+
+    if (readingAttemptCount >= maxReadingAttempts) {
+        showReadingCorrectAnswer();
+        readingResults = { q1: true, q2: true, q3: true };
+        document.getElementById('completeReadingBtn').disabled = false;
+        return;
+    }
+
+    readingAttemptCount++;
+    const checkBtn = document.getElementById('checkReadingBtn');
+    checkBtn.disabled = true;
+    checkBtn.textContent = '⏳ AI Evaluating...';
+    document.getElementById('readingOverallFeedback').innerHTML = '<div class="ai-feedback processing">🤖 Checking your answers...</div>';
+    document.getElementById('readingOverallFeedback').style.display = 'block';
+
+    let result1, result2, result3;
+    let aiSuccess = false;
+
+    try {
+        const readingData = `Q1 (Structured spontaneity meaning): ${q1}
+Q2 (Why silence is not failure): ${q2}
+Q3 (Self-evaluation after speaking): ${q3}`;
+        
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({
+                text: readingData,
+                task_type: 'reading_comprehension',
+                day_number: 23,
+                level: 'advanced',
+                system_prompt: `You are evaluating answers about speed reading techniques from a passage.
+
+READING PASSAGE CONTEXT:
+- Structured spontaneity: knowing your frameworks so well you apply them automatically (NOT memorizing)
+- Silence in impromptu speaking: it is a thinking pause, not failure
+- Self-evaluation should cover position clarity, signposting use, and conclusion strength
+
+Q1: "What does 'structured spontaneity' mean?"
+- CORRECT: Having frameworks/structure ready to use automatically while speaking naturally
+- ACCEPT: "ready-to-use frameworks", "structure you apply automatically"
+- REJECT: "memorizing full speeches", "same way every time"
+
+Q2: "Why does the author say silence is not failure?"
+- CORRECT: Silence is a thinking pause; confident speakers pause deliberately
+- ACCEPT: "thinking pause", "pause to think", "shows confidence"
+
+Q3: Self-evaluation about your impromptu speech
+- Should address: position clarity, signposting use, conclusion strength
+- ACCEPT honest evaluation even if you made mistakes
+
+Return JSON with short feedback:
+{
+"q1_correct": true/false,
+"q2_correct": true/false,
+"q3_correct": true/false,
+"feedback_q1": "short (max 12 words)",
+"feedback_q2": "short (max 12 words)",
+"feedback_q3": "short (max 12 words)",
+"overall": "short summary"
+}`
+            })
+        });
+        
+        const data = await response.json();
+        aiSuccess = true;
+        
+        result1 = { valid: data.q1_correct, message: data.feedback_q1 || (data.q1_correct ? '✅ Correct' : '❌ Needs work') };
+        result2 = { valid: data.q2_correct, message: data.feedback_q2 || (data.q2_correct ? '✅ Correct' : '❌ Needs work') };
+        result3 = { valid: data.q3_correct, message: data.feedback_q3 || (data.q3_correct ? '✅ Good' : '❌ Needs work') };
+        
+    } catch (error) {
+        console.error('AI Error:', error);
+        aiSuccess = false;
+        
+        // Fallback to local validation
+        result1 = validateReadingQ1Local(q1);
+        result2 = validateReadingQ2Local(q2);
+        result3 = validateReadingQ3Local(q3);
+    }
+    
+    // Update UI
+    const fb1 = document.getElementById('readingQ1Feedback');
+    const fb2 = document.getElementById('readingQ2Feedback');
+    const fb3 = document.getElementById('readingQ3Feedback');
+    const overallFb = document.getElementById('readingOverallFeedback');
+    
+    if (fb1) { fb1.innerHTML = result1.message; fb1.className = result1.valid ? 'fix-feedback correct' : 'fix-feedback incorrect'; fb1.style.display = 'block'; }
+    if (fb2) { fb2.innerHTML = result2.message; fb2.className = result2.valid ? 'fix-feedback correct' : 'fix-feedback incorrect'; fb2.style.display = 'block'; }
+    if (fb3) { fb3.innerHTML = result3.message; fb3.className = result3.valid ? 'fix-feedback correct' : 'fix-feedback incorrect'; fb3.style.display = 'block'; }
+    
+    readingResults.q1 = result1.valid;
+    readingResults.q2 = result2.valid;
+    readingResults.q3 = result3.valid;
+    
+    const allCorrect = readingResults.q1 && readingResults.q2 && readingResults.q3;
+    
+    if (allCorrect) {
+        overallFb.innerHTML = '<div class="quiz-feedback correct">✅ All correct!</div>';
+        overallFb.className = 'quiz-feedback correct';
+        overallFb.style.display = 'block';
+        document.getElementById('completeReadingBtn').disabled = false;
+    } else {
+        let errorMsg = '';
+        if (!readingResults.q1) errorMsg += '❌ Q1: Frameworks ready to use automatically. ';
+        if (!readingResults.q2) errorMsg += '❌ Q2: Silence = thinking pause. ';
+        if (!readingResults.q3) errorMsg += '❌ Q3: Evaluate all 3 criteria. ';
+        overallFb.innerHTML = `<div class="quiz-feedback warning">⚠️ ${errorMsg}</div>`;
+        overallFb.className = 'quiz-feedback warning';
+        overallFb.style.display = 'block';
+        document.getElementById('completeReadingBtn').disabled = true;
+    }
+    
+    checkBtn.disabled = false;
+    checkBtn.textContent = '✓ Check Reading Answers';
+}
+
+function resetReading() {
+    document.getElementById('readingQ1').value = '';
+    document.getElementById('readingQ2').value = '';
+    document.getElementById('readingQ3').value = '';
+    
+    document.getElementById('readingQ1Feedback').innerHTML = '';
+    document.getElementById('readingQ2Feedback').innerHTML = '';
+    document.getElementById('readingQ3Feedback').innerHTML = '';
+    document.getElementById('readingOverallFeedback').innerHTML = '';
+    document.getElementById('readingOverallFeedback').style.display = 'none';
+    
+    readingResults = { q1: false, q2: false, q3: false };
+    readingAttemptCount = 0;
+    document.getElementById('completeReadingBtn').disabled = true;
+}
+
+document.getElementById('checkReadingBtn')?.addEventListener('click', evaluateReading);
+document.getElementById('resetReadingBtn')?.addEventListener('click', resetReading);
+
+document.getElementById('completeReadingBtn')?.addEventListener('click', function () {
+    if (readingResults.q1 && readingResults.q2 && readingResults.q3) {
+        markActivityComplete('reading', 'chk3');
+    } else {
+        document.getElementById('readingOverallFeedback').innerHTML = '<div class="quiz-feedback warning">⚠️ Correct all answers first</div>';
+        document.getElementById('readingOverallFeedback').style.display = 'block';
+    }
+});
+// ==================== WRITING ACTIVITY WITH AI (Topic Card & Self-Evaluation) ====================
+let writingValid = false;
+let writingAttemptCount = 0;
+let maxWritingAttempts = 3;
+
+// Helper function to update word count
+function updateWritingSelfEvalWordCount() {
+    const text = document.getElementById('writingSelfEval');
+    if (!text) return 0;
+    const words = text.value.trim().split(/\s+/).filter(w => w.length > 0);
+    const count = words.length;
+    const display = document.getElementById('selfEvalWordCount');
+    if (display) {
+        display.innerHTML = `📝 Words: ${count} / 50 min`;
+        display.style.color = count >= 50 ? '#22c55e' : '#dc2626';
+    }
+    return count;
+}
+
+const selfEvalTextarea = document.getElementById('writingSelfEval');
+if (selfEvalTextarea) {
+    selfEvalTextarea.addEventListener('input', updateWritingSelfEvalWordCount);
+}
+
+// ========== LOCAL VALIDATION FUNCTIONS (STRICT FALLBACK) ==========
+
+function validateTopicCardLocal(topic) {
+    const trimmed = topic.trim();
+    if (!trimmed) return { valid: false, message: '❌ Topic cannot be empty' };
+    if (trimmed.length < 10) return { valid: false, message: '❌ Topic too vague. Be specific' };
+    
+    const technicalTerms = ['system', 'device', 'technology', 'engineering', 'manufacturing', 'automation', 'software', 'hardware', 'design', 'development', 'analysis', 'testing', 'implementation', 'optimization', 'efficiency', 'AI', 'circuit', 'processor', 'database', 'network', 'algorithm'];
+    const hasTechTerm = technicalTerms.some(term => trimmed.toLowerCase().includes(term));
+    
+    if (!hasTechTerm) return { valid: false, message: '❌ Include a technical term' };
+    return { valid: true, message: '✅ Topic specific!' };
+}
+
+function validateOutlinePointLocal(point, pointNumber) {
+    const trimmed = point.trim();
+    if (!trimmed) return { valid: false, message: `❌ Point ${pointNumber} empty` };
+    if (trimmed.length < 15) return { valid: false, message: `❌ Point ${pointNumber} too short` };
+    
+    const informalWords = ['good', 'useful', 'nice', 'great', 'bad', 'okay', 'fine', 'stuff', 'things', 'a lot', 'very', 'really'];
+    for (let word of informalWords) {
+        if (trimmed.toLowerCase().includes(word)) {
+            return { valid: false, message: `❌ Point ${pointNumber}: remove "${word}"` };
+        }
+    }
+    return { valid: true, message: `✅ Point ${pointNumber} good` };
+}
+
+function validateSelfEvaluationLocal(evaluation, wordCount) {
+    const trimmed = evaluation.trim();
+    if (!trimmed) return { valid: false, message: '❌ Self-evaluation empty' };
+    if (wordCount < 50) return { valid: false, message: `❌ Add ${50 - wordCount} more words` };
+    
+    const lower = trimmed.toLowerCase();
+    const hasPosition = lower.includes('position') || lower.includes('clear') || lower.includes('start');
+    const hasSignposting = lower.includes('signpost') || lower.includes('first') || lower.includes('additionally') || lower.includes('most importantly');
+    const hasConclusion = lower.includes('conclusion') || lower.includes('strong') || lower.includes('therefore');
+    
+    if (!hasPosition && !hasSignposting && !hasConclusion) {
+        return { valid: false, message: '❌ Address: position, signposting, conclusion' };
+    }
+    
+    return { valid: true, message: '✅ Good self-evaluation!' };
+}
+
+function showWritingCorrectAnswer() {
+    const writingFeedback = document.getElementById('writingFeedback');
+    if (writingFeedback) {
+        writingFeedback.innerHTML = `
+            <div class="correct-answer-box">
+                <p><strong>Topic:</strong> "Predictive maintenance for manufacturing equipment"</p>
+                <p><strong>Point 1:</strong> First, IoT sensors monitor equipment in real-time.</p>
+                <p><strong>Point 2:</strong> Additionally, AI predicts optimal maintenance schedules.</p>
+                <p><strong>Point 3:</strong> Most importantly, downtime reduces by 40%.</p>
+                <p><strong>Self-Evaluation:</strong> My position was clear, I used signposting, and my conclusion was strong.</p>
+            </div>`;
+    }
+    writingValid = true;
+    const completeBtn = document.getElementById('completeWritingBtn');
+    if (completeBtn) completeBtn.disabled = false;
+}
+
+// ========== AI VALIDATION (Primary) ==========
+async function validateWritingActivity() {
+    const topicInput = document.getElementById('topicCard');
+    const outline1Input = document.getElementById('outline1');
+    const outline2Input = document.getElementById('outline2');
+    const outline3Input = document.getElementById('outline3');
+    const selfEvalInput = document.getElementById('writingSelfEval');
+    
+    // Check if elements exist
+    if (!topicInput || !outline1Input || !outline2Input || !outline3Input || !selfEvalInput) {
+        console.error('Required elements not found');
+        return;
+    }
+    
+    const topic = topicInput.value;
+    const outline1 = outline1Input.value;
+    const outline2 = outline2Input.value;
+    const outline3 = outline3Input.value;
+    const selfEval = selfEvalInput.value;
+    const wordCount = updateWritingSelfEvalWordCount();
+
+    // Quick local validation first
+    if (!topic || !outline1 || !outline2 || !outline3 || !selfEval) {
+        const writingFeedback = document.getElementById('writingFeedback');
+        if (writingFeedback) {
+            writingFeedback.innerHTML = '<div class="writing-feedback incorrect">❌ Fill all fields</div>';
+            writingFeedback.style.display = 'block';
+        }
+        return;
+    }
+
+    if (wordCount < 50) {
+        const writingFeedback = document.getElementById('writingFeedback');
+        if (writingFeedback) {
+            writingFeedback.innerHTML = `<div class="writing-feedback incorrect">❌ Self-evaluation: ${50 - wordCount} more words needed</div>`;
+            writingFeedback.style.display = 'block';
+        }
+        return;
+    }
+
+    if (writingAttemptCount >= maxWritingAttempts) {
+        showWritingCorrectAnswer();
+        writingValid = true;
+        const completeBtn = document.getElementById('completeWritingBtn');
+        if (completeBtn) completeBtn.disabled = false;
+        return;
+    }
+
+    writingAttemptCount++;
+    
+    const attemptCounter = document.getElementById('writingAttemptCounter');
+    if (attemptCounter) {
+        attemptCounter.style.display = 'block';
+        const counterSpan = attemptCounter.querySelector('span');
+        if (counterSpan) counterSpan.innerText = maxWritingAttempts - writingAttemptCount;
+    }
+
+    const writingCheckBtn = document.getElementById('checkWritingBtn');
+    if (writingCheckBtn) {
+        writingCheckBtn.disabled = true;
+        writingCheckBtn.textContent = '⏳ AI Evaluating...';
+    }
+    
+    const writingFeedbackDiv = document.getElementById('writingFeedback');
+    if (writingFeedbackDiv) {
+        writingFeedbackDiv.innerHTML = '<div class="ai-feedback processing">🤖 Checking your topic card...</div>';
+        writingFeedbackDiv.style.display = 'block';
+    }
+
+    try {
+        const writingData = `Topic: ${topic}
+Point 1: ${outline1}
+Point 2: ${outline2}
+Point 3: ${outline3}
+Self-Evaluation: ${selfEval}`;
+
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({
+                text: writingData,
+                task_type: 'impromptu_topic_card',
+                day_number: 21,
+                level: 'advanced',
+                system_prompt: `You are evaluating a student's topic card and self-evaluation.
+
+Requirements:
+1. TOPIC: Specific and technical
+2. THREE POINTS: Structured (First, Additionally, Most importantly), technical depth
+3. SELF-EVALUATION: 50+ words, address position clarity, signposting, conclusion
+
+Return JSON:
+{
+"correct": true/false,
+"topic_valid": true/false,
+"points_valid": true/false,
+"self_eval_valid": true/false,
+"feedback_topic": "short (max 12 words)",
+"feedback_points": "short (max 12 words)",
+"feedback_self_eval": "short (max 12 words)",
+"overall": "short summary"
+}`
+            })
+        });
+        
+        const data = await response.json();
+        
+        // Update feedback displays safely
+        const topicFb = document.getElementById('topicCardFeedback');
+        const outline1Fb = document.getElementById('outline1Feedback');
+        const outline2Fb = document.getElementById('outline2Feedback');
+        const outline3Fb = document.getElementById('outline3Feedback');
+        const selfEvalFb = document.getElementById('writingSelfEvalFeedback');
+        const overallFb = document.getElementById('writingFeedback');
+        
+        if (topicFb) {
+            topicFb.innerHTML = data.topic_valid ? '✅ Topic specific!' : `❌ ${data.feedback_topic || 'Be more specific'}`;
+            topicFb.className = data.topic_valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+            topicFb.style.display = 'block';
+        }
+        
+        const pointsValid = data.points_valid;
+        if (outline1Fb) {
+            outline1Fb.innerHTML = pointsValid ? '✅ Good' : '❌ Add technical depth';
+            outline1Fb.className = pointsValid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+            outline1Fb.style.display = 'block';
+        }
+        if (outline2Fb) {
+            outline2Fb.innerHTML = pointsValid ? '✅ Good' : '❌ Add technical depth';
+            outline2Fb.className = pointsValid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+            outline2Fb.style.display = 'block';
+        }
+        if (outline3Fb) {
+            outline3Fb.innerHTML = pointsValid ? '✅ Good' : '❌ Add technical depth';
+            outline3Fb.className = pointsValid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+            outline3Fb.style.display = 'block';
+        }
+        
+        if (selfEvalFb) {
+            selfEvalFb.innerHTML = data.self_eval_valid ? '✅ Good self-evaluation!' : `❌ ${data.feedback_self_eval || 'Address all 3 criteria'}`;
+            selfEvalFb.className = data.self_eval_valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+            selfEvalFb.style.display = 'block';
+        }
+        
+        if (data.correct) {
+            writingValid = true;
+            if (overallFb) {
+                overallFb.innerHTML = `<div class="writing-feedback correct">✅ ${data.overall || 'All good!'}</div>`;
+            }
+            const completeBtn = document.getElementById('completeWritingBtn');
+            if (completeBtn) completeBtn.disabled = false;
+        } else {
+            let errors = [];
+            if (!data.topic_valid) errors.push('topic');
+            if (!data.points_valid) errors.push('points');
+            if (!data.self_eval_valid) errors.push('self-evaluation');
+            if (overallFb) {
+                overallFb.innerHTML = `<div class="writing-feedback incorrect">❌ Fix: ${errors.join(', ')}. ${data.overall || ''}</div>`;
+            }
+            writingValid = false;
+        }
+        
+    } catch (error) {
+        console.error('AI Error:', error);
+        // Fallback to local validation
+        const topicResult = validateTopicCardLocal(topic);
+        const outline1Result = validateOutlinePointLocal(outline1, 1);
+        const outline2Result = validateOutlinePointLocal(outline2, 2);
+        const outline3Result = validateOutlinePointLocal(outline3, 3);
+        const selfEvalResult = validateSelfEvaluationLocal(selfEval, wordCount);
+        
+        const topicFb = document.getElementById('topicCardFeedback');
+        const outline1Fb = document.getElementById('outline1Feedback');
+        const outline2Fb = document.getElementById('outline2Feedback');
+        const outline3Fb = document.getElementById('outline3Feedback');
+        const selfEvalFb = document.getElementById('writingSelfEvalFeedback');
+        const overallFb = document.getElementById('writingFeedback');
+        
+        if (topicFb) {
+            topicFb.innerHTML = topicResult.message;
+            topicFb.className = topicResult.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+            topicFb.style.display = 'block';
+        }
+        if (outline1Fb) {
+            outline1Fb.innerHTML = outline1Result.message;
+            outline1Fb.className = outline1Result.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+            outline1Fb.style.display = 'block';
+        }
+        if (outline2Fb) {
+            outline2Fb.innerHTML = outline2Result.message;
+            outline2Fb.className = outline2Result.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+            outline2Fb.style.display = 'block';
+        }
+        if (outline3Fb) {
+            outline3Fb.innerHTML = outline3Result.message;
+            outline3Fb.className = outline3Result.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+            outline3Fb.style.display = 'block';
+        }
+        if (selfEvalFb) {
+            selfEvalFb.innerHTML = selfEvalResult.message;
+            selfEvalFb.className = selfEvalResult.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+            selfEvalFb.style.display = 'block';
+        }
+        
+        const allValid = topicResult.valid && outline1Result.valid && outline2Result.valid && outline3Result.valid && selfEvalResult.valid;
+        
+        if (allValid) {
+            writingValid = true;
+            if (overallFb) {
+                overallFb.innerHTML = '<div class="writing-feedback correct">✅ Good work! (Local check)</div>';
+            }
+            const completeBtn = document.getElementById('completeWritingBtn');
+            if (completeBtn) completeBtn.disabled = false;
+        } else {
+            if (overallFb) {
+                overallFb.innerHTML = '<div class="writing-feedback incorrect">❌ Fix errors above</div>';
+            }
+            writingValid = false;
+        }
+    }
+    
+    const writingCheckButton = document.getElementById('checkWritingBtn');
+    if (writingCheckButton) {
+        writingCheckButton.disabled = false;
+        writingCheckButton.textContent = '✓ Submit Activity';
+    }
+    
+    const writingFeedbackElement = document.getElementById('writingFeedback');
+    if (writingFeedbackElement) writingFeedbackElement.style.display = 'block';
+    
+    if (writingAttemptCount >= maxWritingAttempts && !writingValid) {
+        showWritingCorrectAnswer();
+        writingValid = true;
+        const completeBtn = document.getElementById('completeWritingBtn');
+        if (completeBtn) completeBtn.disabled = false;
+    }
+}
+
+function resetWritingActivity() {
+    const topicCard = document.getElementById('topicCard');
+    const outline1 = document.getElementById('outline1');
+    const outline2 = document.getElementById('outline2');
+    const outline3 = document.getElementById('outline3');
+    const writingSelfEval = document.getElementById('writingSelfEval');
+    
+    if (topicCard) topicCard.value = '';
+    if (outline1) outline1.value = '';
+    if (outline2) outline2.value = '';
+    if (outline3) outline3.value = '';
+    if (writingSelfEval) writingSelfEval.value = '';
+    
+    const feedbackIds = ['topicCardFeedback', 'outline1Feedback', 'outline2Feedback', 'outline3Feedback', 'writingSelfEvalFeedback'];
+    feedbackIds.forEach(id => {
+        const fb = document.getElementById(id);
+        if (fb) {
+            fb.innerHTML = '';
+            fb.style.display = 'none';
+        }
+    });
+    
+    const writingFeedback = document.getElementById('writingFeedback');
+    if (writingFeedback) {
+        writingFeedback.innerHTML = '';
+        writingFeedback.style.display = 'none';
+    }
+    
+    writingValid = false;
+    writingAttemptCount = 0;
+    
+    const completeBtn = document.getElementById('completeWritingBtn');
+    if (completeBtn) completeBtn.disabled = true;
+    
+    const attemptCounter = document.getElementById('writingAttemptCounter');
+    if (attemptCounter) attemptCounter.style.display = 'none';
+    
+    updateWritingSelfEvalWordCount();
+}
+
+const writingCheckButton = document.getElementById('checkWritingBtn');
+if (writingCheckButton) writingCheckButton.addEventListener('click', validateWritingActivity);
+
+const writingResetButton = document.getElementById('resetWritingBtn');
+if (writingResetButton) writingResetButton.addEventListener('click', resetWritingActivity);
+
+const writingCompleteButton = document.getElementById('completeWritingBtn');
+if (writingCompleteButton) {
+    writingCompleteButton.addEventListener('click', function () {
+        if (writingValid) {
+            markActivityComplete('writing', 'chk4');
+        } else {
+            const writingFeedback = document.getElementById('writingFeedback');
+            if (writingFeedback) {
+                writingFeedback.innerHTML = '<div class="writing-feedback warning">⚠️ Submit and validate first</div>';
+                writingFeedback.style.display = 'block';
+            }
+        }
+    });
+}
+            // ==================== VOCABULARY ====================
+            const vocabAudioBtns = document.querySelectorAll('.vocab-audio-btn');
+            const completeVocabularyBtn = document.getElementById('completeVocabularyBtn');
+            const vocabHeard = {
+                'check-extemporaneous': false, 'check-coherent': false, 'check-spontaneous': false,
+                'check-cogent': false, 'check-fluent': false
+            };
+
+            function checkAllVocabularyListened() {
+                const allHeard = Object.values(vocabHeard).every(v => v === true);
+                if (completeVocabularyBtn) completeVocabularyBtn.disabled = !allHeard;
+                return allHeard;
+            }
+
+            function updateVocabCheckMark(checkId) {
+                if (!vocabHeard[checkId]) {
+                    vocabHeard[checkId] = true;
+                    const cell = document.getElementById(checkId);
+                    if (cell && cell.innerHTML !== '✅') cell.innerHTML = '✅';
+                    checkAllVocabularyListened();
+                }
+            }
+
+            function speakWordWithCheckmark(word, checkId) {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    utterance.onend = () => { if (checkId) updateVocabCheckMark(checkId); };
+                    window.speechSynthesis.speak(utterance);
+                } else if (checkId) updateVocabCheckMark(checkId);
+            }
+
+            vocabAudioBtns.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const word = this.getAttribute('data-word');
+                    const checkId = this.getAttribute('data-checkid');
+                    if (word && checkId && !vocabHeard[checkId]) {
+                        speakWordWithCheckmark(word, checkId);
+                    } else if (word && checkId && vocabHeard[checkId]) {
+                        const utterance = new SpeechSynthesisUtterance(word);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.85;
+                        window.speechSynthesis.speak(utterance);
+                    }
+                });
+            });
+
+            if (completeVocabularyBtn) {
+                completeVocabularyBtn.addEventListener('click', function () {
+                    if (checkAllVocabularyListened()) markActivityComplete('vocabulary', 'chk5');
+                    else alert('Listen to all 5 vocabulary words first.');
+                });
+            }
+
+            // ==================== GRAMMAR HACK - Information Only (No Activity) ====================
+let grammarValid = true; // Always true since no activity to complete
+const grammarCompleteBtn = document.getElementById('completeGrammarBtn');
+
+if (grammarCompleteBtn) {
+    // Enable the button immediately since no activity is required
+    grammarCompleteBtn.disabled = false;
+    
+    grammarCompleteBtn.addEventListener('click', function () {
+        markActivityComplete('grammar', 'chk6');
+    });
+}
+
+            // ==================== DAY COMPLETION ====================
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            if (dayBtn) {
+                const newBtn = dayBtn.cloneNode(true);
+                dayBtn.parentNode.replaceChild(newBtn, dayBtn);
+                newBtn.addEventListener('click', function () {
+                    const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6'];
+                    let allCompleted = true;
+                    for (let id of checkboxes) {
+                        if (!document.getElementById(id)?.checked) allCompleted = false;
+                    }
+                    if (!allCompleted) {
+                        alert('⚠️ Complete all 6 activities first!');
+                        return;
+                    }
+                    this.innerHTML = '✨ Completing Day 21...';
+                    this.disabled = true;
+                    if (typeof confetti !== 'undefined') {
+                        confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                        setTimeout(() => confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.3 } }), 200);
+                        setTimeout(() => confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.7 } }), 400);
+                    }
+                    setTimeout(() => {
+                        window.location.href = '/learning/level/advanced/?celebrate=true&completed=21';
+                    }, 1500);
+                });
+            }
+
+            setTimeout(updateProgressCounter, 500);
+        });
+    </script>
+</body>
+
+</html>

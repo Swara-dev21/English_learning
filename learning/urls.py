@@ -49,13 +49,10 @@ urlpatterns = [
     path('api/progress/<str:level_name>/', views.get_progress_api, name='api_progress'),
     path('api/check-day/<str:level_name>/<int:day_number>/', views.check_day_completion, name='check_day_completion'),
     
-    # Recording endpoints
-    path('api/save-recording/<str:level_name>/<int:day_number>/<str:activity_type>/', 
-         views.save_recording, name='save_recording'),
+
     
     # Vocabulary
     path('api/save-vocabulary/', views.save_vocabulary, name='save_vocabulary'),
     
-    # Writing response
-    path('api/save-writing/<str:level_name>/<int:day_number>/', views.save_writing_response, name='save_writing_response'),
+
 ]

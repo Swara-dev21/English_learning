@@ -1,1311 +1,1557 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="user-id" content="{{ request.user.id }}">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Day 11: Discourse Markers · The Flow Architect | English for Engineers</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 11: Discourse Markers · The Flow Architect | English for Engineers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <style>
+        .writing-container {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .discourse-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            resize: vertical;
+            margin-top: 0.5rem;
+            box-sizing: border-box;
+        }
+
+        .discourse-textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .marker-badge {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin: 0.2rem;
+        }
+
+        .correct-answer-box {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .attempts-left {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+            text-align: center;
+            padding: 0.5rem;
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+
+        .attempts-left span {
+            font-weight: 700;
+            color: #8b5cf6;
+        }
+
+        .reading-passage {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 2px solid #e2e8f0;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .clickable-word {
+            display: inline-block;
+            padding: 0.1rem 0.2rem;
+            margin: 0 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: transparent;
+            border-radius: 0;
+        }
+
+        .clickable-word:hover {
+            background: #e0e7ff;
+        }
+
+        .temp-underlined {
+            text-decoration: underline !important;
+            text-decoration-thickness: 3px !important;
+            text-decoration-color: #3b82f6 !important;
+            background: #eff6ff !important;
+            display: inline-block;
+        }
+
+        .underline-correct {
+            text-decoration: underline !important;
+            text-decoration-thickness: 3px !important;
+            text-decoration-color: #22c55e !important;
+            background: #f0fdf4 !important;
+            display: inline-block;
+        }
+
+        .underline-incorrect {
+            text-decoration: underline !important;
+            text-decoration-thickness: 3px !important;
+            text-decoration-color: #dc2626 !important;
+            background: #fee2e2 !important;
+            display: inline-block;
+        }
+
+        .temp-circled {
+            border: 3px solid #3b82f6 !important;
+            border-radius: 50% !important;
+            padding: 0.1rem 0.3rem !important;
+            background: #eff6ff !important;
+            display: inline-block;
+        }
+
+        .circle-correct {
+            border: 3px solid #22c55e !important;
+            border-radius: 50% !important;
+            padding: 0.1rem 0.3rem !important;
+            background: #f0fdf4 !important;
+            display: inline-block;
+        }
+
+        .circle-incorrect {
+            border: 3px solid #dc2626 !important;
+            border-radius: 50% !important;
+            padding: 0.1rem 0.3rem !important;
+            background: #fee2e2 !important;
+            display: inline-block;
+        }
+
+        .mode-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .underline-mode {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .circle-mode {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .reading-mode-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .modern-record-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .modern-record-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .modern-record-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
+
 <body>
-<div class="lesson-container">
-    <div class="lesson-hero">
-        <div class="hero-content">
-            <div class="day-badge">Day 11 • Week 2 • Intermediate</div>
-            <h1 class="hero-title">🗺️ DISCOURSE MARKERS: THE FLOW ARCHITECT</h1>
-            <div class="power-line">💡 "Without discourse markers, your ideas are bricks. With them, they become a building."</div>
-        </div>
-    </div>
-    
-    <div class="activities-grid">
-
-        <!-- 1. LISTENING ACTIVITY WITH AI -->
-        <div class="activity-card" id="listening-card">
-            <div class="card-header listening">
-                <h2>🎧 1. Listening Activity · Signposting Flow</h2>
+    <div class="lesson-container">
+        <div class="lesson-hero">
+            <div class="hero-content">
+                <div class="day-badge">Day 11 • Week 2 • Intermediate</div>
+                <h1 class="hero-title">🗺️ DISCOURSE MARKERS: THE FLOW ARCHITECT</h1>
+                <div class="power-line">💡 "Without discourse markers, your ideas are bricks. With them, they become a
+                    building."</div>
             </div>
-            <div class="card-body">
-                <div class="task-box">
-                    <div class="task-header">
-                        <div class="title"><span>🎯</span><span>Focus</span></div>
-                    </div>
-                    <div class="task-content">Signposting Flow — each discourse marker is a GPS instruction for your listener. Emphasise them slightly.</div>
+        </div>
+
+        <div class="activities-grid">
+
+            <!-- 1. LISTENING ACTIVITY WITH WRITING FIRST -->
+            <div class="activity-card" id="listening-card">
+                <div class="card-header listening">
+                    <h2>🎧 1. Listening Activity · Signposting Flow</h2>
                 </div>
-                
-                <audio id="listeningAudio" controls>
-                    <source src="{% static 'learning/audio/day11.mp3' %}" type="audio/mpeg">
-                </audio>
-                
-                <div id="listeningTextSection" style="display: none;">
+                <div class="card-body">
                     <div class="task-box">
-                        <div class="task-header"><div class="title"><span>📝</span><span>Listening Text</span></div></div>
-                        <div class="task-content" style="font-style: italic; background: #fef9e3;">
-                            "First of all, I would like to acknowledge the contributions of the entire team... That said, there are several areas that require immediate attention... On the other hand, the progress achieved this quarter has been remarkable... All things considered, I believe we are on the right track..."
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Focus</span></div>
                         </div>
+                        <div class="task-content">Signposting Flow — each discourse marker is a GPS instruction for your
+                            listener. Emphasise them slightly.</div>
                     </div>
-                </div>
-                
-                <div id="postAudioListeningContent" style="display: none;">
-                    <div class="listening-container">
-                        <div class="task-header"><div class="title"><span>🎯</span><span>Task</span></div></div>
-                        <div class="task-content">Record a <strong>60-90 second summary</strong> of a topic you know well (your engineering subject). Use <strong>at least 4 different discourse markers</strong>.</div>
-                    </div>
-                    
-                    <div id="listeningAIFeedback"></div>
-                    
-                    <div class="quiz-section">
-                        <p><strong>🧠 Quick Listening Check</strong></p>
-                        <div>
-                            <p><strong>1. What does the speaker say about 'limitations'?</strong></p>
-                            <label class="quiz-option"><input type="radio" name="listening_quiz" value="ignored"> They ignored them</label>
-                            <label class="quiz-option"><input type="radio" name="listening_quiz" value="acknowledged"> They acknowledged them</label>
-                            <div id="q1Feedback" class="ind-quiz-feedback"></div>
-                        </div>
-                        <div>
-                            <p><strong>2. How does the speaker describe the overall outcome?</strong></p>
-                            <label class="quiz-option"><input type="radio" name="practice_quiz" value="failure"> A failure</label>
-                            <label class="quiz-option"><input type="radio" name="practice_quiz" value="success"> A success</label>
-                            <div id="q2Feedback" class="ind-quiz-feedback"></div>
-                        </div>
-                        <div id="listeningQuizFeedback" class="quiz-feedback"></div>
-                    </div>
-                    
-                    <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answers</button>
-                </div>
-                
-                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                    <button class="complete-activity-btn" id="completeListeningBtn" data-checklist="chk2" disabled>✓ Mark Listening as Complete</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 2. SPEAKING ACTIVITY -->
-        <div class="activity-card" id="speaking-card">
-            <div class="card-header speaking">
-                <h2>🗣️ 2. Speaking Activity · The Technical Seminar Opener</h2>
-            </div>
-            <div class="card-body">
-                <p>A structured seminar uses discourse markers to guide the audience. Practise these out loud.</p>
-                
-                <div class="speaking-sentences-list">
-                    <div class="speaking-sentence-item">
-                        <div class="sentence-number-badge">1</div>
-                        <div class="sentence-text-content">"Good morning. <strong>To begin with,</strong> I would like to provide a brief overview of today's topic."</div>
-                    </div>
-                    <div class="speaking-sentence-item">
-                        <div class="sentence-number-badge">2</div>
-                        <div class="sentence-text-content">"<strong>Firstly,</strong> we will examine the causes. <strong>Subsequently,</strong> we will analyse the effects."</div>
-                    </div>
-                    <div class="speaking-sentence-item">
-                        <div class="sentence-number-badge">3</div>
-                        <div class="sentence-text-content">"<strong>In contrast to</strong> conventional methods, our proposed approach significantly reduces material waste."</div>
-                    </div>
-                    <div class="speaking-sentence-item">
-                        <div class="sentence-number-badge">4</div>
-                        <div class="sentence-text-content">"<strong>Having said that,</strong> it is important to acknowledge the limitations of this study."</div>
-                    </div>
-                    <div class="speaking-sentence-item">
-                        <div class="sentence-number-badge">5</div>
-                        <div class="sentence-text-content">"<strong>In conclusion,</strong> the evidence strongly suggests that this intervention is both feasible and sustainable."</div>
-                    </div>
-                </div>
-                
-                <div class="task-box">
-                    <div class="task-header"><div class="title"><span>🎙️</span><span>Your Technical Seminar Recording</span></div></div>
-                    <div class="task-content">
-                        <div class="recording-controls">
-                            <button id="speakingRecordBtn" class="modern-record-btn"> Start Recording</button>
-                            <button id="speakingStopBtn" class="modern-record-btn" style="background: #64748b; display: none;"> Stop Recording</button>
-                        </div>
-                        <div id="speakingPlaybackCard" style="display: none; margin-top: 1rem;">
-                            <audio id="speakingPlayback" controls></audio>
-                            <div id="speakingFeedback" style="margin-top: 0.5rem; font-size: 0.85rem;"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
-                    <button class="complete-activity-btn" id="completeSpeakingBtn" data-checklist="chk3" disabled>✓ Mark Speaking as Complete</button>
-                </div>
-                
-                <div class="speaking-why-works">
-                    <div class="why-works-content">
-                        <span class="why-works-icon">👉</span>
-                        <span class="why-works-text"><strong>WHY THIS WORKS:</strong> Discourse markers are the scaffolding of advanced communication. Without them, your speech sounds like a list. With them, it sounds like a structured argument.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 3. READING ACTIVITY -->
-        <div class="activity-card" id="reading-card">
-            <div class="card-header reading">
-                <h2>📖 3. Reading Activity · The Technical Discussion</h2>
-            </div>
-            <div class="card-body">
-                
-                <div id="interactivePassage" class="interactive-passage"></div>
 
-                <div style="background: #e0f2fe; border-radius: 16px; padding: 1rem; margin: 1rem 0;">
-                    <strong>🔍 Analysis Tasks:</strong>
-                    <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
-                        <li>Underline all discourse markers and label their function (Introduction / Contrast / Addition / Concession / Conclusion).</li>
-                        <li>Circle the word that means 'practical and sensible'. </li>
-                    </ol>
-                </div>
-                
-                <div class="reading-mode-buttons">
-                    <button id="underlineModeBtn" class="mode-btn underline-mode">📝 Underline Mode (Contrast Markers)</button>
-                    <button id="circleModeBtn" class="mode-btn circle-mode">⭕ Circle Mode </button>
-                </div>
-                
-                <div id="underlineSection" style="display: block;">
-                    <div class="action-buttons">
-                        <button class="btn-outline" id="checkUnderlinesBtn">✓ Check Underline Answers</button>
-                        <button class="btn-outline" id="resetUnderlinesBtn">⟳ Reset Underlines</button>
+                    <audio id="listeningAudio" controls>
+                        <source src="{% static 'learning/audio/Intermediate/day11.mp3' %}" type="audio/mpeg">
+                    </audio>
+
+                    <div id="listeningTextSection" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Listening Text</span></div>
+                            </div>
+                            <div class="task-content" style="font-style: italic; background: #fef9e3;">
+                                "First of all, I would like to acknowledge the contributions of the entire team... That
+                                said, there are several areas that require immediate attention... On the other hand, the
+                                progress achieved this quarter has been remarkable... All things considered, I believe
+                                we are on the right track..."
+                            </div>
+                        </div>
                     </div>
-                    <div id="underlineFeedback" style="margin-top:0.5rem;"></div>
-                </div>
-                
-                <div id="circleSection" style="display: none;">
-                    <div class="action-buttons">
-                        <button class="btn-outline" id="checkCirclesBtn">✓ Check Circle Answer</button>
-                        <button class="btn-outline" id="resetCirclesBtn">⟳ Reset Circles</button>
+
+                    <div id="postAudioListeningContent" style="display: none;">
+                        <div class="writing-container">
+                            <div class="task-header">
+                                <div class="title"><span>✍️</span><span>Step 1: Write Your Summary</span></div>
+                            </div>
+                            <div class="task-content">Write a <strong>60-90 second summary</strong> of a topic you know
+                                well (your engineering subject). Use <strong>at least 4 different discourse
+                                    markers</strong>.</div>
+
+                            <textarea id="discourseSummary" class="discourse-textarea" rows="6"
+                                placeholder="Example:
+First of all, our team analysed the requirements thoroughly. However, we encountered some unexpected challenges. Furthermore, we developed innovative solutions to address them. In conclusion, the project was successfully completed within the deadline."></textarea>
+
+                            <div id="summaryValidationMsg" style="margin-top: 0.75rem; font-size: 0.85rem;"></div>
+                            <button class="btn-outline" id="validateSummaryBtn"
+                                style="width: 30%; margin-top: 0.5rem;">✓ Submit for AI Evaluation</button>
+                        </div>
+
+                        <div id="summaryAIFeedback" style="margin-top: 0.75rem;"></div>
+                        <div id="summaryAttemptCounter" class="attempts-left">📊 Attempts remaining: <span>3</span>
+                        </div>
+
+                        <div style="font-weight: 600; margin: 1rem 0 0.5rem;">🎙️ Step 2: Record Your Summary</div>
+                        <div class="recording-controls">
+                            <button id="listeningRecordBtn" class="modern-record-btn" disabled>🎙️ Start Recording
+                                (Validate first)</button>
+                            <button id="listeningStopBtn" class="modern-record-btn"
+                                style="background: #64748b; display: none;">⏹️ Stop Recording</button>
+                        </div>
+                        <div id="listeningPlaybackCard" style="display: none;">
+                            <audio id="listeningPlayback" controls style="width: 100%;"></audio>
+                        </div>
+                        <div id="comparisonSection" style="display: none;">
+                            <div class="comparison-message">Did you use at least 4 different discourse markers?</div>
+                            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                                <button id="yesComparisonBtn" class="yes-btn">✓ Yes, correct</button>
+                                <button id="noComparisonBtn" class="no-btn">✗ No, record again</button>
+                            </div>
+                            <div id="comparisonFeedback" style="margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <div class="quiz-section" style="margin-top: 1rem;">
+                            <p><strong>🧠 Quick Listening Check</strong></p><br>
+                            <div>
+                                <p><strong>1. What does the speaker say about 'limitations'?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="listening_quiz" value="ignored">
+                                    They ignored them</label>
+                                <label class="quiz-option"><input type="radio" name="listening_quiz"
+                                        value="acknowledged"> They acknowledged them</label>
+                                <div id="q1Feedback" class="ind-quiz-feedback"></div>
+                            </div>
+                            <div>
+                                <p><strong>2. How does the speaker describe the overall outcome?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="practice_quiz" value="failure"> A
+                                    failure</label>
+                                <label class="quiz-option"><input type="radio" name="practice_quiz" value="success"> A
+                                    success</label>
+                                <div id="q2Feedback" class="ind-quiz-feedback"></div>
+                            </div>
+                            <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                        </div>
+
+                        <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answers</button>
                     </div>
-                    <div id="circleFeedback" style="margin-top:0.5rem;"></div>
-                </div>
-                
-                <!-- Task 2: Replace 'furthermore' with TWO alternatives -->
-                <div style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0;">
-                    <p><strong>📝 Task 2: Replace 'furthermore' with TWO alternative discourse markers</strong></p>
-                    <input type="text" id="task2Alternatives" class="grammar-input" placeholder="e.g., moreover, in addition" style="width: 100%; margin-bottom: 0.5rem;">
-                    <div class="action-buttons">
-                        <button class="btn-outline" id="checkTask2Btn">✓ Check Answer</button>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeListeningBtn" data-checklist="chkListening"
+                            disabled>✓ Mark Listening as Complete</button>
                     </div>
-                    <div id="task2Feedback" class="fix-feedback"></div>
                 </div>
-                
+            </div>
+
+            <!-- 2. SPEAKING ACTIVITY -->
+            <div class="activity-card" id="speaking-card">
+                <div class="card-header speaking">
+                    <h2>🗣️ 2. Speaking Activity · The Technical Seminar Opener</h2>
+                </div>
+                <div class="card-body">
+                    <p>A structured seminar uses discourse markers to guide the audience. Practise these out loud.</p>
+
+                    <div class="speaking-sentences-list">
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">1</div>
+                            <div class="sentence-text-content">"Good morning. <strong>To begin with,</strong> I would
+                                like to provide a brief overview of today's topic."</div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">2</div>
+                            <div class="sentence-text-content">"<strong>Firstly,</strong> we will examine the causes.
+                                <strong>Subsequently,</strong> we will analyse the effects."</div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">3</div>
+                            <div class="sentence-text-content">"<strong>In contrast to</strong> conventional methods,
+                                our proposed approach significantly reduces material waste."</div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">4</div>
+                            <div class="sentence-text-content">"<strong>Having said that,</strong> it is important to
+                                acknowledge the limitations of this study."</div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">5</div>
+                            <div class="sentence-text-content">"<strong>In conclusion,</strong> the evidence strongly
+                                suggests that this intervention is both feasible and sustainable."</div>
+                        </div>
+                    </div>
+
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎙️</span><span>Your Technical Seminar Recording</span></div>
+                        </div>
+                        <div class="task-content">
+                            <div class="recording-controls">
+                                <button id="speakingRecordBtn" class="modern-record-btn">🎤 Start Recording</button>
+                                <button id="speakingStopBtn" class="modern-record-btn"
+                                    style="background: #64748b; display: none;">⏹️ Stop Recording</button>
+                            </div>
+                            <div id="speakingPlaybackCard" style="display: none; margin-top: 1rem;">
+                                <audio id="speakingPlayback" controls></audio>
+                                <div id="speakingFeedback" style="margin-top: 0.5rem; font-size: 0.85rem;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="speaking-why-works">
+                        <div class="why-works-content">
+                            <span class="why-works-icon">👉</span>
+                            <span class="why-works-text"><strong>WHY THIS WORKS:</strong> Discourse markers are the
+                                scaffolding of advanced communication. Without them, your speech sounds like a list.
+                                With them, it sounds like a structured argument.</span>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeSpeakingBtn" data-checklist="chkSpeaking"
+                            disabled>✓ Mark Speaking as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. READING ACTIVITY - UPDATED WITH 3 TASKS -->
+            <div class="activity-card" id="reading-card">
+                <div class="card-header reading">
+                    <h2>📖 3. Reading Activity · The Technical Discussion</h2>
+                </div>
+                <div class="card-body">
+
+                    <div id="interactivePassage" class="reading-passage"></div>
+
+                    <div style="background: #e0f2fe; border-radius: 16px; padding: 1rem; margin: 1rem 0;">
+                        <strong>🔍 Analysis Tasks:</strong>
+                        <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>Underline all discourse markers and label their function.</li><br>
+                            <li>Circle the word that means 'practical and sensible'.</li>
+                        </ol>
+                    </div>
+
+                    <div class="reading-mode-buttons">
+                        <button id="underlineModeBtn" class="mode-btn underline-mode">📝 Underline Mode
+                            (Markers)</button>
+                        <button id="circleModeBtn" class="mode-btn circle-mode">⭕ Circle Mode</button>
+                    </div>
+
+                    <div id="underlineSection" style="display: block;">
+                        <div class="action-buttons">
+                            <button class="btn-outline" id="checkUnderlinesBtn">✓ Check Underline Answers</button>
+                            <button class="btn-outline" id="resetUnderlinesBtn">⟳ Reset Underlines</button>
+                        </div>
+                        <div id="underlineFeedback" style="margin-top:0.5rem;"></div>
+                    </div>
+
+                    <div id="circleSection" style="display: none;">
+                        <div class="action-buttons">
+                            <button class="btn-outline" id="checkCirclesBtn">✓ Check Circle Answer</button>
+                            <button class="btn-outline" id="resetCirclesBtn">⟳ Reset Circles</button>
+                        </div>
+                        <div id="circleFeedback" style="margin-top:0.5rem;"></div>
+                    </div>
+
+                    <!-- Task 2: Replace 'furthermore' with TWO alternatives -->
+                    <div style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0;">
+                        <p><strong>📝 Task 2: Replace 'furthermore' with TWO alternative discourse markers</strong></p>
+                        <input type="text" id="task2Alternatives" class="grammar-input"
+                            placeholder="e.g., moreover, in addition" style="width: 100%; margin-bottom: 0.5rem;">
+                        <div class="action-buttons">
+                            <button class="btn-outline" id="checkTask2Btn">✓ Check Answer</button>
+                            <button class="btn-outline" id="resetTask2Btn">⟳ Reset</button>
+                        </div>
+                        <div id="task2Feedback" class="fix-feedback"></div>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeReadingBtn" data-checklist="chkReading"
+                            disabled>✓ Mark Reading as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. VOCABULARY TABLE -->
+            <div class="activity-card" id="vocabulary-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 4. Vocabulary of the Day</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>🔊</th>
+                                    <th>✅</th>
+                                    <th>Word</th>
+                                    <th>Pronunciation</th>
+                                    <th>Meaning</th>
+                                    <th>Synonym</th>
+                                    <th>Antonym</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Concession"
+                                            data-checkid="check-concession">🔊</button></span>
+                                    <td class="check-cell" id="check-concession">⬜</span>
+                                    <td class="word-cell"><strong>Concession</strong></span>
+                                    <td><code>/kənˈseʃ.ən/</code></span>
+                                    <td>An acknowledgment that something is true despite disagreement</span>
+                                    <td>Acknowledgment</span>
+                                    <td>Denial</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Proximity"
+                                            data-checkid="check-proximity">🔊</button></span>
+                                    <td class="check-cell" id="check-proximity">⬜</span>
+                                    <td class="word-cell"><strong>Proximity</strong></span>
+                                    <td><code>/prɒkˈsɪm.ɪ.ti/</code></span>
+                                    <td>Nearness in space or time</span>
+                                    <td>Closeness</span>
+                                    <td>Distance</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Stakeholder"
+                                            data-checkid="check-stakeholder">🔊</button></span>
+                                    <td class="check-cell" id="check-stakeholder">⬜</span>
+                                    <td class="word-cell"><strong>Stakeholder</strong></span>
+                                    <td><code>/ˈsteɪk.həʊl.dər/</code></span>
+                                    <td>A person with an interest in an organisation's decisions</span>
+                                    <td>Party concerned</span>
+                                    <td>Outsider</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Intervention"
+                                            data-checkid="check-intervention">🔊</button></span>
+                                    <td class="check-cell" id="check-intervention">⬜</span>
+                                    <td class="word-cell"><strong>Intervention</strong></span>
+                                    <td><code>/ˌɪn.təˈven.ʃən/</code></span>
+                                    <td>Taking action to improve a situation</span>
+                                    <td>Action</span>
+                                    <td>Inaction</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Geological"
+                                            data-checkid="check-geological">🔊</button></span>
+                                    <td class="check-cell" id="check-geological">⬜</span>
+                                    <td class="word-cell"><strong>Geological</strong></span>
+                                    <td><code>/ˌdʒiː.əˈlɒdʒ.ɪ.kəl/</code></span>
+                                    <td>Relating to the physical structure of the earth</span>
+                                    <td>Terrain-related</span>
+                                    <td>Structural</span>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="power-word-section" style="border-left-color: #22c55e;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #166534;">
+                            <span>💡</span><span>IDIOM OF THE DAY: "IN THE SAME VEIN"</span>
+                        </div>
+                        <p><strong>Marathi Meaning:</strong> त्याच पद्धतीने, त्याच विचारसरणीत</p>
+                        <p><strong>Meaning:</strong> In the same style or manner</p>
+                        <p><strong>Example:</strong> "In the same vein as our previous recommendations, we advise
+                            conducting a feasibility study before the next phase."</p>
+                    </div>
+
+                    <div class="power-word-section">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
+                            <span>🔥</span><span>POWER WORD: COGENT (KOH-jent)</span>
+                        </div>
+                        <p><strong>Meaning:</strong> Clear, logical, and convincing</p>
+                        <p><strong>Usage:</strong> "The engineer presented a cogent argument for redesigning the
+                            load-bearing structure."</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeVocabularyBtn" data-checklist="chkVocabulary"
+                            disabled>✓ Mark Vocabulary as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. GRAMMAR HACK -->
+            <div class="grammar-section" id="grammar-card">
+                <h3 style="margin: 0 0 1rem 0;">🧠 Grammar Hack: Discourse Markers — The 6 Function Categories</h3>
+
+                <div class="grammar-rule">
+                    <p><strong>📖 INTRODUCTION:</strong> To begin with / First of all / Initially / By way of
+                        introduction</p>
+                    <p><strong>📖 ADDITION:</strong> Furthermore / Moreover / In addition / Besides / What is more</p>
+                    <p><strong>📖 CONTRAST:</strong> However / Nevertheless / On the other hand / In contrast / That
+                        said</p>
+                    <p><strong>📖 CONCESSION:</strong> Although / Even though / Despite / In spite of / Having said that
+                    </p>
+                    <p><strong>📖 EXAMPLE:</strong> For instance / For example / To illustrate / Such as / Namely</p>
+                    <p><strong>📖 CONCLUSION:</strong> In conclusion / To summarise / All in all / On the whole /
+                        Ultimately</p>
+                </div>
+
+                <div class="grammar-rule">
+                    <p><strong>⚠️ Key Difference:</strong></p>
+                    <p>• <strong>'However'</strong> starts a new sentence (with comma).</p>
+                    <p>• <strong>'Although'</strong> joins clauses.</p>
+                    <p>✗ 'Although it rained, however, we continued.' (Never use both together.)</p>
+                    <p>✓ 'Although it rained, we continued.' OR 'It rained. However, we continued.'</p>
+                </div>
+
+                <div class="grammar-rule">
+                    <p><strong>⚠️ Activity:</strong> Complete each sentence by adding the correct discourse marker:</p>
+
+                    <p><strong>1. The material is cost-effective. _________, it is also environmentally
+                            friendly.</strong></p>
+                    <input type="text" id="grammar1" class="grammar-input"
+                        placeholder="Write the complete sentence with the discourse marker...">
+                    <div id="grammar1Feedback" class="fix-feedback"></div>
+
+                    <p><strong>2. _________ its high cost, the technology has been widely adopted.</strong></p>
+                    <input type="text" id="grammar2" class="grammar-input"
+                        placeholder="Write the complete sentence with the discourse marker...">
+                    <div id="grammar2Feedback" class="fix-feedback"></div>
+
+                    <p><strong>3. The test failed. _________, the team identified the root cause.</strong></p>
+                    <input type="text" id="grammar3" class="grammar-input"
+                        placeholder="Write the complete sentence with the discourse marker...">
+                    <div id="grammar3Feedback" class="fix-feedback"></div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="btn-outline" id="checkGrammarBtn">✓ Check Answers</button>
+                </div>
+                <div id="grammarFeedback" class="quiz-feedback"></div>
                 <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
-                    <button class="complete-activity-btn" id="completeReadingBtn" data-checklist="chk1" disabled>✓ Mark Reading as Complete</button>
+                    <button class="complete-activity-btn" id="completeGrammarBtn" data-checklist="chkGrammar" disabled>✓
+                        Mark Grammar as Complete</button>
                 </div>
             </div>
-        </div>
-        
-        <!-- 4. VOCABULARY TABLE -->
-        <div class="activity-card" id="vocabulary-card">
-            <div class="card-header vocabulary">
-                <h2>📘 4. Vocabulary of the Day</h2>
-            </div>
-            <div class="card-body">
-                <div class="vocab-table-container">
-                    <table class="vocab-table">
-                        <thead>
-                            <tr><th>🔊</th><th>✅</th><th>Word</th><th>Pronunciation</th><th>Meaning</th><th>Synonym</th><th>Antonym</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Concession" data-checkid="check-concession">🔊</button></td>
-                            <td class="check-cell" id="check-concession">⬜</td>
-                            <td class="word-cell"><strong>Concession</strong></td>
-                            <td><code>/kənˈseʃ.ən/</code></td>
-                            <td>An acknowledgment that something is true despite disagreement</td>
-                            <td>Acknowledgment</td>
-                            <td>Denial</td>
-                            </tr>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Proximity" data-checkid="check-proximity">🔊</button></td>
-                            <td class="check-cell" id="check-proximity">⬜</td>
-                            <td class="word-cell"><strong>Proximity</strong></td>
-                            <td><code>/prɒkˈsɪm.ɪ.ti/</code></td>
-                            <td>Nearness in space or time</td>
-                            <td>Closeness</td>
-                            <td>Distance</td>
-                            </tr>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Stakeholder" data-checkid="check-stakeholder">🔊</button></td>
-                            <td class="check-cell" id="check-stakeholder">⬜</td>
-                            <td class="word-cell"><strong>Stakeholder</strong></td>
-                            <td><code>/ˈsteɪk.həʊl.dər/</code></td>
-                            <td>A person with an interest in an organisation's decisions</td>
-                            <td>Party concerned</td>
-                            <td>Outsider</td>
-                            </tr>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Intervention" data-checkid="check-intervention">🔊</button></td>
-                            <td class="check-cell" id="check-intervention">⬜</td>
-                            <td class="word-cell"><strong>Intervention</strong></td>
-                            <td><code>/ˌɪn.təˈven.ʃən/</code></td>
-                            <td>Taking action to improve a situation</td>
-                            <td>Action</td>
-                            <td>Inaction</td>
-                            </tr>
-                            <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Geological" data-checkid="check-geological">🔊</button></td>
-                            <td class="check-cell" id="check-geological">⬜</td>
-                            <td class="word-cell"><strong>Geological</strong></td>
-                            <td><code>/ˌdʒiː.əˈlɒdʒ.ɪ.kəl/</code></td>
-                            <td>Relating to the physical structure of the earth</td>
-                            <td>Terrain-related</td>
-                            <td>Structural</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+            <!-- CHECKLIST - FIXED ORDER: Listening, Speaking, Reading, Vocabulary, Grammar -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 11 COMPLETION CHECKLIST</h2>
                 </div>
-                
-                <div class="power-word-section" style="border-left-color: #22c55e;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #166534;">
-                        <span>💡</span><span>IDIOM OF THE DAY: "IN THE SAME VEIN"</span>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chkListening" class="day-check" disabled><label> I wrote and
+                                recorded a 60-90 second summary using at least 4 discourse markers. (Listening
+                                Activity)</label></li>
+                        <li><input type="checkbox" id="chkSpeaking" class="day-check" disabled><label> I practised the
+                                'Technical Seminar Opener' with signposting emphasis. (Speaking Activity)</label></li>
+                        <li><input type="checkbox" id="chkReading" class="day-check" disabled><label> I identified
+                                discourse markers and found 'pragmatic'. (Reading Activity)</label></li>
+                        <li><input type="checkbox" id="chkVocabulary" class="day-check" disabled><label> I listened to
+                                all vocabulary words pronunciation. (Vocabulary Activity)</label></li>
+                        <li><input type="checkbox" id="chkGrammar" class="day-check" disabled><label> I completed the
+                                grammar fill-in-the-blank activity correctly. (Grammar Activity)</label></li>
+                    </ul>
+                    <div style="text-align:right;"><span class="badge" id="progressCounter">0/5 completed</span></div>
+                    <div style="display:flex; justify-content:center; margin-top:1rem;">
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>🏆 Complete Day 11</button>
                     </div>
-                    <p><strong>Marathi Meaning:</strong> त्याच पद्धतीने, त्याच विचारसरणीत</p>
-                    <p><strong>Meaning:</strong> In the same style or manner</p>
-                    <p><strong>Example:</strong> "In the same vein as our previous recommendations, we advise conducting a feasibility study before the next phase."</p>
-                </div>
-                
-                <div class="power-word-section">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
-                        <span>🔥</span><span>POWER WORD: COGENT (KOH-jent)</span>
-                    </div>
-                    <p><strong>Meaning:</strong> Clear, logical, and convincing</p>
-                    <p><strong>Usage:</strong> "The engineer presented a cogent argument for redesigning the load-bearing structure."</p>
-                </div>
-                
-                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                    <button class="complete-activity-btn" id="completeVocabularyBtn" data-checklist="chk5" disabled>✓ Mark Vocabulary as Complete</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 5. GRAMMAR HACK -->
-        <div class="grammar-section" id="grammar-card">
-            <h3 style="margin: 0 0 1rem 0;">🧠 Grammar Hack: Discourse Markers — The 6 Function Categories</h3>
-            
-            <div class="grammar-rule">
-                <p><strong>📖 INTRODUCTION:</strong> To begin with / First of all / Initially / By way of introduction</p>
-                <p><strong>📖 ADDITION:</strong> Furthermore / Moreover / In addition / Besides / What is more</p>
-                <p><strong>📖 CONTRAST:</strong> However / Nevertheless / On the other hand / In contrast / That said</p>
-                <p><strong>📖 CONCESSION:</strong> Although / Even though / Despite / In spite of / Having said that</p>
-                <p><strong>📖 EXAMPLE:</strong> For instance / For example / To illustrate / Such as / Namely</p>
-                <p><strong>📖 CONCLUSION:</strong> In conclusion / To summarise / All in all / On the whole / Ultimately</p>
-            </div>
-            
-            <div class="grammar-rule">
-                <p><strong>⚠️ Key Difference:</strong></p>
-                <p>• <strong>'However'</strong> starts a new sentence (with comma).</p>
-                <p>• <strong>'Although'</strong> joins clauses.</p>
-                <p>✗ 'Although it rained, however, we continued.' (Never use both together.)</p>
-                <p>✓ 'Although it rained, we continued.' OR 'It rained. However, we continued.'</p>
-            </div>
-            
-            <div class="grammar-rule">
-                <p><strong>⚠️ Activity:</strong> Complete each sentence by adding the correct discourse marker:</p>
-                
-                <p><strong>1. The material is cost-effective. _________, it is also environmentally friendly.</strong></p>
-                <input type="text" id="grammar1" class="grammar-input" placeholder="Write the complete sentence with the discourse marker...">
-                <div id="grammar1Feedback" class="fix-feedback"></div>
-                
-                <p><strong>2. _________ its high cost, the technology has been widely adopted.</strong></p>
-                <input type="text" id="grammar2" class="grammar-input" placeholder="Write the complete sentence with the discourse marker...">
-                <div id="grammar2Feedback" class="fix-feedback"></div>
-                
-                <p><strong>3. The test failed. _________, the team identified the root cause.</strong></p>
-                <input type="text" id="grammar3" class="grammar-input" placeholder="Write the complete sentence with the discourse marker...">
-                <div id="grammar3Feedback" class="fix-feedback"></div>
-            </div>
-            
-            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                <button class="btn-outline" id="checkGrammarBtn">✓ Check Answers</button>
-            </div>
-            <div id="grammarFeedback" class="quiz-feedback"></div>
-            <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
-                <button class="complete-activity-btn" id="completeGrammarBtn" data-checklist="chk4" disabled>✓ Mark Grammar as Complete</button>
-            </div>
-        </div>
-        
-        <!-- CHECKLIST -->
-        <div class="activity-card">
-            <div class="card-header vocabulary">
-                <h2>✅ DAY 11 COMPLETION CHECKLIST</h2>
-            </div>
-            <div class="card-body">
-                <ul class="checklist">
-                    <li><input type="checkbox" id="chk1" class="day-check" disabled><label> I identified contrast discourse markers (underlined) and found 'pragmatic' (circled).</label></li>
-                    <li><input type="checkbox" id="chk2" class="day-check" disabled><label> I recorded a 90-second technical summary using at least 4 discourse markers.</label></li>
-                    <li><input type="checkbox" id="chk3" class="day-check" disabled><label> I practised the 'Technical Seminar Opener' with signposting emphasis.</label></li>
-                    <li><input type="checkbox" id="chk4" class="day-check" disabled><label> I completed the grammar fill-in-the-blank activity correctly.</label></li>
-                    <li><input type="checkbox" id="chk5" class="day-check" disabled><label> I listened to all vocabulary words pronunciation.</label></li>
-                </ul>
-                <div style="text-align:right;"><span class="badge" id="progressCounter">0/5 completed</span></div>
-                <div style="display:flex; justify-content:center; margin-top:1rem;">
-                    <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 11</button>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<script src="{% static 'learning/js/main.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // ==================== CSRF TOKEN ====================
-    function getCookie(n) {
-        let v = null;
-        if (document.cookie && document.cookie !== '') {
-            const c = document.cookie.split(';');
-            for (let i = 0; i < c.length; i++) {
-                const t = c[i].trim();
-                if (t.substring(0, n.length + 1) === (n + '=')) {
-                    v = decodeURIComponent(t.substring(n.length + 1));
-                    break;
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // ==================== CSRF TOKEN ====================
+            function getCookie(n) {
+                let v = null;
+                if (document.cookie && document.cookie !== '') {
+                    const c = document.cookie.split(';');
+                    for (let i = 0; i < c.length; i++) {
+                        const t = c[i].trim();
+                        if (t.substring(0, n.length + 1) === (n + '=')) {
+                            v = decodeURIComponent(t.substring(n.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return v;
+            }
+
+            const csrftoken = getCookie('csrftoken');
+
+            // ==================== INITIALIZATION ====================
+            if (typeof initializeDay === 'function') {
+                initializeDay(11, 'intermediate', {
+                    quizAnswers: { q1: 'acknowledged', q2: 'success' },
+                    vocabularyWords: ['concession', 'proximity', 'stakeholder', 'intervention', 'geological'],
+                    powerWord: 'cogent'
+                });
+            }
+
+            // ==================== STATE VARIABLES ====================
+            let listeningQuizCorrect = false;
+            let listeningQuizAnswers = { q1: null, q2: null };
+            let masterAudioFinished = false;
+            let summaryValidated = false;
+            let listeningRecorded = false;
+            let speakingRecorded = false;
+            let grammarCompleted = false;
+
+            // ==================== HELPER FUNCTIONS ====================
+            function updateDayProgress() {
+                const c = document.querySelectorAll('.checklist input.day-check');
+                let completed = 0;
+                c.forEach(cb => { if (cb.checked) completed++; });
+                const counter = document.getElementById('progressCounter');
+                if (counter) counter.innerText = `${completed}/5 completed`;
+                const btn = document.getElementById('dayCompleteBtn');
+                if (btn) {
+                    btn.disabled = (completed !== 5);
+                    btn.style.opacity = (completed === 5) ? '1' : '0.5';
                 }
             }
-        }
-        return v;
-    }
-    
-    const csrftoken = getCookie('csrftoken');
-    
-    // ==================== INITIALIZATION ====================
-    if (typeof initializeDay === 'function') {
-        initializeDay(11, 'intermediate', {
-            quizAnswers: { q1: 'acknowledged', q2: 'success' },
-            vocabularyWords: ['concession', 'proximity', 'stakeholder', 'intervention', 'geological'],
-            powerWord: 'cogent'
-        });
-    }
-    
-    // ==================== STATE VARIABLES ====================
-    let listeningQuizCorrect = false;
-    let listeningQuizAnswers = { q1: null, q2: null };
-    let masterAudioFinished = false;
-    let aiEvaluationDone = false;
-    let aiCorrect = false;
-    let attemptCount = 0;
-    let maxAttempts = 3;
-    let userResponses = [];
-    let speakingRecorded = false;
-    let readingTask1Done = false;
-    let readingTask2Done = false;
-    let grammarCompleted = false;
-    let showCorrectAnswerTriggered = false;
-    
-    // ==================== HELPER FUNCTIONS ====================
-    function updateDayProgress() {
-        const c = document.querySelectorAll('.checklist input.day-check');
-        let completed = 0;
-        c.forEach(cb => { if (cb.checked) completed++; });
-        document.getElementById('progressCounter').innerText = `${completed}/5 completed`;
-        const btn = document.getElementById('dayCompleteBtn');
-        if (btn) {
-            btn.disabled = (completed !== 5);
-            btn.style.opacity = (completed === 5) ? '1' : '0.5';
-        }
-    }
-    
-    function showValidationMessage(id, msg) {
-        const e = document.getElementById(id);
-        if (e) {
-            e.innerHTML = msg;
-            e.style.display = 'block';
-            setTimeout(() => { e.style.display = 'none'; }, 3000);
-        } else alert(msg);
-    }
-    
-    if (typeof markActivityComplete === 'function') {
-        const orig = window.markActivityComplete;
-        window.markActivityComplete = function(aid, cid) {
-            orig(aid, cid);
-            document.getElementById(cid).checked = true;
-            setTimeout(updateDayProgress, 100);
-        };
-    } else {
-        window.markActivityComplete = function(aid, cid) {
-            document.getElementById(cid).checked = true;
-            const btn = document.getElementById(`complete${aid.charAt(0).toUpperCase() + aid.slice(1)}Btn`);
-            if (btn) {
-                btn.disabled = true;
-                btn.textContent = '✓ Completed';
+
+            function showValidationMessage(id, msg) {
+                const e = document.getElementById(id);
+                if (e) {
+                    e.innerHTML = msg;
+                    e.style.display = 'block';
+                    setTimeout(() => { e.style.display = 'none'; }, 3000);
+                } else alert(msg);
             }
-            setTimeout(updateDayProgress, 100);
-        };
-    }
-    
-    // ==================== LISTENING ACTIVITY WITH AI ====================
-    const listeningAudioElem = document.getElementById('listeningAudio');
-    const listeningTextSection = document.getElementById('listeningTextSection');
-    const postAudioListeningContent = document.getElementById('postAudioListeningContent');
-    const listeningAIFeedbackDiv = document.getElementById('listeningAIFeedback');
-    const listeningCompleteBtn = document.getElementById('completeListeningBtn');
-    const listeningQuizFeedbackDiv = document.getElementById('listeningQuizFeedback');
-    const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
-    const listeningAttemptCounterSpan = document.querySelector('#listeningAttemptCounter span');
-    
-    if (listeningAudioElem) {
-        listeningAudioElem.addEventListener('ended', function() {
-            if (!masterAudioFinished) {
-                masterAudioFinished = true;
-                if (listeningTextSection) listeningTextSection.style.display = 'block';
-                if (postAudioListeningContent) postAudioListeningContent.style.display = 'block';
+
+            // Override markActivityComplete to ensure proper checklist checking
+            if (typeof markActivityComplete === 'function') {
+                const originalMarkActivityComplete = window.markActivityComplete;
+                window.markActivityComplete = function (activityId, checklistId) {
+                    console.log(`Marking ${activityId} as complete with checklist ${checklistId}`);
+
+                    // Call the original function
+                    originalMarkActivityComplete(activityId, checklistId);
+
+                    // Ensure the specific checkbox is checked
+                    const checkbox = document.getElementById(checklistId);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        console.log(`Checked checkbox ${checklistId}`);
+                    }
+
+                    // Update progress after a short delay
+                    setTimeout(updateDayProgress, 100);
+                };
             }
-        });
-    }
-    
-    function startLiveSpeechRecognition() {
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            showValidationMessage('listeningValidationMsg', '⚠️ Speech recognition not supported. Please use Chrome browser.');
-            return null;
-        }
-        const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-        const recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = false;
-        recognition.lang = 'en-US';
-        recognition.maxAlternatives = 1;
-        return recognition;
-    }
-    
-    const speakBtn = document.createElement('button');
-    speakBtn.textContent = '🎤 Click to Speak (Use 4+ discourse markers)';
-    speakBtn.className = 'modern-record-btn';
-    speakBtn.style.width = '100%';
-    speakBtn.style.marginTop = '0.5rem';
-    speakBtn.style.padding = '0.75rem';
-    
-    const attemptDisplay = document.createElement('div');
-    attemptDisplay.style.cssText = 'font-size: 0.8rem; color: #64748b; margin-top: 0.5rem; text-align: center;';
-    
-    const listeningContainer = document.querySelector('#postAudioListeningContent .listening-container');
-    if (listeningContainer) {
-        listeningContainer.appendChild(speakBtn);
-        listeningContainer.appendChild(attemptDisplay);
-    }
-    
-    let currentRecognition = null;
-    
-    function updateListeningAttemptDisplay() {
-        const remaining = maxAttempts - attemptCount;
-        if (listeningAttemptCounterSpan) listeningAttemptCounterSpan.innerText = remaining;
-        attemptDisplay.innerHTML = `📊 Attempts remaining: ${remaining}`;
-        if (attemptCount >= maxAttempts) {
-            speakBtn.disabled = true;
-            speakBtn.style.background = '#94a3b8';
-            speakBtn.style.cursor = 'not-allowed';
-            speakBtn.textContent = '🔒 No attempts left. See the correct answer below.';
-        }
-    }
-    
-    function showCorrectAnswer() {
-        if (showCorrectAnswerTriggered) return;
-        showCorrectAnswerTriggered = true;
-        
-        const correctAnswerHtml = `
+
+            // ==================== LISTENING ACTIVITY WITH WRITING FIRST ====================
+            const listeningAudioElem = document.getElementById('listeningAudio');
+            const listeningTextSection = document.getElementById('listeningTextSection');
+            const postAudioListeningContent = document.getElementById('postAudioListeningContent');
+            const summaryAIFeedbackDiv = document.getElementById('summaryAIFeedback');
+            const listeningCompleteBtn = document.getElementById('completeListeningBtn');
+            const listeningQuizFeedbackDiv = document.getElementById('listeningQuizFeedback');
+            const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
+            const validateSummaryBtn = document.getElementById('validateSummaryBtn');
+            const listenRecordBtn = document.getElementById('listeningRecordBtn');
+            const listenStopBtn = document.getElementById('listeningStopBtn');
+            const listenPlaybackCard = document.getElementById('listeningPlaybackCard');
+            const listenPlaybackAudio = document.getElementById('listeningPlayback');
+            const comparisonSection = document.getElementById('comparisonSection');
+            const yesComparisonBtn = document.getElementById('yesComparisonBtn');
+            const noComparisonBtn = document.getElementById('noComparisonBtn');
+            const comparisonFeedbackDiv = document.getElementById('comparisonFeedback');
+            const summaryAttemptCounterSpan = document.querySelector('#summaryAttemptCounter span');
+
+            let attemptCount = 0;
+            let maxAttempts = 3;
+            let showCorrectAnswerTriggered = false;
+
+            function updateSummaryAttemptDisplay() {
+                const remaining = maxAttempts - attemptCount;
+                if (summaryAttemptCounterSpan) summaryAttemptCounterSpan.innerText = remaining;
+                if (attemptCount >= maxAttempts && validateSummaryBtn) {
+                    validateSummaryBtn.disabled = true;
+                    validateSummaryBtn.textContent = '🔒 No attempts left';
+                }
+            }
+
+            function showCorrectAnswer() {
+                if (showCorrectAnswerTriggered) return;
+                showCorrectAnswerTriggered = true;
+
+                const correctAnswerHtml = `
             <div class="correct-answer-box">
-                <h4>📚 Here is an Example with 4 Discourse Markers:</h4>
+                <h4>📚 Example with 4 Discourse Markers:</h4>
                 <p>"<strong>First of all,</strong> our team analysed the requirements thoroughly. <strong>However,</strong> we encountered some unexpected challenges. <strong>Furthermore,</strong> we developed innovative solutions to address them. <strong>In conclusion,</strong> the project was successfully completed within the deadline."</p>
                 <hr style="margin: 0.75rem 0;">
                 <p><strong>🎯 Discourse Markers Used:</strong> First of all (introduction), However (contrast), Furthermore (addition), In conclusion (conclusion)</p>
                 <p style="margin-top: 0.5rem; color: #6d28d9;"><strong>💡 Tip:</strong> Practice using different types of discourse markers to guide your listener!</p>
             </div>
         `;
-        listeningAIFeedbackDiv.innerHTML += correctAnswerHtml;
-    }
-    
-    function getTeachingFeedback(userText) {
-        const lowerText = userText.toLowerCase();
-        const discourseMarkers = [
-            'first of all', 'firstly', 'to begin with', 'however', 'nevertheless', 
-            'furthermore', 'moreover', 'in addition', 'on the other hand', 
-            'in conclusion', 'all things considered', 'that said', 'having said that'
-        ];
-        
-        let foundMarkers = [];
-        for (let marker of discourseMarkers) {
-            if (lowerText.includes(marker)) {
-                foundMarkers.push(marker);
+                summaryAIFeedbackDiv.innerHTML += correctAnswerHtml;
             }
-        }
-        
-        const uniqueMarkers = [...new Set(foundMarkers)];
-        const markerCount = uniqueMarkers.length;
-        
-        if (attemptCount >= maxAttempts) {
-            showCorrectAnswer();
-            return {
-                correct: false,
-                feedback: "📚 You've used all your attempts. Please study the example above.",
-                suggestion: "Practice these discourse markers and try again tomorrow!",
-                lesson: "Discourse markers help structure your speech logically."
-            };
-        }
-        
-        if (markerCount >= 4) {
-            return {
-                correct: true,
-                feedback: `✅ Excellent! You used ${markerCount} different discourse markers!`,
-                suggestion: "🎉 Great job! Your speech flows naturally with these signposts.",
-                lesson: "📖 Keep using discourse markers to guide your listener!"
-            };
-        } else if (markerCount === 3) {
-            return {
-                correct: false,
-                feedback: `👍 Good! You used ${markerCount} discourse markers. Try one more!`,
-                suggestion: "💡 Add 'however' for contrast or 'furthermore' for addition.",
-                lesson: "📖 Example: 'The design is efficient. Furthermore, it is cost-effective.'"
-            };
-        } else {
-            return {
-                correct: false,
-                feedback: `📚 You used ${markerCount} discourse markers. Need at least 4.`,
-                suggestion: "💡 Try: 'First of all...', 'However...', 'Furthermore...', 'In conclusion...'",
-                lesson: "📖 Discourse markers help organize your speech into clear sections."
-            };
-        }
-    }
-    
-    speakBtn.onclick = () => {
-        if (attemptCount >= maxAttempts) {
-            listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback show-answer">🔒 You have used all 3 attempts. Please review the correct example below and practice.</div>';
-            listeningAIFeedbackDiv.style.display = 'block';
-            showCorrectAnswer();
-            return;
-        }
-        
-        if (!masterAudioFinished) {
-            listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">⚠️ Please listen to the audio first.</div>';
-            listeningAIFeedbackDiv.style.display = 'block';
-            return;
-        }
-        
-        if (currentRecognition) {
-            currentRecognition.stop();
-            currentRecognition = null;
-            speakBtn.textContent = '🎤 Click to Speak (Use 4+ discourse markers)';
-            speakBtn.style.background = '#8b5cf6';
-            return;
-        }
-        
-        const recognition = startLiveSpeechRecognition();
-        if (!recognition) return;
-        
-        currentRecognition = recognition;
-        speakBtn.textContent = '🔴 Speaking... Click to Stop';
-        speakBtn.style.background = '#ef4444';
-        
-        let fullTranscript = '';
-        
-        recognition.onresult = (event) => {
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                if (event.results[i].isFinal) {
-                    fullTranscript += event.results[i][0].transcript + ' ';
+
+            function countDiscourseMarkers(text) {
+                const markers = [
+                    'first of all', 'firstly', 'to begin with', 'secondly', 'thirdly',
+                    'however', 'nevertheless', 'nonetheless', 'on the other hand',
+                    'furthermore', 'moreover', 'in addition', 'besides', 'what is more',
+                    'in conclusion', 'to conclude', 'all things considered', 'on the whole',
+                    'that said', 'having said that', 'in spite of', 'despite'
+                ];
+
+                const lowerText = text.toLowerCase();
+                let found = [];
+                for (let marker of markers) {
+                    if (lowerText.includes(marker)) {
+                        found.push(marker);
+                    }
                 }
+                return [...new Set(found)];
             }
-        };
-        
-        recognition.onend = async () => {
-            currentRecognition = null;
-            speakBtn.textContent = '🎤 Click to Speak (Use 4+ discourse markers)';
-            speakBtn.style.background = '#8b5cf6';
-            
-            attemptCount++;
-            updateListeningAttemptDisplay();
-            
-            if (fullTranscript.trim().length < 30) {
-                listeningAIFeedbackDiv.innerHTML = `
-                    <div class="ai-feedback incorrect">
-                        <strong>⚠️ Speech too short.</strong><br>
-                        💡 Please speak for at least 30 seconds using 4+ discourse markers.<br>
-                        📖 Example: "First of all... However... Furthermore... In conclusion..."
-                    </div>`;
-                listeningAIFeedbackDiv.style.display = 'block';
-                return;
-            }
-            
-            listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback processing">🤖 Evaluating your discourse markers...</div>';
-            listeningAIFeedbackDiv.style.display = 'block';
-            
-            userResponses.push({
-                attempt: attemptCount,
-                text: fullTranscript,
-                timestamp: new Date().toLocaleTimeString()
-            });
-            
-            try {
-                const response = await fetch('/learning/ai/evaluate/', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': csrftoken,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        text: fullTranscript,
-                        task_type: 'discourse_markers',
-                        day_number: 11,
-                        level: 'intermediate',
-                        system_prompt: `You are evaluating a student's use of discourse markers. The student needs to use at least 4 different discourse markers (e.g., first of all, however, furthermore, in conclusion, on the other hand, etc.).
+
+            if (validateSummaryBtn) {
+                validateSummaryBtn.addEventListener('click', async function () {
+                    if (attemptCount >= maxAttempts) {
+                        summaryAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">🔒 You have used all 3 attempts. Please review the example below.</div>';
+                        summaryAIFeedbackDiv.style.display = 'block';
+                        showCorrectAnswer();
+                        return;
+                    }
+
+                    const summary = document.getElementById('discourseSummary').value.trim();
+                    const validationMsg = document.getElementById('summaryValidationMsg');
+
+                    if (!summary) {
+                        validationMsg.innerHTML = '<span style="color: #dc2626;">❌ Please write your summary first.</span>';
+                        return;
+                    }
+
+                    const wordCount = summary.split(/\s+/).length;
+                    if (wordCount < 50) {
+                        validationMsg.innerHTML = `<span style="color: #dc2626;">⚠️ Summary too short (${wordCount}/50 words). Write at least 50 words.</span>`;
+                        return;
+                    }
+
+                    validationMsg.innerHTML = '<span style="color: #f59e0b;">🤖 AI is evaluating your discourse markers...</span>';
+                    summaryAIFeedbackDiv.innerHTML = '<div class="ai-feedback processing">🤖 AI is evaluating your summary...</div>';
+                    summaryAIFeedbackDiv.style.display = 'block';
+
+                    attemptCount++;
+                    updateSummaryAttemptDisplay();
+
+                    try {
+                        const response = await fetch('/learning/ai/evaluate/', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrftoken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                text: summary,
+                                task_type: 'discourse_markers',
+                                day_number: 11,
+                                level: 'intermediate',
+                                system_prompt: `You are evaluating a student's use of discourse markers. The student needs to use at least 4 different discourse markers.
 
 SCORING RULES:
 - Count how many different discourse markers are used
 - Score = (number of different markers / 4) * 100, max 100
 - correct = true if at least 4 different markers are used
 
-FEEDBACK RULES (max 20 words):
+FEEDBACK RULES:
 - If correct: " Great! You used [X] different discourse markers."
 - If close (3 markers): " Good! Try one more marker like 'however' or 'furthermore'."
-- If few (1-2 markers): " Use markers like 'firstly', 'however', 'in conclusion'."
+- If few (1-2 markers): " You need more discourse markers. Try 'firstly', 'however', 'in conclusion'."
 
-SUGGESTION RULES (max 20 words):
+SUGGESTION RULES:
 - Give ONE specific example of a missing discourse marker
 
-STRICT OUTPUT JSON:
+OUTPUT JSON:
 {
 "correct": true/false,
 "score": number,
 "feedback": "short text",
 "suggestion": "short text"
 }`
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    aiCorrect = result.correct;
-                    aiEvaluationDone = true;
-                    
-                    let feedbackHtml = '';
-                    
-                    if (result.correct) {
-                        feedbackHtml = `
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            summaryValidated = result.correct;
+
+                            let feedbackHtml = '';
+                            if (result.correct) {
+                                feedbackHtml = `
                             <div class="ai-feedback correct">
                                 <strong>✅ ${result.feedback || 'Great job! You used discourse markers effectively!'}</strong><br>
-                                <strong>🎤 You said:</strong> "${fullTranscript.substring(0, 300)}${fullTranscript.length > 300 ? '...' : ''}"<br>
                                 <strong>💡 ${result.suggestion || 'Keep practicing to master discourse markers!'}</strong>
                             </div>
                         `;
-                    } else {
-                        feedbackHtml = `
+                                validationMsg.innerHTML = '<span style="color: #22c55e;">✅ Summary validated! You can now record.</span>';
+                            } else {
+                                feedbackHtml = `
                             <div class="ai-feedback incorrect">
                                 <strong>📚 ${result.feedback || 'Need more discourse markers.'}</strong><br>
-                                <strong>🎤 You said:</strong> "${fullTranscript.substring(0, 300)}${fullTranscript.length > 300 ? '...' : ''}"<br>
                                 <strong>💡 ${result.suggestion || 'Try using "first of all", "however", "furthermore", and "in conclusion".'}</strong>
                             </div>
                         `;
-                        
-                        if (attemptCount === maxAttempts) {
-                            showCorrectAnswer();
+                                validationMsg.innerHTML = '<span style="color: #dc2626;">❌ Please improve your summary based on feedback above.</span>';
+
+                                if (attemptCount === maxAttempts) {
+                                    showCorrectAnswer();
+                                }
+                            }
+
+                            summaryAIFeedbackDiv.innerHTML = feedbackHtml;
+
+                            if (summaryValidated && listenRecordBtn) {
+                                listenRecordBtn.disabled = false;
+                                listenRecordBtn.textContent = '🎙️ Start Recording';
+                            } else if (listenRecordBtn) {
+                                listenRecordBtn.disabled = true;
+                                listenRecordBtn.textContent = '🎙️ Validate summary first';
+                            }
+                        } else {
+                            throw new Error('AI response not successful');
+                        }
+                    } catch (error) {
+                        console.error('AI Error:', error);
+                        // Fallback to local validation
+                        const foundMarkers = countDiscourseMarkers(summary);
+                        const markerCount = foundMarkers.length;
+                        const isCorrect = markerCount >= 4;
+                        summaryValidated = isCorrect;
+
+                        let feedbackHtml = '';
+                        if (isCorrect) {
+                            feedbackHtml = `
+                        <div class="ai-feedback correct">
+                            <strong>✅ Great! You used ${markerCount} different discourse markers!</strong><br>
+                            <strong>💡 Keep practicing to master discourse markers!</strong>
+                        </div>
+                    `;
+                            validationMsg.innerHTML = '<span style="color: #22c55e;">✅ Summary validated! You can now record.</span>';
+                        } else {
+                            feedbackHtml = `
+                        <div class="ai-feedback incorrect">
+                            <strong>📚 You used ${markerCount} discourse markers. Need at least 4.</strong><br>
+                            <strong>💡 Try: "first of all", "however", "furthermore", "in conclusion"</strong>
+                        </div>
+                    `;
+                            validationMsg.innerHTML = '<span style="color: #dc2626;">❌ Please add more discourse markers. Need at least 4.</span>';
+
+                            if (attemptCount === maxAttempts) {
+                                showCorrectAnswer();
+                            }
+                        }
+                        summaryAIFeedbackDiv.innerHTML = feedbackHtml;
+
+                        if (summaryValidated && listenRecordBtn) {
+                            listenRecordBtn.disabled = false;
+                            listenRecordBtn.textContent = '🎙️ Start Recording';
+                        } else if (listenRecordBtn) {
+                            listenRecordBtn.disabled = true;
+                            listenRecordBtn.textContent = '🎙️ Validate summary first';
                         }
                     }
-                    
-                    listeningAIFeedbackDiv.innerHTML = feedbackHtml;
-                    
-                } else {
-                    throw new Error('AI response not successful');
-                }
-                
-            } catch (error) {
-                console.error('AI Error:', error);
-                const teachingFeedback = getTeachingFeedback(fullTranscript);
-                aiCorrect = teachingFeedback.correct;
-                aiEvaluationDone = true;
-                
-                listeningAIFeedbackDiv.innerHTML = `
-                    <div class="ai-feedback ${teachingFeedback.correct ? 'correct' : 'incorrect'}">
-                        <strong>${teachingFeedback.feedback}</strong><br>
-                        <strong>🎤 You said:</strong> "${fullTranscript.substring(0, 300)}${fullTranscript.length > 300 ? '...' : ''}"<br>
-                        <strong>💡 ${teachingFeedback.suggestion}</strong><br>
-                        <em>📖 ${teachingFeedback.lesson}</em>
-                        <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #64748b;">(Using local evaluation)</div>
-                    </div>
-                `;
-                
-                if (!teachingFeedback.correct && attemptCount >= maxAttempts) {
-                    showCorrectAnswer();
-                }
+                });
             }
-            
-            updateListeningCompleteButton();
-        };
-        
-        recognition.onerror = (event) => {
-            console.error('Speech recognition error:', event.error);
-            currentRecognition = null;
-            speakBtn.textContent = '🎤 Click to Speak (Use 4+ discourse markers)';
-            speakBtn.style.background = '#8b5cf6';
-            listeningAIFeedbackDiv.innerHTML = `<div class="ai-feedback incorrect">⚠️ Error: ${event.error}. Please click the button and speak clearly.</div>`;
-            listeningAIFeedbackDiv.style.display = 'block';
-        };
-        
-        recognition.start();
-    };
-    
-    // Quiz validation
-    document.querySelectorAll('input[name="listening_quiz"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q1 = e.target.value; updateListeningCompleteButton(); }));
-    document.querySelectorAll('input[name="practice_quiz"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q2 = e.target.value; updateListeningCompleteButton(); }));
-    
-    if (checkListeningWorkBtn) {
-        checkListeningWorkBtn.addEventListener('click', () => {
-            if (!listeningQuizAnswers.q1 || !listeningQuizAnswers.q2) {
-                listeningQuizFeedbackDiv.innerHTML = '⚠️ Please answer both questions.';
-                listeningQuizFeedbackDiv.className = 'quiz-feedback warning';
-                listeningQuizFeedbackDiv.style.display = 'block';
-                return;
-            }
-            let q1Correct = (listeningQuizAnswers.q1 === 'acknowledged');
-            let q2Correct = (listeningQuizAnswers.q2 === 'success');
-            
-            const q1fb = document.getElementById('q1Feedback');
-            const q2fb = document.getElementById('q2Feedback');
-            
-            if (q1fb) {
-                q1fb.innerHTML = q1Correct ? '✅ Correct! The speaker acknowledged the limitations.' : '💡 Hint: The speaker said "That said, there are several areas that require immediate attention" - this acknowledges limitations.';
-                q1fb.className = q1Correct ? 'ind-quiz-feedback correct' : 'ind-quiz-feedback incorrect';
-            }
-            if (q2fb) {
-                q2fb.innerHTML = q2Correct ? '✅ Correct! The speaker believes they are on the right track.' : '💡 Hint: The speaker ended with "All things considered, I believe we are on the right track" - this indicates success.';
-                q2fb.className = q2Correct ? 'ind-quiz-feedback correct' : 'ind-quiz-feedback incorrect';
-            }
-            
-            if (q1Correct && q2Correct) {
-                listeningQuizFeedbackDiv.innerHTML = '✅ Correct! Great job!';
-                listeningQuizFeedbackDiv.className = 'quiz-feedback correct';
-                listeningQuizCorrect = true;
-            } else {
-                listeningQuizFeedbackDiv.innerHTML = '📚 Some answers need review. Read the hints above and try again.';
-                listeningQuizFeedbackDiv.className = 'quiz-feedback incorrect';
-                listeningQuizCorrect = false;
-            }
-            listeningQuizFeedbackDiv.style.display = 'block';
-            updateListeningCompleteButton();
-        });
-    }
-    
-    function updateListeningCompleteButton() {
-        if (listeningCompleteBtn) {
-            const canComplete = masterAudioFinished && aiEvaluationDone && listeningQuizCorrect;
-            listeningCompleteBtn.disabled = !canComplete;
-            if (!listeningCompleteBtn.disabled) {
-                listeningCompleteBtn.classList.add('pulse');
-            } else {
-                listeningCompleteBtn.classList.remove('pulse');
-            }
-        }
-    }
-    
-    if (listeningCompleteBtn) {
-        listeningCompleteBtn.onclick = () => {
-            if (!masterAudioFinished) { 
-                showValidationMessage('listeningValidationMsg', '⚠️ Please listen to the complete audio first.'); 
-                return; 
-            }
-            if (!aiEvaluationDone) { 
-                showValidationMessage('listeningValidationMsg', '⚠️ Please click the speak button and say your engineering summary.'); 
-                return; 
-            }
-            if (!listeningQuizCorrect) { 
-                showValidationMessage('listeningValidationMsg', '⚠️ Please answer both quiz questions correctly.'); 
-                return; 
-            }
-            markActivityComplete('listening', 'chk2');
-        };
-        listeningCompleteBtn.disabled = true;
-    }
-    
-    // ==================== SPEAKING ACTIVITY ====================
-    const speakRecordBtn = document.getElementById('speakingRecordBtn');
-    const speakStopBtn = document.getElementById('speakingStopBtn');
-    const speakPlaybackCard = document.getElementById('speakingPlaybackCard');
-    const speakPlaybackAudio = document.getElementById('speakingPlayback');
-    const completeSpeakingBtn = document.getElementById('completeSpeakingBtn');
-    const speakingFeedbackDiv = document.getElementById('speakingFeedback');
-    let speakMediaRecorder, speakChunks = [], speakIsRecording = false;
-    let speakStartTime = 0;
-    const MIN_SPEAKING_TIME = 6;
-    
-    if (speakRecordBtn) {
-        speakRecordBtn.addEventListener('click', async function() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                speakMediaRecorder = new MediaRecorder(stream);
-                speakChunks = [];
-                speakStartTime = Date.now();
-                
-                speakMediaRecorder.ondataavailable = e => speakChunks.push(e.data);
-                speakMediaRecorder.onstop = () => {
-                    const speakingDuration = (Date.now() - speakStartTime) / 1000;
-                    const blob = new Blob(speakChunks, { type: 'audio/webm' });
-                    
-                    if (speakingDuration < MIN_SPEAKING_TIME) {
-                        if (speakingFeedbackDiv) {
-                            speakingFeedbackDiv.innerHTML = `⚠️ Speak for at least ${MIN_SPEAKING_TIME} seconds. You spoke for ${Math.round(speakingDuration)} seconds.`;
-                            speakingFeedbackDiv.style.color = '#dc2626';
-                        }
-                        speakingRecorded = false;
-                        if (completeSpeakingBtn) completeSpeakingBtn.disabled = true;
+
+            // Listening recording
+            let listeningMediaRecorder, listeningChunks = [], listeningIsRecording = false;
+
+            if (listenRecordBtn) {
+                listenRecordBtn.addEventListener('click', async function () {
+                    if (!summaryValidated) {
+                        alert('Please validate your summary first!');
                         return;
                     }
-                    
-                    if (speakPlaybackAudio) speakPlaybackAudio.src = URL.createObjectURL(blob);
-                    if (speakPlaybackCard) speakPlaybackCard.style.display = 'block';
-                    speakingRecorded = true;
-                    if (speakingFeedbackDiv) {
-                        speakingFeedbackDiv.innerHTML = `✅ Recording saved! (${Math.round(speakingDuration)} seconds)`;
-                        speakingFeedbackDiv.style.color = '#22c55e';
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        listeningMediaRecorder = new MediaRecorder(stream);
+                        listeningChunks = [];
+                        listeningMediaRecorder.ondataavailable = e => listeningChunks.push(e.data);
+                        listeningMediaRecorder.onstop = () => {
+                            const blob = new Blob(listeningChunks, { type: 'audio/webm' });
+                            if (listenPlaybackAudio) listenPlaybackAudio.src = URL.createObjectURL(blob);
+                            if (listenPlaybackCard) listenPlaybackCard.style.display = 'block';
+                            if (comparisonSection) comparisonSection.style.display = 'block';
+                            listeningRecorded = true;
+                            stream.getTracks().forEach(t => t.stop());
+                        };
+                        listeningMediaRecorder.start();
+                        listeningIsRecording = true;
+                        listenRecordBtn.style.display = 'none';
+                        if (listenStopBtn) listenStopBtn.style.display = 'inline-flex';
+                    } catch (e) { console.error('Microphone error'); }
+                });
+            }
+
+            if (listenStopBtn) {
+                listenStopBtn.addEventListener('click', function () {
+                    if (listeningMediaRecorder && listeningIsRecording) {
+                        listeningMediaRecorder.stop();
+                        listeningIsRecording = false;
+                        listenRecordBtn.style.display = 'inline-flex';
+                        listenStopBtn.style.display = 'none';
                     }
-                    stream.getTracks().forEach(t => t.stop());
-                    if (completeSpeakingBtn) completeSpeakingBtn.disabled = false;
-                };
-                
-                speakMediaRecorder.start();
-                speakIsRecording = true;
-                speakRecordBtn.style.display = 'none';
-                if (speakStopBtn) speakStopBtn.style.display = 'inline-flex';
-                if (speakingFeedbackDiv) {
-                    speakingFeedbackDiv.innerHTML = '<span style="color: #3b82f6;">🔴 Recording... Speak for at least 6 seconds.</span>';
+                });
+            }
+
+            if (yesComparisonBtn) {
+                yesComparisonBtn.addEventListener('click', function () {
+                    if (listeningCompleteBtn) {
+                        listeningCompleteBtn.disabled = false;
+                        if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #22c55e;">✅ Great! Recording confirmed.</span>';
+                    }
+                });
+            }
+
+            if (noComparisonBtn) {
+                noComparisonBtn.addEventListener('click', function () {
+                    comparisonFeedbackDiv.innerHTML = '<span style="color: #dc2626;">⚠️ Please record again with correct discourse markers.</span>';
+                    listeningRecorded = false;
+                    listenPlaybackCard.style.display = 'none';
+                    comparisonSection.style.display = 'none';
+                    listenRecordBtn.style.display = 'inline-flex';
+                    listenStopBtn.style.display = 'none';
+                });
+            }
+
+            // Audio reveal
+            if (listeningAudioElem) {
+                listeningAudioElem.addEventListener('ended', function () {
+                    if (!masterAudioFinished) {
+                        masterAudioFinished = true;
+                        if (listeningTextSection) listeningTextSection.style.display = 'block';
+                        if (postAudioListeningContent) postAudioListeningContent.style.display = 'block';
+                    }
+                });
+            }
+
+            // Quiz validation
+            document.querySelectorAll('input[name="listening_quiz"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q1 = e.target.value; }));
+            document.querySelectorAll('input[name="practice_quiz"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q2 = e.target.value; }));
+
+            if (checkListeningWorkBtn) {
+                checkListeningWorkBtn.addEventListener('click', () => {
+                    if (!listeningQuizAnswers.q1 || !listeningQuizAnswers.q2) {
+                        listeningQuizFeedbackDiv.innerHTML = '⚠️ Please answer both questions.';
+                        listeningQuizFeedbackDiv.className = 'quiz-feedback warning';
+                        listeningQuizFeedbackDiv.style.display = 'block';
+                        return;
+                    }
+                    let q1Correct = (listeningQuizAnswers.q1 === 'acknowledged');
+                    let q2Correct = (listeningQuizAnswers.q2 === 'success');
+
+                    const q1fb = document.getElementById('q1Feedback');
+                    const q2fb = document.getElementById('q2Feedback');
+
+                    if (q1fb) {
+                        q1fb.innerHTML = q1Correct ? '✅ Correct!' : '💡 Hint: The speaker said "That said, there are several areas that require immediate attention"';
+                        q1fb.className = q1Correct ? 'ind-quiz-feedback correct' : 'ind-quiz-feedback incorrect';
+                    }
+                    if (q2fb) {
+                        q2fb.innerHTML = q2Correct ? '✅ Correct!' : '💡 Hint: The speaker ended with "All things considered, I believe we are on the right track"';
+                        q2fb.className = q2Correct ? 'ind-quiz-feedback correct' : 'ind-quiz-feedback incorrect';
+                    }
+
+                    if (q1Correct && q2Correct) {
+                        listeningQuizFeedbackDiv.innerHTML = '✅ Correct! Great job!';
+                        listeningQuizFeedbackDiv.className = 'quiz-feedback correct';
+                        listeningQuizCorrect = true;
+                    } else {
+                        listeningQuizFeedbackDiv.innerHTML = '📚 Some answers need review. Read the hints above.';
+                        listeningQuizFeedbackDiv.className = 'quiz-feedback incorrect';
+                        listeningQuizCorrect = false;
+                    }
+                    listeningQuizFeedbackDiv.style.display = 'block';
+                });
+            }
+
+            function updateListeningCompleteButton() {
+                if (listeningCompleteBtn) {
+                    const canComplete = masterAudioFinished && summaryValidated && listeningRecorded && listeningQuizCorrect;
+                    listeningCompleteBtn.disabled = !canComplete;
                 }
-            } catch(e) { 
-                if (speakingFeedbackDiv) speakingFeedbackDiv.innerHTML = '<span style="color: #dc2626;">❌ Microphone access required.</span>';
             }
-        });
-    }
-    
-    if (speakStopBtn) {
-        speakStopBtn.addEventListener('click', function() {
-            if (speakMediaRecorder && speakIsRecording) {
-                speakMediaRecorder.stop();
-                speakIsRecording = false;
-                speakRecordBtn.style.display = 'inline-flex';
-                speakStopBtn.style.display = 'none';
+
+            if (listeningCompleteBtn) {
+                listeningCompleteBtn.onclick = () => {
+                    if (!masterAudioFinished) { showValidationMessage('summaryValidationMsg', '⚠️ Please listen to the complete audio first.'); return; }
+                    if (!summaryValidated) { showValidationMessage('summaryValidationMsg', '⚠️ Please validate your summary first.'); return; }
+                    if (!listeningRecorded) { showValidationMessage('summaryValidationMsg', '⚠️ Please record your summary.'); return; }
+                    if (!listeningQuizCorrect) { showValidationMessage('summaryValidationMsg', '⚠️ Please answer both quiz questions correctly.'); return; }
+                    markActivityComplete('listening', 'chkListening');
+                };
+                listeningCompleteBtn.disabled = true;
             }
-        });
-    }
-    
-    if (completeSpeakingBtn) {
-        completeSpeakingBtn.addEventListener('click', function() {
-            if (!completeSpeakingBtn.disabled && speakingRecorded) {
-                markActivityComplete('speaking', 'chk3');
+
+            // ==================== SPEAKING ACTIVITY ====================
+            const speakRecordBtn = document.getElementById('speakingRecordBtn');
+            const speakStopBtn = document.getElementById('speakingStopBtn');
+            const speakPlaybackCard = document.getElementById('speakingPlaybackCard');
+            const speakPlaybackAudio = document.getElementById('speakingPlayback');
+            const completeSpeakingBtn = document.getElementById('completeSpeakingBtn');
+            const speakingFeedbackDiv = document.getElementById('speakingFeedback');
+            let speakMediaRecorder, speakChunks = [], speakIsRecording = false;
+            let speakStartTime = 0;
+            const MIN_SPEAKING_TIME = 6;
+
+            if (speakRecordBtn) {
+                speakRecordBtn.addEventListener('click', async function () {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        speakMediaRecorder = new MediaRecorder(stream);
+                        speakChunks = [];
+                        speakStartTime = Date.now();
+
+                        speakMediaRecorder.ondataavailable = e => speakChunks.push(e.data);
+                        speakMediaRecorder.onstop = () => {
+                            const speakingDuration = (Date.now() - speakStartTime) / 1000;
+                            const blob = new Blob(speakChunks, { type: 'audio/webm' });
+
+                            if (speakingDuration < MIN_SPEAKING_TIME) {
+                                if (speakingFeedbackDiv) {
+                                    speakingFeedbackDiv.innerHTML = `⚠️ Speak for at least ${MIN_SPEAKING_TIME} seconds. You spoke for ${Math.round(speakingDuration)} seconds.`;
+                                    speakingFeedbackDiv.style.color = '#dc2626';
+                                }
+                                speakingRecorded = false;
+                                if (completeSpeakingBtn) completeSpeakingBtn.disabled = true;
+                                return;
+                            }
+
+                            if (speakPlaybackAudio) speakPlaybackAudio.src = URL.createObjectURL(blob);
+                            if (speakPlaybackCard) speakPlaybackCard.style.display = 'block';
+                            speakingRecorded = true;
+                            if (speakingFeedbackDiv) {
+                                speakingFeedbackDiv.innerHTML = `✅ Recording saved! (${Math.round(speakingDuration)} seconds)`;
+                                speakingFeedbackDiv.style.color = '#22c55e';
+                            }
+                            stream.getTracks().forEach(t => t.stop());
+                            if (completeSpeakingBtn) completeSpeakingBtn.disabled = false;
+                        };
+
+                        speakMediaRecorder.start();
+                        speakIsRecording = true;
+                        speakRecordBtn.style.display = 'none';
+                        if (speakStopBtn) speakStopBtn.style.display = 'inline-flex';
+                        if (speakingFeedbackDiv) {
+                            speakingFeedbackDiv.innerHTML = '<span style="color: #3b82f6;">🔴 Recording... Speak for at least 6 seconds.</span>';
+                        }
+                    } catch (e) {
+                        if (speakingFeedbackDiv) speakingFeedbackDiv.innerHTML = '<span style="color: #dc2626;">❌ Microphone access required.</span>';
+                    }
+                });
             }
-        });
-    }
-    
-    // ==================== READING ACTIVITY ====================
-    const readingPassageText = "To begin with, the committee acknowledged that the proposed site had certain geological advantages. Nevertheless, concerns were raised regarding the proximity to residential areas. In spite of this, the majority voted in favour of the location. Furthermore, an environmental impact assessment had already been commissioned. On the whole, the decision was deemed pragmatic. However, the committee emphasised that all stakeholders should be consulted before construction commences.";
-    
-    const contrastWords = ['nevertheless', 'however', 'in spite of this'];
-    const circleWord = 'pragmatic';
-    
-    let userUnderlinedWords = new Set();
-    let userCircledWords = new Set();
-    let currentMode = 'underline';
-    let underlineCheckDone = false;
-    let circleCheckDone = false;
-    let wordOccurrences = [];
-    
-    function buildInteractivePassage() {
-        const container = document.getElementById('interactivePassage');
-        if (!container) return;
-        const words = readingPassageText.split(/(\s+)/);
-        container.innerHTML = '';
-        wordOccurrences = [];
-        let index = 0;
-        words.forEach(word => {
-            if (word.trim() === '') {
-                container.appendChild(document.createTextNode(word));
-                return;
+
+            if (speakStopBtn) {
+                speakStopBtn.addEventListener('click', function () {
+                    if (speakMediaRecorder && speakIsRecording) {
+                        speakMediaRecorder.stop();
+                        speakIsRecording = false;
+                        speakRecordBtn.style.display = 'inline-flex';
+                        speakStopBtn.style.display = 'none';
+                    }
+                });
             }
-            const cleanWord = word.toLowerCase().replace(/[.,!?;]/g, '');
-            const span = document.createElement('span');
-            span.textContent = word;
-            span.className = 'clickable-word';
-            span.dataset.word = cleanWord;
-            span.dataset.index = index;
-            span.addEventListener('click', () => {
-                const idx = parseInt(span.dataset.index);
-                if (currentMode === 'underline') {
-                    if (userUnderlinedWords.has(idx)) userUnderlinedWords.delete(idx);
-                    else userUnderlinedWords.add(idx);
-                    underlineCheckDone = false;
-                    document.getElementById('underlineFeedback').innerHTML = '';
+
+            if (completeSpeakingBtn) {
+                completeSpeakingBtn.addEventListener('click', function () {
+                    if (!completeSpeakingBtn.disabled && speakingRecorded) {
+                        markActivityComplete('speaking', 'chkSpeaking');
+                    }
+                });
+            }
+
+            // ==================== READING ACTIVITY ====================
+            const readingPassageText = "To begin with, the committee acknowledged that the proposed site had certain geological advantages. Nevertheless, concerns were raised regarding the proximity to residential areas. In spite of this, the majority voted in favour of the location. Furthermore, an environmental impact assessment had already been commissioned. On the whole, the decision was deemed pragmatic. However, the committee emphasised that all stakeholders should be consulted before construction commences.";
+
+            const contrastWords = ['nevertheless', 'however', 'in spite of this'];
+            const circleWord = 'pragmatic';
+            const validAlternatives = ['moreover', 'in addition', 'besides', 'what is more', 'additionally', 'also'];
+
+            let userUnderlinedWords = new Set();
+            let userCircledWords = new Set();
+            let currentMode = 'underline';
+            let underlineCheckDone = false;
+            let circleCheckDone = false;
+            let readingTask1Done = false;
+            let readingTask2Done = false;
+            let readingTask3Done = false;
+            let wordOccurrences = [];
+
+            const completeReadingBtn = document.getElementById('completeReadingBtn');
+
+            function updateReadingCompleteButton() {
+                const btn = completeReadingBtn;
+                if (!btn) return;
+
+                const allTasksDone = readingTask1Done && readingTask2Done && readingTask3Done;
+                btn.disabled = !allTasksDone;
+            }
+
+            function buildInteractivePassage() {
+                const container = document.getElementById('interactivePassage');
+                if (!container) return;
+                const words = readingPassageText.split(/(\s+)/);
+                container.innerHTML = '';
+                wordOccurrences = [];
+                let index = 0;
+                words.forEach(word => {
+                    if (word.trim() === '') {
+                        container.appendChild(document.createTextNode(word));
+                        return;
+                    }
+                    const cleanWord = word.toLowerCase().replace(/[.,!?;]/g, '');
+                    const span = document.createElement('span');
+                    span.textContent = word;
+                    span.className = 'clickable-word';
+                    span.dataset.word = cleanWord;
+                    span.dataset.index = index;
+                    span.addEventListener('click', () => {
+                        const idx = parseInt(span.dataset.index);
+                        if (currentMode === 'underline') {
+                            if (userUnderlinedWords.has(idx)) userUnderlinedWords.delete(idx);
+                            else userUnderlinedWords.add(idx);
+                            underlineCheckDone = false;
+                            document.getElementById('underlineFeedback').innerHTML = '';
+                        } else {
+                            if (userCircledWords.has(idx)) userCircledWords.delete(idx);
+                            else userCircledWords.add(idx);
+                            circleCheckDone = false;
+                            document.getElementById('circleFeedback').innerHTML = '';
+                        }
+                        updateAllVisuals();
+                    });
+                    container.appendChild(span);
+                    wordOccurrences.push({ word: cleanWord, element: span, index: index });
+                    index++;
+                });
+                updateAllVisuals();
+            }
+
+            function updateAllVisuals() {
+                wordOccurrences.forEach(occ => {
+                    const span = occ.element;
+                    const idx = occ.index;
+                    span.classList.remove('temp-underlined', 'underline-correct', 'underline-incorrect', 'temp-circled', 'circle-correct', 'circle-incorrect');
+                    if (userUnderlinedWords.has(idx)) {
+                        if (underlineCheckDone) {
+                            const isCorrect = contrastWords.includes(occ.word);
+                            span.classList.add(isCorrect ? 'underline-correct' : 'underline-incorrect');
+                        } else {
+                            span.classList.add('temp-underlined');
+                        }
+                    }
+                    if (userCircledWords.has(idx)) {
+                        if (circleCheckDone) {
+                            const isCorrect = occ.word === circleWord;
+                            span.classList.add(isCorrect ? 'circle-correct' : 'circle-incorrect');
+                        } else {
+                            span.classList.add('temp-circled');
+                        }
+                    }
+                });
+            }
+
+            function checkUnderlines() {
+                if (userUnderlinedWords.size === 0) {
+                    document.getElementById('underlineFeedback').innerHTML = '<div class="fix-feedback warning">⚠️ Please select words to underline first.</div>';
+                    return;
+                }
+
+                let correct = 0;
+                let totalExpected = 0;
+                wordOccurrences.forEach(occ => {
+                    if (contrastWords.includes(occ.word)) totalExpected++;
+                });
+
+                userUnderlinedWords.forEach(idx => {
+                    if (contrastWords.includes(wordOccurrences[idx].word)) correct++;
+                });
+                underlineCheckDone = true;
+
+                if (correct === totalExpected) {
+                    document.getElementById('underlineFeedback').innerHTML = `<div style="background:#d1fae5;padding:.75rem;border-radius:12px;">
+                <p style="color:#16a34a;">✅ Perfect! You identified all ${totalExpected} discourse markers!</p>
+            </div>`;
+                    readingTask1Done = true;
                 } else {
-                    if (userCircledWords.has(idx)) userCircledWords.delete(idx);
-                    else userCircledWords.add(idx);
-                    circleCheckDone = false;
-                    document.getElementById('circleFeedback').innerHTML = '';
+                    document.getElementById('underlineFeedback').innerHTML = `<div style="background:#fef9e3;padding:.75rem;border-radius:12px;">
+                <p><strong>📝 Contrast Markers:</strong> ${correct}/${totalExpected} correct</p>
+                <p style="color:#f59e0b;">💡 Hint: Look for "nevertheless", "however", and "in spite of this"</p>
+            </div>`;
+                    readingTask1Done = false;
                 }
                 updateAllVisuals();
                 updateReadingCompleteButton();
+            }
+
+            function checkCircles() {
+                if (userCircledWords.size === 0) {
+                    document.getElementById('circleFeedback').innerHTML = '<div class="fix-feedback warning">⚠️ Please select a word to circle first.</div>';
+                    return;
+                }
+
+                let correct = 0;
+                userCircledWords.forEach(idx => {
+                    if (wordOccurrences[idx].word === circleWord) correct++;
+                });
+                circleCheckDone = true;
+
+                if (correct === 1) {
+                    document.getElementById('circleFeedback').innerHTML = `<div style="background:#d1fae5;padding:.75rem;border-radius:12px;">
+                <p style="color:#16a34a;">✅ Perfect! You found "pragmatic"!</p>
+            </div>`;
+                    readingTask3Done = true;
+                } else {
+                    document.getElementById('circleFeedback').innerHTML = `<div style="background:#fef9e3;padding:.75rem;border-radius:12px;">
+                <p><strong>⭕ Find "pragmatic":</strong> ${correct}/1 correct</p>
+                <p style="color:#f59e0b;">💡 Hint: The word means "practical and sensible" - it starts with "p"</p>
+            </div>`;
+                    readingTask3Done = false;
+                }
+                updateAllVisuals();
+                updateReadingCompleteButton();
+            }
+
+            function resetUnderlines() {
+                userUnderlinedWords.clear();
+                underlineCheckDone = false;
+                readingTask1Done = false;
+                document.getElementById('underlineFeedback').innerHTML = '';
+                updateAllVisuals();
+                updateReadingCompleteButton();
+            }
+
+            function resetCircles() {
+                userCircledWords.clear();
+                circleCheckDone = false;
+                readingTask3Done = false;
+                document.getElementById('circleFeedback').innerHTML = '';
+                updateAllVisuals();
+                updateReadingCompleteButton();
+            }
+
+            function switchToUnderlineMode() {
+                currentMode = 'underline';
+                document.getElementById('underlineModeBtn').style.background = '#f59e0b';
+                document.getElementById('circleModeBtn').style.background = '#3b82f6';
+                document.getElementById('underlineSection').style.display = 'block';
+                document.getElementById('circleSection').style.display = 'none';
+                updateAllVisuals();
+            }
+
+            function switchToCircleMode() {
+                currentMode = 'circle';
+                document.getElementById('circleModeBtn').style.background = '#3b82f6';
+                document.getElementById('underlineModeBtn').style.background = '#f59e0b';
+                document.getElementById('circleSection').style.display = 'block';
+                document.getElementById('underlineSection').style.display = 'none';
+                updateAllVisuals();
+            }
+
+            function validateTask2() {
+                const input = document.getElementById('task2Alternatives').value.trim().toLowerCase();
+                const feedback = document.getElementById('task2Feedback');
+
+                if (input.length === 0) {
+                    feedback.innerHTML = '⚠️ Please enter two alternative discourse markers.';
+                    feedback.className = 'fix-feedback warning';
+                    readingTask2Done = false;
+                    updateReadingCompleteButton();
+                    return;
+                }
+
+                let parts = input.split(',').map(p => p.trim().toLowerCase());
+                parts = parts.filter(p => p.length > 0);
+
+                if (parts.length !== 2) {
+                    feedback.innerHTML = `⚠️ Please enter exactly TWO alternatives separated by commas. You entered ${parts.length} item(s).`;
+                    feedback.className = 'fix-feedback warning';
+                    readingTask2Done = false;
+                    updateReadingCompleteButton();
+                    return;
+                }
+
+                let validCount = 0;
+                for (let part of parts) {
+                    if (validAlternatives.includes(part)) validCount++;
+                }
+
+                if (validCount === 2) {
+                    feedback.innerHTML = '✅ Correct! Both alternatives are valid replacements for "furthermore".';
+                    feedback.className = 'fix-feedback correct';
+                    readingTask2Done = true;
+                } else {
+                    feedback.innerHTML = `❌ Invalid alternatives. Valid: moreover, in addition, besides, what is more, additionally, also.`;
+                    feedback.className = 'fix-feedback incorrect';
+                    readingTask2Done = false;
+                }
+                updateReadingCompleteButton();
+            }
+
+            function resetTask2() {
+                document.getElementById('task2Alternatives').value = '';
+                document.getElementById('task2Feedback').innerHTML = '';
+                readingTask2Done = false;
+                updateReadingCompleteButton();
+            }
+
+            document.getElementById('underlineModeBtn')?.addEventListener('click', switchToUnderlineMode);
+            document.getElementById('circleModeBtn')?.addEventListener('click', switchToCircleMode);
+            document.getElementById('checkUnderlinesBtn')?.addEventListener('click', checkUnderlines);
+            document.getElementById('checkCirclesBtn')?.addEventListener('click', checkCircles);
+            document.getElementById('resetUnderlinesBtn')?.addEventListener('click', resetUnderlines);
+            document.getElementById('resetCirclesBtn')?.addEventListener('click', resetCircles);
+            document.getElementById('checkTask2Btn')?.addEventListener('click', validateTask2);
+            document.getElementById('resetTask2Btn')?.addEventListener('click', resetTask2);
+
+            if (completeReadingBtn) {
+                completeReadingBtn.addEventListener('click', function () {
+                    if (!this.disabled) {
+                        markActivityComplete('reading', 'chkReading');
+                    }
+                });
+            }
+
+            buildInteractivePassage();
+
+            // ==================== VOCABULARY ====================
+            const vChecks = document.querySelectorAll('.check-cell');
+            const vComplete = document.getElementById('completeVocabularyBtn');
+
+            function checkVocab() {
+                let all = true;
+                vChecks.forEach(c => { if (c.innerHTML !== '✅') all = false; });
+                if (vComplete) vComplete.disabled = !all;
+            }
+
+            document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const word = this.getAttribute('data-word');
+                    const cell = document.getElementById(this.getAttribute('data-checkid'));
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const u = new SpeechSynthesisUtterance(word);
+                        u.lang = 'en-US';
+                        u.rate = 0.9;
+                        u.onend = () => {
+                            if (cell && cell.innerHTML !== '✅') {
+                                cell.innerHTML = '✅';
+                                cell.style.color = 'green';
+                                checkVocab();
+                            }
+                        };
+                        window.speechSynthesis.speak(u);
+                    }
+                });
             });
-            container.appendChild(span);
-            wordOccurrences.push({ word: cleanWord, element: span, index: index });
-            index++;
-        });
-        updateAllVisuals();
-    }
-    
-    function updateAllVisuals() {
-        wordOccurrences.forEach(occ => {
-            const span = occ.element;
-            const idx = occ.index;
-            span.classList.remove('temp-underlined', 'underline-correct', 'underline-incorrect', 'temp-circled', 'circle-correct', 'circle-incorrect');
-            if (userUnderlinedWords.has(idx)) {
-                if (underlineCheckDone) {
-                    const isCorrect = contrastWords.includes(occ.word);
-                    span.classList.add(isCorrect ? 'underline-correct' : 'underline-incorrect');
-                } else {
-                    span.classList.add('temp-underlined');
+
+            if (vComplete) {
+                vComplete.addEventListener('click', function () {
+                    if (!vComplete.disabled) markActivityComplete('vocabulary', 'chkVocabulary');
+                });
+            }
+
+            // ==================== GRAMMAR ====================
+            const gBtn = document.getElementById('checkGrammarBtn');
+            const gComplete = document.getElementById('completeGrammarBtn');
+
+            const grammarConfig = {
+                q1: {
+                    correctMarker: 'furthermore',
+                    alternatives: ['furthermore', 'moreover', 'in addition', 'besides'],
+                    example: 'Furthermore, it is also environmentally friendly.'
+                },
+                q2: {
+                    correctMarker: 'despite',
+                    alternatives: ['despite', 'in spite of'],
+                    example: 'Despite its high cost, the technology has been widely adopted.'
+                },
+                q3: {
+                    correctMarker: 'however',
+                    alternatives: ['however', 'nevertheless', 'nonetheless'],
+                    example: 'However, the team identified the root cause.'
                 }
-            }
-            if (userCircledWords.has(idx)) {
-                if (circleCheckDone) {
-                    const isCorrect = occ.word === circleWord;
-                    span.classList.add(isCorrect ? 'circle-correct' : 'circle-incorrect');
-                } else {
-                    span.classList.add('temp-circled');
-                }
-            }
-        });
-    }
-    
-    function checkUnderlines() {
-        if (userUnderlinedWords.size === 0) {
-            document.getElementById('underlineFeedback').innerHTML = '<div class="fix-feedback warning">⚠️ Please select words to underline first.</div>';
-            return;
-        }
-        
-        let correct = 0;
-        let totalExpected = 0;
-        wordOccurrences.forEach(occ => {
-            if (contrastWords.includes(occ.word)) totalExpected++;
-        });
-        
-        userUnderlinedWords.forEach(idx => {
-            if (contrastWords.includes(wordOccurrences[idx].word)) correct++;
-        });
-        underlineCheckDone = true;
-        document.getElementById('underlineFeedback').innerHTML = `<div style="background:#fef9e3;padding:.75rem;border-radius:12px;">
-            <p><strong>📝 Contrast Markers:</strong> ${correct}/${totalExpected} correct</p>
-            ${correct === totalExpected ? '<p style="color:#16a34a;">✅ Perfect! You identified all contrast markers!</p>' : '<p style="color:#f59e0b;">💡 Hint: Look for "nevertheless", "however", and "in spite of this"</p>'}
-        </div>`;
-        updateAllVisuals();
-        updateReadingCompleteButton();
-    }
-    
-    function checkCircles() {
-        if (userCircledWords.size === 0) {
-            document.getElementById('circleFeedback').innerHTML = '<div class="fix-feedback warning">⚠️ Please select a word to circle first. Click on the word that means "practical and sensible".</div>';
-            return;
-        }
-        
-        let correct = 0;
-        userCircledWords.forEach(idx => {
-            if (wordOccurrences[idx].word === circleWord) correct++;
-        });
-        circleCheckDone = true;
-        document.getElementById('circleFeedback').innerHTML = `<div style="background:#fef9e3;padding:.75rem;border-radius:12px;">
-            <p><strong>⭕ Find "pragmatic":</strong> ${correct}/1 correct</p>
-            ${correct === 1 ? '<p style="color:#16a34a;">✅ Perfect! You found "pragmatic"!</p>' : '<p style="color:#f59e0b;">💡 Hint: Look for the word that means "practical and sensible" - it starts with "p"</p>'}
-        </div>`;
-        updateAllVisuals();
-        updateReadingCompleteButton();
-    }
-    
-    function resetUnderlines() {
-        userUnderlinedWords.clear();
-        underlineCheckDone = false;
-        document.getElementById('underlineFeedback').innerHTML = '';
-        updateAllVisuals();
-        updateReadingCompleteButton();
-    }
-    
-    function resetCircles() {
-        userCircledWords.clear();
-        circleCheckDone = false;
-        document.getElementById('circleFeedback').innerHTML = '';
-        updateAllVisuals();
-        updateReadingCompleteButton();
-    }
-    
-    function switchToUnderlineMode() {
-        currentMode = 'underline';
-        document.getElementById('underlineModeBtn').style.background = '#f59e0b';
-        document.getElementById('circleModeBtn').style.background = '#3b82f6';
-        document.getElementById('underlineSection').style.display = 'block';
-        document.getElementById('circleSection').style.display = 'none';
-        updateAllVisuals();
-    }
-    
-    function switchToCircleMode() {
-        currentMode = 'circle';
-        document.getElementById('circleModeBtn').style.background = '#3b82f6';
-        document.getElementById('underlineModeBtn').style.background = '#f59e0b';
-        document.getElementById('circleSection').style.display = 'block';
-        document.getElementById('underlineSection').style.display = 'none';
-        updateAllVisuals();
-    }
-    
-    function updateReadingCompleteButton() {
-        const btn = document.getElementById('completeReadingBtn');
-        if (!btn) return;
-        
-        let correctUnderline = 0;
-        let totalExpected = 0;
-        wordOccurrences.forEach(occ => {
-            if (contrastWords.includes(occ.word)) totalExpected++;
-        });
-        userUnderlinedWords.forEach(idx => {
-            if (contrastWords.includes(wordOccurrences[idx].word)) correctUnderline++;
-        });
-        
-        let correctCircle = 0;
-        userCircledWords.forEach(idx => {
-            if (wordOccurrences[idx].word === circleWord) correctCircle++;
-        });
-        
-        btn.disabled = !(underlineCheckDone && correctUnderline === totalExpected && circleCheckDone && correctCircle === 1 && readingTask2Done);
-    }
-    
-    // Task 2: Replace 'furthermore' with TWO alternatives
-    const validAlternatives = ['moreover', 'in addition', 'besides', 'what is more', 'additionally', 'also'];
-    
-    function validateTask2() {
-        const input = document.getElementById('task2Alternatives').value.trim().toLowerCase();
-        const feedback = document.getElementById('task2Feedback');
-        
-        if (input.length === 0) {
-            feedback.innerHTML = '⚠️ Please enter two alternative discourse markers.';
-            feedback.className = 'fix-feedback warning';
-            readingTask2Done = false;
-            updateReadingCompleteButton();
-            return;
-        }
-        
-        let parts = input.split(',').map(p => p.trim().toLowerCase());
-        parts = parts.filter(p => p.length > 0);
-        
-        if (parts.length !== 2) {
-            feedback.innerHTML = `⚠️ Please enter exactly TWO alternatives separated by commas. You entered ${parts.length} item(s).`;
-            feedback.className = 'fix-feedback warning';
-            readingTask2Done = false;
-            updateReadingCompleteButton();
-            return;
-        }
-        
-        let validCount = 0;
-        let invalidParts = [];
-        
-        for (let part of parts) {
-            if (validAlternatives.includes(part)) {
-                validCount++;
-            } else {
-                invalidParts.push(part);
-            }
-        }
-        
-        if (validCount === 2) {
-            feedback.innerHTML = '✅ Correct! Both alternatives are valid replacements for "furthermore".';
-            feedback.className = 'fix-feedback correct';
-            readingTask2Done = true;
-        } else if (validCount === 1) {
-            feedback.innerHTML = `⚠️ Only one valid alternative found. "${invalidParts[0]}" is not valid. Valid: moreover, in addition, besides, what is more, additionally, also.`;
-            feedback.className = 'fix-feedback warning';
-            readingTask2Done = false;
-        } else {
-            feedback.innerHTML = `❌ Both alternatives invalid. "${invalidParts.join(', ')}" not valid. Valid: moreover, in addition, besides, what is more, additionally, also.`;
-            feedback.className = 'fix-feedback incorrect';
-            readingTask2Done = false;
-        }
-        updateReadingCompleteButton();
-    }
-    
-    function resetTask2() {
-        document.getElementById('task2Alternatives').value = '';
-        document.getElementById('task2Feedback').innerHTML = '';
-        document.getElementById('task2Feedback').className = 'fix-feedback';
-        readingTask2Done = false;
-        updateReadingCompleteButton();
-    }
-    
-    document.getElementById('underlineModeBtn')?.addEventListener('click', switchToUnderlineMode);
-    document.getElementById('circleModeBtn')?.addEventListener('click', switchToCircleMode);
-    document.getElementById('checkUnderlinesBtn')?.addEventListener('click', checkUnderlines);
-    document.getElementById('checkCirclesBtn')?.addEventListener('click', checkCircles);
-    document.getElementById('resetUnderlinesBtn')?.addEventListener('click', resetUnderlines);
-    document.getElementById('resetCirclesBtn')?.addEventListener('click', resetCircles);
-    document.getElementById('checkTask2Btn')?.addEventListener('click', validateTask2);
-    document.getElementById('resetTask2Btn')?.addEventListener('click', resetTask2);
-    
-    document.getElementById('completeReadingBtn')?.addEventListener('click', function() {
-        if (!this.disabled) {
-            markActivityComplete('reading', 'chk1');
-        }
-    });
-    
-    buildInteractivePassage();
-    
-    // ==================== VOCABULARY ====================
-    const vChecks = document.querySelectorAll('.check-cell');
-    const vComplete = document.getElementById('completeVocabularyBtn');
-    
-    function checkVocab() { 
-        let all = true; 
-        vChecks.forEach(c => { if (c.innerHTML !== '✅') all = false; }); 
-        if (vComplete) vComplete.disabled = !all; 
-    }
-    
-    document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const word = this.getAttribute('data-word');
-            const cid = this.getAttribute('data-checkid');
-            const cell = document.getElementById(cid);
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const u = new SpeechSynthesisUtterance(word);
-                u.lang = 'en-US';
-                u.rate = 0.9;
-                u.onend = () => { 
-                    if (cell && cell.innerHTML !== '✅') { 
-                        cell.innerHTML = '✅'; 
-                        cell.style.color = 'green'; 
-                        checkVocab(); 
-                    } 
-                };
-                window.speechSynthesis.speak(u);
-            }
-        });
-    });
-    
-    if (vComplete) { 
-        vComplete.addEventListener('click', function() { 
-            if (!vComplete.disabled) markActivityComplete('vocabulary', 'chk5'); 
-        }); 
-    }
-    
-    // ==================== GRAMMAR ====================
-    const gBtn = document.getElementById('checkGrammarBtn');
-    const gComplete = document.getElementById('completeGrammarBtn');
-    
-    const grammarConfig = {
-        q1: {
-            correctMarker: 'furthermore',
-            alternatives: ['furthermore', 'moreover', 'in addition', 'besides', 'what is more'],
-            example: 'Furthermore, it is also environmentally friendly.'
-        },
-        q2: {
-            correctMarker: 'despite',
-            alternatives: ['despite', 'in spite of'],
-            example: 'Despite its high cost, the technology has been widely adopted.'
-        },
-        q3: {
-            correctMarker: 'however',
-            alternatives: ['however', 'nevertheless', 'nonetheless'],
-            example: 'However, the team identified the root cause.'
-        }
-    };
-    
-    function validateGrammarSentence(userSentence, config) {
-        const lowerSentence = userSentence.trim().toLowerCase();
-        
-        if (lowerSentence.length === 0) {
-            return { isValid: false, feedback: '⚠️ Please write the complete sentence.', hint: `Example: "${config.example}"` };
-        }
-        
-        let hasCorrectMarker = false;
-        for (let marker of config.alternatives) {
-            if (lowerSentence.includes(marker.toLowerCase())) {
-                hasCorrectMarker = true;
-                break;
-            }
-        }
-        
-        if (!hasCorrectMarker) {
-            return { 
-                isValid: false, 
-                feedback: `💡 Hint: Your sentence should include a discourse marker like "${config.correctMarker}".`, 
-                hint: `Try: "${config.example}"` 
             };
-        }
-        
-        if (lowerSentence.length < 15) {
-            return { 
-                isValid: false, 
-                feedback: '💡 Hint: Write a complete sentence, not just the marker word.', 
-                hint: `Example: "${config.example}"` 
-            };
-        }
-        
-        return { isValid: true, feedback: '✅ Correct! Great sentence structure!' };
-    }
-    
-    if (gBtn) {
-        gBtn.addEventListener('click', () => {
-            const q1 = document.getElementById('grammar1').value;
-            const q2 = document.getElementById('grammar2').value;
-            const q3 = document.getElementById('grammar3').value;
-            
-            const result1 = validateGrammarSentence(q1, grammarConfig.q1);
-            const result2 = validateGrammarSentence(q2, grammarConfig.q2);
-            const result3 = validateGrammarSentence(q3, grammarConfig.q3);
-            
-            const fb1 = document.getElementById('grammar1Feedback');
-            const fb2 = document.getElementById('grammar2Feedback');
-            const fb3 = document.getElementById('grammar3Feedback');
-            const grammarFeedback = document.getElementById('grammarFeedback');
-            
-            if (fb1) { fb1.innerHTML = result1.feedback + (result1.hint ? '<br>' + result1.hint : ''); fb1.className = result1.isValid ? 'fix-feedback correct' : 'fix-feedback hint'; fb1.style.display = 'block'; }
-            if (fb2) { fb2.innerHTML = result2.feedback + (result2.hint ? '<br>' + result2.hint : ''); fb2.className = result2.isValid ? 'fix-feedback correct' : 'fix-feedback hint'; fb2.style.display = 'block'; }
-            if (fb3) { fb3.innerHTML = result3.feedback + (result3.hint ? '<br>' + result3.hint : ''); fb3.className = result3.isValid ? 'fix-feedback correct' : 'fix-feedback hint'; fb3.style.display = 'block'; }
-            
-            const allValid = result1.isValid && result2.isValid && result3.isValid;
-            
-            if (allValid) {
-                grammarCompleted = true;
-                if (grammarFeedback) {
-                    grammarFeedback.innerHTML = '✅ Excellent! All grammar sentences are correct!';
-                    grammarFeedback.className = 'quiz-feedback correct';
-                    grammarFeedback.style.display = 'block';
+
+            function validateGrammarSentence(userSentence, config) {
+                const lowerSentence = userSentence.trim().toLowerCase();
+
+                if (lowerSentence.length === 0) {
+                    return { isValid: false, feedback: '⚠️ Please write the complete sentence.', hint: `Example: "${config.example}"` };
                 }
-                if (gComplete) gComplete.disabled = false;
-            } else {
-                grammarCompleted = false;
-                if (grammarFeedback) {
-                    grammarFeedback.innerHTML = '📚 Some sentences need improvement. Read the hints above and try again.';
-                    grammarFeedback.className = 'quiz-feedback incorrect';
-                    grammarFeedback.style.display = 'block';
+
+                let hasCorrectMarker = false;
+                for (let marker of config.alternatives) {
+                    if (lowerSentence.includes(marker.toLowerCase())) {
+                        hasCorrectMarker = true;
+                        break;
+                    }
                 }
-                if (gComplete) gComplete.disabled = true;
+
+                if (!hasCorrectMarker) {
+                    return {
+                        isValid: false,
+                        feedback: `💡 Your sentence should include a discourse marker like "${config.correctMarker}".`,
+                        hint: `Try: "${config.example}"`
+                    };
+                }
+
+                if (lowerSentence.length < 15) {
+                    return {
+                        isValid: false,
+                        feedback: '💡 Write a complete sentence, not just the marker word.',
+                        hint: `Example: "${config.example}"`
+                    };
+                }
+
+                return { isValid: true, feedback: '✅ Correct! Great sentence structure!' };
             }
+
+            if (gBtn) {
+                gBtn.addEventListener('click', () => {
+                    const q1 = document.getElementById('grammar1').value;
+                    const q2 = document.getElementById('grammar2').value;
+                    const q3 = document.getElementById('grammar3').value;
+
+                    const result1 = validateGrammarSentence(q1, grammarConfig.q1);
+                    const result2 = validateGrammarSentence(q2, grammarConfig.q2);
+                    const result3 = validateGrammarSentence(q3, grammarConfig.q3);
+
+                    const fb1 = document.getElementById('grammar1Feedback');
+                    const fb2 = document.getElementById('grammar2Feedback');
+                    const fb3 = document.getElementById('grammar3Feedback');
+                    const grammarFeedback = document.getElementById('grammarFeedback');
+
+                    if (fb1) { fb1.innerHTML = result1.feedback + (result1.hint ? '<br>' + result1.hint : ''); fb1.className = result1.isValid ? 'fix-feedback correct' : 'fix-feedback hint'; fb1.style.display = 'block'; }
+                    if (fb2) { fb2.innerHTML = result2.feedback + (result2.hint ? '<br>' + result2.hint : ''); fb2.className = result2.isValid ? 'fix-feedback correct' : 'fix-feedback hint'; fb2.style.display = 'block'; }
+                    if (fb3) { fb3.innerHTML = result3.feedback + (result3.hint ? '<br>' + result3.hint : ''); fb3.className = result3.isValid ? 'fix-feedback correct' : 'fix-feedback hint'; fb3.style.display = 'block'; }
+
+                    const allValid = result1.isValid && result2.isValid && result3.isValid;
+
+                    if (allValid) {
+                        grammarCompleted = true;
+                        if (grammarFeedback) {
+                            grammarFeedback.innerHTML = '✅ Excellent! All grammar sentences are correct!';
+                            grammarFeedback.className = 'quiz-feedback correct';
+                            grammarFeedback.style.display = 'block';
+                        }
+                        if (gComplete) gComplete.disabled = false;
+                    } else {
+                        grammarCompleted = false;
+                        if (grammarFeedback) {
+                            grammarFeedback.innerHTML = '📚 Some sentences need improvement. Read the hints above.';
+                            grammarFeedback.className = 'quiz-feedback incorrect';
+                            grammarFeedback.style.display = 'block';
+                        }
+                        if (gComplete) gComplete.disabled = true;
+                    }
+                });
+            }
+
+            if (gComplete) {
+                gComplete.addEventListener('click', () => {
+                    if (grammarCompleted) markActivityComplete('grammar', 'chkGrammar');
+                });
+            }
+
+            // ==================== DAY COMPLETION ====================
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            if (dayBtn) {
+                const newBtn = dayBtn.cloneNode(true);
+                dayBtn.parentNode.replaceChild(newBtn, dayBtn);
+                newBtn.addEventListener('click', function () {
+                    const cbs = document.querySelectorAll('.checklist input.day-check');
+                    let all = true;
+                    cbs.forEach(cb => { if (!cb.checked) all = false; });
+                    if (!all) {
+                        alert('⚠️ Complete all activities first!');
+                        return;
+                    }
+                    this.innerHTML = '✨ Completing day...';
+                    this.disabled = true;
+                    if (typeof canvasConfetti !== 'undefined') {
+                        canvasConfetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                    }
+                    setTimeout(() => {
+                        window.location.href = '/learning/level/intermediate/?celebrate=true&completed=11';
+                    }, 500);
+                });
+            }
+
+            setTimeout(updateDayProgress, 500);
         });
-    }
-    
-    if (gComplete) { 
-        gComplete.addEventListener('click', () => { 
-            if (grammarCompleted) markActivityComplete('grammar', 'chk4'); 
-        }); 
-    }
-    
-    // ==================== DAY COMPLETION ====================
-    const dayBtn = document.getElementById('dayCompleteBtn');
-    if (dayBtn) {
-        const newBtn = dayBtn.cloneNode(true);
-        dayBtn.parentNode.replaceChild(newBtn, dayBtn);
-        newBtn.addEventListener('click', function() {
-            const cbs = document.querySelectorAll('.checklist input.day-check');
-            let all = true;
-            cbs.forEach(cb => { if (!cb.checked) all = false; });
-            if (!all) {
-                alert('⚠️ Complete all activities first!');
-                return;
-            }
-            this.innerHTML = '✨ Completing day...';
-            this.disabled = true;
-            if (typeof confetti !== 'undefined') {
-                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-            }
-            setTimeout(() => {
-                window.location.href = '/learning/level/intermediate/?celebrate=true&completed=11';
-            }, 500);
-        });
-    }
-    
-    setTimeout(updateDayProgress, 500);
-});
-</script>
+    </script>
 </body>
+
 </html>

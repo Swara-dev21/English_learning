@@ -9,6 +9,67 @@
     <title>Day 14: Week 2 Review · The Intermediate Audit | English for Engineers</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <style>
+        .ai-feedback {
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin: 0.5rem 0;
+        }
+
+        .ai-feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #22c55e;
+        }
+
+        .ai-feedback.incorrect {
+            background: #fef9e3;
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .ai-feedback.processing {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .listening-feedback-item {
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .listening-feedback-item.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 3px solid #22c55e;
+        }
+
+        .listening-feedback-item.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 3px solid #dc2626;
+        }
+
+        .attempt-counter {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+            text-align: center;
+            padding: 0.5rem;
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+
+        .correct-answer-box {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+    </style>
 </head>
 
 <body>
@@ -24,7 +85,7 @@
 
         <div class="activities-grid">
 
-            <!-- 1. LISTENING ACTIVITY - UPDATED WITH PRESENTATION VALIDATION -->
+            <!-- 1. LISTENING ACTIVITY - UPDATED WITH AI EVALUATION -->
             <div class="activity-card" id="listening-card">
                 <div class="card-header listening">
                     <h2>🎧 1. Listening Activity · Confident Progression</h2>
@@ -39,7 +100,7 @@
                     </div>
 
                     <audio id="listeningAudio" controls>
-                        <source src="{% static 'learning/audio/day14.mp3' %}" type="audio/mpeg">
+                        <source src="{% static 'learning/audio/Intermediate/day14.mp3' %}" type="audio/mpeg">
                     </audio>
 
                     <div id="listeningTextSection" style="display: none;">
@@ -74,8 +135,10 @@
                                 <textarea id="presentationScript" class="presentation-textarea" rows="6"
                                     placeholder="Write your 3-minute presentation script here. Include: passive voice, conditional, relative clause, discourse marker, and hedging expression."></textarea>
                                 <div id="scriptValidationMsg" style="margin-top: 0.5rem; font-size: 0.85rem;"></div>
+                                <div id="scriptAttemptCounter" class="attempt-counter" style="display: none;">📊
+                                    Attempts remaining: <span>5</span></div>
                                 <button class="btn-outline" id="validateScriptBtn"
-                                    style="width: 100%; margin-top: 0.5rem;">✓ Validate My Presentation Script</button>
+                                    style="width: 50%; margin-top: 0.5rem;">✓ Validate My Presentation Script</button>
                             </div>
 
                             <div style="font-weight: 600; margin: 1rem 0 0.5rem;">🎙️ Your Recording</div>
@@ -384,7 +447,8 @@
 
                     <div class="power-word-section" style="border-left-color: #22c55e;">
                         <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #166534;">
-                            <span>💡</span><span>IDIOM OF THE DAY: "THE MOMENT OF TRUTH"</span></div>
+                            <span>💡</span><span>IDIOM OF THE DAY: "THE MOMENT OF TRUTH"</span>
+                        </div>
                         <p><strong>Marathi Meaning:</strong> निर्णायक क्षण</p>
                         <p><strong>Meaning:</strong> A critical time when something is tested or decided</p>
                         <p><strong>Example:</strong> "After two weeks of intensive preparation, this presentation is our
@@ -393,12 +457,12 @@
 
                     <div class="power-word-section">
                         <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
-                            <span>🔥</span><span>POWER WORD: HOLISTIC (Hoh-LIS-tik)</span></div>
+                            <span>🔥</span><span>POWER WORD: HOLISTIC (Hoh-LIS-tik)</span>
+                        </div>
                         <p><strong>Meaning:</strong> Considering a whole system rather than just its parts</p>
                         <p><strong>Usage:</strong> "A holistic approach to engineering education integrates technical
                             skills with professional communication."</p>
                     </div>
-
 
                     <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
                         <button class="complete-activity-btn" id="completeVocabularyBtn" data-checklist="chk5"
@@ -424,14 +488,14 @@
                             <td>'I will revert to you.'<br><small>('Revert' already means to go back.)</small></td>
                         </tr>
                         <tr>
-                            <td>'Please do the needful.'</td>
+                            <td>'Please do the needful.'</span>
                             <td>'Please take the necessary action.' or 'Please address this at your earliest
                                 convenience.'<br><small>('Do the needful' is only used in Indian English.)</small></td>
                         </tr>
                         <tr>
-                            <td>'The work is in process.'</td>
+                            <td>'The work is in process.'</span>
                             <td>'The work is in progress.'<br><small>('In process' = being manufactured. 'In progress' =
-                                    currently happening.)</small></td>
+                                    currently happening.)</small></span>
                         </tr>
                     </tbody>
                 </table>
@@ -498,128 +562,195 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
-            // ==================== VOCABULARY AUDIO WITH CHECKMARK ====================
+            // ==================== CSRF TOKEN ====================
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+
+            // ==================== ACTIVITY COMPLETION FUNCTIONS ====================
+            function updateProgressCounter() {
+                const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'];
+                let completed = 0;
+                checkboxes.forEach(id => {
+                    const cb = document.getElementById(id);
+                    if (cb && cb.checked) completed++;
+                });
+                const counter = document.getElementById('progressCounter');
+                if (counter) counter.innerText = `${completed}/5 completed`;
+
+                const dayBtn = document.getElementById('dayCompleteBtn');
+                if (dayBtn) {
+                    dayBtn.disabled = (completed !== 5);
+                    if (completed === 5) {
+                        dayBtn.style.background = '#16a34a';
+                        dayBtn.style.cursor = 'pointer';
+                        dayBtn.style.opacity = '1';
+                    } else {
+                        dayBtn.style.background = '#94a3b8';
+                        dayBtn.style.cursor = 'not-allowed';
+                        dayBtn.style.opacity = '0.6';
+                    }
+                }
+            }
+
+            window.markActivityComplete = function (activityId, checklistId) {
+                const checkbox = document.getElementById(checklistId);
+                if (checkbox) checkbox.checked = true;
+                const completeBtn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+                if (completeBtn) {
+                    completeBtn.disabled = true;
+                    completeBtn.textContent = '✓ Completed';
+                }
+                updateProgressCounter();
+            };
+
+            // ==================== VOCABULARY AUDIO ====================
             const audioBtns = document.querySelectorAll('.vocab-audio-btn');
             const completeVocabularyBtn = document.getElementById('completeVocabularyBtn');
-            let vocabularyCompleted = false;
+
+            const vocabHeard = {
+                'check-fortnight': false,
+                'check-ambient': false,
+                'check-diagnostic': false,
+                'check-intermittent': false,
+                'check-seamless': false
+            };
 
             function checkAllVocabularyListened() {
-                const checkCells = ['check-fortnight', 'check-ambient', 'check-diagnostic', 'check-intermittent', 'check-seamless'];
-                let allListened = true;
-                for (let id of checkCells) {
-                    const cell = document.getElementById(id);
-                    if (cell && cell.innerHTML !== '✅') { allListened = false; break; }
+                const allHeard = Object.values(vocabHeard).every(v => v === true);
+                if (completeVocabularyBtn) {
+                    completeVocabularyBtn.disabled = !allHeard;
                 }
-                if (allListened && completeVocabularyBtn) { completeVocabularyBtn.disabled = false; vocabularyCompleted = true; }
-                else if (completeVocabularyBtn) { completeVocabularyBtn.disabled = true; vocabularyCompleted = false; }
+                return allHeard;
+            }
+
+            function updateVocabCheckMark(checkId) {
+                if (!vocabHeard[checkId]) {
+                    vocabHeard[checkId] = true;
+                    const cell = document.getElementById(checkId);
+                    if (cell && cell.innerHTML !== '✅') {
+                        cell.innerHTML = '✅';
+                        cell.style.color = '#22c55e';
+                    }
+                    checkAllVocabularyListened();
+                }
+            }
+
+            function speakWordWithCheckmark(word, checkId) {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    utterance.onend = function () {
+                        if (checkId) updateVocabCheckMark(checkId);
+                    };
+                    utterance.onerror = function () {
+                        if (checkId) updateVocabCheckMark(checkId);
+                    };
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    if (checkId) updateVocabCheckMark(checkId);
+                }
             }
 
             audioBtns.forEach(btn => {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
                     const word = this.getAttribute('data-word');
                     const checkId = this.getAttribute('data-checkid');
-                    if (typeof playAudio === 'function') playAudio(word);
-                    else { const utterance = new SpeechSynthesisUtterance(word); utterance.lang = 'en-US'; utterance.rate = 0.85; window.speechSynthesis.speak(utterance); }
-                    if (checkId) {
-                        const checkCell = document.getElementById(checkId);
-                        if (checkCell && checkCell.innerHTML === '⬜') { checkCell.innerHTML = '✅'; checkCell.style.color = '#22c55e'; checkCell.style.fontSize = '1rem'; }
+                    if (word && checkId && !vocabHeard[checkId]) {
+                        speakWordWithCheckmark(word, checkId);
+                    } else if (word && checkId && vocabHeard[checkId]) {
+                        const utterance = new SpeechSynthesisUtterance(word);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.85;
+                        window.speechSynthesis.speak(utterance);
                     }
-                    checkAllVocabularyListened();
                 });
             });
 
-            // Power Word Validation
-            const powerWordInput = document.getElementById('powerWordSentence');
-            const checkPowerWordBtn = document.getElementById('checkPowerWordBtn');
-            if (checkPowerWordBtn) {
-                checkPowerWordBtn.addEventListener('click', function () {
-                    const sentence = powerWordInput.value.trim().toLowerCase();
-                    const isValid = sentence.includes('holistic') && sentence.length > 15;
-                    const feedback = document.getElementById('powerWordFeedback');
-                    if (isValid) {
-                        feedback.innerHTML = '✅ Correct! Great sentence with "holistic"!';
-                        feedback.className = 'fix-feedback correct';
-                        feedback.style.display = 'block';
-                    } else {
-                        feedback.innerHTML = '❌ Please write a sentence using the word "holistic".';
-                        feedback.className = 'fix-feedback incorrect';
-                        feedback.style.display = 'block';
-                    }
-                });
-            }
-
             if (completeVocabularyBtn) {
                 completeVocabularyBtn.addEventListener('click', function () {
-                    if (vocabularyCompleted && typeof markActivityComplete === 'function') {
+                    if (checkAllVocabularyListened() && typeof markActivityComplete === 'function') {
                         markActivityComplete('vocabulary', 'chk5');
                     } else {
-                        alert('Please listen to all 5 vocabulary words and use the power word in a sentence first.');
+                        const remainingCount = Object.values(vocabHeard).filter(v => v === false).length;
+                        alert(`Please listen to all 5 vocabulary words first. ${remainingCount} word(s) remaining.`);
                     }
                 });
             }
 
-            // ==================== PRESENTATION SCRIPT VALIDATION (UPDATED & FLEXIBLE) ====================
+            // ==================== PRESENTATION SCRIPT VALIDATION WITH AI ====================
             let scriptValidated = false;
             let listeningRecorded = false;
+            let attemptCount = 0;
+            let maxAttempts = 5;
+            let showCorrectAnswerTriggered = false;
+            const scriptAttemptCounterSpan = document.querySelector('#scriptAttemptCounter span');
+            const scriptAttemptCounterDiv = document.getElementById('scriptAttemptCounter');
 
-            function validatePresentationScript(script) {
-                const text = script.trim();
-
-                if (!text) {
-                    return {
-                        valid: false,
-                        message: '⚠️ Please write your presentation script.'
-                    };
+            function updateScriptAttemptDisplay() {
+                const remaining = maxAttempts - attemptCount;
+                if (scriptAttemptCounterSpan) scriptAttemptCounterSpan.innerText = remaining;
+                if (attemptCount >= maxAttempts) {
+                    if (validateScriptBtn) validateScriptBtn.disabled = true;
+                    showCorrectAnswer();
                 }
+            }
 
+            function showCorrectAnswer() {
+                if (showCorrectAnswerTriggered) return;
+                showCorrectAnswerTriggered = true;
+
+                const correctAnswerHtml = `
+                    <div class="correct-answer-box">
+                        <h4>📚 Sample Presentation Script (with all 5 grammar tools):</h4>
+                        <p><strong>Topic: Solar Energy Implementation</strong></p>
+                        <p>"The new solar panels <strong>have been installed</strong> on the rooftop (passive voice). The system, <strong>which was designed by our engineering team</strong>, is expected to reduce energy costs by 30% (relative clause). <strong>However</strong>, the performance may vary depending on weather conditions (discourse marker). <strong>It would appear that</strong> the system requires regular maintenance to operate efficiently (hedging expression). <strong>If we continue to monitor the output daily</strong>, we will be able to identify any issues early (conditional)."</p>
+                        <hr style="margin: 0.75rem 0;">
+                        <p><strong>🎯 Required Grammar Tools:</strong><br>
+                        • Passive Voice: "have been installed"<br>
+                        • Relative Clause: "which was designed by..."<br>
+                        • Discourse Marker: "However"<br>
+                        • Hedging Expression: "It would appear that"<br>
+                        • Conditional: "If we continue to monitor..."</p>
+                    </div>
+                `;
+                const validationMsg = document.getElementById('scriptValidationMsg');
+                if (validationMsg) {
+                    validationMsg.insertAdjacentHTML('afterend', correctAnswerHtml);
+                }
+            }
+
+            // Fallback validation function (local)
+            function fallbackValidation(script) {
+                const text = script.trim();
                 const words = text.split(/\s+/).length;
 
                 if (words < 100) {
-                    return {
-                        valid: false,
-                        message: `⚠️ Script is too short (${words}/100 words). Write at least 100 words.`
-                    };
+                    return { valid: false, message: `⚠️ Script too short (${words}/100 words). Write at least 100 words.` };
                 }
 
                 const lower = text.toLowerCase();
-
-                // ==================== PASSIVE VOICE ====================
-                // catches:
-                // has been introduced, were installed, are being organized, should be used
-                const hasPassive =
-                    /\b(am|is|are|was|were|be|been|being|has been|have been|had been|will be|shall be|must be|can be|should be|could be|may be|might be)\s+(being\s+)?([a-z]+ed|known|made|given|taken|seen|shown|found|built|written|done|introduced|installed|organized|used)\b/i
-                        .test(text);
-
-                // ==================== CONDITIONAL ====================
-                // catches:
-                // if we continue..., our performance will improve
-                // if + clause + result
-                const hasConditional =
-                    /\bif\b[\s\S]{0,120}\b(will|would|could|may|might|can|should)\b/i.test(text);
-
-                // ==================== RELATIVE CLAUSE ====================
-                // catches:
-                // which were installed
-                // students who...
-                const hasRelativeClause =
-                    /\b(which|that|who|whom|whose)\b/i.test(text);
-
-                // ==================== DISCOURSE MARKER ====================
-                // catches:
-                // moreover, however, therefore...
-                const hasDiscourseMarker =
-                    /\b(however|therefore|consequently|furthermore|moreover|nevertheless|in addition|on the other hand|firstly|secondly|thirdly|finally|meanwhile|besides)\b/i
-                        .test(text);
-
-                // ==================== HEDGING ====================
-                // catches:
-                // it seems, appears, may, might...
-                const hasHedging =
-                    /\b(seems|it seems|appear|appears|appears to|would appear|suggests|indicates|may|might|could|possibly|perhaps|potentially|likely|tends to)\b/i
-                        .test(text);
+                const hasPassive = /\b(am|is|are|was|were|be|been|being|has been|have been|had been|will be|shall be|must be|can be|should be|could be|may be|might be)\s+(being\s+)?([a-z]+ed|known|made|given|taken|seen|shown|found|built|written|done|introduced|installed|organized|used)\b/i.test(text);
+                const hasConditional = /\bif\b[\s\S]{0,120}\b(will|would|could|may|might|can|should)\b/i.test(text);
+                const hasRelativeClause = /\b(which|that|who|whom|whose)\b/i.test(text);
+                const hasDiscourseMarker = /\b(however|therefore|consequently|furthermore|moreover|nevertheless|in addition|on the other hand|firstly|secondly|thirdly|finally|meanwhile|besides)\b/i.test(text);
+                const hasHedging = /\b(seems|it seems|appear|appears|appears to|would appear|suggests|indicates|may|might|could|possibly|perhaps|potentially|likely|tends to)\b/i.test(text);
 
                 let missing = [];
-
                 if (!hasPassive) missing.push('passive voice');
                 if (!hasConditional) missing.push('conditional');
                 if (!hasRelativeClause) missing.push('relative clause');
@@ -627,54 +758,162 @@
                 if (!hasHedging) missing.push('hedging expression');
 
                 if (missing.length === 0) {
-                    return {
-                        valid: true,
-                        message: '✅ Perfect! Your script includes all 5 required grammar tools!'
-                    };
+                    return { valid: true, message: '✅ Perfect! Your script includes all 5 required grammar tools!' };
                 } else {
-                    return {
-                        valid: false,
-                        message: `❌ Missing: ${missing.join(', ')}. Please add these to your script.`
-                    };
+                    return { valid: false, message: `❌ Missing: ${missing.join(', ')}. Please add these to your script.` };
                 }
             }
 
-            // ==================== BUTTON LOGIC ====================
-            const validateScriptBtn = document.getElementById('validateScriptBtn');
-            const scriptValidationMsg = document.getElementById('scriptValidationMsg');
-            const listenRecordBtn = document.getElementById('listeningRecordBtn');
+            async function evaluateScriptWithAI() {
+                const script = document.getElementById('presentationScript').value;
 
-            if (validateScriptBtn) {
-                validateScriptBtn.addEventListener('click', function () {
-                    const script = document.getElementById('presentationScript').value;
-                    const result = validatePresentationScript(script);
-
-                    if (scriptValidationMsg) {
-                        scriptValidationMsg.innerHTML = result.message;
-                        scriptValidationMsg.style.color = result.valid ? '#22c55e' : '#dc2626';
+                if (!script.trim()) {
+                    const msgDiv = document.getElementById('scriptValidationMsg');
+                    if (msgDiv) {
+                        msgDiv.innerHTML = '⚠️ Please write your presentation script before validating.';
+                        msgDiv.style.color = '#dc2626';
                     }
+                    return;
+                }
 
-                    scriptValidated = result.valid;
+                const words = script.split(/\s+/).length;
+                if (words < 100) {
+                    const msgDiv = document.getElementById('scriptValidationMsg');
+                    if (msgDiv) {
+                        msgDiv.innerHTML = `⚠️ Script too short (${words}/100 words). Please write at least 100 words.`;
+                        msgDiv.style.color = '#dc2626';
+                    }
+                    return;
+                }
 
+                if (attemptCount >= maxAttempts) {
+                    const msgDiv = document.getElementById('scriptValidationMsg');
+                    if (msgDiv) {
+                        msgDiv.innerHTML = '🔒 You have used all 5 attempts. Please review the sample script above.';
+                        msgDiv.style.color = '#dc2626';
+                    }
+                    scriptValidated = true;
+                    if (listenRecordBtn) {
+                        listenRecordBtn.disabled = false;
+                        listenRecordBtn.textContent = '🎙️ Start Recording';
+                    }
+                    return;
+                }
+
+                if (validateScriptBtn) {
+                    validateScriptBtn.disabled = true;
+                    validateScriptBtn.textContent = '⏳ Evaluating with AI...';
+                }
+
+                if (scriptAttemptCounterDiv) scriptAttemptCounterDiv.style.display = 'block';
+
+                try {
+                    const response = await fetch('/learning/ai/evaluate/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken
+                        },
+                        body: JSON.stringify({
+                            text: script,
+                            task_type: 'presentation_script_validation',
+                            day_number: 14,
+                            level: 'intermediate',
+                            system_prompt: `You are an encouraging English teacher evaluating a presentation script.
+
+STUDENT'S SCRIPT: "${script.substring(0, 500)}"
+
+REQUIRED GRAMMAR TOOLS (must include all 5):
+1. Passive Voice - example: "has been installed", "were designed"
+2. Conditional - example: "if we continue", "if the temperature exceeds"
+3. Relative Clause - example: "which was installed", "that were built"
+4. Discourse Marker - example: "however", "therefore", "consequently"
+5. Hedging Expression - example: "it would appear", "may require", "suggests that"
+
+EVALUATION RULES:
+- Check if ALL 5 grammar tools are present
+- Be generous - accept reasonable variations
+- Minimum 100 words required
+
+OUTPUT ONLY JSON:
+{
+"correct": true/false,
+"missing": ["list", "of", "missing", "tools"],
+"feedback": "Short encouraging feedback (max 30 words)",
+"suggestion": "Improvement tip if needed (max 20 words)"
+}`
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        attemptCount++;
+                        updateScriptAttemptDisplay();
+
+                        const msgDiv = document.getElementById('scriptValidationMsg');
+
+                        if (data.correct) {
+                            msgDiv.innerHTML = `✅ ${data.feedback || 'Excellent! Your script includes all 5 required grammar tools!'}`;
+                            msgDiv.style.color = '#22c55e';
+                            scriptValidated = true;
+                            if (listenRecordBtn) {
+                                listenRecordBtn.disabled = false;
+                                listenRecordBtn.textContent = '🎙️ Start Recording';
+                            }
+                        } else {
+                            const missingList = data.missing ? data.missing.join(', ') : 'some grammar tools';
+                            msgDiv.innerHTML = `❌ ${data.feedback || 'Missing: ' + missingList}. ${data.suggestion || 'Please add the missing grammar tools to your script.'}`;
+                            msgDiv.style.color = '#dc2626';
+                            scriptValidated = false;
+                            if (listenRecordBtn) {
+                                listenRecordBtn.disabled = true;
+                                listenRecordBtn.textContent = '🎙️ Validate script first';
+                            }
+                        }
+                    } else {
+                        throw new Error('AI response invalid');
+                    }
+                } catch (error) {
+                    console.error('AI Error:', error);
+                    // Fallback to local validation
+                    const fallbackResult = fallbackValidation(script);
+                    attemptCount++;
+                    updateScriptAttemptDisplay();
+
+                    const msgDiv = document.getElementById('scriptValidationMsg');
+                    msgDiv.innerHTML = fallbackResult.message;
+                    msgDiv.style.color = fallbackResult.valid ? '#22c55e' : '#dc2626';
+                    msgDiv.innerHTML += '<br><small style="color:#64748b;">(Using local evaluation)</small>';
+
+                    scriptValidated = fallbackResult.valid;
                     if (listenRecordBtn) {
                         if (scriptValidated) {
                             listenRecordBtn.disabled = false;
                             listenRecordBtn.textContent = '🎙️ Start Recording';
-                            listenRecordBtn.style.opacity = '1';
                         } else {
                             listenRecordBtn.disabled = true;
                             listenRecordBtn.textContent = '🎙️ Validate script first';
-                            listenRecordBtn.style.opacity = '0.6';
                         }
                     }
-                });
+                }
+
+                if (validateScriptBtn) {
+                    validateScriptBtn.disabled = false;
+                    validateScriptBtn.textContent = '✓ Validate My Presentation Script';
+                }
             }
-            // ==================== READING TASK 1 VALIDATION - FILL IN PHRASE ====================
+
+            const validateScriptBtn = document.getElementById('validateScriptBtn');
+            if (validateScriptBtn) {
+                validateScriptBtn.addEventListener('click', evaluateScriptWithAI);
+            }
+
+            // ==================== READING TASK 1 VALIDATION ====================
             let task1Completed = false;
             let task2Completed = false;
             let task3Completed = false;
 
-            // Expected correct answers (flexible matching)
             const expectedAnswers = {
                 passive: ['have been introduced', 'the learners have been introduced', 'learners have been introduced'],
                 relative: ['that were covered', 'the techniques that were covered', 'that were covered — including', 'that were covered including'],
@@ -686,7 +925,6 @@
             function validateTask1Answer(userAnswer, correctPatterns) {
                 const lower = userAnswer.trim().toLowerCase();
                 if (!lower) return { valid: false, message: '⚠️ Please write your answer.' };
-
                 for (let pattern of correctPatterns) {
                     if (lower.includes(pattern.toLowerCase())) {
                         return { valid: true, message: '✅ Correct!' };
@@ -734,17 +972,12 @@
 
             document.getElementById('checkTask1Btn')?.addEventListener('click', validateTask1);
 
-            // ==================== TASK 2 VALIDATION - DIRECT SPEECH ====================
+            // ==================== TASK 2 VALIDATION ====================
             function validateTask2() {
                 const answer = document.getElementById('task2Direct').value.trim();
                 const lower = answer.toLowerCase();
 
-                const expectedPhrases = [
-                    'programme coordinator said',
-                    'program coordinator said',
-                    'coordinator said'
-                ];
-
+                const expectedPhrases = ['programme coordinator said', 'program coordinator said', 'coordinator said'];
                 const hasCoordinator = expectedPhrases.some(phrase => lower.includes(phrase));
                 const hasQuotes = answer.includes('"') || answer.includes('“') || answer.includes('”') || answer.includes("'");
                 const hasIf = lower.includes('if');
@@ -778,7 +1011,7 @@
 
             document.getElementById('checkTask2Btn')?.addEventListener('click', validateTask2);
 
-            // ==================== TASK 3 VALIDATION - FORTNIGHT ====================
+            // ==================== TASK 3 VALIDATION ====================
             function validateTask3() {
                 const answer = document.getElementById('task3Word').value.trim().toLowerCase();
                 const feedback = document.getElementById('task3Feedback');
@@ -813,11 +1046,7 @@
 
             function updateReadingCompleteButton() {
                 if (completeReadingBtn) {
-                    if (task1Completed && task2Completed && task3Completed) {
-                        completeReadingBtn.disabled = false;
-                    } else {
-                        completeReadingBtn.disabled = true;
-                    }
+                    completeReadingBtn.disabled = !(task1Completed && task2Completed && task3Completed);
                 }
             }
 
@@ -830,7 +1059,8 @@
                     }
                 });
             }
-            // ==================== GRAMMAR VALIDATION - STRICT ====================
+
+            // ==================== GRAMMAR VALIDATION ====================
             const checkGrammarBtn = document.getElementById('checkGrammarBtn');
             const resetGrammarBtn = document.getElementById('resetGrammarBtn');
             const completeGrammarBtn = document.getElementById('completeGrammarBtn');
@@ -850,9 +1080,9 @@
                 const lower = answer.toLowerCase().trim();
                 if (!answer.trim()) return { valid: false, message: '⚠️ Please write your correction.' };
                 if (lower.includes('do the needful')) return { valid: false, message: '❌ Replace "do the needful" with a more global phrase.' };
-                const hasCorrectPhrase = /take the necessary action|address this|please take action/.test(lower);
-                const hasAttendance = /confirm attendance/.test(lower);
-                if (!hasCorrectPhrase || !hasAttendance) return { valid: false, message: '❌ Use a formal phrase and mention attendance confirmation.' };
+                const hasConfirm = /\bconfirm\b/.test(lower);
+                const hasAttendance = /\battendance\b/.test(lower);
+                if (!hasConfirm || !hasAttendance) return { valid: false, message: '❌ Clearly ask to confirm attendance.' };
                 return { valid: true, message: '✅ Correct! Well rewritten.' };
             }
 
@@ -948,6 +1178,7 @@
             if (completeSpeakingBtn) { completeSpeakingBtn.addEventListener('click', function () { if (!completeSpeakingBtn.disabled && speakingRecorded && typeof markActivityComplete === 'function') markActivityComplete('speaking', 'chk4'); }); }
 
             // ==================== LISTENING RECORDING ====================
+            const listenRecordBtn = document.getElementById('listeningRecordBtn');
             const listenStopBtn = document.getElementById('listeningStopBtn');
             const listenPlaybackCard = document.getElementById('listeningPlaybackCard');
             const listenPlaybackAudio = document.getElementById('listeningPlayback');
@@ -996,14 +1227,14 @@
                 yesComparisonBtn.addEventListener('click', function () {
                     if (completeListeningBtn) {
                         completeListeningBtn.disabled = false;
-                        if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #22c55e;">✅ Great! You have confirmed your recording is correct.</span>';
+                        if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #22c55e;">✅ Great! Recording confirmed.</span>';
                     }
                 });
             }
 
             if (noComparisonBtn) {
                 noComparisonBtn.addEventListener('click', function () {
-                    if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #dc2626;">⚠️ Please record again and ensure your presentation includes all grammar tools.</span>';
+                    if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #dc2626;">⚠️ Please record again clearly.</span>';
                     listeningRecorded = false;
                     if (listenPlaybackCard) listenPlaybackCard.style.display = 'none';
                     if (comparisonSection) comparisonSection.style.display = 'none';
@@ -1034,13 +1265,51 @@
             }
 
             // ==================== AUDIO REVEAL ====================
-            const listeningAudio = document.getElementById('listeningAudio');
-            const listeningTextSection = document.getElementById('listeningTextSection');
-            const postAudioContent = document.getElementById('postAudioListeningContent');
-            if (listeningAudio && listeningTextSection && postAudioContent) { listeningAudio.addEventListener('ended', function () { listeningTextSection.style.display = 'block'; postAudioContent.style.display = 'block'; }); }
+            const listeningAudioElem = document.getElementById('listeningAudio');
+            const listeningTextSectionElem = document.getElementById('listeningTextSection');
+            const postAudioContentElem = document.getElementById('postAudioListeningContent');
+            if (listeningAudioElem && listeningTextSectionElem && postAudioContentElem) {
+                listeningAudioElem.addEventListener('ended', function () {
+                    listeningTextSectionElem.style.display = 'block';
+                    postAudioContentElem.style.display = 'block';
+                });
+            }
 
-            // ==================== PROGRESS TRACKING ====================
-            if (typeof updateChecklistProgress === 'function') { updateChecklistProgress(); }
+            // ==================== DAY COMPLETION WITH CONFETTI ====================
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            if (dayBtn) {
+                const newBtn = dayBtn.cloneNode(true);
+                dayBtn.parentNode.replaceChild(newBtn, dayBtn);
+                newBtn.addEventListener('click', function () {
+                    const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'];
+                    let allCompleted = true;
+                    for (let id of checkboxes) {
+                        if (!document.getElementById(id)?.checked) {
+                            allCompleted = false;
+                            break;
+                        }
+                    }
+                    if (!allCompleted) {
+                        alert('⚠️ Please complete all 5 activities before completing the day!');
+                        return;
+                    }
+                    this.innerHTML = '✨ Completing day...';
+                    this.disabled = true;
+
+                    // Confetti celebration
+                    if (typeof confetti !== 'undefined') {
+                        confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                        setTimeout(() => confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.3 } }), 200);
+                        setTimeout(() => confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.7 } }), 400);
+                    }
+
+                    setTimeout(() => {
+                        window.location.href = '/learning/level/intermediate/?celebrate=true&completed=14';
+                    }, 1500);
+                });
+            }
+
+            setTimeout(updateProgressCounter, 500);
         });
     </script>
 </body>

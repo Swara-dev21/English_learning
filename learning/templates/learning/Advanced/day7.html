@@ -1,0 +1,1890 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 7: Storytelling for Engineers | English for Engineers - Advanced</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'learning/css/advance.css' %}">
+    <style>
+        /* Additional styles specific to Day 7 */
+        .sca-framework {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-left: 4px solid #f59e0b;
+        }
+        .story-prompt {
+            background: #f0fdf4;
+            border-radius: 12px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border-left: 3px solid #22c55e;
+        }
+        .speech-feedback {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+        .transcript-box {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            font-size: 0.85rem;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lesson-container">
+        <div class="lesson-hero">
+            <div class="hero-content">
+                <div class="day-badge">
+                    <span class="advanced-badge">Advanced Level</span> Day 7 • Week 1 • Advanced
+                </div>
+                <h1 class="hero-title">📖 STORYTELLING FOR ENGINEERS</h1>
+                <div class="power-line">💡 "Facts inform. Stories transform. Master both."</div>
+            </div>
+        </div>
+
+        <!-- TIP OF THE DAY BANNER -->
+        <div class="tip-of-day-banner">
+            <div class="tip-icon">💡</div>
+            <div class="tip-content">
+                <h3>TIP OF THE DAY</h3>
+                <p>Every technical problem you have solved is a story waiting to be told. Use the <strong>SCA framework</strong>: <strong>S</strong>ituation (what was the context?), <strong>C</strong>omplication (what went wrong?), <strong>A</strong>ction (what did you do?). Practise framing one past project using SCA — it will become your most powerful interview and presentation tool.</p>
+            </div>
+        </div>
+
+        <div class="activities-grid">
+
+            <!-- 1. LISTENING ACTIVITY WITH AI -->
+            <div class="activity-card" id="listening-card">
+                <div class="card-header listening">
+                    <h2>🎧 1. Listening Activity · Narrative Arcs</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Focus</span></div>
+                        </div>
+                        <div class="task-content">Narrative Arcs — how great communicators structure problem-solution stories.</div>
+                    </div>
+
+                    <audio id="listeningAudio" controls style="width: 100%; margin: 0.5rem 0;">
+                         <source src="{% static 'learning/audio/Advanced/day7.mp3' %}" type="audio/mpeg">
+                    </audio>
+
+                    <div id="listeningTextSection" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Listening Text</span></div>
+                            </div>
+                            <div class="task-content" style="font-style: italic; background: #fef9e3; line-height: 1.8;">
+                                "The assembly line had been stalling intermittently for three weeks. No one could identify the pattern. I noticed the failures were clustered on Monday mornings — which pointed to a weekend shutdown-restart issue with the pneumatic pressure system. We corrected the initialisation sequence. The line has not stalled since."
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="postAudioListeningContent" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Task: Map to SCA Framework</span></div>
+                            </div>
+                            <div class="task-content">
+                                Identify the narrative elements using the SCA framework.<br>
+                                <strong>S</strong>ituation, <strong>C</strong>omplication, <strong>A</strong>ction, <strong>R</strong>esolution
+                            </div>
+                        </div>
+
+                        <!-- SCA Inputs -->
+                        <div class="word-pair-group">
+                            <label style="font-weight: 600;">📌 Situation (Context):</label>
+                            <input type="text" id="situation" class="grammar-input" placeholder="What was happening at the beginning?" style="width: 100%; margin-top: 0.25rem;">
+                            <div id="situationFeedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <div class="word-pair-group">
+                            <label style="font-weight: 600;">⚠️ Complication (Problem):</label>
+                            <input type="text" id="complication" class="grammar-input" placeholder="What went wrong or what was the challenge?" style="width: 100%; margin-top: 0.25rem;">
+                            <div id="complicationFeedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <div class="word-pair-group">
+                            <label style="font-weight: 600;">🔧 Action (Solution):</label>
+                            <input type="text" id="action" class="grammar-input" placeholder="What did they do to fix it?" style="width: 100%; margin-top: 0.25rem;">
+                            <div id="actionFeedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <div class="word-pair-group">
+                            <label style="font-weight: 600;">✅ Resolution (Outcome):</label>
+                            <input type="text" id="resolution" class="grammar-input" placeholder="What was the result?" style="width: 100%; margin-top: 0.25rem;">
+                            <div id="resolutionFeedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <button class="btn-outline" id="checkListeningTaskBtn" style="background: #8b5cf6; color: white;">✓ Check My SCA Mapping</button>
+                        <div id="listeningAttemptCounter" class="attempt-counter" style="display: none;">📊 Attempts remaining: <span>3</span></div>
+                        <div id="listeningOverallFeedback" style="margin-top: 1rem;"></div>
+
+                        <!-- Quiz Section -->
+                        <div class="quiz-section" style="margin-top: 1rem;">
+                            <p><strong>🧠 Quick Listening Check</strong></p><br>
+                            <div>
+                                <p><strong>1. What was the turning point in the story?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q1" value="machine"> A new machine was installed</label>
+                                <label class="quiz-option"><input type="radio" name="q1" value="pattern"> A pattern was identified</label>
+                            </div>
+                            <div>
+                                <p><strong>2. What structure does this story follow?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q2" value="random"> Random facts</label>
+                                <label class="quiz-option"><input type="radio" name="q2" value="sca"> Problem → Insight → Resolution</label>
+                            </div>
+                            <div id="listeningQuizFeedback" class="quiz-feedback" style="display: none;"></div>
+                            <button class="btn-outline" id="checkListeningWorkBtn" style="margin-top: 0.5rem;">✓ Check Answers</button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeListeningBtn" data-checklist="chk1" disabled>✓ Mark Listening as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SPEAKING ACTIVITY WITH SPEECH-TO-TEXT AI -->
+<div class="activity-card" id="speaking-card">
+    <div class="card-header speaking">
+        <h2>🗣️ 2. Speaking Activity · The Engineering Story</h2>
+    </div>
+    <div class="card-body">
+        <div class="task-box">
+            <div class="task-header">
+                <div class="title"><span>🎯</span><span>Task</span></div>
+            </div>
+            <div class="task-content">
+                Deliver a <strong>60-90 second story</strong> about a real or hypothetical technical problem using the SCA structure.
+            </div>
+        </div>
+
+        <div class="story-prompt">
+            <strong>📋 Story Structure Template:</strong><br>
+            • "The situation was... [set the scene]"<br>
+            • "The complication arose when... [what went wrong]"<br>
+            • "I analysed and realised that... [your insight]"<br>
+            • "As a result... [measurable outcome]"
+        </div>
+
+        <div class="speaking-sentences-list">
+            <div class="speaking-sentence-item">
+                <div class="sentence-number-badge">Example</div>
+                <div class="sentence-text-content">
+                    "The situation was a motor driver overheating. The complication arose when temperature exceeded limits. I analysed and found a faulty resistor. As a result, temperature dropped 40%."
+                </div>
+            </div>
+        </div>
+
+        <!-- Speech-to-Text Button -->
+        <div style="margin-bottom: 1rem;">
+            <button id="speakingSpeechBtn" class="speaking-record-btn" style="background: #22c55e;">🎤 Click to Speak Your Story (60-90 sec)</button>
+            <button id="speakingStopSpeechBtn" class="speaking-stop-btn" style="display: none;">⏹️ Stop Recording</button>
+            <div id="speakingAttemptCounter" class="attempt-counter" style="display: none; margin-top: 0.5rem;">📊 Attempts: <span>3</span> left</div>
+        </div>
+        
+        <!-- Transcript Display -->
+        <div id="transcriptContainer" style="display: none;">
+            <div class="transcript-box" style="background: #f8fafc; padding: 0.75rem; border-radius: 12px;">
+                <strong>📝 Your Story:</strong>
+                <div id="speechTranscript" style="margin-top: 0.5rem; color: #334155; font-size: 0.9rem;"></div>
+            </div>
+        </div>
+        
+        <!-- AI Feedback -->
+        <div id="speakingAIFeedback" class="ai-feedback" style="display: none;"></div>
+
+        <div class="speaking-complete-wrapper" style="margin-top: 1rem;">
+            <button class="complete-activity-btn" id="completeSpeakingBtn" data-checklist="chk2" disabled>✓ Mark Speaking as Complete</button>
+        </div>
+    </div>
+</div>
+            <!-- 3. READING ACTIVITY WITH STRICT VALIDATION -->
+            <div class="activity-card" id="reading-card">
+                <div class="card-header reading">
+                    <h2>📖 3. Reading Activity · The Power of Narrative</h2>
+                </div>
+                <div class="card-body">
+                    <div class="reading-passage" style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                        <p><strong>Reading Passage:</strong></p>
+                        <p style="line-height: 1.8;">Engineers are trained to think in systems, diagrams, and data. But the most impactful engineers are those who can translate that technical thinking into a story that a non-engineer can act on. A story does what a specification cannot: it creates empathy, suspense, and investment. When you tell a decision-maker about a system failure as a narrative — with characters, tension, and resolution — they remember it. When you give them a data table, they file it away. The engineer who masters storytelling gains an influence that pure technical skill cannot.</p>
+                    </div>
+
+                    <!-- Q1: What story achieves -->
+                    <div class="grammar-input-group" style="margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; background: white;">
+                        <label style="font-weight: 700;">1. According to the passage, what does a story achieve that a specification cannot?</label>
+                        <textarea id="readingQ1" class="writing-textarea" rows="3" placeholder="Write your answer here..."></textarea>
+                        <div id="readingQ1Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Q2: Why decision-makers remember stories -->
+                    <div class="grammar-input-group" style="margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; background: white;">
+                        <label style="font-weight: 700;">2. Why do decision-makers remember stories better than data tables?</label>
+                        <textarea id="readingQ2" class="writing-textarea" rows="3" placeholder="Write your answer here..."></textarea>
+                        <div id="readingQ2Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Q3: Write opening sentence -->
+                    <div class="grammar-input-group" style="margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; background: white;">
+                        <label style="font-weight: 700;">3. Write the opening sentence of an engineering story that immediately creates interest.</label>
+                        <input type="text" id="readingQ3" class="grammar-input" placeholder="Write your opening sentence..." style="width: 100%;">
+                        <div id="readingQ3Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+                        <button class="btn-outline" id="checkReadingBtn">✓ Check Reading Answers</button>
+                        <button class="btn-outline" id="resetReadingBtn">⟳ Reset</button>
+                    </div>
+
+                    <div id="readingOverallFeedback" class="quiz-feedback" style="display: none;"></div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeReadingBtn" data-checklist="chk3" disabled>✓ Mark Reading as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. WRITING ACTIVITY with AI -->
+            <div class="activity-card" id="writing-card">
+                <div class="card-header vocabulary">
+                    <h2>✍️ 4. Writing Activity · Technical Problem Story</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>📝</span><span>Task</span></div>
+                        </div>
+                        <div class="task-content">
+                            Write a <strong>150-word story</strong> about solving a technical problem. Include: challenge, your action, result. Use at least <strong>two narrative tenses</strong> (past perfect + past simple) and one vocabulary word from today's list.
+                        </div>
+                    </div>
+
+                    <div class="writing-tip" style="background: #e0f2fe; border-radius: 12px; padding: 0.75rem; margin: 1rem 0;">
+                        <strong>💡 Writing Tip</strong>
+                        <p style="margin-top: 0.25rem;">Use past perfect tense (<strong>'had been stalling'</strong>, <strong>'had not been tested'</strong>) to show that something happened before the main story event. This creates professional depth in technical narratives.</p>
+                    </div>
+
+                    <textarea id="technicalStory" class="writing-textarea" rows="10" placeholder="Write your 150-word technical problem story here. Include: situation, complication, action, resolution. Use past perfect + past simple tenses and one vocabulary word (narrative, compelling, anecdote, resolution, protagonist)."></textarea>
+                    
+                    <div id="writingWordCount" style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem; text-align: right;"></div>
+                    <div id="writingAttemptCounter" class="attempt-counter" style="display: none;">📊 Attempts remaining: <span>3</span></div>
+                    <div id="writingFeedback" class="writing-feedback" style="display: none;"></div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button class="btn-outline" id="checkWritingBtn" style="background: #8b5cf6; color: white;">✓ Check My Story with AI</button>
+                        <button class="btn-outline" id="resetWritingBtn">⟳ Reset</button>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeWritingBtn" data-checklist="chk4" disabled>✓ Mark Writing as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. VOCABULARY TABLE -->
+            <div class="activity-card" id="vocabulary-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 5. Vocabulary of the Day</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>🔊</th>
+                                    <th>✅</th>
+                                    <th>Word</th>
+                                    <th>Pronunciation</th>
+                                    <th>Meaning</th>
+                                    <th>Synonym</th>
+                                    <th>Antonym</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Narrative" data-checkid="check-narrative">🔊</button></td>
+                                    <td class="check-cell" id="check-narrative">⬜</span>
+                                    <td class="word-cell"><strong>Narrative</strong></span>
+                                    <td><code>/ˈnær.ə.tɪv/</code></span>
+                                    <td>A spoken or written account of events</span>
+                                    <td>Account</span>
+                                    <td>Abstract</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Compelling" data-checkid="check-compelling">🔊</button></span>
+                                    <td class="check-cell" id="check-compelling">⬜</span>
+                                    <td class="word-cell"><strong>Compelling</strong></span>
+                                    <td><code>/kəmˈpel.ɪŋ/</code></span>
+                                    <td>Evoking strong interest or admiration</span>
+                                    <td>Gripping</span>
+                                    <td>Dull</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Anecdote" data-checkid="check-anecdote">🔊</button></span>
+                                    <td class="check-cell" id="check-anecdote">⬜</span>
+                                    <td class="word-cell"><strong>Anecdote</strong></span>
+                                    <td><code>/ˈæn.ɪk.dəʊt/</code></span>
+                                    <td>A short amusing or interesting story</span>
+                                    <td>Account</span>
+                                    <td>Abstraction</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Resolution" data-checkid="check-resolution">🔊</button></span>
+                                    <td class="check-cell" id="check-resolution">⬜</span>
+                                    <td class="word-cell"><strong>Resolution</strong></span>
+                                    <td><code>/ˌrez.əˈluː.ʃən/</code></span>
+                                    <td>The solution to a problem or conflict</span>
+                                    <td>Outcome</span>
+                                    <td>Stalemate</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Protagonist" data-checkid="check-protagonist">🔊</button></span>
+                                    <td class="check-cell" id="check-protagonist">⬜</span>
+                                    <td class="word-cell"><strong>Protagonist</strong></span>
+                                    <td><code>/prəˈtæɡ.ə.nɪst/</code></span>
+                                    <td>The main character or driving force</span>
+                                    <td>Hero</span>
+                                    <td>Antagonist</span>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="idiom-section">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #166534;">
+                            <span>💡</span><span>IDIOM OF THE DAY: "TURN THE TABLES"</span>
+                        </div><br>
+                        <p><strong>Marathi Meaning:</strong> परिस्थिती उलटवणे</p>
+                        <p><strong>Meaning:</strong> Reverse a situation to gain advantage</p>
+                        <p><strong>Example:</strong> "By presenting the data creatively, we turned the tables in the client meeting."</p>
+                    </div>
+
+                    <div class="power-word-section">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
+                            <span>🔥</span><span>POWER WORD: COMPELLING (kum-PEL-ing)</span>
+                        </div><br>
+                        <p><strong>Meaning:</strong> Evoking strong interest or admiration</p>
+                        <p><strong>Usage:</strong> "Her compelling case study convinced the selection committee in minutes."</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeVocabularyBtn" data-checklist="chk5" disabled>✓ Mark Vocabulary as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. GRAMMAR HACK - Sentence Fragments -->
+            <div class="grammar-section" id="grammar-card">
+                <h3 style="margin: 0 0 1rem 0;">🧠 6. Grammar Hack: Avoid Sentence Fragments</h3>
+                
+                <div class="grammar-info-only" style="background: #f0fdf4; padding: 1rem; border-radius: 12px; margin: 1rem 0; border-left: 4px solid #22c55e;">
+                    <p><strong>📖 Why to avoid sentence fragments:</strong></p>
+                    <p>A sentence must have a subject and a verb. Fragments are incomplete thoughts that mislead readers.</p>
+                </div>
+
+                <div class="grammar-rule">
+                    <p>❌ <strong>Incorrect (Fragment):</strong> "Because the voltage dropped suddenly."</p>
+                    <p>✅ <strong>Correct:</strong> "The system shut down because the voltage dropped suddenly."</p><br>
+                    
+                    <p>❌ <strong>Incorrect (Fragment):</strong> "The engineer. Working on the project alone."</p>
+                    <p>✅ <strong>Correct:</strong> "The engineer was working on the project alone."</p><br>
+                    
+                    <p><strong>Rule:</strong> Before submitting any writing, check that every sentence can stand alone with a complete thought.</p>
+                </div>
+
+                <div class="grammar-rule" style="margin-top: 1.5rem;">
+                    <p><strong>⚠️ Activity: Fix these sentence fragments:</strong></p>
+                    <p><strong>1. "While the motor was overheating. The operator stopped the machine."</strong></p>
+                    <input type="text" id="grammar1" class="grammar-input" placeholder="Write the corrected sentence..." style="width: 100%; margin-top: 0.5rem;">
+                    <div id="grammar1Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+
+                    <p><strong>2. "Because the data was inconclusive. We ran the test again."</strong></p>
+                    <input type="text" id="grammar2" class="grammar-input" placeholder="Write the corrected sentence..." style="width: 100%; margin-top: 0.5rem;">
+                    <div id="grammar2Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="btn-outline" id="checkGrammarBtn">✓ Check Grammar Answers</button>
+                    <button class="btn-outline" id="resetGrammarBtn">⟳ Reset Grammar</button>
+                </div>
+                <div id="grammarOverallFeedback" class="quiz-feedback"></div>
+                
+                <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                    <button class="complete-activity-btn" id="completeGrammarBtn" data-checklist="chk6" disabled>✓ Mark Grammar as Complete</button>
+                </div>
+            </div>
+
+            <!-- CHECKLIST -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 7 COMPLETION CHECKLIST</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chk1" disabled><label> I mapped the listening script to the SCA framework (Listening).</label></li>
+                        <li><input type="checkbox" id="chk2" disabled><label> I delivered a 90-second engineering story aloud (Speaking).</label></li>
+                        <li><input type="checkbox" id="chk3" disabled><label> I identified what stories achieve vs. data tables in the reading (Reading).</label></li>
+                        <li><input type="checkbox" id="chk4" disabled><label> I wrote the 150-word technical problem story (Writing).</label></li>
+                        <li><input type="checkbox" id="chk5" disabled><label> I listened to all vocabulary words.</label></li>
+                        <li><input type="checkbox" id="chk6" disabled><label> I fixed the sentence fragments (Grammar).</label></li>
+                    </ul>
+                    <div style="text-align:right;"><span class="badge" id="progressCounter">0/6 completed</span></div>
+                    <div style="display:flex; justify-content:center; margin-top:1rem;">
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>🏆 Complete Day 7</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // ==================== CSRF TOKEN ====================
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+
+            // ==================== ACTIVITY COMPLETION FUNCTIONS ====================
+            function updateProgressCounter() {
+                const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6'];
+                let completed = 0;
+                checkboxes.forEach(id => {
+                    const cb = document.getElementById(id);
+                    if (cb && cb.checked) completed++;
+                });
+                const counter = document.getElementById('progressCounter');
+                if (counter) counter.innerText = `${completed}/6 completed`;
+
+                const dayBtn = document.getElementById('dayCompleteBtn');
+                if (dayBtn) {
+                    dayBtn.disabled = (completed !== 6);
+                    if (completed === 6) {
+                        dayBtn.style.background = '#16a34a';
+                        dayBtn.style.cursor = 'pointer';
+                        dayBtn.style.opacity = '1';
+                    } else {
+                        dayBtn.style.background = '#94a3b8';
+                        dayBtn.style.cursor = 'not-allowed';
+                        dayBtn.style.opacity = '0.6';
+                    }
+                }
+            }
+
+            window.markActivityComplete = function (activityId, checklistId) {
+                const checkbox = document.getElementById(checklistId);
+                if (checkbox) checkbox.checked = true;
+                const completeBtn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+                if (completeBtn) {
+                    completeBtn.disabled = true;
+                    completeBtn.textContent = '✓ Completed';
+                }
+                updateProgressCounter();
+            };
+
+            // ==================== LISTENING ACTIVITY ====================
+            const listeningAudio = document.getElementById('listeningAudio');
+            const listeningTextSection = document.getElementById('listeningTextSection');
+            const postAudioContent = document.getElementById('postAudioListeningContent');
+            let masterAudioFinished = false;
+            let listeningTaskCompleted = false;
+            let listeningQuizCompleted = false;
+            let listeningAttemptCount = 0;
+            let maxListeningAttempts = 3;
+
+            if (listeningAudio && listeningTextSection && postAudioContent) {
+                listeningAudio.addEventListener('ended', function () {
+                    if (!masterAudioFinished) {
+                        masterAudioFinished = true;
+                        listeningTextSection.style.display = 'block';
+                        postAudioContent.style.display = 'block';
+                    }
+                });
+            }
+
+            function showListeningCorrectAnswer() {
+                const correctHtml = `
+                    <div class="correct-answer-box">
+                        <h4>📚 Correct SCA Framework Mapping:</h4>
+                        <p><strong>Situation:</strong> The assembly line had been stalling intermittently for three weeks.</p>
+                        <p><strong>Complication:</strong> No one could identify the pattern of failures.</p>
+                        <p><strong>Action:</strong> We corrected the initialisation sequence of the pneumatic pressure system.</p>
+                        <p><strong>Resolution:</strong> The line has not stalled since.</p>
+                    </div>
+                `;
+                document.getElementById('listeningOverallFeedback').innerHTML = correctHtml;
+            }
+
+            async function evaluateListeningWithAI() {
+                const situation = document.getElementById('situation').value.trim();
+                const complication = document.getElementById('complication').value.trim();
+                const action = document.getElementById('action').value.trim();
+                const resolution = document.getElementById('resolution').value.trim();
+
+                if (!situation || !complication || !action || !resolution) {
+                    document.getElementById('listeningOverallFeedback').innerHTML = '<div class="listening-feedback-item incorrect">⚠️ Please fill in all 4 SCA fields.</div>';
+                    return;
+                }
+
+                if (listeningAttemptCount >= maxListeningAttempts) {
+                    showListeningCorrectAnswer();
+                    listeningTaskCompleted = true;
+                    document.getElementById('completeListeningBtn').disabled = false;
+                    return;
+                }
+
+                listeningAttemptCount++;
+                document.getElementById('listeningAttemptCounter').style.display = 'block';
+                document.getElementById('listeningAttemptCounter').querySelector('span').innerText = maxListeningAttempts - listeningAttemptCount;
+
+                const checkBtn = document.getElementById('checkListeningTaskBtn');
+                checkBtn.disabled = true;
+                checkBtn.textContent = '⏳ Evaluating with AI...';
+
+                const fields = [
+                    { name: 'situation', value: situation, expected: 'assembly line had been stalling' },
+                    { name: 'complication', value: complication, expected: 'pattern' },
+                    { name: 'action', value: action, expected: 'corrected the initialisation sequence' },
+                    { name: 'resolution', value: resolution, expected: 'has not stalled since' }
+                ];
+
+                let allCorrect = true;
+
+                for (let field of fields) {
+                    try {
+                        const response = await fetch('/learning/ai/evaluate/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                            body: JSON.stringify({
+                                text: field.value,
+                                task_type: 'sca_mapping',
+                                day_number: 7,
+                                level: 'advanced',
+                                system_prompt: `You are evaluating a student's SCA mapping. Expected ${field.name}: "${field.expected}". Student: "${field.value}". Return JSON: {"correct": true/false, "feedback": "short reason"}`
+                            })
+                        });
+                        const data = await response.json();
+                        
+                        const feedbackDiv = document.getElementById(`${field.name}Feedback`);
+                        if (data.correct) {
+                            feedbackDiv.innerHTML = `✅ ${data.feedback || 'Correct!'}`;
+                            feedbackDiv.className = 'listening-feedback-item correct';
+                            feedbackDiv.style.display = 'block';
+                        } else {
+                            feedbackDiv.innerHTML = `❌ ${data.feedback || 'Incorrect'}`;
+                            feedbackDiv.className = 'listening-feedback-item incorrect';
+                            feedbackDiv.style.display = 'block';
+                            allCorrect = false;
+                        }
+                    } catch (error) {
+                        const lowerValue = field.value.toLowerCase();
+                        const isCorrect = lowerValue.includes(field.expected.substring(0, 15)) || lowerValue.length > 10;
+                        const feedbackDiv = document.getElementById(`${field.name}Feedback`);
+                        
+                        if (isCorrect) {
+                            feedbackDiv.innerHTML = `✅ Good! Your ${field.name} is correct.`;
+                            feedbackDiv.className = 'listening-feedback-item correct';
+                            feedbackDiv.style.display = 'block';
+                        } else {
+                            feedbackDiv.innerHTML = `❌ Your ${field.name} needs revision. Expected: "${field.expected}"`;
+                            feedbackDiv.className = 'listening-feedback-item incorrect';
+                            feedbackDiv.style.display = 'block';
+                            allCorrect = false;
+                        }
+                    }
+                }
+
+                checkBtn.disabled = false;
+                checkBtn.textContent = '✓ Check My SCA Mapping';
+
+                if (allCorrect) {
+                    listeningTaskCompleted = true;
+                    document.getElementById('listeningOverallFeedback').innerHTML = '<div class="listening-feedback-item correct">🎉 Excellent! Your SCA mapping is correct!</div>';
+                    document.getElementById('completeListeningBtn').disabled = false;
+                } else if (listeningAttemptCount >= maxListeningAttempts) {
+                    showListeningCorrectAnswer();
+                    listeningTaskCompleted = true;
+                    document.getElementById('completeListeningBtn').disabled = false;
+                } else {
+                    document.getElementById('listeningOverallFeedback').innerHTML = `<div class="listening-feedback-item incorrect">📚 ${maxListeningAttempts - listeningAttemptCount} attempts remaining. Please correct the errors above.</div>`;
+                }
+            }
+
+            document.getElementById('checkListeningTaskBtn')?.addEventListener('click', evaluateListeningWithAI);
+            document.getElementById('checkListeningWorkBtn')?.addEventListener('click', function () {
+                const q1 = document.querySelector('input[name="q1"]:checked');
+                const q2 = document.querySelector('input[name="q2"]:checked');
+                const feedback = document.getElementById('listeningQuizFeedback');
+                
+                if (!q1 || !q2) {
+                    feedback.innerHTML = '⚠️ Please answer both questions.';
+                    feedback.className = 'quiz-feedback warning';
+                    feedback.style.display = 'block';
+                    return;
+                }
+                
+                const q1Valid = q1.value === 'pattern';
+                const q2Valid = q2.value === 'sca';
+                
+                if (q1Valid && q2Valid) {
+                    feedback.innerHTML = '✅ Correct! Great job!';
+                    feedback.className = 'quiz-feedback correct';
+                    listeningQuizCompleted = true;
+                } else {
+                    let errorMsg = '';
+                    if (!q1Valid) errorMsg += '❌ The turning point was identifying the pattern. ';
+                    if (!q2Valid) errorMsg += '❌ The story follows Problem → Insight → Resolution.';
+                    feedback.innerHTML = errorMsg;
+                    feedback.className = 'quiz-feedback incorrect';
+                    listeningQuizCompleted = false;
+                }
+                feedback.style.display = 'block';
+                
+                const completeBtn = document.getElementById('completeListeningBtn');
+                if (completeBtn && listeningTaskCompleted && listeningQuizCompleted && masterAudioFinished) {
+                    completeBtn.disabled = false;
+                }
+            });
+
+            document.getElementById('completeListeningBtn')?.addEventListener('click', function () {
+                if (masterAudioFinished && listeningTaskCompleted && listeningQuizCompleted) {
+                    markActivityComplete('listening', 'chk1');
+                } else {
+                   ('⚠️ Please comp alertlete all listening tasks first.');
+                }
+            });
+
+// ==================== SPEAKING ACTIVITY WITH STRICT SCA VALIDATION ====================
+let speakingValid = false;
+let speakingAttemptCount = 0;
+let maxSpeakingAttempts = 3;
+let currentRecognition = null;
+
+const speakingSpeechBtn = document.getElementById('speakingSpeechBtn');
+const speakingStopSpeechBtn = document.getElementById('speakingStopSpeechBtn');
+const speakingAttemptCounter = document.getElementById('speakingAttemptCounter');
+const transcriptContainer = document.getElementById('transcriptContainer');
+const speechTranscriptDiv = document.getElementById('speechTranscript');
+const speakingAIFeedback = document.getElementById('speakingAIFeedback');
+const completeSpeakingBtn = document.getElementById('completeSpeakingBtn');
+
+// Required keywords for SCA structure
+const requiredSituationKeywords = ['situation was', 'project', 'final year', 'diploma', 'working on', 'circuit', 'system', 'device', 'motor', 'assembly', 'production'];
+const requiredComplicationKeywords = ['complication', 'problem', 'issue', 'error', 'failure', 'overheating', 'malfunction', 'not working', 'giving problems', 'unexpected', 'fault'];
+const requiredActionKeywords = ['analysed', 'analysed the data', 'tested', 'checked', 'measured', 'diagnosed', 'replaced', 'fixed', 'solved', 'corrected', 'adjusted', 'implemented', 'redesigned', 'component'];
+const requiredResultKeywords = ['result', 'resolution', 'improved', 'reduced', 'dropped', 'increased', 'saved', 'as a result', 'temperature', 'percent', 'successfully', 'completed', 'working properly'];
+
+// Grammar error patterns to reject
+const grammarErrorPatterns = [
+    /\bwe we\b/i,           // repetition
+    /\bi analyse\b/i,       // wrong tense (should be analysed)
+    /\bthey are there\b/i,  // incorrect structure
+    /\btry in\b/i,          // wrong preposition
+    /\bcompleted successful\b/i, // wrong form
+    /\bwas was\b/i,         // repetition
+    /\bare are\b/i,         // repetition
+    /\bdoing doing\b/i      // repetition
+];
+
+function checkGrammarErrors(text) {
+    for (let pattern of grammarErrorPatterns) {
+        if (pattern.test(text)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function calculateWordCount(text) {
+    return text.split(/\s+/).filter(w => w.length > 0).length;
+}
+
+function extractTechnicalTerms(text) {
+    const technicalTerms = [
+        'circuit', 'resistor', 'capacitor', 'transistor', 'diode', 'sensor', 'actuator',
+        'motor', 'driver', 'controller', 'microcontroller', 'arduino', 'raspberry',
+        'voltage', 'current', 'resistance', 'capacitance', 'inductance', 'frequency',
+        'temperature', 'pressure', 'flow', 'speed', 'torque', 'efficiency',
+        'calibration', 'soldering', 'pcb', 'breadboard', 'oscilloscope', 'multimeter'
+    ];
+    let found = [];
+    for (let term of technicalTerms) {
+        if (text.toLowerCase().includes(term)) {
+            found.push(term);
+        }
+    }
+    return found;
+}
+
+function hasMeasurableOutcome(text) {
+    // Check for numbers, percentages, or specific improvements
+    const hasNumbers = /\d+/.test(text);
+    const hasPercent = /percent|%|percentage/i.test(text);
+    const hasImprovementWords = /improved|reduced|increased|dropped|rose|saved/i.test(text);
+    return hasNumbers || hasPercent || hasImprovementWords;
+}
+
+// STRICT LOCAL VALIDATION
+function strictLocalValidation(transcript) {
+    const lower = transcript.toLowerCase();
+    const wordCount = calculateWordCount(transcript);
+    const hasGrammarErrors = checkGrammarErrors(transcript);
+    const technicalTerms = extractTechnicalTerms(transcript);
+    
+    // Check SCA elements
+    let hasSituation = false;
+    for (let keyword of requiredSituationKeywords) {
+        if (lower.includes(keyword)) {
+            hasSituation = true;
+            break;
+        }
+    }
+    
+    let hasComplication = false;
+    for (let keyword of requiredComplicationKeywords) {
+        if (lower.includes(keyword)) {
+            hasComplication = true;
+            break;
+        }
+    }
+    
+    let hasAction = false;
+    for (let keyword of requiredActionKeywords) {
+        if (lower.includes(keyword)) {
+            hasAction = true;
+            break;
+        }
+    }
+    
+    let hasResult = false;
+    for (let keyword of requiredResultKeywords) {
+        if (lower.includes(keyword)) {
+            hasResult = true;
+            break;
+        }
+    }
+    
+    const hasMeasurable = hasMeasurableOutcome(transcript);
+    const hasTechnicalDepth = technicalTerms.length >= 1;
+    
+    // Build issues list
+    let issues = [];
+    if (wordCount < 80) issues.push(`❌ Word count: ${wordCount}/80 (need ${80 - wordCount} more words)`);
+    if (hasGrammarErrors) issues.push(`❌ Grammar errors detected (e.g., "we we", "try in different methods")`);
+    if (!hasSituation) issues.push(`❌ Missing SITUATION (describe the initial context/project)`);
+    if (!hasComplication) issues.push(`❌ Missing COMPLICATION (specific problem that occurred)`);
+    if (!hasAction) issues.push(`❌ Missing ACTION (specific technical fix you implemented)`);
+    if (!hasResult) issues.push(`❌ Missing RESULT (measurable outcome)`);
+    if (!hasMeasurable && hasResult) issues.push(`⚠️ Add measurable number (e.g., "temperature dropped 30%")`);
+    if (!hasTechnicalDepth) issues.push(`⚠️ Add technical terms (e.g., "circuit", "resistor", "voltage")`);
+    
+    const isPassing = wordCount >= 80 && !hasGrammarErrors && hasSituation && hasComplication && hasAction && hasResult && hasMeasurable && hasTechnicalDepth;
+    
+    return { passing: isPassing, issues: issues, wordCount: wordCount, technicalTerms: technicalTerms };
+}
+
+function showSpeakingCorrectAnswer() {
+    const correctHtml = `
+        <div class="correct-answer-box">
+            <h4>📚 Correct SCA Example:</h4>
+            <p><strong>S:</strong> The situation was - Our diploma project was a temperature monitoring system using an Arduino and LM35 sensor.</p>
+            <p><strong>C:</strong> The complication arose when - The sensor readings were fluctuating wildly, showing 15°C variation without reason.</p>
+            <p><strong>A:</strong> I analysed and realised that - The ground connection was loose, causing floating voltage. I resoldered all ground points.</p>
+            <p><strong>R:</strong> As a result - The readings stabilized within ±1°C accuracy, and the project was successfully demonstrated.</p>
+        </div>`;
+    speakingAIFeedback.innerHTML = correctHtml;
+    speakingAIFeedback.style.display = 'block';
+    speakingValid = true;
+    if (completeSpeakingBtn) completeSpeakingBtn.disabled = false;
+}
+
+async function evaluateSpeakingWithAI(transcript) {
+    if (speakingAttemptCount >= maxSpeakingAttempts) {
+        showSpeakingCorrectAnswer();
+        return;
+    }
+    
+    speakingAttemptCount++;
+    if (speakingAttemptCounter) {
+        speakingAttemptCounter.style.display = 'block';
+        speakingAttemptCounter.querySelector('span').innerText = maxSpeakingAttempts - speakingAttemptCount;
+    }
+    
+    speakingAIFeedback.innerHTML = '<div class="ai-feedback processing">🤖 Validating your story...</div>';
+    speakingAIFeedback.style.display = 'block';
+    
+    try {
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({
+                text: transcript,
+                task_type: 'sca_story_strict',
+                day_number: 7,
+                level: 'advanced',
+                system_prompt: `You are evaluating an engineering story for SCA structure. Be STRICT.
+
+REQUIRED (ALL must be present):
+1. SITUATION - Clear project/context setup
+2. COMPLICATION - Specific technical problem
+3. ACTION - Concrete steps taken to fix
+4. RESOLUTION - Measurable outcome (numbers/percentages)
+
+REJECT IMMEDIATELY if:
+- No technical terms (circuit, component, voltage, temperature, etc.)
+- Grammar errors (repetition, wrong tense)
+- Vague actions like "tried different methods"
+- No measurable result
+
+Return JSON:
+{
+"correct": true/false,
+"situation": true/false,
+"complication": true/false,
+"action": true/false,
+"resolution": true/false,
+"hasTechnicalTerms": true/false,
+"hasGrammarErrors": true/false,
+"hasNumber": true/false,
+"wordCount": number,
+"feedback": "short 1-line (max 12 words)",
+"missing": "what's missing (max 15 words)"
+}`
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.correct) {
+            speakingValid = true;
+            speakingAIFeedback.innerHTML = `<div class="ai-feedback correct">✅ ${data.feedback || 'Great SCA story!'}</div>`;
+            if (completeSpeakingBtn) completeSpeakingBtn.disabled = false;
+        } else {
+            let errorMsg = `❌ ${data.feedback || 'Needs improvement'}<br>`;
+            if (data.missing) errorMsg += `📋 ${data.missing}<br>`;
+            if (!data.hasTechnicalTerms) errorMsg += `📋 Add technical terms (circuit, voltage, component)<br>`;
+            if (!data.hasNumber) errorMsg += `📋 Add measurable outcome (percentage or number)<br>`;
+            if (data.wordCount && data.wordCount < 80) errorMsg += `📋 Add ${80 - data.wordCount} more words<br>`;
+            errorMsg += `💡 Use: Situation → Complication → Action → Result`;
+            
+            speakingAIFeedback.innerHTML = `<div class="ai-feedback incorrect">${errorMsg}</div>`;
+            speakingValid = false;
+            
+            if (speakingAttemptCount >= maxSpeakingAttempts) {
+                showSpeakingCorrectAnswer();
+            }
+        }
+    } catch (error) {
+        // FALLBACK: Strict local validation
+        const result = strictLocalValidation(transcript);
+        
+        if (result.passing) {
+            speakingValid = true;
+            speakingAIFeedback.innerHTML = `<div class="ai-feedback correct">✅ Good SCA story! Technical terms: ${result.technicalTerms.slice(0,3).join(', ')}</div>`;
+            if (completeSpeakingBtn) completeSpeakingBtn.disabled = false;
+        } else {
+            let errorHtml = `<div class="ai-feedback incorrect">❌ SCA structure incomplete (${result.wordCount} words)<br>`;
+            errorHtml += result.issues.slice(0, 4).join('<br>');
+            errorHtml += `<br>💡 Follow: Situation → Complication → Action → Result with measurable outcome</div>`;
+            speakingAIFeedback.innerHTML = errorHtml;
+            speakingValid = false;
+            
+            if (speakingAttemptCount >= maxSpeakingAttempts) {
+                showSpeakingCorrectAnswer();
+            }
+        }
+    }
+}
+
+// Speech Recognition Setup
+if (speakingSpeechBtn) {
+    speakingSpeechBtn.addEventListener('click', function() {
+        if (speakingAttemptCount >= maxSpeakingAttempts && !speakingValid) {
+            speakingAIFeedback.innerHTML = '<div class="ai-feedback warning">⚠️ No attempts left. See sample above.</div>';
+            speakingAIFeedback.style.display = 'block';
+            return;
+        }
+        
+        if (!('webkitSpeechRecognition' in window)) {
+            speakingAIFeedback.innerHTML = '<div class="ai-feedback incorrect">❌ Use Chrome browser</div>';
+            return;
+        }
+        
+        const recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+        
+        currentRecognition = recognition;
+        speakingSpeechBtn.style.display = 'none';
+        speakingStopSpeechBtn.style.display = 'inline-flex';
+        speakingAIFeedback.innerHTML = '<div class="ai-feedback processing">🎤 Speak your SCA story... Click Stop when done</div>';
+        
+        let fullTranscript = '';
+        
+        recognition.onresult = (event) => {
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i].isFinal) {
+                    fullTranscript += event.results[i][0].transcript + ' ';
+                }
+            }
+            const wordCount = fullTranscript.split(/\s+/).length;
+            speechTranscriptDiv.innerHTML = `${fullTranscript}<br><span style="color: #64748b; font-size: 0.75rem;">📊 Words: ${wordCount} (need 80+)</span>`;
+            transcriptContainer.style.display = 'block';
+        };
+        
+        recognition.onend = async () => {
+            speakingSpeechBtn.style.display = 'inline-flex';
+            speakingStopSpeechBtn.style.display = 'none';
+            currentRecognition = null;
+            
+            if (fullTranscript.trim().length < 30) {
+                speakingAIFeedback.innerHTML = '<div class="ai-feedback incorrect">❌ Too short. Speak for 60-90 seconds.</div>';
+                return;
+            }
+            
+            await evaluateSpeakingWithAI(fullTranscript);
+        };
+        
+        recognition.onerror = () => {
+            speakingSpeechBtn.style.display = 'inline-flex';
+            speakingStopSpeechBtn.style.display = 'none';
+            speakingAIFeedback.innerHTML = '<div class="ai-feedback incorrect">❌ Error. Please try again.</div>';
+            currentRecognition = null;
+        };
+        
+        recognition.start();
+    });
+}
+
+if (speakingStopSpeechBtn) {
+    speakingStopSpeechBtn.addEventListener('click', function() {
+        if (currentRecognition) {
+            currentRecognition.stop();
+            currentRecognition = null;
+        }
+    });
+}
+
+if (completeSpeakingBtn) {
+    completeSpeakingBtn.addEventListener('click', function() {
+        if (speakingValid) {
+            markActivityComplete('speaking', 'chk2');
+        } else {
+            speakingAIFeedback.innerHTML = '<div class="ai-feedback warning">⚠️ Validate your story first</div>';
+            speakingAIFeedback.style.display = 'block';
+        }
+    });
+}
+            // ==================== READING ACTIVITY WITH AI VALIDATION ====================
+let readingResults = { q1: false, q2: false, q3: false };
+let readingAttemptCount = 0;
+let maxReadingAttempts = 3;
+
+// ========== LOCAL VALIDATION FUNCTIONS (FALLBACK) ==========
+
+function validateReadingQ1Local(answer) {
+    const lower = answer.toLowerCase().trim();
+    if (!answer.trim()) return { valid: false, message: '⚠️ Please write your answer.' };
+    if (lower.length < 15) return { valid: false, message: '❌ Answer too short.' };
+    
+    const hasEmpathy = lower.includes('empathy');
+    const hasSuspense = lower.includes('suspense');
+    const hasInvestment = lower.includes('investment');
+    
+    if (hasEmpathy && hasSuspense && hasInvestment) {
+        return { valid: true, message: '✅ Correct! Stories create empathy, suspense, and investment.' };
+    } else if ((hasEmpathy || hasSuspense || hasInvestment)) {
+        return { valid: true, message: '✅ Correct! Stories create emotional connection.' };
+    }
+    return { valid: false, message: '❌ Stories create empathy, suspense, and investment.' };
+}
+
+function validateReadingQ2Local(answer) {
+    const lower = answer.toLowerCase().trim();
+    if (!answer.trim()) return { valid: false, message: '⚠️ Please write your answer.' };
+    if (lower.length < 15) return { valid: false, message: '❌ Answer too short.' };
+    
+    const hasRemember = lower.includes('remember') || lower.includes('memorable') || lower.includes('recall');
+    const hasNarrative = lower.includes('narrative') || lower.includes('story') || lower.includes('characters') || lower.includes('tension');
+    
+    if (hasRemember && hasNarrative) {
+        return { valid: true, message: '✅ Correct! Stories are memorable due to narrative structure.' };
+    } else if (hasRemember) {
+        return { valid: true, message: '✅ Correct! Stories are more memorable.' };
+    }
+    return { valid: false, message: '❌ Stories are more memorable because they have narrative structure.' };
+}
+
+function validateReadingQ3Local(answer) {
+    const trimmed = answer.trim();
+    const lower = trimmed.toLowerCase();
+    if (!trimmed) return { valid: false, message: '⚠️ Please write your answer.' };
+    if (trimmed.length < 15) return { valid: false, message: '❌ Opening sentence too short.' };
+    
+    // Check for engineering/technical context
+    const hasEngineering = lower.includes('system') || lower.includes('production') || lower.includes('circuit') || 
+                          lower.includes('machine') || lower.includes('device') || lower.includes('motor') ||
+                          lower.includes('test') || lower.includes('check') || lower.includes('assembly');
+    
+    // Check for problem/failure/unexpected event
+    const hasProblem = lower.includes('failed') || lower.includes('failure') || lower.includes('problem') || 
+                       lower.includes('error') || lower.includes('crisis') || lower.includes('sudden') ||
+                       lower.includes('unexpected') || lower.includes('stopped') || lower.includes('broke');
+    
+    // Check for narrative hook (creates interest)
+    const hasHook = hasProblem && (hasEngineering || trimmed.length > 20);
+    
+    if (hasHook) {
+        return { valid: true, message: '✅ Good opening! Creates interest and tension.' };
+    } else if (hasProblem) {
+        return { valid: true, message: '✅ Good opening! Creates interest.' };
+    }
+    return { valid: false, message: '❌ Start with a problem: "The production line stopped suddenly during testing."' };
+}
+
+function showReadingCorrectAnswer() {
+    document.getElementById('readingOverallFeedback').innerHTML = `
+        <div class="correct-answer-box">
+            <h4>📚 Correct Answers:</h4>
+            <p><strong>Q1:</strong> Stories create empathy, suspense, and investment.</p>
+            <p><strong>Q2:</strong> Stories are more memorable because they have narrative structure.</p>
+            <p><strong>Q3:</strong> "During a routine system check, the entire production line suddenly stopped without warning."</p>
+        </div>`;
+}
+
+async function evaluateReadingWithAI() {
+    const q1 = document.getElementById('readingQ1').value;
+    const q2 = document.getElementById('readingQ2').value;
+    const q3 = document.getElementById('readingQ3').value;
+
+    if (!q1 || !q2 || !q3) {
+        document.getElementById('readingOverallFeedback').innerHTML = '<div class="quiz-feedback warning">⚠️ Answer all 3 questions</div>';
+        document.getElementById('readingOverallFeedback').style.display = 'block';
+        return;
+    }
+
+    if (readingAttemptCount >= maxReadingAttempts) {
+        showReadingCorrectAnswer();
+        readingResults = { q1: true, q2: true, q3: true };
+        document.getElementById('completeReadingBtn').disabled = false;
+        return;
+    }
+
+    readingAttemptCount++;
+    const checkBtn = document.getElementById('checkReadingBtn');
+    checkBtn.disabled = true;
+    checkBtn.textContent = '⏳ AI Evaluating...';
+
+    try {
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({
+                text: `Q1: ${q1}\nQ2: ${q2}\nQ3: ${q3}`,
+                task_type: 'reading_questions',
+                day_number: 7,
+                level: 'advanced',
+                system_prompt: `You are evaluating reading comprehension answers about storytelling for engineers.
+
+PASSAGE CONTEXT:
+- Stories create empathy, suspense, and investment (what specifications cannot)
+- Decision-makers remember stories because of narrative structure (characters, tension, resolution)
+- Engineers who master storytelling gain influence
+
+For Q3 (opening sentence of an engineering story):
+- Accept ANY sentence that describes a technical problem, unexpected event, or system failure
+- Must have engineering context (system, machine, circuit, production line, test, equipment)
+- Must create interest/tension (problem, failure, sudden event, crisis)
+- Be GENEROUS - the student's sentence "During a routine system check, the entire production line suddenly stopped without warning, triggering an urgent investigation" is CORRECT because it has engineering context, unexpected failure, and narrative hook
+
+Return JSON with SHORT feedback:
+{
+"q1_correct": true/false,
+"q2_correct": true/false,
+"q3_correct": true/false,
+"feedback_q1": "short (max 10 words)",
+"feedback_q2": "short (max 10 words)",
+"feedback_q3": "short (max 10 words)",
+"overall": "short summary"
+}`
+            })
+        });
+        
+        const data = await response.json();
+        
+        // Update individual feedback
+        const fb1 = document.getElementById('readingQ1Feedback');
+        const fb2 = document.getElementById('readingQ2Feedback');
+        const fb3 = document.getElementById('readingQ3Feedback');
+        const overallFb = document.getElementById('readingOverallFeedback');
+        
+        if (data.q1_correct) {
+            fb1.innerHTML = `✅ ${data.feedback_q1 || 'Correct!'}`;
+            fb1.className = 'fix-feedback correct';
+        } else {
+            fb1.innerHTML = `❌ ${data.feedback_q1 || 'Stories create empathy, suspense, investment'}`;
+            fb1.className = 'fix-feedback incorrect';
+        }
+        fb1.style.display = 'block';
+        
+        if (data.q2_correct) {
+            fb2.innerHTML = `✅ ${data.feedback_q2 || 'Correct!'}`;
+            fb2.className = 'fix-feedback correct';
+        } else {
+            fb2.innerHTML = `❌ ${data.feedback_q2 || 'Stories are more memorable'}`;
+            fb2.className = 'fix-feedback incorrect';
+        }
+        fb2.style.display = 'block';
+        
+        if (data.q3_correct) {
+            fb3.innerHTML = `✅ ${data.feedback_q3 || 'Good engineering story opening!'}`;
+            fb3.className = 'fix-feedback correct';
+        } else {
+            fb3.innerHTML = `❌ ${data.feedback_q3 || 'Start with a technical problem or failure'}`;
+            fb3.className = 'fix-feedback incorrect';
+        }
+        fb3.style.display = 'block';
+        
+        readingResults.q1 = data.q1_correct;
+        readingResults.q2 = data.q2_correct;
+        readingResults.q3 = data.q3_correct;
+        
+        const allCorrect = readingResults.q1 && readingResults.q2 && readingResults.q3;
+        
+        if (allCorrect) {
+            overallFb.innerHTML = `<div class="quiz-feedback correct">✅ ${data.overall || 'All correct!'}</div>`;
+            overallFb.style.display = 'block';
+            document.getElementById('completeReadingBtn').disabled = false;
+        } else if (readingAttemptCount >= maxReadingAttempts) {
+            showReadingCorrectAnswer();
+            readingResults = { q1: true, q2: true, q3: true };
+            document.getElementById('completeReadingBtn').disabled = false;
+        } else {
+            overallFb.innerHTML = `<div class="quiz-feedback warning">📚 ${maxReadingAttempts - readingAttemptCount} attempts left</div>`;
+            overallFb.style.display = 'block';
+            document.getElementById('completeReadingBtn').disabled = true;
+        }
+        
+    } catch (error) {
+        console.error('AI Error:', error);
+        // Fallback to local validation
+        const result1 = validateReadingQ1Local(q1);
+        const result2 = validateReadingQ2Local(q2);
+        const result3 = validateReadingQ3Local(q3);
+        
+        const fb1 = document.getElementById('readingQ1Feedback');
+        const fb2 = document.getElementById('readingQ2Feedback');
+        const fb3 = document.getElementById('readingQ3Feedback');
+        const overallFb = document.getElementById('readingOverallFeedback');
+        
+        fb1.innerHTML = result1.message;
+        fb1.className = result1.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+        fb1.style.display = 'block';
+        
+        fb2.innerHTML = result2.message;
+        fb2.className = result2.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+        fb2.style.display = 'block';
+        
+        fb3.innerHTML = result3.message;
+        fb3.className = result3.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+        fb3.style.display = 'block';
+        
+        readingResults.q1 = result1.valid;
+        readingResults.q2 = result2.valid;
+        readingResults.q3 = result3.valid;
+        
+        const allCorrect = readingResults.q1 && readingResults.q2 && readingResults.q3;
+        
+        if (allCorrect) {
+            overallFb.innerHTML = '<div class="quiz-feedback correct">✅ All correct! (Validated locally)</div>';
+            overallFb.style.display = 'block';
+            document.getElementById('completeReadingBtn').disabled = false;
+        } else if (readingAttemptCount >= maxReadingAttempts) {
+            showReadingCorrectAnswer();
+            readingResults = { q1: true, q2: true, q3: true };
+            document.getElementById('completeReadingBtn').disabled = false;
+        } else {
+            overallFb.innerHTML = `<div class="quiz-feedback warning">📚 ${maxReadingAttempts - readingAttemptCount} attempts left</div>`;
+            overallFb.style.display = 'block';
+            document.getElementById('completeReadingBtn').disabled = true;
+        }
+    }
+    
+    checkBtn.disabled = false;
+    checkBtn.textContent = '✓ Check Reading Answers';
+}
+
+function resetReading() {
+    document.getElementById('readingQ1').value = '';
+    document.getElementById('readingQ2').value = '';
+    document.getElementById('readingQ3').value = '';
+    
+    document.getElementById('readingQ1Feedback').innerHTML = '';
+    document.getElementById('readingQ2Feedback').innerHTML = '';
+    document.getElementById('readingQ3Feedback').innerHTML = '';
+    document.getElementById('readingOverallFeedback').innerHTML = '';
+    document.getElementById('readingOverallFeedback').style.display = 'none';
+    
+    readingResults = { q1: false, q2: false, q3: false };
+    readingAttemptCount = 0;
+    document.getElementById('completeReadingBtn').disabled = true;
+}
+
+document.getElementById('checkReadingBtn')?.addEventListener('click', evaluateReadingWithAI);
+document.getElementById('resetReadingBtn')?.addEventListener('click', resetReading);
+
+document.getElementById('completeReadingBtn')?.addEventListener('click', function () {
+    if (readingResults.q1 && readingResults.q2 && readingResults.q3) {
+        markActivityComplete('reading', 'chk3');
+    } else {
+        document.getElementById('readingOverallFeedback').innerHTML = '<div class="quiz-feedback warning">⚠️ Answer all questions correctly first</div>';
+        document.getElementById('readingOverallFeedback').style.display = 'block';
+    }
+});
+// ==================== WRITING ACTIVITY WITH DETAILED SHORT FEEDBACK ====================
+let writingValid = false;
+let writingAttemptCount = 0;
+let maxWritingAttempts = 3;
+const storyTextarea = document.getElementById('technicalStory');
+const wordCountDisplay = document.getElementById('writingWordCount');
+
+function updateWordCount() {
+    const text = storyTextarea.value;
+    const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+    const count = words.length;
+    wordCountDisplay.innerHTML = `📝 Word count: ${count} / 150 words minimum`;
+    wordCountDisplay.style.color = count >= 150 ? '#22c55e' : '#dc2626';
+    return count;
+}
+
+storyTextarea.addEventListener('input', updateWordCount);
+
+function showWritingCorrectAnswer() {
+    const correctHtml = `
+        <div class="correct-answer-box">
+            <h4>📚 Sample Technical Story:</h4>
+            <p>The situation was a critical database that <strong>had been experiencing</strong> unexplained slowdowns for two weeks. The complication arose when user queries began timing out during peak hours. I realised the indexing strategy <strong>had not been updated</strong> for two years. I redesigned the database schema and reindexed all tables overnight. As a result, query response time improved by 85%. This <strong>compelling</strong> resolution turned a crisis into a breakthrough.</p>
+        </div>
+    `;
+    document.getElementById('writingFeedback').innerHTML = correctHtml;
+    document.getElementById('writingFeedback').style.display = 'block';
+}
+
+// Local validation function with short, clear error messages
+function localWritingValidation(text) {
+    const lowerText = text.toLowerCase();
+    const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+    const wordCount = words.length;
+    
+    // Check word count
+    if (wordCount < 150) {
+        return { 
+            valid: false, 
+            error: `📝 Word count: ${wordCount}/150. Need ${150 - wordCount} more words.`,
+            shortMsg: `Add ${150 - wordCount} more words`
+        };
+    }
+    
+    // Check for first-person pronouns
+    const hasFirstPerson = /\b(i|we|my|our|me|us)\b/i.test(text);
+    if (hasFirstPerson) {
+        return { 
+            valid: false, 
+            error: `❌ Remove "I/we/my/our". Use passive voice: "The test was conducted" instead of "I tested".`,
+            shortMsg: `Remove I/we/my/our`
+        };
+    }
+    
+    // Check for past perfect tense
+    const hasPastPerfect = /\bhad\s+(\w+ed|\w+en|\w+ne|\w+wn)\b/i.test(text);
+    if (!hasPastPerfect) {
+        return { 
+            valid: false, 
+            error: `❌ Missing past perfect tense. Use "had + past participle" (e.g., "had been stalling", "had failed").`,
+            shortMsg: `Use past perfect: "had + verb-ed"`
+        };
+    }
+    
+    // Check for past simple tense
+    const hasPastSimple = /\b(was|were|did|took|made|fixed|solved|analysed|designed|implemented|tested|ran|used)\b/i.test(text);
+    if (!hasPastSimple) {
+        return { 
+            valid: false, 
+            error: `❌ Missing past simple tense. Use "was/were/did" for main actions.`,
+            shortMsg: `Use past simple: "was/were/did"`
+        };
+    }
+    
+    // Check for SCA structure
+    const hasSituation = lowerText.includes('situation') || lowerText.includes('project') || lowerText.includes('system') || lowerText.includes('was working');
+    const hasComplication = lowerText.includes('complication') || lowerText.includes('problem') || lowerText.includes('issue') || lowerText.includes('went wrong') || lowerText.includes('failed') || lowerText.includes('error');
+    const hasAction = lowerText.includes('action') || lowerText.includes('fixed') || lowerText.includes('solved') || lowerText.includes('changed') || lowerText.includes('updated') || lowerText.includes('redesigned') || lowerText.includes('implemented');
+    const hasResolution = lowerText.includes('result') || lowerText.includes('resolution') || lowerText.includes('improved') || lowerText.includes('increased') || lowerText.includes('reduced') || lowerText.includes('saved');
+    
+    if (!hasSituation) {
+        return { 
+            valid: false, 
+            error: `❌ Missing SITUATION. Describe the starting context (e.g., "The system was running at 85% efficiency").`,
+            shortMsg: `Add SITUATION (context)`
+        };
+    }
+    if (!hasComplication) {
+        return { 
+            valid: false, 
+            error: `❌ Missing COMPLICATION. Describe what went wrong (e.g., "The motor began overheating").`,
+            shortMsg: `Add COMPLICATION (problem)`
+        };
+    }
+    if (!hasAction) {
+        return { 
+            valid: false, 
+            error: `❌ Missing ACTION. Describe what you did to fix it (e.g., "I replaced the fan").`,
+            shortMsg: `Add ACTION (solution)`
+        };
+    }
+    if (!hasResolution) {
+        return { 
+            valid: false, 
+            error: `❌ Missing RESOLUTION. State the outcome (e.g., "Efficiency improved to 98%").`,
+            shortMsg: `Add RESOLUTION (result)`
+        };
+    }
+    
+    // Check for vocabulary word
+    const hasVocab = lowerText.includes('narrative') || lowerText.includes('compelling') || lowerText.includes('anecdote') || lowerText.includes('resolution') || lowerText.includes('protagonist');
+    if (!hasVocab) {
+        return { 
+            valid: false, 
+            error: `❌ Missing vocabulary word. Use: narrative, compelling, anecdote, resolution, or protagonist.`,
+            shortMsg: `Add vocabulary word (compelling/resolution)`
+        };
+    }
+    
+    // All checks passed
+    return { valid: true, error: null, shortMsg: null };
+}
+
+async function evaluateWritingWithAI() {
+    const text = storyTextarea.value;
+    const wordCount = updateWordCount();
+    
+    // First check word count locally (fast feedback)
+    if (wordCount < 150) {
+        document.getElementById('writingFeedback').innerHTML = `
+            <div class="writing-feedback incorrect">
+                <strong>❌ ${wordCount}/150 words</strong><br>
+                Add ${150 - wordCount} more words to your story.
+            </div>`;
+        document.getElementById('writingFeedback').style.display = 'block';
+        writingValid = false;
+        document.getElementById('completeWritingBtn').disabled = true;
+        return;
+    }
+    
+    if (writingAttemptCount >= maxWritingAttempts) {
+        showWritingCorrectAnswer();
+        writingValid = true;
+        document.getElementById('completeWritingBtn').disabled = false;
+        return;
+    }
+    
+    writingAttemptCount++;
+    document.getElementById('writingAttemptCounter').style.display = 'block';
+    document.getElementById('writingAttemptCounter').querySelector('span').innerText = maxWritingAttempts - writingAttemptCount;
+    
+    const checkBtn = document.getElementById('checkWritingBtn');
+    checkBtn.disabled = true;
+    checkBtn.textContent = '⏳ Evaluating...';
+    
+    const feedbackDiv = document.getElementById('writingFeedback');
+    feedbackDiv.style.display = 'block';
+    
+    try {
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({
+                text: text,
+                task_type: 'technical_story',
+                day_number: 7,
+                level: 'advanced',
+                system_prompt: `You are evaluating a technical engineering story. Check these 5 requirements:
+1. Word count minimum 150 words
+2. Contains past perfect tense (had + verb-ed/en)
+3. Contains past simple tense (was/were/did/fixed)
+4. Includes SCA structure: Situation, Complication, Action, Resolution
+5. Uses one vocabulary word: narrative, compelling, anecdote, resolution, protagonist
+
+For each missing requirement, give ONE short sentence (max 10 words).
+
+Return JSON only:
+{
+"correct": true/false,
+"missing": ["short missing item 1", "short missing item 2"],
+"shortFeedback": "one short sentence explaining the main issue"
+}`
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.correct) {
+            writingValid = true;
+            feedbackDiv.innerHTML = `
+                <div class="writing-feedback correct">
+                    <strong>✅ EXCELLENT!</strong> Your story meets all requirements.<br>
+                    🎉 Mark as complete!
+                </div>`;
+            document.getElementById('completeWritingBtn').disabled = false;
+        } else {
+            // Display short error messages
+            let errorHtml = `<div class="writing-feedback incorrect"><strong>❌ Needs Improvement</strong><br>`;
+            if (data.missing && data.missing.length > 0) {
+                errorHtml += `• ${data.missing.join('<br>• ')}`;
+            } else {
+                errorHtml += `• ${data.shortFeedback || 'Please review the story requirements.'}`;
+            }
+            errorHtml += `</div>`;
+            feedbackDiv.innerHTML = errorHtml;
+            writingValid = false;
+            document.getElementById('completeWritingBtn').disabled = true;
+            
+            // If attempts exhausted, show correct answer
+            if (writingAttemptCount >= maxWritingAttempts) {
+                showWritingCorrectAnswer();
+                writingValid = true;
+                document.getElementById('completeWritingBtn').disabled = false;
+            }
+        }
+    } catch (error) {
+        console.error('AI Error:', error);
+        
+        // FALLBACK: Use local validation with short messages
+        const localResult = localWritingValidation(text);
+        
+        if (localResult.valid) {
+            writingValid = true;
+            feedbackDiv.innerHTML = `
+                <div class="writing-feedback correct">
+                    <strong>✅ GOOD STORY!</strong> All requirements met (Local validation).<br>
+                    🎉 Mark as complete!
+                </div>`;
+            document.getElementById('completeWritingBtn').disabled = false;
+        } else {
+            feedbackDiv.innerHTML = `
+                <div class="writing-feedback incorrect">
+                    <strong>❌ ${localResult.error || 'Improve your story'}</strong>
+                </div>`;
+            writingValid = false;
+            document.getElementById('completeWritingBtn').disabled = true;
+            
+            if (writingAttemptCount >= maxWritingAttempts) {
+                showWritingCorrectAnswer();
+                writingValid = true;
+                document.getElementById('completeWritingBtn').disabled = false;
+            }
+        }
+    }
+    
+    checkBtn.disabled = false;
+    checkBtn.textContent = '✓ Check My Story';
+}
+
+function resetWriting() {
+    storyTextarea.value = '';
+    document.getElementById('writingFeedback').innerHTML = '';
+    document.getElementById('writingFeedback').style.display = 'none';
+    document.getElementById('completeWritingBtn').disabled = true;
+    document.getElementById('writingAttemptCounter').style.display = 'none';
+    writingValid = false;
+    writingAttemptCount = 0;
+    updateWordCount();
+}
+
+document.getElementById('checkWritingBtn')?.addEventListener('click', evaluateWritingWithAI);
+document.getElementById('resetWritingBtn')?.addEventListener('click', resetWriting);
+
+document.getElementById('completeWritingBtn')?.addEventListener('click', function () {
+    if (writingValid) {
+        markActivityComplete('writing', 'chk4');
+    } else {
+        alert('Please check your story first. Click "Check My Story" to validate.');
+    }
+});
+            // ==================== VOCABULARY AUDIO ====================
+            const vocabAudioBtns = document.querySelectorAll('.vocab-audio-btn');
+            const completeVocabularyBtn = document.getElementById('completeVocabularyBtn');
+            const vocabHeard = {
+                'check-narrative': false, 'check-compelling': false, 'check-anecdote': false,
+                'check-resolution': false, 'check-protagonist': false
+            };
+
+            function checkAllVocabularyListened() {
+                const allHeard = Object.values(vocabHeard).every(v => v === true);
+                if (completeVocabularyBtn) completeVocabularyBtn.disabled = !allHeard;
+                return allHeard;
+            }
+
+            function updateVocabCheckMark(checkId) {
+                if (!vocabHeard[checkId]) {
+                    vocabHeard[checkId] = true;
+                    const cell = document.getElementById(checkId);
+                    if (cell && cell.innerHTML !== '✅') {
+                        cell.innerHTML = '✅';
+                        cell.style.color = '#22c55e';
+                    }
+                    checkAllVocabularyListened();
+                }
+            }
+
+            function speakWordWithCheckmark(word, checkId) {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    utterance.onend = () => { if (checkId) updateVocabCheckMark(checkId); };
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    if (checkId) updateVocabCheckMark(checkId);
+                }
+            }
+
+            vocabAudioBtns.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const word = this.getAttribute('data-word');
+                    const checkId = this.getAttribute('data-checkid');
+                    if (word && checkId && !vocabHeard[checkId]) {
+                        speakWordWithCheckmark(word, checkId);
+                    } else if (word && checkId && vocabHeard[checkId]) {
+                        const utterance = new SpeechSynthesisUtterance(word);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.85;
+                        window.speechSynthesis.speak(utterance);
+                    }
+                });
+            });
+
+            if (completeVocabularyBtn) {
+                completeVocabularyBtn.addEventListener('click', function () {
+                    if (checkAllVocabularyListened()) markActivityComplete('vocabulary', 'chk5');
+                    else alert('Please listen to all 5 vocabulary words first.');
+                });
+            }
+
+           // ==================== GRAMMAR VALIDATION (STRICT MODE) ====================
+let grammarValid = { g1: false, g2: false };
+
+function validateGrammar1(answer) {
+    const trimmed = answer.trim();
+    const lower = trimmed.toLowerCase();
+    
+    // Rule 1: Empty check
+    if (!trimmed) {
+        return { valid: false, message: '⚠️ Please write your correction.' };
+    }
+    
+    // Rule 2: Single sentence - exactly one period at the end only
+    const periodCount = (trimmed.match(/\./g) || []).length;
+    if (periodCount === 0) {
+        return { valid: false, message: '❌ Missing period (.) at the end.' };
+    }
+    if (periodCount > 1) {
+        return { valid: false, message: '❌ Only ONE period allowed. Write one sentence.' };
+    }
+    if (!trimmed.endsWith('.')) {
+        return { valid: false, message: '❌ Period must be at the end.' };
+    }
+    
+    // Rule 3: Must start with "While"
+    if (!lower.startsWith('while')) {
+        return { valid: false, message: '❌ Sentence must start with "While".' };
+    }
+    
+    // Rule 4: Must contain a comma
+    if (!trimmed.includes(',')) {
+        return { valid: false, message: '❌ Missing comma (,) after the first clause.' };
+    }
+    
+    // Rule 5: Comma position check - comma should be before the main clause
+    const commaIndex = trimmed.indexOf(',');
+    const wordsBeforeComma = trimmed.substring(0, commaIndex).split(/\s+/);
+    if (wordsBeforeComma.length < 3) {
+        return { valid: false, message: '❌ Comma should come after the "While" clause.' };
+    }
+    
+    // Rule 6: Minimum 8 words
+    const wordCount = trimmed.split(/\s+/).length;
+    if (wordCount < 8) {
+        return { valid: false, message: `❌ Too short (${wordCount}/8 words). Write a complete sentence.` };
+    }
+    
+    // Rule 7: Keyword presence - motor, overheating, operator, machine
+    const hasMotor = lower.includes('motor');
+    const hasOverheating = lower.includes('overheating');
+    const hasOperator = lower.includes('operator');
+    const hasMachine = lower.includes('machine');
+    
+    if (!hasMotor) return { valid: false, message: '❌ Missing "motor".' };
+    if (!hasOverheating) return { valid: false, message: '❌ Missing "overheating".' };
+    if (!hasOperator) return { valid: false, message: '❌ Missing "operator".' };
+    if (!hasMachine) return { valid: false, message: '❌ Missing "machine".' };
+    
+    // Rule 8: Order preservation - "While clause, main clause" not reversed
+    const whileClauseEndsAt = trimmed.indexOf(',');
+    const afterComma = trimmed.substring(whileClauseEndsAt + 1).trim();
+    
+    // Check if the pattern is "While X, Y" not "Y while X"
+    if (afterComma.toLowerCase().includes('while')) {
+        return { valid: false, message: '❌ Keep "While" clause FIRST, then comma, then main clause.' };
+    }
+    
+    // Rule 9: Check for fragment pattern - no period before end
+    if (trimmed.includes('.') && trimmed.indexOf('.') !== trimmed.length - 1) {
+        return { valid: false, message: '❌ Use only ONE period at the end.' };
+    }
+    
+    // Rule 10: Grammar structure - must have subject and verb after while
+    const whilePart = trimmed.substring(0, commaIndex).toLowerCase();
+    const hasVerbInWhile = /\b(was|were|is|are|had|has|kept|continued|became|started)\b/.test(whilePart);
+    if (!hasVerbInWhile) {
+        return { valid: false, message: '❌ "While" clause needs a verb (was, were, kept).' };
+    }
+    
+    // Rule 11: Main clause must have subject and verb
+    const mainPart = trimmed.substring(commaIndex + 1).toLowerCase();
+    const hasSubjectInMain = /\b(operator|engineer|technician|team|i|we|they|the)\b/.test(mainPart);
+    const hasVerbInMain = /\b(stopped|fixed|ran|checked|noticed|saw|found)\b/.test(mainPart);
+    
+    if (!hasSubjectInMain) {
+        return { valid: false, message: '❌ Main clause missing subject (operator, I, we).' };
+    }
+    if (!hasVerbInMain) {
+        return { valid: false, message: '❌ Main clause missing verb (stopped, fixed, ran).' };
+    }
+    
+    // All rules passed
+    return { valid: true, message: '✅ Correct! While + clause, main clause.' };
+}
+
+function validateGrammar2(answer) {
+    const trimmed = answer.trim();
+    const lower = trimmed.toLowerCase();
+    
+    // Rule 1: Empty check
+    if (!trimmed) {
+        return { valid: false, message: '⚠️ Please write your correction.' };
+    }
+    
+    // Rule 2: Single sentence - exactly one period at the end only
+    const periodCount = (trimmed.match(/\./g) || []).length;
+    if (periodCount === 0) {
+        return { valid: false, message: '❌ Missing period (.) at the end.' };
+    }
+    if (periodCount > 1) {
+        return { valid: false, message: '❌ Only ONE period allowed. Write one sentence.' };
+    }
+    if (!trimmed.endsWith('.')) {
+        return { valid: false, message: '❌ Period must be at the end.' };
+    }
+    
+    // Rule 3: Must start with "Because"
+    if (!lower.startsWith('because')) {
+        return { valid: false, message: '❌ Sentence must start with "Because".' };
+    }
+    
+    // Rule 4: Must contain a comma
+    if (!trimmed.includes(',')) {
+        return { valid: false, message: '❌ Missing comma (,) after the first clause.' };
+    }
+    
+    // Rule 5: Comma position check
+    const commaIndex = trimmed.indexOf(',');
+    const wordsBeforeComma = trimmed.substring(0, commaIndex).split(/\s+/);
+    if (wordsBeforeComma.length < 3) {
+        return { valid: false, message: '❌ Comma should come after the "Because" clause.' };
+    }
+    
+    // Rule 6: Minimum 8 words
+    const wordCount = trimmed.split(/\s+/).length;
+    if (wordCount < 8) {
+        return { valid: false, message: `❌ Too short (${wordCount}/8 words). Write a complete sentence.` };
+    }
+    
+    // Rule 7: Keyword presence - data, inconclusive, test
+    const hasData = lower.includes('data');
+    const hasInconclusive = lower.includes('inconclusive') || lower.includes('not conclusive') || lower.includes('unclear');
+    const hasTest = lower.includes('test') || lower.includes('ran') || lower.includes('performed');
+    
+    if (!hasData) return { valid: false, message: '❌ Missing "data".' };
+    if (!hasInconclusive) return { valid: false, message: '❌ Missing "inconclusive".' };
+    if (!hasTest) return { valid: false, message: '❌ Missing action (test, ran, performed).' };
+    
+    // Rule 8: Order preservation - "Because clause, main clause" not reversed
+    const afterComma = trimmed.substring(commaIndex + 1).trim();
+    if (afterComma.toLowerCase().includes('because')) {
+        return { valid: false, message: '❌ Keep "Because" clause FIRST, then comma, then main clause.' };
+    }
+    
+    // Rule 9: Check for fragment pattern
+    if (trimmed.includes('.') && trimmed.indexOf('.') !== trimmed.length - 1) {
+        return { valid: false, message: '❌ Use only ONE period at the end.' };
+    }
+    
+    // Rule 10: Grammar structure - Because clause must have subject and verb
+    const becausePart = trimmed.substring(0, commaIndex).toLowerCase();
+    const hasSubjectInBecause = /\b(data|result|finding|analysis|test)\b/.test(becausePart);
+    const hasVerbInBecause = /\b(was|were|is|are|had|seemed|appeared|proved)\b/.test(becausePart);
+    
+    if (!hasSubjectInBecause) {
+        return { valid: false, message: '❌ "Because" clause needs a subject (data, result).' };
+    }
+    if (!hasVerbInBecause) {
+        return { valid: false, message: '❌ "Because" clause needs a verb (was, were).' };
+    }
+    
+    // Rule 11: Main clause must have subject and verb
+    const mainPart = trimmed.substring(commaIndex + 1).toLowerCase();
+    const hasSubjectInMain = /\b(i|we|they|the|team|engineer)\b/.test(mainPart);
+    const hasVerbInMain = /\b(ran|performed|conducted|did|tried|repeated)\b/.test(mainPart);
+    
+    if (!hasSubjectInMain) {
+        return { valid: false, message: '❌ Main clause missing subject (I, we, team).' };
+    }
+    if (!hasVerbInMain) {
+        return { valid: false, message: '❌ Main clause missing verb (ran, performed, repeated).' };
+    }
+    
+    // All rules passed
+    return { valid: true, message: '✅ Correct! Because + clause, main clause.' };
+}
+
+function validateGrammar() {
+    const g1 = document.getElementById('grammar1').value;
+    const g2 = document.getElementById('grammar2').value;
+    
+    const result1 = validateGrammar1(g1);
+    const result2 = validateGrammar2(g2);
+    
+    const fb1 = document.getElementById('grammar1Feedback');
+    const fb2 = document.getElementById('grammar2Feedback');
+    const overallFb = document.getElementById('grammarOverallFeedback');
+    const completeBtn = document.getElementById('completeGrammarBtn');
+    
+    if (fb1) { 
+        fb1.innerHTML = result1.message; 
+        fb1.className = result1.valid ? 'fix-feedback correct' : 'fix-feedback incorrect'; 
+        fb1.style.display = 'block'; 
+    }
+    if (fb2) { 
+        fb2.innerHTML = result2.message; 
+        fb2.className = result2.valid ? 'fix-feedback correct' : 'fix-feedback incorrect'; 
+        fb2.style.display = 'block'; 
+    }
+    
+    grammarValid.g1 = result1.valid;
+    grammarValid.g2 = result2.valid;
+    const allValid = grammarValid.g1 && grammarValid.g2;
+    
+    if (allValid) {
+        overallFb.innerHTML = '✅ Excellent! Both sentences are correct!';
+        overallFb.className = 'quiz-feedback correct';
+        overallFb.style.display = 'block';
+        if (completeBtn) completeBtn.disabled = false;
+    } else {
+        let errorCount = (result1.valid ? 0 : 1) + (result2.valid ? 0 : 1);
+        overallFb.innerHTML = `❌ ${errorCount} sentence(s) need correction. Fix the errors above.`;
+        overallFb.className = 'quiz-feedback incorrect';
+        overallFb.style.display = 'block';
+        if (completeBtn) completeBtn.disabled = true;
+    }
+}
+
+function resetGrammar() {
+    document.getElementById('grammar1').value = '';
+    document.getElementById('grammar2').value = '';
+    document.getElementById('grammar1Feedback').innerHTML = '';
+    document.getElementById('grammar2Feedback').innerHTML = '';
+    document.getElementById('grammarOverallFeedback').innerHTML = '';
+    grammarValid = { g1: false, g2: false };
+    const completeBtn = document.getElementById('completeGrammarBtn');
+    if (completeBtn) completeBtn.disabled = true;
+}
+
+document.getElementById('checkGrammarBtn')?.addEventListener('click', validateGrammar);
+document.getElementById('resetGrammarBtn')?.addEventListener('click', resetGrammar);
+
+document.getElementById('completeGrammarBtn')?.addEventListener('click', function () {
+    if (grammarValid.g1 && grammarValid.g2) {
+        markActivityComplete('grammar', 'chk6');
+    } else {
+        alert('Please fix both grammar sentences first. Click "Check Grammar Answers" to see errors.');
+    }
+});
+            // ==================== DAY COMPLETION WITH CONFETTI ====================
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            if (dayBtn) {
+                const newBtn = dayBtn.cloneNode(true);
+                dayBtn.parentNode.replaceChild(newBtn, dayBtn);
+                newBtn.addEventListener('click', function () {
+                    const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6'];
+                    let allCompleted = true;
+                    for (let id of checkboxes) {
+                        if (!document.getElementById(id)?.checked) allCompleted = false;
+                    }
+                    if (!allCompleted) {
+                        alert('⚠️ Please complete all 6 activities before completing the day!');
+                        return;
+                    }
+                    this.innerHTML = '✨ Completing Day 7...';
+                    this.disabled = true;
+                    
+                    if (typeof confetti !== 'undefined') {
+                        confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                        setTimeout(() => confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.3 } }), 200);
+                        setTimeout(() => confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.7 } }), 400);
+                    }
+                    
+                    setTimeout(() => {
+                        window.location.href = '/learning/level/advanced/?celebrate=true&completed=7';
+                    }, 1500);
+                });
+            }
+            
+            setTimeout(updateProgressCounter, 500);
+        });
+    </script>
+</body>
+
+</html>

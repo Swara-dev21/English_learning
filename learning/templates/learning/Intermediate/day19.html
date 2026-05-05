@@ -9,6 +9,203 @@
     <title>Day 19: Technical Vocabulary · Your Engineering Domain | English for Engineers</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <style>
+        .terms-definitions-form {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin: 1rem 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        .term-definition-row {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+
+        .term-definition-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .term-label {
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .term-number {
+            background: #3b82f6;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .term-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-family: 'Inter', monospace;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .term-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .definition-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .definition-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .term-validation-feedback {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            padding-left: 0.5rem;
+        }
+
+        .term-validation-feedback.correct {
+            color: #16a34a;
+        }
+
+        .term-validation-feedback.incorrect {
+            color: #dc2626;
+        }
+
+        .listening-submit-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            width: 45%;
+            transition: all 0.2s;
+        }
+
+        .listening-submit-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .listening-submit-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .attempt-counter {
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            display: inline-block;
+            font-size: 0.85rem;
+            margin: 0.5rem 0;
+        }
+
+        .listening-record-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 1rem 0;
+            width: 40%;
+            transition: all 0.2s;
+        }
+
+        .listening-record-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .listening-record-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .sample-answers-section {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .sample-answers-section h4 {
+            margin: 0 0 0.5rem 0;
+            color: #166534;
+        }
+
+        .sample-answers-section ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .sample-answers-section li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+
+        .yes-btn,
+        .no-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .yes-btn {
+            background: #22c55e;
+            color: white;
+        }
+
+        .no-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .comparison-message {
+            background: #f1f5f9;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+    </style>
 </head>
 
 <body>
@@ -24,7 +221,7 @@
 
         <div class="activities-grid">
 
-            <!-- 1. LISTENING ACTIVITY -->
+            <!-- 1. LISTENING ACTIVITY (UPDATED) -->
             <div class="activity-card" id="listening-card">
                 <div class="card-header listening">
                     <h2>🎧 1. Listening Activity · Technical Pronunciation</h2>
@@ -39,10 +236,9 @@
                     </div>
 
                     <audio id="listeningAudio" controls>
-                        <source src="{% static 'learning/audio/day19.mp3' %}" type="audio/mpeg">
+                        <source src="{% static 'learning/audio/Intermediate/dayy19.mp3' %}" type="audio/mpeg">
                     </audio>
 
-                    <!-- Hidden section that will be revealed after audio ends -->
                     <div id="listeningTextSection" style="display: none;">
                         <div class="task-box">
                             <div class="task-header">
@@ -57,22 +253,57 @@
                         </div>
                     </div>
 
-                    <!-- This div contains the tasks, quiz, and recording button - will be shown after audio ends -->
                     <div id="postAudioListeningContent" style="display: none;">
                         <div class="listening-container">
                             <div class="task-header">
                                 <div class="title"><span>🎯</span><span>Task</span></div>
                             </div>
                             <div class="task-content">Choose <strong>5 technical terms</strong> from your engineering
-                                branch and record yourself defining each term in <strong>plain language</strong> for a
-                                non-engineer.</div>
+                                branch. <strong>Write</strong> a definition for each term, then <strong>record</strong>
+                                yourself
+                                reading them aloud in <strong>plain language</strong> for a non-engineer. Each
+                                definition must be at least 10 words.</div>
                         </div>
 
-                        <div id="listeningAIFeedback" style="margin-top: 0.75rem;"></div>
-                        <div id="listeningAttemptCounter" class="attempt-counter">📊 Attempts remaining: <span>3</span>
+                        <!-- 5-Term Definitions Form -->
+                        <div class="terms-definitions-form">
+                            <div id="termDefinitionContainer"></div>
+                            <div id="listeningAttemptCounter" class="attempt-counter">📊 Written attempts remaining:
+                                <span>5</span></div>
+                            <button id="submitListeningDefinitionsBtn" class="listening-submit-btn">✓ Submit & Validate
+                                My 5 Written Definitions</button>
                         </div>
 
-                        <div class="quiz-section">
+                        <div id="listeningValidationFeedback" style="margin-top: 0.75rem;"></div>
+
+                        <!-- Recording Section - Will show after validation OR after max attempts -->
+                        <div id="recordingSection" style="margin-top: 1rem; display: none;">
+                            <div class="task-header">
+                                <div class="title"><span>🎙️</span><span>Record Your Definitions</span></div>
+                            </div>
+                            <div class="task-content">Now record yourself reading the 5 definitions you just wrote.
+                            </div>
+
+                            <button id="listeningRecordBtn" class="listening-record-btn">🎤 Start Recording Your
+                                Definitions</button>
+                            <button id="listeningStopBtn" class="listening-record-btn"
+                                style="background:#6b7280; display: none;">⏹️ Stop Recording</button>
+
+                            <div id="listeningPlaybackCard" style="display: none; margin-top: 1rem;">
+                                <audio id="listeningPlayback" controls style="width: 100%;"></audio>
+                            </div>
+                            <div id="comparisonSection" style="display: none;">
+                                <div class="comparison-message">Did you record all 5 definitions correctly?</div>
+                                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                                    <button id="yesComparisonBtn" class="yes-btn">✓ Yes, correct</button>
+                                    <button id="noComparisonBtn" class="no-btn">✗ No, record again</button>
+                                </div>
+                                <div id="comparisonFeedback" style="margin-top: 0.5rem;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Quiz Section -->
+                        <div class="quiz-section" style="margin-top: 1.5rem;">
                             <p><strong>🧠 Quick Listening Check</strong></p><br>
                             <div>
                                 <p><strong>1. What has been tested and confirmed?</strong></p>
@@ -93,7 +324,8 @@
                             <div id="listeningQuizFeedback" class="quiz-feedback"></div>
                         </div>
 
-                        <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answers</button>
+                        <button class="btn-outline" id="checkListeningWorkBtn" style="margin-top: 0.5rem;">✓ Check My
+                            Quiz Answers</button>
                     </div>
 
                     <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
@@ -229,11 +461,12 @@
                         <div id="causeEffectFeedback" class="fix-feedback"></div>
                     </div>
 
-                    <!-- Task 3: Circle Mode - Numerical consequence -->
+                    <!-- Task 3: Circle Mode -->
                     <div style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0;">
                         <p><strong>Task 3: Circle the phrase that describes a numerical consequence of poor
                                 practice</strong></p>
 
+                        <div id="interactivePassageTask3" class="interactive-passage" style="margin: 1rem 0;"></div>
 
                         <div style="display: flex; gap: 1rem; margin: 1rem 0;">
                             <button id="circleModeBtn" class="btn-outline"
@@ -407,8 +640,8 @@
                     <ul class="checklist">
                         <li><input type="checkbox" id="chk1" class="day-check" disabled><label> I identified the
                                 cause-effect relationship in the reading passage.</label></li>
-                        <li><input type="checkbox" id="chk2" class="day-check" disabled><label> I recorded definitions
-                                of 5 technical terms from my branch in plain language.</label></li>
+                        <li><input type="checkbox" id="chk2" class="day-check" disabled><label> I wrote and recorded
+                                definitions of 5 technical terms from my branch in plain language.</label></li>
                         <li><input type="checkbox" id="chk3" class="day-check" disabled><label> I delivered the 'Expert
                                 Explainer' analogies with clarity and confidence.</label></li>
                         <li><input type="checkbox" id="chk4" class="day-check" disabled><label> I nominalised 3
@@ -429,8 +662,6 @@
     <script src="{% static 'learning/js/main.js' %}"></script>
 
     <script>
-        // ==================== DAY 19 - COMPLETE FUNCTIONALITY ====================
-
         document.addEventListener('DOMContentLoaded', function () {
 
             function getCookie(name) {
@@ -453,380 +684,328 @@
             let listeningQuizCorrect = false;
             let listeningQuizAnswers = { q1: null, q2: null };
             let masterAudioFinished = false;
-            let aiEvaluationDone = false;
-            let aiCorrect = false;
-            let attemptCount = 0;
-            let maxAttempts = 3;
-            let userResponses = [];
+            let listeningDefinitionsValid = false;
+            let listeningRecorded = false;
+            let writtenAttemptCount = 0;
+            let maxWrittenAttempts = 5;
+            let attemptsExhausted = false; // Track if user has exhausted all attempts
+
+            // Recording variables
+            let listeningMediaRecorder = null;
+            let listeningChunks = [];
+            let listeningIsRecording = false;
+
+            // Other activity flags
             let speakingRecorded = false;
             let readingTask1Valid = false;
             let readingTask2Valid = false;
             let readingTask3Valid = false;
             let grammarCompleted = false;
-            let vocabularyCompleted = false;
 
-            // ========== HELPER FUNCTIONS ==========
-            function updateDayProgress() {
-                const checkboxes = document.querySelectorAll('.checklist input.day-check');
-                let completed = 0;
-                checkboxes.forEach(cb => { if (cb.checked) completed++; });
-                const counter = document.getElementById('progressCounter');
-                if (counter) counter.innerText = `${completed}/5 completed`;
-                const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-                if (dayCompleteBtn) {
-                    dayCompleteBtn.disabled = (completed !== 5);
-                    dayCompleteBtn.style.opacity = (completed === 5) ? '1' : '0.5';
+            // ========== VALIDATION FUNCTIONS ==========
+            const forbiddenGenericTerms = ['thing', 'stuff', 'data', 'information', 'item', 'object', 'element', 'component', 'material', 'device', 'machine', 'equipment'];
+
+            function isGibberish(text) {
+                if (!text || text.trim().length < 3) return true;
+                const words = text.toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/);
+                for (let word of words) {
+                    if (word.length < 2) continue;
+                    const hasVowel = /[aeiou]/.test(word);
+                    const hasConsonant = /[bcdfghjklmnpqrstvwxyz]/.test(word);
+                    const hasRepeatingPattern = /(.)\1{3,}/.test(word);
+                    if (!hasVowel || !hasConsonant || hasRepeatingPattern) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            function isValidEngineeringTerm(term) {
+                const lowerTerm = term.toLowerCase().trim();
+                if (forbiddenGenericTerms.includes(lowerTerm)) return false;
+                if (lowerTerm.length < 2) return false;
+                return true;
+            }
+
+            function isPlainLanguage(text) {
+                const complexJargon = ['utilize', 'utilization', 'architecture', 'implementation', 'optimization', 'parameterization', 'configurability', 'synergize', 'leverage', 'paradigm', 'facilitate', 'endeavor'];
+                const lower = text.toLowerCase();
+                for (let word of complexJargon) {
+                    if (lower.includes(word)) return false;
+                }
+                return true;
+            }
+
+            function hasTooManyRepetitions(text) {
+                const words = text.toLowerCase().split(/\s+/);
+                const wordCounts = {};
+                for (let w of words) {
+                    wordCounts[w] = (wordCounts[w] || 0) + 1;
+                    if (wordCounts[w] > 3 && w.length > 2) return true;
+                }
+                return false;
+            }
+
+            function isCompleteSentence(text) {
+                const verbPatterns = /\b(is|are|was|were|means|refers to|can be|describes|measures|indicates|represents|involves|occurs|happens|works|functions|uses|requires|becomes|changes)\b/i;
+                const wordCount = text.split(/\s+/).length;
+                return verbPatterns.test(text) && wordCount >= 5;
+            }
+
+            function validateTermDefinition(term, definition) {
+                if (!term || !definition || term.trim() === '' || definition.trim() === '') {
+                    return { valid: false, message: `❌ Term and definition cannot be empty.` };
+                }
+
+                const termTrim = term.trim();
+                const defTrim = definition.trim();
+
+                if (isGibberish(termTrim) || isGibberish(defTrim)) {
+                    return { valid: false, message: `❌ "${termTrim}" contains gibberish or random characters.` };
+                }
+
+                if (!isValidEngineeringTerm(termTrim)) {
+                    return { valid: false, message: `❌ "${termTrim}" is not a specific engineering term. Use terms like "tensile strength" or "heat sink".` };
+                }
+
+                const wordCount = defTrim.split(/\s+/).length;
+                if (wordCount < 10) {
+                    return { valid: false, message: `❌ Definition too short (${wordCount} words). Need at least 10 words.` };
+                }
+                if (wordCount > 80) {
+                    return { valid: false, message: `❌ Definition too long (${wordCount} words). Keep under 80 words.` };
+                }
+
+                if (!isPlainLanguage(defTrim)) {
+                    return { valid: false, message: `❌ Uses complex jargon. Write in plain, simple language.` };
+                }
+
+                if (hasTooManyRepetitions(defTrim)) {
+                    return { valid: false, message: `❌ Too many repeated words. Use varied vocabulary.` };
+                }
+
+                if (!isCompleteSentence(defTrim)) {
+                    return { valid: false, message: `❌ Not a complete sentence. Use a verb (e.g., "It is...").` };
+                }
+
+                return { valid: true, message: `✅ "${termTrim}" defined correctly.` };
+            }
+
+            const sampleDefinitions = [
+                { term: "Tensile strength", definition: "Tensile strength is how much pulling force a material can handle before it breaks or gets damaged." },
+                { term: "Compressive strength", definition: "Compressive strength means how much crushing or pressing force a material can withstand without getting destroyed." },
+                { term: "Hydration", definition: "Hydration is the chemical reaction between cement and water that makes concrete harden and gain strength over time." },
+                { term: "Curing", definition: "Curing is the process of keeping concrete moist so it can gain proper strength and durability for construction." },
+                { term: "Load", definition: "Load refers to the weight or force that a structure must support during its normal use and operation." }
+            ];
+
+            function showCorrectExamples() {
+                const feedbackDiv = document.getElementById('listeningValidationFeedback');
+                if (feedbackDiv && !feedbackDiv.innerHTML.includes('sample correct definitions')) {
+                    let sampleHtml = `
+                        <div class="sample-answers-section">
+                            <h4>📚 Here are 5 correct example definitions:</h4>
+                            <ul>
+                                ${sampleDefinitions.map((item, idx) => `<li><strong>${idx + 1}. ${item.term}:</strong> ${item.definition}</li>`).join('')}
+                            </ul>
+                            <p style="margin-top: 0.75rem; font-size: 0.8rem; color: #64748b;">💡 You can now record these definitions or create your own.</p>
+                        </div>`;
+                    feedbackDiv.innerHTML = sampleHtml;
                 }
             }
 
-            if (typeof markActivityComplete === 'function') {
-                const originalMarkComplete = window.markActivityComplete;
-                window.markActivityComplete = function (activityId, checklistId) {
-                    originalMarkComplete(activityId, checklistId);
-                    const checkbox = document.getElementById(checklistId);
-                    if (checkbox) checkbox.checked = true;
-                    setTimeout(updateDayProgress, 100);
-                };
-            } else {
-                window.markActivityComplete = function (activityId, checklistId) {
-                    const checkbox = document.getElementById(checklistId);
-                    if (checkbox) checkbox.checked = true;
-                    const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-                    if (btn) {
-                        btn.disabled = true;
-                        btn.textContent = '✓ Completed';
-                    }
-                    setTimeout(updateDayProgress, 100);
-                };
-            }
-
-            // ==================== VOCABULARY AUDIO ====================
-            const vocabChecks = document.querySelectorAll('.check-cell');
-            const completeVocabularyBtn = document.getElementById('completeVocabularyBtn');
-
-            function checkVocabularyCompletion() {
-                let allCompleted = true;
-                vocabChecks.forEach(cell => { if (cell.innerHTML !== '✅') allCompleted = false; });
-                if (completeVocabularyBtn) completeVocabularyBtn.disabled = !allCompleted;
-                vocabularyCompleted = allCompleted;
-            }
-
-            document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const word = this.getAttribute('data-word');
-                    const checkId = this.getAttribute('data-checkid');
-                    const cell = document.getElementById(checkId);
-                    if ('speechSynthesis' in window) {
-                        window.speechSynthesis.cancel();
-                        const utterance = new SpeechSynthesisUtterance(word);
-                        utterance.lang = 'en-US';
-                        utterance.rate = 0.9;
-                        utterance.onend = () => {
-                            if (cell && cell.innerHTML !== '✅') {
-                                cell.innerHTML = '✅';
-                                cell.style.color = 'green';
-                                checkVocabularyCompletion();
-                            }
-                        };
-                        window.speechSynthesis.speak(utterance);
-                    }
-                });
-            });
-
-            if (completeVocabularyBtn) {
-                completeVocabularyBtn.addEventListener('click', function () {
-                    if (vocabularyCompleted && typeof markActivityComplete === 'function') {
-                        markActivityComplete('vocabulary', 'chk5');
-                    } else {
-                        alert('Please listen to all 5 vocabulary words first.');
-                    }
-                });
-            }
-
-            // ==================== LISTENING ACTIVITY ====================
-            const listeningAudioElem = document.getElementById('listeningAudio');
-            const listeningTextSection = document.getElementById('listeningTextSection');
-            const postAudioListeningContent = document.getElementById('postAudioListeningContent');
-            const listeningAIFeedbackDiv = document.getElementById('listeningAIFeedback');
-            const listeningCompleteBtn = document.getElementById('completeListeningBtn');
-            const listeningQuizFeedbackDiv = document.getElementById('listeningQuizFeedback');
-            const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
-            const listeningAttemptCounterSpan = document.querySelector('#listeningAttemptCounter span');
-
-            // FIX: Ensure audio end event reveals both sections
-            if (listeningAudioElem) {
-                listeningAudioElem.addEventListener('ended', function () {
-                    if (!masterAudioFinished) {
-                        masterAudioFinished = true;
-                        if (listeningTextSection) listeningTextSection.style.display = 'block';
-                        if (postAudioListeningContent) postAudioListeningContent.style.display = 'block';
-                    }
-                });
-
-                listeningAudioElem.addEventListener('timeupdate', function () {
-                    if (!masterAudioFinished && listeningAudioElem.currentTime >= listeningAudioElem.duration - 0.5) {
-                        masterAudioFinished = true;
-                        if (listeningTextSection) listeningTextSection.style.display = 'block';
-                        if (postAudioListeningContent) postAudioListeningContent.style.display = 'block';
-                    }
-                });
-            }
-
-            function startLiveSpeechRecognition() {
-                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                    alert('⚠️ Speech recognition not supported. Please use Chrome browser.');
-                    return null;
+            // Function to show recording section (can be called from validation success OR after max attempts)
+            function showRecordingSection() {
+                const recordingSection = document.getElementById('recordingSection');
+                if (recordingSection && recordingSection.style.display !== 'block') {
+                    recordingSection.style.display = 'block';
                 }
-                const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-                const recognition = new SpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = false;
-                recognition.lang = 'en-US';
-                recognition.maxAlternatives = 1;
-                return recognition;
+                // Enable the record button
+                if (listeningRecordBtn) {
+                    listeningRecordBtn.disabled = false;
+                }
             }
 
-            const speakBtn = document.createElement('button');
-            speakBtn.textContent = '🎤 Click to Speak Your 5 Technical Term Definitions';
-            speakBtn.className = 'modern-record-btn';
-            speakBtn.style.width = '50%';
-            speakBtn.style.marginTop = '0.5rem';
-            speakBtn.style.padding = '0.75rem';
-            speakBtn.style.fontSize = '1rem';
-
-            const attemptDisplay = document.createElement('div');
-            attemptDisplay.style.cssText = 'font-size: 0.8rem; color: #64748b; margin-top: 0.5rem; text-align: center;';
-
-            const listeningContainer = document.querySelector('#postAudioListeningContent .listening-container');
-            if (listeningContainer) {
-                listeningContainer.appendChild(speakBtn);
-                listeningContainer.appendChild(attemptDisplay);
+            // ========== GENERATE 5 TERM INPUT ROWS ==========
+            const termDefContainer = document.getElementById('termDefinitionContainer');
+            if (termDefContainer) {
+                let html = '';
+                for (let i = 1; i <= 5; i++) {
+                    html += `
+                        <div class="term-definition-row" data-term-index="${i}">
+                            <div class="term-label">
+                                <span class="term-number">${i}</span>
+                                <span>Technical Term:</span>
+                            </div>
+                            <input type="text" id="listeningTerm${i}" class="term-input" placeholder="e.g., Tensile strength, Heat sink, Algorithm, etc.">
+                            <div class="term-label" style="margin-top: 0.5rem;">
+                                <span>📝 Definition (plain language, 10+ words):</span>
+                            </div>
+                            <textarea id="listeningDef${i}" class="definition-input" rows="3" placeholder="Explain this term simply, as if talking to a non-engineer. Use complete sentences."></textarea>
+                            <div id="listeningTermFeedback${i}" class="term-validation-feedback"></div>
+                        </div>
+                    `;
+                }
+                termDefContainer.innerHTML = html;
             }
-
-            let currentRecognition = null;
 
             function updateListeningAttemptDisplay() {
-                const remaining = maxAttempts - attemptCount;
-                if (listeningAttemptCounterSpan) listeningAttemptCounterSpan.innerText = remaining;
+                const remaining = maxWrittenAttempts - writtenAttemptCount;
+                const counterSpan = document.querySelector('#listeningAttemptCounter span');
+                if (counterSpan) counterSpan.innerText = remaining;
 
-                if (attemptCount >= maxAttempts) {
-                    speakBtn.disabled = true;
-                    speakBtn.style.background = '#94a3b8';
-                    speakBtn.style.cursor = 'not-allowed';
-                    speakBtn.textContent = '🔒 No attempts left. Please review the correct answers below.';
-
-                    listeningAIFeedbackDiv.innerHTML += `
-                <div class="ai-feedback processing" style="margin-top: 0.75rem;">
-                    <strong>📚 Here are 5 correct example definitions:</strong><br>
-                    • <strong>Tensile strength:</strong> How much pulling force a material can handle before breaking.<br>
-                    • <strong>Compressive strength:</strong> How much crushing or pressing force a material can withstand.<br>
-                    • <strong>Hydration:</strong> The chemical reaction between cement and water that makes concrete harden.<br>
-                    • <strong>Curing:</strong> Keeping concrete moist so it gains proper strength and durability.<br>
-                    • <strong>Load:</strong> The weight or force that a structure must support.<br><br>
-                    <strong>🎯 Practice these and try again tomorrow!</strong>
-                </div>
-            `;
+                const submitBtn = document.getElementById('submitListeningDefinitionsBtn');
+                if (writtenAttemptCount >= maxWrittenAttempts && submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = '🔒 No attempts left - See examples below';
+                    if (!attemptsExhausted) {
+                        attemptsExhausted = true;
+                        showCorrectExamples();
+                        // Show recording section even after failed attempts
+                        showRecordingSection();
+                    }
                 }
             }
 
-            speakBtn.onclick = () => {
-                if (attemptCount >= maxAttempts) {
-                    listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">🔒 You have used all 3 attempts. Please review the examples below and try again tomorrow.</div>';
-                    listeningAIFeedbackDiv.style.display = 'block';
-                    return;
+            function validateAllDefinitions() {
+                if (writtenAttemptCount >= maxWrittenAttempts) {
+                    return false;
                 }
 
-                if (!masterAudioFinished) {
-                    listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">⚠️ Please listen to the complete audio first.</div>';
-                    listeningAIFeedbackDiv.style.display = 'block';
-                    return;
-                }
+                let allValid = true;
 
-                if (currentRecognition) {
-                    currentRecognition.stop();
-                    currentRecognition = null;
-                    speakBtn.textContent = '🎤 Click to Speak Your 5 Technical Term Definitions';
-                    speakBtn.style.background = '#8b5cf6';
-                    return;
-                }
+                for (let i = 1; i <= 5; i++) {
+                    const term = document.getElementById(`listeningTerm${i}`).value;
+                    const definition = document.getElementById(`listeningDef${i}`).value;
+                    const result = validateTermDefinition(term, definition);
 
-                const recognition = startLiveSpeechRecognition();
-                if (!recognition) return;
-
-                currentRecognition = recognition;
-                speakBtn.textContent = '🔴 Speaking... Click to Stop';
-                speakBtn.style.background = '#ef4444';
-
-                let fullTranscript = '';
-
-                recognition.onresult = (event) => {
-                    for (let i = event.resultIndex; i < event.results.length; i++) {
-                        if (event.results[i].isFinal) {
-                            fullTranscript += event.results[i][0].transcript + ' ';
-                        }
+                    const feedbackSpan = document.getElementById(`listeningTermFeedback${i}`);
+                    if (feedbackSpan) {
+                        feedbackSpan.innerHTML = result.message;
+                        feedbackSpan.className = `term-validation-feedback ${result.valid ? 'correct' : 'incorrect'}`;
                     }
-                };
 
-                recognition.onend = async () => {
-                    currentRecognition = null;
-                    speakBtn.textContent = '🎤 Click to Speak Your 5 Technical Term Definitions';
-                    speakBtn.style.background = '#8b5cf6';
+                    if (!result.valid) allValid = false;
+                }
 
-                    attemptCount++;
-                    updateListeningAttemptDisplay();
+                const feedbackDiv = document.getElementById('listeningValidationFeedback');
+                if (feedbackDiv) {
+                    if (allValid) {
+                        feedbackDiv.innerHTML = '<div style="background:#d1fae5; padding:1rem; border-radius:12px;"><strong>✅ Excellent! All 5 definitions are correct!</strong><br>💡 Now record yourself reading these definitions.</div>';
+                        listeningDefinitionsValid = true;
+                        showRecordingSection();
+                        return true;
+                    } else {
+                        feedbackDiv.innerHTML = '<div style="background:#fee2e2; padding:1rem; border-radius:12px;"><strong>❌ Some definitions need improvement.</strong><br>💡 Fix the errors above and try again.</div>';
+                        listeningDefinitionsValid = false;
+                        return false;
+                    }
+                }
+                return allValid;
+            }
 
-                    if (fullTranscript.trim().length < 30) {
-                        listeningAIFeedbackDiv.innerHTML = `
-                    <div class="ai-feedback incorrect">
-                        <strong>🎤 I couldn't hear enough of your response.</strong><br>
-                        💡 Please speak clearly and define at least 5 technical terms.<br>
-                        📖 Example: "Tensile strength means how much pulling force a material can handle before breaking."
-                    </div>`;
-                        listeningAIFeedbackDiv.style.display = 'block';
+            // Submit definitions button
+            const submitBtn = document.getElementById('submitListeningDefinitionsBtn');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function () {
+                    if (!masterAudioFinished) {
+                        const feedbackDiv = document.getElementById('listeningValidationFeedback');
+                        if (feedbackDiv) {
+                            feedbackDiv.innerHTML = '<div style="background:#fee2e2; padding:1rem; border-radius:12px;">⚠️ Please listen to the complete audio first.</div>';
+                        }
                         return;
                     }
 
-                    listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback processing">🤖 Evaluating your technical explanations...</div>';
-                    listeningAIFeedbackDiv.style.display = 'block';
-
-                    userResponses.push({
-                        attempt: attemptCount,
-                        text: fullTranscript,
-                        timestamp: new Date().toLocaleTimeString()
-                    });
-
-                    try {
-                        const response = await fetch('/learning/ai/evaluate/', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRFToken': csrftoken,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                text: fullTranscript,
-                                task_type: 'technical_vocabulary',
-                                day_number: 19,
-                                level: 'intermediate',
-                                system_prompt: `You are an expert English communication coach helping engineering students learn to explain technical concepts clearly.
-
-TASK: The student must speak and explain 5 technical terms from their engineering branch in plain, simple language for a non-engineer.
-
-YOUR ROLE: Evaluate whether the student:
-1. Mentioned at least 5 DISTINCT technical terms.
-2. Explained each term correctly.
-3. Used simple language understandable by a non-technical person.
-4. Spoke in complete, meaningful sentences.
-5. Avoided simply listing terms without explanation.
-
-IMPORTANT RULES:
-- Do NOT give marks or scores.
-- Do NOT praise weak answers as correct.
-- Be honest, strict, and educational.
-- If the answer is weak or partially correct, clearly explain what is missing.
-
-STRICT EVALUATION:
-A response is CORRECT only if ALL are true:
-- At least 5 distinct technical terms are clearly identified
-- Each term has a basic correct explanation
-- Explanations are simple enough for a school student
-
-A response is INCORRECT if ANY are true:
-- Fewer than 5 terms are explained
-- Terms are only named without explanation
-- Definitions are technically wrong
-- Language is too technical
-
-FEEDBACK STYLE:
-- Friendly and motivating
-- Clear and specific
-- Focus on: number of terms, which terms were unclear, what to improve
-
-FEEDBACK FORMAT (max 60 words):
-📚 You explained [X] terms clearly.
-[Specific issue]
-💡 [One clear action to improve]
-
-SUGGESTION FORMAT (max 30 words):
-Try explaining [specific term] like: "[simple example]"
-
-STRICT OUTPUT JSON:
-{
-"correct": true/false,
-"feedback": "specific learning feedback",
-"suggestion": "clear actionable suggestion"
-}`
-                            })
-                        });
-
-                        const result = await response.json();
-
-                        if (result.success) {
-                            aiCorrect = result.correct;
-                            aiEvaluationDone = true;
-
-                            let feedbackHtml = '';
-
-                            if (result.correct) {
-                                feedbackHtml = `
-                            <div class="ai-feedback correct">
-                                <strong>✅ ${result.feedback || 'Excellent! You explained 5 technical terms clearly.'}</strong><br>
-                                <strong>🎤 Your response:</strong> "${fullTranscript.substring(0, 350)}${fullTranscript.length > 350 ? '...' : ''}"<br>
-                                <strong>💡 ${result.suggestion || 'Keep practicing to master technical explanations!'}</strong>
-                            </div>
-                        `;
-                            } else {
-                                feedbackHtml = `
-                            <div class="ai-feedback incorrect">
-                                <strong>📚 ${result.feedback || 'Your explanation needs improvement.'}</strong><br>
-                                <strong>🎤 Your response:</strong> "${fullTranscript.substring(0, 350)}${fullTranscript.length > 350 ? '...' : ''}"<br>
-                                <strong>💡 ${result.suggestion || 'Try explaining terms like: "Tensile strength is how much pulling force a material can handle."'}</strong>
-                            </div>
-                        `;
-                            }
-
-                            listeningAIFeedbackDiv.innerHTML = feedbackHtml;
-
-                        } else {
-                            listeningAIFeedbackDiv.innerHTML = `
-                        <div class="ai-feedback incorrect">
-                            <strong>⚠️ Connection issue. Please try again.</strong><br>
-                            💡 Make sure you are connected to the internet.<br>
-                            📖 Example: "Tensile strength is how much pulling force a material can handle."
-                        </div>
-                    `;
-                            aiCorrect = false;
-                            aiEvaluationDone = true;
-                        }
-
-                    } catch (error) {
-                        console.error('Error:', error);
-                        listeningAIFeedbackDiv.innerHTML = `
-                    <div class="ai-feedback incorrect">
-                        <strong>⚠️ Connection issue. Please try again.</strong><br>
-                        💡 Check your internet connection.
-                    </div>
-                `;
-                        aiCorrect = false;
-                        aiEvaluationDone = true;
+                    if (writtenAttemptCount >= maxWrittenAttempts) {
+                        showCorrectExamples();
+                        showRecordingSection();
+                        return;
                     }
 
+                    writtenAttemptCount++;
+                    updateListeningAttemptDisplay();
+                    validateAllDefinitions();
                     updateListeningCompleteButton();
-                };
+                });
+            }
 
-                recognition.onerror = (event) => {
-                    console.error('Speech recognition error:', event.error);
-                    currentRecognition = null;
-                    speakBtn.textContent = '🎤 Click to Speak Your 5 Technical Term Definitions';
-                    speakBtn.style.background = '#8b5cf6';
-                    listeningAIFeedbackDiv.innerHTML = `<div class="ai-feedback incorrect">⚠️ Microphone error: ${event.error}. Please check your microphone and try again.</div>`;
-                    listeningAIFeedbackDiv.style.display = 'block';
-                };
+            // ========== RECORDING FUNCTIONALITY ==========
+            const listeningRecordBtn = document.getElementById('listeningRecordBtn');
+            const listeningStopBtn = document.getElementById('listeningStopBtn');
+            const listeningPlaybackCard = document.getElementById('listeningPlaybackCard');
+            const listeningPlaybackAudio = document.getElementById('listeningPlayback');
+            const comparisonSection = document.getElementById('comparisonSection');
+            const yesComparisonBtn = document.getElementById('yesComparisonBtn');
+            const noComparisonBtn = document.getElementById('noComparisonBtn');
+            const comparisonFeedbackDiv = document.getElementById('comparisonFeedback');
 
-                recognition.start();
-            };
+            if (listeningRecordBtn) {
+                listeningRecordBtn.addEventListener('click', async function () {
+                    // Allow recording if either definitions are valid OR attempts are exhausted
+                    if (!listeningDefinitionsValid && writtenAttemptCount < maxWrittenAttempts) {
+                        alert('Please validate your definitions first!');
+                        return;
+                    }
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        listeningMediaRecorder = new MediaRecorder(stream);
+                        listeningChunks = [];
+                        listeningMediaRecorder.ondataavailable = e => listeningChunks.push(e.data);
+                        listeningMediaRecorder.onstop = () => {
+                            const blob = new Blob(listeningChunks, { type: 'audio/webm' });
+                            if (listeningPlaybackAudio) listeningPlaybackAudio.src = URL.createObjectURL(blob);
+                            if (listeningPlaybackCard) listeningPlaybackCard.style.display = 'block';
+                            if (comparisonSection) comparisonSection.style.display = 'block';
+                            listeningRecorded = true;
+                            stream.getTracks().forEach(t => t.stop());
+                            updateListeningCompleteButton();
+                        };
+                        listeningMediaRecorder.start();
+                        listeningIsRecording = true;
+                        listeningRecordBtn.style.display = 'none';
+                        if (listeningStopBtn) listeningStopBtn.style.display = 'inline-flex';
+                    } catch (e) { console.error('Microphone error'); }
+                });
+            }
 
+            if (listeningStopBtn) {
+                listeningStopBtn.addEventListener('click', function () {
+                    if (listeningMediaRecorder && listeningIsRecording) {
+                        listeningMediaRecorder.stop();
+                        listeningIsRecording = false;
+                        listeningRecordBtn.style.display = 'inline-flex';
+                        listeningStopBtn.style.display = 'none';
+                    }
+                });
+            }
+
+            if (yesComparisonBtn) {
+                yesComparisonBtn.addEventListener('click', function () {
+                    if (document.getElementById('completeListeningBtn')) {
+                        document.getElementById('completeListeningBtn').disabled = false;
+                        if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #22c55e;">✅ Great! Recording confirmed.</span>';
+                    }
+                });
+            }
+
+            if (noComparisonBtn) {
+                noComparisonBtn.addEventListener('click', function () {
+                    comparisonFeedbackDiv.innerHTML = '<span style="color: #dc2626;">⚠️ Please record again with clear definitions.</span>';
+                    listeningRecorded = false;
+                    listeningPlaybackCard.style.display = 'none';
+                    comparisonSection.style.display = 'none';
+                    listeningRecordBtn.style.display = 'inline-flex';
+                    listeningStopBtn.style.display = 'none';
+                    updateListeningCompleteButton();
+                });
+            }
+
+            // ========== QUIZ FUNCTIONALITY ==========
             document.querySelectorAll('input[name="listening_quiz"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q1 = e.target.value; updateListeningCompleteButton(); }));
             document.querySelectorAll('input[name="practice_quiz"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q2 = e.target.value; updateListeningCompleteButton(); }));
+
+            const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
+            const listeningQuizFeedbackDiv = document.getElementById('listeningQuizFeedback');
 
             if (checkListeningWorkBtn) {
                 checkListeningWorkBtn.addEventListener('click', () => {
@@ -865,22 +1044,38 @@ STRICT OUTPUT JSON:
                 });
             }
 
+            // Audio finished reveal
+            const listeningAudioElem = document.getElementById('listeningAudio');
+            const listeningTextSection = document.getElementById('listeningTextSection');
+            const postAudioListeningContent = document.getElementById('postAudioListeningContent');
+
+            if (listeningAudioElem) {
+                listeningAudioElem.addEventListener('ended', function () {
+                    if (!masterAudioFinished) {
+                        masterAudioFinished = true;
+                        if (listeningTextSection) listeningTextSection.style.display = 'block';
+                        if (postAudioListeningContent) postAudioListeningContent.style.display = 'block';
+                    }
+                });
+            }
+
             function updateListeningCompleteButton() {
+                const listeningCompleteBtn = document.getElementById('completeListeningBtn');
                 if (listeningCompleteBtn) {
-                    // Enable when audio finished, AI evaluation done, AND quiz is correct
-                    const canComplete = masterAudioFinished && aiEvaluationDone && listeningQuizCorrect;
+                    const canComplete = masterAudioFinished && listeningRecorded && listeningQuizCorrect;
                     listeningCompleteBtn.disabled = !canComplete;
                 }
             }
 
+            const listeningCompleteBtn = document.getElementById('completeListeningBtn');
             if (listeningCompleteBtn) {
                 listeningCompleteBtn.onclick = () => {
                     if (!masterAudioFinished) {
                         alert('⚠️ Please listen to the complete master audio first.');
                         return;
                     }
-                    if (!aiEvaluationDone) {
-                        alert('⚠️ Please click the speak button and define 5 technical terms.');
+                    if (!listeningRecorded) {
+                        alert('⚠️ Please record your definitions using the recording button and confirm "Yes" when done.');
                         return;
                     }
                     if (!listeningQuizCorrect) {
@@ -889,10 +1084,9 @@ STRICT OUTPUT JSON:
                     }
                     markActivityComplete('listening', 'chk2');
                 };
-                listeningCompleteBtn.disabled = true;
             }
 
-            // ========== 2. SPEAKING ACTIVITY ==========
+            // ========== SPEAKING ACTIVITY ==========
             const speakRecordBtn = document.getElementById('speakingRecordBtn');
             const speakStopBtn = document.getElementById('speakingStopBtn');
             const speakPlaybackArea = document.getElementById('speakingPlaybackArea');
@@ -901,12 +1095,12 @@ STRICT OUTPUT JSON:
             const speakTimer = document.getElementById('speakingTimer');
             const completeSpeakingBtn = document.getElementById('completeSpeakingBtn');
             let speakMediaRecorder, speakChunks = [], speakIsRecording = false;
-            let timerInterval, seconds = 0;
+            let speakTimerInterval, speakSeconds = 0;
 
             function updateSpeakingTimerDisplay() {
                 if (speakTimer) {
-                    const mins = Math.floor(seconds / 60);
-                    const secs = seconds % 60;
+                    const mins = Math.floor(speakSeconds / 60);
+                    const secs = speakSeconds % 60;
                     speakTimer.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
                 }
             }
@@ -917,15 +1111,15 @@ STRICT OUTPUT JSON:
                         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                         speakMediaRecorder = new MediaRecorder(stream);
                         speakChunks = [];
-                        seconds = 0;
+                        speakSeconds = 0;
                         updateSpeakingTimerDisplay();
                         if (speakRecordingStatus) speakRecordingStatus.style.display = 'flex';
-                        if (timerInterval) clearInterval(timerInterval);
-                        timerInterval = setInterval(() => { seconds++; updateSpeakingTimerDisplay(); }, 1000);
+                        if (speakTimerInterval) clearInterval(speakTimerInterval);
+                        speakTimerInterval = setInterval(() => { speakSeconds++; updateSpeakingTimerDisplay(); }, 1000);
 
                         speakMediaRecorder.ondataavailable = e => speakChunks.push(e.data);
                         speakMediaRecorder.onstop = () => {
-                            clearInterval(timerInterval);
+                            clearInterval(speakTimerInterval);
                             const blob = new Blob(speakChunks, { type: 'audio/webm' });
                             if (speakPlaybackAudio) speakPlaybackAudio.src = URL.createObjectURL(blob);
                             if (speakPlaybackArea) speakPlaybackArea.style.display = 'block';
@@ -937,7 +1131,6 @@ STRICT OUTPUT JSON:
                         speakIsRecording = true;
                         speakRecordBtn.style.display = 'none';
                         if (speakStopBtn) speakStopBtn.style.display = 'inline-flex';
-                        speakRecordBtn.classList.add('recording-active');
                     } catch (e) { console.error('Microphone error'); }
                 });
             }
@@ -949,7 +1142,6 @@ STRICT OUTPUT JSON:
                         speakIsRecording = false;
                         speakRecordBtn.style.display = 'inline-flex';
                         speakStopBtn.style.display = 'none';
-                        speakRecordBtn.classList.remove('recording-active');
                         if (speakRecordingStatus) speakRecordingStatus.style.display = 'none';
                     }
                 });
@@ -1232,8 +1424,7 @@ STRICT OUTPUT JSON:
                     }
                 });
             }
-
-            // ========== 5. GRAMMAR ACTIVITY ==========
+            // ========== GRAMMAR ACTIVITY ==========
             const checkGrammarBtn = document.getElementById('checkGrammarBtn');
             const resetGrammarBtn = document.getElementById('resetGrammarBtn');
             const completeGrammarBtn = document.getElementById('completeGrammarBtn');
@@ -1242,37 +1433,26 @@ STRICT OUTPUT JSON:
                 const lower = answer.toLowerCase().trim();
                 if (!lower) return { valid: false, message: '⚠️ Please answer sentence 1.' };
                 if (lower.split(/\s+/).length < 6) return { valid: false, message: '❌ Sentence is too short.' };
-                if (lower.includes('they analysed the data carefully')) return { valid: false, message: '❌ Rewrite using nominalisation.' };
                 const hasNoun = /\banalysis\b/.test(lower);
-                const hasData = /\bdata\b/.test(lower);
-                const hasCareful = /\bcareful|carefully\b/.test(lower);
-                const validStructure = /\banalysis\b.*\b(data)\b.*\b(was|were|conducted|carried out|performed)\b/.test(lower) || /\bcareful\b.*\banalysis\b/.test(lower);
-                if (!(hasNoun && hasData && hasCareful)) return { valid: false, message: '❌ Use "analysis", mention data, and show carefulness.' };
-                if (!validStructure) return { valid: false, message: '❌ Sentence structure is incorrect.' };
+                if (!hasNoun) return { valid: false, message: '❌ Use "analysis" as the main noun.' };
                 return { valid: true, message: '✅ Correct nominalisation.' };
             }
 
             function validateNominal2(answer) {
                 const lower = answer.toLowerCase().trim();
                 if (!lower) return { valid: false, message: '⚠️ Please answer sentence 2.' };
-                if (lower.split(/\s+/).length < 6) return { valid: false, message: '❌ Sentence too short.' };
+                if (lower.split(/\s+/).length < 5) return { valid: false, message: '❌ Sentence too short.' };
                 const hasNoun = /\bimplementation\b/.test(lower);
-                const hasSystem = /\bsystem\b/.test(lower);
-                const validStructure = /\bimplementation\b.*\b(system)\b.*\b(was|were|completed|carried out)\b/.test(lower) || /\bteam\b.*\bimplementation\b/.test(lower);
-                if (!(hasNoun && hasSystem)) return { valid: false, message: '❌ Use "implementation" and mention system.' };
-                if (!validStructure) return { valid: false, message: '❌ Sentence structure is incorrect.' };
+                if (!hasNoun) return { valid: false, message: '❌ Use "implementation" as the main noun.' };
                 return { valid: true, message: '✅ Good nominalisation.' };
             }
 
             function validateNominal3(answer) {
                 const lower = answer.toLowerCase().trim();
                 if (!lower) return { valid: false, message: '⚠️ Please answer sentence 3.' };
-                if (lower.split(/\s+/).length < 5) return { valid: false, message: '❌ Sentence too short.' };
+                if (lower.split(/\s+/).length < 4) return { valid: false, message: '❌ Sentence too short.' };
                 const hasAccuracy = /\baccuracy\b/.test(lower);
-                const hasResults = /\bresults?\b/.test(lower);
-                const validStructure = /\baccuracy\b.*\b(results?)\b.*\b(was|were|is|high)\b/.test(lower) || /\bresults?\b.*\b(showed|demonstrated)\b.*\baccuracy\b/.test(lower);
-                if (!(hasAccuracy && hasResults)) return { valid: false, message: '❌ Use "accuracy" and mention results.' };
-                if (!validStructure) return { valid: false, message: '❌ Sentence structure is incorrect.' };
+                if (!hasAccuracy) return { valid: false, message: '❌ Use "accuracy" as the main noun.' };
                 return { valid: true, message: '✅ Correct nominalisation.' };
             }
 
@@ -1328,7 +1508,74 @@ STRICT OUTPUT JSON:
                 });
             }
 
+            // ========== VOCABULARY ACTIVITY ==========
+            const vocabChecks = document.querySelectorAll('.check-cell');
+            const completeVocabularyBtn = document.getElementById('completeVocabularyBtn');
+
+            function checkVocabularyCompletion() {
+                let allCompleted = true;
+                vocabChecks.forEach(cell => { if (cell.innerHTML !== '✅') allCompleted = false; });
+                if (completeVocabularyBtn) completeVocabularyBtn.disabled = !allCompleted;
+            }
+
+            document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const word = this.getAttribute('data-word');
+                    const checkId = this.getAttribute('data-checkid');
+                    const cell = document.getElementById(checkId);
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const utterance = new SpeechSynthesisUtterance(word);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.9;
+                        utterance.onend = () => {
+                            if (cell && cell.innerHTML !== '✅') {
+                                cell.innerHTML = '✅';
+                                cell.style.color = 'green';
+                                checkVocabularyCompletion();
+                            }
+                        };
+                        window.speechSynthesis.speak(utterance);
+                    }
+                });
+            });
+
+            if (completeVocabularyBtn) {
+                completeVocabularyBtn.addEventListener('click', function () {
+                    let allCompleted = true;
+                    vocabChecks.forEach(cell => { if (cell.innerHTML !== '✅') allCompleted = false; });
+                    if (allCompleted && typeof markActivityComplete === 'function') {
+                        markActivityComplete('vocabulary', 'chk5');
+                    } else {
+                        alert('Please listen to all 5 vocabulary words first.');
+                    }
+                });
+            }
+
             // ========== DAY COMPLETION ==========
+            function updateDayProgress() {
+                const checkboxes = document.querySelectorAll('.checklist input.day-check');
+                let completed = 0;
+                checkboxes.forEach(cb => { if (cb.checked) completed++; });
+                const counter = document.getElementById('progressCounter');
+                if (counter) counter.innerText = `${completed}/5 completed`;
+                const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+                if (dayCompleteBtn) {
+                    dayCompleteBtn.disabled = (completed !== 5);
+                    dayCompleteBtn.style.opacity = (completed === 5) ? '1' : '0.5';
+                }
+            }
+
+            if (typeof markActivityComplete === 'function') {
+                const originalMarkComplete = window.markActivityComplete;
+                window.markActivityComplete = function (activityId, checklistId) {
+                    originalMarkComplete(activityId, checklistId);
+                    const checkbox = document.getElementById(checklistId);
+                    if (checkbox) checkbox.checked = true;
+                    setTimeout(updateDayProgress, 100);
+                };
+            }
+
             const dayCompleteBtn = document.getElementById('dayCompleteBtn');
             if (dayCompleteBtn) {
                 dayCompleteBtn.addEventListener('click', function () {
@@ -1343,8 +1590,12 @@ STRICT OUTPUT JSON:
 
                     this.innerHTML = '✨ Completing day...';
                     this.disabled = true;
-                    if (typeof confetti !== 'undefined') confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-                    setTimeout(() => { window.location.href = '/learning/level/intermediate/?celebrate=true&completed=19'; }, 500);
+                    if (typeof canvasConfetti !== 'undefined') {
+                        canvasConfetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                    }
+                    setTimeout(() => {
+                        window.location.href = '/learning/level/intermediate/?celebrate=true&completed=19';
+                    }, 500);
                 });
             }
 

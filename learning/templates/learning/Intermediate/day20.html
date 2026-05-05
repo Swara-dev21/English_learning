@@ -9,6 +9,136 @@
     <title>Day 20: Critical Analysis & Evaluation | English for Engineers</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <style>
+        .listening-feedback-item {
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .listening-feedback-item.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 3px solid #22c55e;
+        }
+
+        .listening-feedback-item.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 3px solid #dc2626;
+        }
+
+        .listening-feedback-item.warning {
+            background: #fef9e3;
+            color: #92400e;
+            border-left: 3px solid #f59e0b;
+        }
+
+        .listening-overall-feedback {
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .listening-overall-feedback.green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .listening-overall-feedback.yellow {
+            background: #fef9e3;
+            color: #92400e;
+        }
+
+        .listening-overall-feedback.red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .correct-answer-box {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .attempt-counter {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+            text-align: center;
+            padding: 0.5rem;
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+
+        .modern-record-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .modern-record-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .modern-record-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .ai-feedback {
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin: 0.5rem 0;
+        }
+
+        .ai-feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #22c55e;
+        }
+
+        .ai-feedback.incorrect {
+            background: #fef9e3;
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .ai-feedback.processing {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .analysis-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+            margin-top: 0.5rem;
+        }
+
+        .phrase-input-group {
+            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.75rem;
+            background: white;
+        }
+    </style>
 </head>
 
 <body>
@@ -24,7 +154,7 @@
 
         <div class="activities-grid">
 
-            <!-- 1. LISTENING ACTIVITY -->
+            <!-- 1. LISTENING ACTIVITY - UPDATED WITH AI EVALUATION -->
             <div class="activity-card" id="listening-card">
                 <div class="card-header listening">
                     <h2>🎧 1. Listening Activity : Analytical Tone</h2>
@@ -39,14 +169,14 @@
                     </div>
 
                     <audio id="listeningAudio" controls style="width: 100%; margin: 0.5rem 0;">
-                        <source src="{% static 'learning/audio/day20.mp3' %}" type="audio/mpeg">
+                        <source src="{% static 'learning/audio/Intermediate/day20.mp3' %}" type="audio/mpeg">
                     </audio>
 
                     <!-- Hidden until audio ends -->
                     <div id="listeningTextSection" style="display: none;">
                         <div class="task-box">
                             <div class="task-header">
-                                <div class="title"><span>📝</span><span>Listening Text ]</span></div>
+                                <div class="title"><span>📝</span><span>Listening Text</span></div>
                             </div>
                             <div class="task-content"
                                 style="font-style: italic; background: #fef9e3; line-height: 1.8;">
@@ -61,34 +191,84 @@
 
                     <!-- Hidden until audio ends -->
                     <div id="postAudioContent" style="display: none;">
+
+                        <!-- Task: Write Critical Analysis -->
                         <div class="task-box">
                             <div class="task-header">
-                                <div class="title"><span>🎯</span><span>Task</span></div>
+                                <div class="title"><span>📝</span><span>Task 1: Write Your Critical Analysis
+                                        Script</span></div>
                             </div>
-                            <div class="task-content">Read any newspaper editorial or technical article. Record a
-                                <strong>2-minute critical analysis</strong> using the language from today's lesson.
+                            <div class="task-content">
+                                Write a <strong>critical analysis script</strong> (2-3 sentences) using analytical
+                                language
+                                from today's lesson. Include words like "however", "nevertheless", "on balance",
+                                "while", etc.
                             </div>
                         </div>
 
-                        <!-- Recording Section -->
-                        <div class="combined-recording-section">
-                            <div style="font-weight: 600; margin-bottom: 0.5rem;">🎙️ Your Critical Analysis Recording
+                        <div
+                            style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; margin: 1rem 0;">
+                            <div style="background: #f8fafc; padding: 0.8rem 1rem; border-bottom: 2px solid #e2e8f0;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 1.1rem;">✍️</span>
+                                    <span style="font-weight: 700; color: #1e293b;">Write Your Critical Analysis
+                                        Script</span>
+                                </div>
+                                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.3rem;">
+                                    Example: "The report presents compelling evidence for renewable investment. However,
+                                    the cost projections may be overly optimistic. Nevertheless, the overall argument
+                                    remains persuasive."
+                                </p>
+                            </div>
+
+                            <div style="padding: 1rem;">
+                                <textarea id="analysisScript" class="analysis-textarea" rows="5"
+                                    placeholder="Write your critical analysis script here (2-3 sentences using analytical language)..."></textarea>
+                                <div id="scriptFeedback" class="listening-feedback-item"
+                                    style="display: none; margin-top: 0.5rem;"></div>
+                            </div>
+
+                            <div style="padding: 0 1rem 1rem 1rem;">
+                                <button class="btn-outline" id="checkScriptBtn"
+                                    style="display: inline-block; width: auto; background: #8b5cf6; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 40px; cursor: pointer;">
+                                    ✓ Check My Script
+                                </button>
+                                <div id="scriptAttemptCounter" class="attempt-counter" style="margin-top: 0.75rem;">📊
+                                    Attempts remaining: <span>5</span></div>
+                                <div id="listeningOverallFeedback" style="margin-top: 1rem;"></div>
+                                <div id="listeningTeachingTip" class="teaching-tip"
+                                    style="display: none; margin-top: 1rem;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Recording Section - Shows after script is validated -->
+                        <div id="recordingSection" style="display: none;">
+                            <div style="font-weight: 600; margin: 1rem 0 0.5rem;">🎙️ Record Your Critical Analysis
                             </div>
                             <div class="recording-controls">
-                                <button id="listeningRecordBtn" class="record-btn">🎙️ Start Recording</button>
-                                <button id="listeningStopBtn" class="record-btn"
+                                <button id="listeningRecordBtn" class="modern-record-btn" disabled>🎙️ Start Recording
+                                    (Validate script first)</button>
+                                <button id="listeningStopBtn" class="modern-record-btn"
                                     style="background: #64748b; display: none;">⏹️ Stop Recording</button>
                             </div>
                             <div id="listeningPlaybackCard" style="display: none;">
                                 <audio id="listeningPlayback" controls style="width: 100%;"></audio>
                             </div>
-                            <div id="listeningAIFeedback" class="listening-feedback-ai" style="display: none;"></div>
+                            <div id="comparisonSection" style="display: none;">
+                                <div class="comparison-message">Did you read your analysis clearly with an analytical
+                                    tone?</div>
+                                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                                    <button id="yesComparisonBtn" class="yes-btn">✓ Yes, correct</button>
+                                    <button id="noComparisonBtn" class="no-btn">✗ No, record again</button>
+                                </div>
+                                <div id="comparisonFeedback" style="margin-top: 0.5rem;"></div>
+                            </div>
                         </div>
 
                         <!-- Quiz Section -->
-                        <div class="quiz-section">
-                            <p><strong>🧠 Quick Listening Check</strong></p>
-                            <div><br>
+                        <div class="quiz-section" style="margin-top: 1rem;">
+                            <p><strong>🧠 Quick Listening Check</strong></p><br>
+                            <div>
                                 <p><strong>1. What follows 'However'?</strong></p>
                                 <label class="quiz-option"><input type="radio" name="q1" value="agreement">
                                     Agreement</label>
@@ -115,7 +295,7 @@
                 </div>
             </div>
 
-            <!-- 2. SPEAKING ACTIVITY - The Peer Review -->
+            <!-- 2. SPEAKING ACTIVITY - The Peer Review (UNCHANGED) -->
             <div class="activity-card" id="speaking-card">
                 <div class="card-header speaking">
                     <h2>🗣️ 2. Speaking Activity : The Peer Review</h2>
@@ -205,7 +385,7 @@
                 </div>
             </div>
 
-            <!-- 3. READING ACTIVITY -->
+            <!-- 3. READING ACTIVITY (UNCHANGED) -->
             <div class="activity-card" id="reading-card">
                 <div class="card-header reading">
                     <h2>📖 3. Reading Activity : Critical Analysis</h2>
@@ -326,7 +506,7 @@
                 </div>
             </div>
 
-            <!-- 4. VOCABULARY TABLE -->
+            <!-- 4. VOCABULARY TABLE (UNCHANGED) -->
             <div class="activity-card" id="vocabulary-card">
                 <div class="card-header vocabulary">
                     <h2>📘 4. Vocabulary of the Day</h2>
@@ -349,52 +529,52 @@
                                 <tr>
                                     <td class="audio-cell"><button class="vocab-audio-btn" data-word="Proponent"
                                             data-checkid="check-proponent">🔊</button></td>
-                                    <td class="check-cell" id="check-proponent">⬜</td>
-                                    <td><strong>Proponent</strong></td>
-                                    <td><code>/prəˈpəʊ.nənt/</code></td>
-                                    <td>A person who advocates for something</td>
-                                    <td>Supporter</td>
-                                    <td>Critic</td>
+                                    <td class="check-cell" id="check-proponent">⬜</span>
+                                    <td><strong>Proponent</strong></span>
+                                    <td><code>/prəˈpəʊ.nənt/</code></span>
+                                    <td>A person who advocates for something</span>
+                                    <td>Supporter</span>
+                                    <td>Critic</span>
                                 </tr>
                                 <tr>
                                     <td class="audio-cell"><button class="vocab-audio-btn" data-word="Contend"
-                                            data-checkid="check-contend">🔊</button></td>
-                                    <td class="check-cell" id="check-contend">⬜</td>
-                                    <td><strong>Contend</strong></td>
-                                    <td><code>/kənˈtend/</code></td>
-                                    <td>To assert something as true</td>
-                                    <td>Argue</td>
-                                    <td>Concede</td>
+                                            data-checkid="check-contend">🔊</button></span>
+                                    <td class="check-cell" id="check-contend">⬜</span>
+                                    <td><strong>Contend</strong></span>
+                                    <td><code>/kənˈtend/</code></span>
+                                    <td>To assert something as true</span>
+                                    <td>Argue</span>
+                                    <td>Concede</span>
                                 </tr>
                                 <tr>
                                     <td class="audio-cell"><button class="vocab-audio-btn" data-word="Oversight"
-                                            data-checkid="check-oversight">🔊</button></td>
-                                    <td class="check-cell" id="check-oversight">⬜</td>
-                                    <td><strong>Oversight</strong></td>
-                                    <td><code>/ˈəʊ.və.saɪt/</code></td>
-                                    <td>Supervision and monitoring</td>
-                                    <td>Supervision</td>
-                                    <td>Neglect</td>
+                                            data-checkid="check-oversight">🔊</button></span>
+                                    <td class="check-cell" id="check-oversight">⬜</span>
+                                    <td><strong>Oversight</strong></span>
+                                    <td><code>/ˈəʊ.və.saɪt/</code></span>
+                                    <td>Supervision and monitoring</span>
+                                    <td>Supervision</span>
+                                    <td>Neglect</span>
                                 </tr>
                                 <tr>
                                     <td class="audio-cell"><button class="vocab-audio-btn" data-word="Generalisability"
-                                            data-checkid="check-generalisability">🔊</button></td>
-                                    <td class="check-cell" id="check-generalisability">⬜</td>
-                                    <td><strong>Generalisability</strong></td>
-                                    <td><code>/ˌdʒen.ər.ə.laɪ.zəˈbɪl.ɪ.ti/</code></td>
-                                    <td>How widely results can be applied</td>
-                                    <td>Transferability</td>
-                                    <td>Specificity</td>
+                                            data-checkid="check-generalisability">🔊</button></span>
+                                    <td class="check-cell" id="check-generalisability">⬜</span>
+                                    <td><strong>Generalisability</strong></span>
+                                    <td><code>/ˌdʒen.ər.ə.laɪ.zəˈbɪl.ɪ.ti/</code></span>
+                                    <td>How widely results can be applied</span>
+                                    <td>Transferability</span>
+                                    <td>Specificity</span>
                                 </tr>
                                 <tr>
                                     <td class="audio-cell"><button class="vocab-audio-btn" data-word="Rigorous"
-                                            data-checkid="check-rigorous">🔊</button></td>
-                                    <td class="check-cell" id="check-rigorous">⬜</td>
-                                    <td><strong>Rigorous</strong></td>
-                                    <td><code>/ˈrɪɡ.ər.əs/</code></td>
-                                    <td>Thorough and careful</td>
-                                    <td>Meticulous</td>
-                                    <td>Lax</td>
+                                            data-checkid="check-rigorous">🔊</button></span>
+                                    <td class="check-cell" id="check-rigorous">⬜</span>
+                                    <td><strong>Rigorous</strong></span>
+                                    <td><code>/ˈrɪɡ.ər.əs/</code></span>
+                                    <td>Thorough and careful</span>
+                                    <td>Meticulous</span>
+                                    <td>Lax</span>
                                 </tr>
                             </tbody>
                         </table>
@@ -407,8 +587,8 @@
                         <p style="margin-bottom:0.5rem"><strong>Marathi Meaning:</strong> एखाद्या माहितीवर पूर्ण विश्वास
                             न ठेवणे</p>
                         <p style="margin-bottom:0.5rem"><strong>Meaning:</strong> To view something with scepticism</p>
-                        <p style="margin-bottom:0.5rem"></p><strong>Example:</strong> "I would take the manufacturer's
-                        efficiency claims with a grain of salt until we have independent test data."</p>
+                        <p style="margin-bottom:0.5rem"><strong>Example:</strong> "I would take the manufacturer's
+                            efficiency claims with a grain of salt until we have independent test data."</p>
                     </div>
 
                     <div class="power-word-section">
@@ -428,7 +608,7 @@
                 </div>
             </div>
 
-            <!-- 5. GRAMMAR HACK - Reporting Verbs Spectrum (SIMPLIFIED) -->
+            <!-- 5. GRAMMAR HACK - Reporting Verbs Spectrum -->
             <div class="grammar-section" id="grammar-card">
                 <h3 style="margin: 0 0 1rem 0;">🧠 5. Grammar Hack: Reporting Verbs for Critical Analysis</h3>
 
@@ -531,6 +711,23 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
+            // ==================== CSRF TOKEN ====================
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+
             // ==================== ACTIVITY COMPLETION FUNCTIONS ====================
             function updateProgressCounter() {
                 const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'];
@@ -571,7 +768,6 @@
                     completeBtn.disabled = true;
                     completeBtn.textContent = '✓ Completed';
                     completeBtn.style.animation = 'none';
-                    completeBtn.style.background = '#94a3b8';
                 }
 
                 updateProgressCounter();
@@ -612,6 +808,549 @@
                     quizAnswers: { q1: 'challenge', q2: 'counter' },
                     vocabularyWords: ['proponent', 'contend', 'oversight', 'generalisability', 'rigorous'],
                     powerWord: 'rigorous'
+                });
+            }
+
+            // ==================== LISTENING ACTIVITY WITH AI EVALUATION ====================
+            const listeningAudio = document.getElementById('listeningAudio');
+            const listeningTextSection = document.getElementById('listeningTextSection');
+            const postAudioContent = document.getElementById('postAudioContent');
+            const completeListeningBtn = document.getElementById('completeListeningBtn');
+            const listeningQuizFeedbackDiv = document.getElementById('listeningQuizFeedback');
+            const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
+
+            // New elements for script validation
+            const analysisScript = document.getElementById('analysisScript');
+            const checkScriptBtn = document.getElementById('checkScriptBtn');
+            const scriptFeedbackDiv = document.getElementById('scriptFeedback');
+            const overallFeedbackDiv = document.getElementById('listeningOverallFeedback');
+            const teachingTipDiv = document.getElementById('listeningTeachingTip');
+            const scriptAttemptCounterSpan = document.querySelector('#scriptAttemptCounter span');
+            const recordingSection = document.getElementById('recordingSection');
+            const listenRecordBtn = document.getElementById('listeningRecordBtn');
+            const listenStopBtn = document.getElementById('listeningStopBtn');
+            const listenPlaybackCard = document.getElementById('listeningPlaybackCard');
+            const listenPlaybackAudio = document.getElementById('listeningPlayback');
+            const comparisonSection = document.getElementById('comparisonSection');
+            const yesComparisonBtn = document.getElementById('yesComparisonBtn');
+            const noComparisonBtn = document.getElementById('noComparisonBtn');
+            const comparisonFeedbackDiv = document.getElementById('comparisonFeedback');
+
+            // State variables
+            let masterAudioFinished = false;
+            let listeningQuizCompleted = false;
+            let attemptCount = 0;
+            let maxAttempts = 5;
+            let showCorrectAnswerTriggered = false;
+            let scriptValid = false;
+            let listeningRecorded = false;
+            let listeningConfirmed = false;
+            let listeningQuizAnswers = { q1: null, q2: null };
+
+            // Analytical language keywords for validation
+            const analyticalKeywords = [
+                'however', 'nevertheless', 'on balance', 'while', 'although', 'though',
+                'in practice', 'it can be argued', 'there is evidence', 'critics contend',
+                'proponents argue', 'the evidence suggests', 'one might question',
+                'a reasonable counter-position', 'the report contends'
+            ];
+
+            function updateScriptAttemptDisplay() {
+                const remaining = maxAttempts - attemptCount;
+                if (scriptAttemptCounterSpan) scriptAttemptCounterSpan.innerText = remaining;
+                if (attemptCount >= maxAttempts && checkScriptBtn) {
+                    checkScriptBtn.disabled = true;
+                    checkScriptBtn.textContent = '🔒 No attempts left';
+                }
+            }
+
+            function showCorrectAnswer() {
+                if (showCorrectAnswerTriggered) return;
+                showCorrectAnswerTriggered = true;
+
+                const correctAnswerHtml = `
+                    <div class="correct-answer-box">
+                        <h4>📚 Sample Critical Analysis Script:</h4>
+                        <p><strong>Example 1:</strong> "The report contends that renewable energy investment is timely and necessary. However, one might question whether the cost projections are sufficiently conservative. Nevertheless, the overall argument remains persuasive."</p>
+                        <p><strong>Example 2:</strong> "While the study presents compelling evidence, the sample size limits its generalisability. On balance, the findings are significant but require further validation."</p>
+                        <hr style="margin: 0.75rem 0;">
+                        <p><strong>🎯 Key Analytical Language to Include:</strong><br>
+                        • however, nevertheless, on balance, while, although<br>
+                        • The report contends, critics argue, there is evidence to suggest<br>
+                        • one might question, it can be argued, in practice<br>
+                        • a reasonable counter-position could be advanced</p>
+                        <p style="margin-top: 0.5rem; color: #6d28d9;"><strong>💡 Tip:</strong> Use balanced language that shows evaluation, not just reporting!</p>
+                    </div>
+                `;
+                overallFeedbackDiv.insertAdjacentHTML('afterend', correctAnswerHtml);
+            }
+
+            // Fallback validation function
+            function fallbackScriptValidation(scriptText) {
+                const lowerText = scriptText.toLowerCase();
+                let foundKeywords = [];
+
+                for (let keyword of analyticalKeywords) {
+                    if (lowerText.includes(keyword)) {
+                        foundKeywords.push(keyword);
+                    }
+                }
+
+                // Remove duplicates
+                foundKeywords = [...new Set(foundKeywords)];
+                const wordCount = scriptText.split(/\s+/).length;
+
+                if (foundKeywords.length >= 2 && wordCount >= 20) {
+                    return { correct: true, foundCount: foundKeywords.length, feedback: "Excellent! Your script uses good analytical language!" };
+                } else if (foundKeywords.length >= 1 && wordCount >= 15) {
+                    return { correct: false, foundCount: foundKeywords.length, feedback: `Good start! You used ${foundKeywords.length} analytical term(s). Try to add more variety.` };
+                } else if (wordCount >= 15) {
+                    return { correct: false, foundCount: 0, feedback: "Your script needs more analytical language. Add words like 'however', 'nevertheless', 'on balance'." };
+                } else {
+                    return { correct: false, foundCount: 0, feedback: "Your script is too short. Write 2-3 complete sentences (minimum 20 words)." };
+                }
+            }
+
+            async function evaluateScript() {
+                const scriptText = analysisScript?.value.trim() || '';
+
+                if (!scriptText) {
+                    overallFeedbackDiv.innerHTML = '<div class="listening-overall-feedback yellow">⚠️ Please write your critical analysis script before checking.</div>';
+                    return;
+                }
+
+                if (attemptCount >= maxAttempts) {
+                    overallFeedbackDiv.innerHTML = '<div class="listening-overall-feedback red">🔒 You have used all 5 attempts. Please review the sample below.</div>';
+                    showCorrectAnswer();
+                    scriptValid = true;
+                    if (recordingSection) recordingSection.style.display = 'block';
+                    if (listenRecordBtn) {
+                        listenRecordBtn.disabled = false;
+                        listenRecordBtn.textContent = '🎙️ Start Recording';
+                    }
+                    return;
+                }
+
+                if (checkScriptBtn) {
+                    checkScriptBtn.disabled = true;
+                    checkScriptBtn.textContent = '⏳ Evaluating...';
+                }
+
+                const wordCount = scriptText.split(/\s+/).length;
+                if (wordCount < 15) {
+                    overallFeedbackDiv.innerHTML = `<div class="listening-overall-feedback yellow">⚠️ Please write at least 15-20 words (2-3 sentences). You wrote ${wordCount} words.</div>`;
+                    if (checkScriptBtn) {
+                        checkScriptBtn.disabled = false;
+                        checkScriptBtn.textContent = '✓ Check My Script';
+                    }
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/learning/ai/evaluate/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken
+                        },
+                        body: JSON.stringify({
+                            text: scriptText,
+                            task_type: 'critical_analysis_script',
+                            day_number: 20,
+                            level: 'intermediate',
+                            system_prompt: `You are an encouraging English teacher evaluating a critical analysis script.
+
+STUDENT'S SCRIPT: "${scriptText}"
+
+REQUIRED ELEMENTS for critical analysis:
+1. Use of analytical transition words (however, nevertheless, on balance, while, although)
+2. Balanced evaluation (showing both strengths and limitations)
+3. Professional, measured tone
+4. Minimum 2-3 sentences
+
+ACCEPTABLE FORMATS:
+- "X argues that... However, one might question Y... Nevertheless, Z..."
+- "While the evidence supports A, the limitations include B. On balance, C..."
+- "The report contends X. There is evidence to suggest Y. In practice, Z..."
+
+OUTPUT ONLY JSON:
+{
+"correct": true/false,
+"feedback": "Short encouraging feedback (max 30 words)",
+"suggestion": "Improvement tip if needed (max 20 words)",
+"teaching_tip": "One sentence about critical analysis"
+}`
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const isCorrect = data.correct === true;
+
+                        attemptCount++;
+                        updateScriptAttemptDisplay();
+
+                        if (isCorrect) {
+                            scriptFeedbackDiv.innerHTML = `✅ ${data.feedback || 'Great job! Your script uses good analytical language!'}`;
+                            scriptFeedbackDiv.className = 'listening-feedback-item correct';
+                            overallFeedbackDiv.innerHTML = `<div class="listening-overall-feedback green">🎉 EXCELLENT! Your script is correct! You can now record.</div>`;
+                            scriptValid = true;
+                            if (recordingSection) recordingSection.style.display = 'block';
+                            if (listenRecordBtn) {
+                                listenRecordBtn.disabled = false;
+                                listenRecordBtn.textContent = '🎙️ Start Recording';
+                            }
+                            teachingTipDiv.style.display = 'none';
+                        } else {
+                            scriptFeedbackDiv.innerHTML = `📚 ${data.feedback || 'Good effort!'}<br>💡 ${data.suggestion || 'Add more analytical language like "however", "nevertheless", or "on balance".'}`;
+                            scriptFeedbackDiv.className = 'listening-feedback-item incorrect';
+                            overallFeedbackDiv.innerHTML = `<div class="listening-overall-feedback yellow">📊 ${maxAttempts - attemptCount} attempt(s) remaining. ${data.feedback || 'Review and try again.'}</div>`;
+                            teachingTipDiv.innerHTML = data.teaching_tip || '💡 Critical analysis requires balanced evaluation. Show both strengths and limitations.';
+                            teachingTipDiv.style.display = 'block';
+                            scriptValid = false;
+                        }
+
+                        scriptFeedbackDiv.style.display = 'block';
+
+                        if (attemptCount >= maxAttempts && !scriptValid) {
+                            showCorrectAnswer();
+                            scriptValid = true;
+                            if (recordingSection) recordingSection.style.display = 'block';
+                            if (listenRecordBtn) {
+                                listenRecordBtn.disabled = false;
+                                listenRecordBtn.textContent = '🎙️ Start Recording';
+                            }
+                        }
+                    } else {
+                        throw new Error('AI response invalid');
+                    }
+                } catch (error) {
+                    console.error('AI Error:', error);
+                    // Fallback validation
+                    const fallbackResult = fallbackScriptValidation(scriptText);
+                    attemptCount++;
+                    updateScriptAttemptDisplay();
+
+                    if (fallbackResult.correct) {
+                        scriptFeedbackDiv.innerHTML = `✅ ${fallbackResult.feedback}`;
+                        scriptFeedbackDiv.className = 'listening-feedback-item correct';
+                        overallFeedbackDiv.innerHTML = `<div class="listening-overall-feedback green">🎉 EXCELLENT! Your script is correct! You can now record.</div>`;
+                        scriptValid = true;
+                        if (recordingSection) recordingSection.style.display = 'block';
+                        if (listenRecordBtn) {
+                            listenRecordBtn.disabled = false;
+                            listenRecordBtn.textContent = '🎙️ Start Recording';
+                        }
+                        teachingTipDiv.style.display = 'none';
+                    } else {
+                        scriptFeedbackDiv.innerHTML = `📚 ${fallbackResult.feedback}<br>💡 Include words like "however", "nevertheless", or "on balance" in your analysis.`;
+                        scriptFeedbackDiv.className = 'listening-feedback-item incorrect';
+                        overallFeedbackDiv.innerHTML = `<div class="listening-overall-feedback yellow">📊 Found ${fallbackResult.foundCount} analytical terms. ${maxAttempts - attemptCount} attempt(s) remaining.</div>`;
+                        teachingTipDiv.innerHTML = '💡 Critical analysis uses balanced language: acknowledge strengths AND limitations.';
+                        teachingTipDiv.style.display = 'block';
+                        scriptValid = false;
+                    }
+                    scriptFeedbackDiv.style.display = 'block';
+
+                    if (attemptCount >= maxAttempts && !scriptValid) {
+                        showCorrectAnswer();
+                        scriptValid = true;
+                        if (recordingSection) recordingSection.style.display = 'block';
+                        if (listenRecordBtn) {
+                            listenRecordBtn.disabled = false;
+                            listenRecordBtn.textContent = '🎙️ Start Recording';
+                        }
+                    }
+                }
+
+                if (checkScriptBtn) {
+                    checkScriptBtn.disabled = false;
+                    checkScriptBtn.textContent = '✓ Check My Script';
+                }
+            }
+
+            // Audio ended event
+            if (listeningAudio && listeningTextSection && postAudioContent) {
+                listeningAudio.addEventListener('ended', function () {
+                    if (!masterAudioFinished) {
+                        masterAudioFinished = true;
+                        listeningTextSection.style.display = 'block';
+                        postAudioContent.style.display = 'block';
+                    }
+                });
+            }
+
+            // Recording functionality
+            let listeningMediaRecorder, listeningChunks = [], listeningIsRecording = false;
+
+            if (listenRecordBtn) {
+                listenRecordBtn.addEventListener('click', async function () {
+                    if (!scriptValid && attemptCount < maxAttempts && !showCorrectAnswerTriggered) {
+                        alert('Please get your script validated first! Click "Check My Script" button.');
+                        return;
+                    }
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        listeningMediaRecorder = new MediaRecorder(stream);
+                        listeningChunks = [];
+                        listeningMediaRecorder.ondataavailable = e => listeningChunks.push(e.data);
+                        listeningMediaRecorder.onstop = () => {
+                            const blob = new Blob(listeningChunks, { type: 'audio/webm' });
+                            if (listenPlaybackAudio) listenPlaybackAudio.src = URL.createObjectURL(blob);
+                            if (listenPlaybackCard) listenPlaybackCard.style.display = 'block';
+                            if (comparisonSection) comparisonSection.style.display = 'block';
+                            listeningRecorded = true;
+                            stream.getTracks().forEach(t => t.stop());
+                        };
+                        listeningMediaRecorder.start();
+                        listeningIsRecording = true;
+                        listenRecordBtn.style.display = 'none';
+                        if (listenStopBtn) listenStopBtn.style.display = 'inline-flex';
+                    } catch (e) {
+                        console.error('Microphone error');
+                        alert('Please allow microphone access.');
+                    }
+                });
+            }
+
+            if (listenStopBtn) {
+                listenStopBtn.addEventListener('click', function () {
+                    if (listeningMediaRecorder && listeningIsRecording) {
+                        listeningMediaRecorder.stop();
+                        listeningIsRecording = false;
+                        listenRecordBtn.style.display = 'inline-flex';
+                        listenStopBtn.style.display = 'none';
+                    }
+                });
+            }
+
+            if (yesComparisonBtn) {
+                yesComparisonBtn.addEventListener('click', function () {
+                    listeningConfirmed = true;
+                    if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #22c55e;">✅ Great! Recording confirmed.</span>';
+                    updateListeningCompleteButton();
+                });
+            }
+
+            if (noComparisonBtn) {
+                noComparisonBtn.addEventListener('click', function () {
+                    comparisonFeedbackDiv.innerHTML = '<span style="color: #dc2626;">⚠️ Please record again clearly.</span>';
+                    listeningRecorded = false;
+                    listeningConfirmed = false;
+                    listenPlaybackCard.style.display = 'none';
+                    comparisonSection.style.display = 'none';
+                    listenRecordBtn.style.display = 'inline-flex';
+                    listenStopBtn.style.display = 'none';
+                    updateListeningCompleteButton();
+                });
+            }
+
+            // Quiz validation
+            document.querySelectorAll('input[name="q1"]').forEach(r => r.addEventListener('change', e => {
+                listeningQuizAnswers.q1 = e.target.value;
+                updateListeningCompleteButton();
+            }));
+
+            document.querySelectorAll('input[name="q2"]').forEach(r => r.addEventListener('change', e => {
+                listeningQuizAnswers.q2 = e.target.value;
+                updateListeningCompleteButton();
+            }));
+
+            if (checkListeningWorkBtn) {
+                checkListeningWorkBtn.addEventListener('click', () => {
+                    if (!listeningQuizAnswers.q1 || !listeningQuizAnswers.q2) {
+                        listeningQuizFeedbackDiv.innerHTML = '⚠️ Please answer both questions.';
+                        listeningQuizFeedbackDiv.className = 'quiz-feedback warning';
+                        listeningQuizFeedbackDiv.style.display = 'block';
+                        return;
+                    }
+                    let q1Correct = (listeningQuizAnswers.q1 === 'challenge');
+                    let q2Correct = (listeningQuizAnswers.q2 === 'counter');
+
+                    if (q1Correct && q2Correct) {
+                        listeningQuizFeedbackDiv.innerHTML = '✅ Correct! Great job!';
+                        listeningQuizFeedbackDiv.className = 'quiz-feedback correct';
+                        listeningQuizCompleted = true;
+                    } else {
+                        let errorMsg = '';
+                        if (!q1Correct) errorMsg += '❌ "However" introduces a question or challenge, not agreement.<br>';
+                        if (!q2Correct) errorMsg += '❌ "Nevertheless" introduces a counter-argument, not a summary.';
+                        listeningQuizFeedbackDiv.innerHTML = errorMsg;
+                        listeningQuizFeedbackDiv.className = 'quiz-feedback incorrect';
+                        listeningQuizCompleted = false;
+                    }
+                    listeningQuizFeedbackDiv.style.display = 'block';
+                    updateListeningCompleteButton();
+                });
+            }
+
+            function updateListeningCompleteButton() {
+                if (completeListeningBtn) {
+                    const canComplete = masterAudioFinished && scriptValid && listeningRecorded && listeningConfirmed && listeningQuizCompleted;
+                    completeListeningBtn.disabled = !canComplete;
+                    if (canComplete) {
+                        completeListeningBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
+                        completeListeningBtn.style.background = '#22c55e';
+                    } else {
+                        completeListeningBtn.style.animation = 'none';
+                    }
+                }
+            }
+
+            if (completeListeningBtn) {
+                completeListeningBtn.addEventListener('click', function () {
+                    if (!masterAudioFinished) {
+                        alert('⚠️ Please listen to the complete audio first.');
+                        return;
+                    }
+                    if (!scriptValid) {
+                        alert('⚠️ Please write and validate your critical analysis script first.');
+                        return;
+                    }
+                    if (!listeningRecorded) {
+                        alert('⚠️ Please record your voice.');
+                        return;
+                    }
+                    if (!listeningConfirmed) {
+                        alert('⚠️ Please confirm your recording.');
+                        return;
+                    }
+                    if (!listeningQuizCompleted) {
+                        alert('⚠️ Please answer the quiz questions correctly.');
+                        return;
+                    }
+                    if (typeof markActivityComplete === 'function') {
+                        markActivityComplete('listening', 'chk3');
+                    }
+                });
+                completeListeningBtn.disabled = true;
+            }
+
+            // Add event listener to check button
+            if (checkScriptBtn) {
+                checkScriptBtn.addEventListener('click', evaluateScript);
+            }
+
+            // Initialize attempts counter
+            updateScriptAttemptDisplay();
+
+            // ==================== SPEAKING ACTIVITY ====================
+            let speakingRecorded = false;
+            const speakRecordBtn = document.getElementById('speakingRecordBtn');
+            const speakStopBtn = document.getElementById('speakingStopBtn');
+            const speakPlaybackArea = document.getElementById('speakingPlaybackArea');
+            const speakPlaybackAudio = document.getElementById('speakingPlayback');
+            const speakRecordingStatus = document.getElementById('speakingRecordingStatus');
+            const speakTimer = document.getElementById('speakingTimer');
+            let completeSpeakingBtn = document.getElementById('completeSpeakingBtn');
+
+            let speakingMessageDiv = document.getElementById('speakingMessage');
+            if (!speakingMessageDiv) {
+                speakingMessageDiv = document.createElement('div');
+                speakingMessageDiv.id = 'speakingMessage';
+                speakingMessageDiv.style.cssText = 'margin-top: 0.75rem; padding: 0.6rem 1rem; border-radius: 10px; font-size: 0.85rem; display: none;';
+                const recordingSectionSp = document.querySelector('.speaking-recording-section');
+                if (recordingSectionSp) recordingSectionSp.appendChild(speakingMessageDiv);
+            }
+
+            let speakMediaRecorder, speakChunks = [], speakIsRecording = false;
+            let timerInterval, seconds = 0;
+            const MIN_RECORDING_SECONDS = 10;
+
+            function updateTimerDisplay() {
+                if (speakTimer) {
+                    const mins = Math.floor(seconds / 60);
+                    const secs = seconds % 60;
+                    speakTimer.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                }
+            }
+
+            function showSpeakingMessage(message, isError = true) {
+                if (!speakingMessageDiv) return;
+                speakingMessageDiv.style.display = 'block';
+                speakingMessageDiv.style.background = isError ? '#fee2e2' : '#d1fae5';
+                speakingMessageDiv.style.color = isError ? '#991b1b' : '#065f46';
+                speakingMessageDiv.style.borderLeft = isError ? '4px solid #ef4444' : '4px solid #22c55e';
+                speakingMessageDiv.innerHTML = isError ? `⚠️ ${message}` : `✅ ${message}`;
+                setTimeout(() => { if (speakingMessageDiv) speakingMessageDiv.style.display = 'none'; }, 5000);
+            }
+
+            if (speakRecordBtn) {
+                speakRecordBtn.addEventListener('click', async function () {
+                    if (speakingMessageDiv) speakingMessageDiv.style.display = 'none';
+                    if (speakPlaybackArea) speakPlaybackArea.style.display = 'none';
+
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        speakMediaRecorder = new MediaRecorder(stream);
+                        speakChunks = [];
+                        seconds = 0;
+                        updateTimerDisplay();
+                        if (speakRecordingStatus) speakRecordingStatus.style.display = 'flex';
+                        if (timerInterval) clearInterval(timerInterval);
+                        timerInterval = setInterval(() => { seconds++; updateTimerDisplay(); }, 1000);
+
+                        speakMediaRecorder.ondataavailable = e => speakChunks.push(e.data);
+
+                        speakMediaRecorder.onstop = () => {
+                            clearInterval(timerInterval);
+
+                            if (seconds < MIN_RECORDING_SECONDS) {
+                                speakChunks = [];
+                                speakingRecorded = false;
+                                if (completeSpeakingBtn) completeSpeakingBtn.disabled = true;
+                                showSpeakingMessage(`Recording too short! Please speak for at least ${MIN_RECORDING_SECONDS} seconds.`, true);
+                                stream.getTracks().forEach(t => t.stop());
+                                return;
+                            }
+
+                            const blob = new Blob(speakChunks, { type: 'audio/webm' });
+                            if (speakPlaybackAudio) speakPlaybackAudio.src = URL.createObjectURL(blob);
+                            if (speakPlaybackArea) speakPlaybackArea.style.display = 'block';
+                            speakingRecorded = true;
+                            stream.getTracks().forEach(t => t.stop());
+                            if (completeSpeakingBtn) {
+                                completeSpeakingBtn.disabled = false;
+                                completeSpeakingBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
+                                completeSpeakingBtn.style.background = '#22c55e';
+                                completeSpeakingBtn.style.cursor = 'pointer';
+                            }
+                        };
+
+                        speakMediaRecorder.start();
+                        speakIsRecording = true;
+                        speakRecordBtn.style.display = 'none';
+                        if (speakStopBtn) speakStopBtn.style.display = 'inline-flex';
+
+                    } catch (e) {
+                        showSpeakingMessage('Microphone access required.', true);
+                    }
+                });
+            }
+
+            if (speakStopBtn) {
+                speakStopBtn.addEventListener('click', function () {
+                    if (speakMediaRecorder && speakIsRecording) {
+                        speakMediaRecorder.stop();
+                        speakIsRecording = false;
+                        speakRecordBtn.style.display = 'inline-flex';
+                        speakStopBtn.style.display = 'none';
+                        if (speakRecordingStatus) speakRecordingStatus.style.display = 'none';
+                    }
+                });
+            }
+
+            if (completeSpeakingBtn) {
+                const newSpeakingBtn = completeSpeakingBtn.cloneNode(true);
+                completeSpeakingBtn.parentNode.replaceChild(newSpeakingBtn, completeSpeakingBtn);
+
+                completeSpeakingBtn = document.getElementById('completeSpeakingBtn');
+
+                completeSpeakingBtn.addEventListener('click', function () {
+                    if (!this.disabled && speakingRecorded) {
+                        markActivityComplete('speaking', 'chk4');
+                    }
                 });
             }
 
@@ -680,451 +1419,13 @@
                 });
             }
 
-            // ==================== HELPER FUNCTIONS ====================
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-
+            // ==================== READING ACTIVITY ====================
             function isGibberish(text) {
                 const gibberishPatterns = /^[0-9\W]+$|^[asdfghjkl;'zxcvbnm,.\/]+$/i;
                 const meaningfulWords = text.split(/\s+/).filter(w => w.length > 2);
                 return gibberishPatterns.test(text) || meaningfulWords.length === 0;
             }
 
-            // ==================== LISTENING ACTIVITY ====================
-            const listeningAudio = document.getElementById('listeningAudio');
-            const listeningTextSection = document.getElementById('listeningTextSection');
-            const postAudioContent = document.getElementById('postAudioContent');
-            const listeningAIFeedbackDiv = document.getElementById('listeningAIFeedback');
-            let completeListeningBtn = document.getElementById('completeListeningBtn');
-            const listeningQuizFeedbackDiv = document.getElementById('listeningQuizFeedback');
-            const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
-
-            const originalRecordBtn = document.getElementById('listeningRecordBtn');
-            const originalStopBtn = document.getElementById('listeningStopBtn');
-            const originalPlaybackCard = document.getElementById('listeningPlaybackCard');
-            if (originalRecordBtn) originalRecordBtn.style.display = 'none';
-            if (originalStopBtn) originalStopBtn.style.display = 'none';
-            if (originalPlaybackCard) originalPlaybackCard.style.display = 'none';
-
-            let masterAudioFinished = false;
-            let aiEvaluationDone = false;
-            let listeningQuizCorrect = false;
-            let attemptCount = 0;
-            let maxAttempts = 3;
-            let currentRecognition = null;
-
-            if (listeningAudio && listeningTextSection && postAudioContent) {
-                listeningAudio.addEventListener('ended', function () {
-                    if (!masterAudioFinished) {
-                        masterAudioFinished = true;
-                        listeningTextSection.style.display = 'block';
-                        postAudioContent.style.display = 'block';
-                    }
-                });
-            }
-
-            const speakBtn = document.createElement('button');
-            speakBtn.textContent = '🎤 Click to Speak';
-            speakBtn.style.cssText = 'width: auto; margin-top: 0.3rem; padding: 0.4rem 0.8rem; font-size: 0.8rem; background: #22c55e; color: white; border: none; border-radius: 30px; cursor: pointer;';
-
-            const listeningContainer = document.querySelector('#postAudioContent .combined-recording-section');
-            if (listeningContainer) listeningContainer.appendChild(speakBtn);
-
-            const attemptDisplay = document.createElement('div');
-            attemptDisplay.style.cssText = 'font-size: 0.8rem; color: #64748b; margin-top: 0.5rem; text-align: center;';
-            attemptDisplay.innerHTML = `📊 Attempts remaining: <span id="attemptCount">${maxAttempts}</span>`;
-            if (listeningContainer) listeningContainer.appendChild(attemptDisplay);
-
-            function updateAttemptDisplay() {
-                const remaining = maxAttempts - attemptCount;
-                const span = document.getElementById('attemptCount');
-                if (span) span.innerText = remaining;
-
-                if (attemptCount >= maxAttempts) {
-                    speakBtn.disabled = true;
-                    speakBtn.style.background = '#94a3b8';
-                    speakBtn.style.cursor = 'not-allowed';
-                    speakBtn.textContent = '🔒 No attempts left';
-                    listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback warning">📚 No attempts left. Please answer the quiz correctly to complete this activity.</div>';
-                    listeningAIFeedbackDiv.style.display = 'block';
-                }
-            }
-
-            function updateListeningCompleteButton() {
-                console.log('DEBUG - updateListeningCompleteButton');
-                console.log('  masterAudioFinished:', masterAudioFinished);
-                console.log('  aiEvaluationDone:', aiEvaluationDone);
-                console.log('  listeningQuizCorrect:', listeningQuizCorrect);
-
-                if (completeListeningBtn) {
-                    const hasFeedbackOrAttemptsExhausted = aiEvaluationDone || (attemptCount >= maxAttempts);
-                    const canComplete = masterAudioFinished && listeningQuizCorrect && hasFeedbackOrAttemptsExhausted;
-
-                    console.log('  canComplete:', canComplete);
-
-                    completeListeningBtn.disabled = !canComplete;
-                    if (canComplete) {
-                        completeListeningBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
-                        completeListeningBtn.style.background = '#22c55e';
-                        completeListeningBtn.style.opacity = '1';
-                        completeListeningBtn.style.cursor = 'pointer';
-                    } else {
-                        completeListeningBtn.style.animation = 'none';
-                        completeListeningBtn.style.background = '#22c55e';  // ← KEEP GREEN
-                        completeListeningBtn.style.opacity = '0.5';
-                    }
-                }
-            }
-
-            function getTeachingFeedback(transcript) {
-                const lowerText = transcript.toLowerCase();
-                const hasHowever = lowerText.includes('however');
-                const hasNevertheless = lowerText.includes('nevertheless');
-                const wordCount = transcript.split(' ').length;
-
-                if (hasHowever && hasNevertheless && wordCount > 30) {
-                    return { correct: true, feedback: "🎉 EXCELLENT! You used both 'However' and 'Nevertheless' correctly!", suggestion: "🌟 Keep practicing this style!" };
-                } else if (hasHowever && wordCount > 25) {
-                    return { correct: false, feedback: "👍 GOOD WORK! You used 'However' correctly.", suggestion: "📚 Add 'Nevertheless' for counter-argument." };
-                } else if (hasNevertheless && wordCount > 25) {
-                    return { correct: false, feedback: "👍 GOOD WORK! You used 'Nevertheless' correctly.", suggestion: "📚 Add 'However' to introduce a challenge first." };
-                } else if (wordCount > 20) {
-                    return { correct: false, feedback: "📚 GOOD EFFORT!", suggestion: "Use 'However' for challenge, 'Nevertheless' for counter-argument." };
-                } else {
-                    return { correct: false, feedback: "🎤 KEEP PRACTICING!", suggestion: "Speak for at least 20-30 seconds." };
-                }
-            }
-
-            function getTeachingPrompt(transcript) {
-                return `You are an encouraging English teacher. Student's speech: "${transcript}"
-        Return JSON: {"correct": true/false, "feedback": "short text", "suggestion": "tip"}`;
-            }
-
-            speakBtn.onclick = () => {
-                if (attemptCount >= maxAttempts) {
-                    listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback warning">📚 No attempts left.</div>';
-                    listeningAIFeedbackDiv.style.display = 'block';
-                    return;
-                }
-
-                if (!masterAudioFinished) {
-                    listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">⚠️ Please listen to the audio first.</div>';
-                    listeningAIFeedbackDiv.style.display = 'block';
-                    return;
-                }
-
-                if (currentRecognition) {
-                    currentRecognition.stop();
-                    currentRecognition = null;
-                    speakBtn.textContent = '🎤 Click to Speak';
-                    speakBtn.style.background = '#22c55e';
-                    return;
-                }
-
-                if (!('webkitSpeechRecognition' in window)) {
-                    listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">⚠️ Speech recognition not supported.</div>';
-                    listeningAIFeedbackDiv.style.display = 'block';
-                    return;
-                }
-
-                const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-                const recognition = new SpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = true;
-                recognition.lang = 'en-US';
-
-                currentRecognition = recognition;
-                speakBtn.textContent = '🔴 Listening... Click to Stop';
-                speakBtn.style.background = '#ef4444';
-
-                let fullTranscript = '';
-
-                recognition.onstart = () => {
-                    listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback processing">🎤 Listening... Speak clearly!</div>';
-                    listeningAIFeedbackDiv.style.display = 'block';
-                };
-
-                recognition.onresult = (event) => {
-                    for (let i = event.resultIndex; i < event.results.length; i++) {
-                        if (event.results[i].isFinal) {
-                            fullTranscript += event.results[i][0].transcript + ' ';
-                        }
-                    }
-                };
-
-                recognition.onend = async () => {
-                    currentRecognition = null;
-                    speakBtn.textContent = '🎤 Click to Speak';
-                    speakBtn.style.background = '#22c55e';
-
-                    attemptCount++;
-                    updateAttemptDisplay();
-
-                    if (fullTranscript.trim().length < 15) {
-                        listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">⚠️ No speech detected or too short.</div>';
-                        listeningAIFeedbackDiv.style.display = 'block';
-                        aiEvaluationDone = true;  // ADD THIS LINE
-                        updateListeningCompleteButton();
-                        return;
-                    }
-
-                    listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback processing">⏳ Evaluating...</div>';
-
-                    try {
-                        const response = await fetch('/learning/ai/evaluate/', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
-                            body: JSON.stringify({
-                                text: fullTranscript,
-                                task_type: 'listening_critical_analysis',
-                                day_number: 20,
-                                level: 'intermediate',
-                                system_prompt: getTeachingPrompt(fullTranscript)
-                            })
-                        });
-
-                        const result = await response.json();
-
-                        if (result.success) {
-                            aiEvaluationDone = true;
-                            listeningAIFeedbackDiv.innerHTML = `
-                        <div class="ai-feedback ${result.correct ? 'correct' : 'incorrect'}">
-                            <strong>${result.feedback || 'Evaluation complete'}</strong><br><br>
-                            <strong>💡 Tip:</strong> ${result.suggestion || 'Keep practicing!'}
-                        </div>
-                    `;
-                        } else {
-                            throw new Error('AI failed');
-                        }
-                    } catch (error) {
-                        const teaching = getTeachingFeedback(fullTranscript);
-                        aiEvaluationDone = true;
-                        listeningAIFeedbackDiv.innerHTML = `
-                    <div class="ai-feedback ${teaching.correct ? 'correct' : 'incorrect'}">
-                        <strong>${teaching.feedback}</strong><br><br>
-                        <strong>💡 ${teaching.suggestion}</strong>
-                    </div>
-                `;
-                    }
-
-                    listeningAIFeedbackDiv.style.display = 'block';
-                    updateListeningCompleteButton();
-                };
-
-                recognition.onerror = (event) => {
-                    currentRecognition = null;
-                    speakBtn.textContent = '🎤 Click to Speak';
-                    speakBtn.style.background = '#22c55e';
-                    listeningAIFeedbackDiv.innerHTML = `<div class="ai-feedback incorrect">⚠️ Error: ${event.error}</div>`;
-                    listeningAIFeedbackDiv.style.display = 'block';
-                    aiEvaluationDone = true;  // ADD THIS LINE
-                    updateListeningCompleteButton();  // ADD THIS LINE
-                };
-
-                recognition.start();
-            };
-
-            function checkListeningQuiz() {
-                const q1Selected = document.querySelector('input[name="q1"]:checked');
-                const q2Selected = document.querySelector('input[name="q2"]:checked');
-
-                if (!q1Selected || !q2Selected) {
-                    listeningQuizFeedbackDiv.innerHTML = '⚠️ Please answer both questions.';
-                    listeningQuizFeedbackDiv.className = 'quiz-feedback warning';
-                    listeningQuizFeedbackDiv.style.display = 'block';
-                    listeningQuizCorrect = false;
-                    updateListeningCompleteButton();
-                    return;
-                }
-
-                const q1Correct = q1Selected.value === 'challenge';
-                const q2Correct = q2Selected.value === 'counter';
-
-                if (q1Correct && q2Correct) {
-                    listeningQuizFeedbackDiv.innerHTML = '✅ Great job! Both answers are correct.';
-                    listeningQuizFeedbackDiv.className = 'quiz-feedback correct';
-                    listeningQuizCorrect = true;
-                } else {
-                    let feedbackHtml = '';
-                    if (!q1Correct) feedbackHtml += '"However" introduces a challenge.<br>';
-                    if (!q2Correct) feedbackHtml += '"Nevertheless" introduces a counter-argument.<br>';
-                    listeningQuizFeedbackDiv.innerHTML = feedbackHtml;
-                    listeningQuizFeedbackDiv.className = 'quiz-feedback incorrect';
-                    listeningQuizCorrect = false;
-                }
-
-                listeningQuizFeedbackDiv.style.display = 'block';
-                updateListeningCompleteButton();
-            }
-
-            if (checkListeningWorkBtn) {
-                checkListeningWorkBtn.addEventListener('click', checkListeningQuiz);
-            }
-
-            if (completeListeningBtn) {
-                const newListeningBtn = completeListeningBtn.cloneNode(true);
-                completeListeningBtn.parentNode.replaceChild(newListeningBtn, completeListeningBtn);
-
-                completeListeningBtn = document.getElementById('completeListeningBtn');
-
-                completeListeningBtn.addEventListener('click', function () {
-                    if (!this.disabled) {
-                        markActivityComplete('listening', 'chk3');
-                    }
-                });
-
-                updateListeningCompleteButton();
-            }
-
-            // Initialize button state
-            setTimeout(() => {
-                updateListeningCompleteButton();
-            }, 200);
-
-            // ==================== SPEAKING ACTIVITY ====================
-            let speakingRecorded = false;
-            const speakRecordBtn = document.getElementById('speakingRecordBtn');
-            const speakStopBtn = document.getElementById('speakingStopBtn');
-            const speakPlaybackArea = document.getElementById('speakingPlaybackArea');
-            const speakPlaybackAudio = document.getElementById('speakingPlayback');
-            const speakRecordingStatus = document.getElementById('speakingRecordingStatus');
-            const speakTimer = document.getElementById('speakingTimer');
-            let completeSpeakingBtn = document.getElementById('completeSpeakingBtn');
-
-            let speakingMessageDiv = document.getElementById('speakingMessage');
-            if (!speakingMessageDiv) {
-                speakingMessageDiv = document.createElement('div');
-                speakingMessageDiv.id = 'speakingMessage';
-                speakingMessageDiv.style.cssText = 'margin-top: 0.75rem; padding: 0.6rem 1rem; border-radius: 10px; font-size: 0.85rem; display: none;';
-                const recordingSection = document.querySelector('.speaking-recording-section');
-                if (recordingSection) recordingSection.appendChild(speakingMessageDiv);
-            }
-
-            let speakMediaRecorder, speakChunks = [], speakIsRecording = false;
-            let timerInterval, seconds = 0;
-            const MIN_RECORDING_SECONDS = 10;
-
-            function updateTimerDisplay() {
-                if (speakTimer) {
-                    const mins = Math.floor(seconds / 60);
-                    const secs = seconds % 60;
-                    speakTimer.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-                }
-            }
-
-            function showSpeakingMessage(message, isError = true) {
-                if (!speakingMessageDiv) return;
-                speakingMessageDiv.style.display = 'block';
-                speakingMessageDiv.style.background = isError ? '#fee2e2' : '#d1fae5';
-                speakingMessageDiv.style.color = isError ? '#991b1b' : '#065f46';
-                speakingMessageDiv.style.borderLeft = isError ? '4px solid #ef4444' : '4px solid #22c55e';
-                speakingMessageDiv.innerHTML = isError ? `⚠️ ${message}` : `✅ ${message}`;
-                setTimeout(() => { if (speakingMessageDiv) speakingMessageDiv.style.display = 'none'; }, 5000);
-            }
-
-            if (speakRecordBtn) {
-                speakRecordBtn.addEventListener('click', async function () {
-                    if (speakingMessageDiv) speakingMessageDiv.style.display = 'none';
-                    if (speakPlaybackArea) speakPlaybackArea.style.display = 'none';
-
-                    try {
-                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                        speakMediaRecorder = new MediaRecorder(stream);
-                        speakChunks = [];
-                        seconds = 0;
-                        updateTimerDisplay();
-                        if (speakRecordingStatus) speakRecordingStatus.style.display = 'flex';
-                        if (timerInterval) clearInterval(timerInterval);
-                        timerInterval = setInterval(() => { seconds++; updateTimerDisplay(); }, 1000);
-
-                        speakMediaRecorder.ondataavailable = e => speakChunks.push(e.data);
-
-                        speakMediaRecorder.onstop = () => {
-                            clearInterval(timerInterval);
-
-                            if (seconds < MIN_RECORDING_SECONDS) {
-                                speakChunks = [];
-                                speakingRecorded = false;
-                                if (completeSpeakingBtn) completeSpeakingBtn.disabled = true;
-                                showSpeakingMessage(`Recording too short! Please speak for at least ${MIN_RECORDING_SECONDS} seconds.`, true);
-                                stream.getTracks().forEach(t => t.stop());
-                                return;
-                            }
-
-                            const blob = new Blob(speakChunks, { type: 'audio/webm' });
-                            if (speakPlaybackAudio) speakPlaybackAudio.src = URL.createObjectURL(blob);
-                            if (speakPlaybackArea) speakPlaybackArea.style.display = 'block';
-                            speakingRecorded = true;
-                            stream.getTracks().forEach(t => t.stop());
-                            if (completeSpeakingBtn) {
-                                completeSpeakingBtn.disabled = false;
-                                completeSpeakingBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
-                                completeSpeakingBtn.style.background = '#22c55e';  // ADD THIS
-                                completeSpeakingBtn.style.cursor = 'pointer';
-                            }
-                        };
-
-                        speakMediaRecorder.start();
-                        speakIsRecording = true;
-                        speakRecordBtn.style.display = 'none';
-                        if (speakStopBtn) speakStopBtn.style.display = 'inline-flex';
-
-                    } catch (e) {
-                        showSpeakingMessage('Microphone access required.', true);
-                    }
-                });
-            }
-
-            if (speakStopBtn) {
-                speakStopBtn.addEventListener('click', function () {
-                    if (speakMediaRecorder && speakIsRecording) {
-                        speakMediaRecorder.stop();
-                        speakIsRecording = false;
-                        speakRecordBtn.style.display = 'inline-flex';
-                        speakStopBtn.style.display = 'none';
-                        if (speakRecordingStatus) speakRecordingStatus.style.display = 'none';
-                    }
-                });
-            }
-
-            if (completeSpeakingBtn) {
-                const newSpeakingBtn = completeSpeakingBtn.cloneNode(true);
-                completeSpeakingBtn.parentNode.replaceChild(newSpeakingBtn, completeSpeakingBtn);
-
-                completeSpeakingBtn = document.getElementById('completeSpeakingBtn');
-
-                completeSpeakingBtn.addEventListener('click', function () {
-                    if (!this.disabled && speakingRecorded) {
-                        markActivityComplete('speaking', 'chk4');
-                    }
-                });
-            }
-            function checkReadingCompletion() {
-                const allCorrect = readingResults.thesis && readingResults.supporting && readingResults.counter && readingResults.conclusion && readingResults.evaluation && readingResults.ownSentence;
-                console.log('Reading results:', readingResults);
-                console.log('All correct?', allCorrect);
-                const completeBtn = document.getElementById('completeReadingBtn');
-                if (completeBtn) {
-                    completeBtn.disabled = !allCorrect;
-                    completeBtn.style.animation = allCorrect ? 'pulse 1.5s ease-in-out infinite' : 'none';
-                    if (allCorrect) {
-                        completeBtn.style.background = '#22c55e';
-                    }
-                }
-            }
-            // ==================== READING ACTIVITY ====================
             const readingCorrectAnswers = {
                 thesis: "the government's infrastructure policy is ambitious but has faced criticism.",
                 supporting: "the scale of investment is necessary to address decades of underinvestment.",
@@ -1152,7 +1453,6 @@
 
             function validateReadingAnswer(answer, correctAnswer, alternatives, hint, isEvaluation = false) {
                 let trimmed = answer.trim().toLowerCase();
-                // Remove trailing period for consistent comparison
                 trimmed = trimmed.replace(/\.$/, '');
 
                 let correctAnswerClean = correctAnswer.toLowerCase().replace(/\.$/, '');
@@ -1177,13 +1477,6 @@
                 const feedbackDiv = document.getElementById(feedbackId);
                 const hintDiv = document.getElementById(hintId);
 
-                console.log('=== VALIDATION DEBUG ===');
-                console.log('User answer:', answer);
-                console.log('Trimmed:', trimmed);
-                console.log('Correct answer clean:', correctAnswerClean);
-                console.log('feedbackId:', feedbackId);
-                console.log('feedbackDiv exists?', feedbackDiv !== null);
-
                 if (feedbackDiv) {
                     feedbackDiv.innerHTML = '';
                     feedbackDiv.className = 'fix-feedback';
@@ -1195,7 +1488,6 @@
                     hintDiv.className = 'feedback-hint';
                 }
 
-                // CASE 1: EMPTY FIELD
                 if (trimmed === "") {
                     if (feedbackDiv) {
                         feedbackDiv.innerHTML = '⚠️ Please write your answer.';
@@ -1204,7 +1496,6 @@
                     return false;
                 }
 
-                // CASE 2: GIBBERISH
                 if (isGibberish(trimmed)) {
                     if (feedbackDiv) {
                         feedbackDiv.innerHTML = '❌ Please write a meaningful sentence.';
@@ -1217,7 +1508,6 @@
                     return false;
                 }
 
-                // CASE 3: TOO SHORT
                 const wordCount = trimmed.split(/\s+/).length;
                 if (wordCount < 4) {
                     if (feedbackDiv) {
@@ -1231,7 +1521,6 @@
                     return false;
                 }
 
-                // CASE 4: EVALUATION TASK
                 if (isEvaluation) {
                     const evaluationWords = ['while', 'however', 'on balance', 'in practice', 'suggest', 'argued', 'criticism'];
                     let foundCount = evaluationWords.filter(w => trimmed.includes(w)).length;
@@ -1264,9 +1553,7 @@
                     }
                 }
 
-                // CASE 5: EXACT MATCH WITH CORRECT ANSWER (with or without period)
                 if (trimmed === correctAnswerClean) {
-                    console.log('✅ EXACT MATCH with correct answer!');
                     if (feedbackDiv) {
                         feedbackDiv.innerHTML = '✅ Correct! Well done.';
                         feedbackDiv.className = 'fix-feedback correct';
@@ -1274,11 +1561,9 @@
                     return true;
                 }
 
-                // CASE 6: EXACT MATCH WITH ALTERNATIVES
                 for (let alt of alternatives) {
                     let altClean = alt.toLowerCase().replace(/\.$/, '');
                     if (trimmed === altClean) {
-                        console.log('✅ EXACT MATCH with alternative!');
                         if (feedbackDiv) {
                             feedbackDiv.innerHTML = '✅ Correct! Well done.';
                             feedbackDiv.className = 'fix-feedback correct';
@@ -1287,7 +1572,6 @@
                     }
                 }
 
-                // CASE 7: CALCULATE WORD MATCH PERCENTAGE
                 const correctWords = correctAnswerClean.split(/\s+/);
                 const userWords = trimmed.split(/\s+/);
                 let matchCount = 0;
@@ -1298,29 +1582,19 @@
                 }
                 const matchPercentage = (matchCount / correctWords.length) * 100;
 
-                console.log(`Match percentage: ${matchPercentage}%`);
-
-                // CASE 8: 80%+ MATCH - CORRECT
                 if (matchPercentage >= 80) {
-                    console.log('✅ Match percentage >= 80% - CORRECT');
                     if (feedbackDiv) {
                         feedbackDiv.innerHTML = '✅ Correct! Well done.';
                         feedbackDiv.className = 'fix-feedback correct';
                     }
                     return true;
-                }
-                // CASE 9: 30-79% MATCH - ALMOST CORRECT
-                else if (matchPercentage >= 30) {
-                    console.log('⚠️ Match percentage 30-79% - ALMOST CORRECT');
+                } else if (matchPercentage >= 30) {
                     if (feedbackDiv) {
                         feedbackDiv.innerHTML = `⚠️ Almost correct! The correct answer is: "${correctAnswerClean}"`;
                         feedbackDiv.className = 'fix-feedback warning';
                     }
                     return false;
-                }
-                // CASE 10: <30% MATCH - WRONG
-                else {
-                    console.log('❌ Match percentage < 30% - WRONG');
+                } else {
                     if (feedbackDiv) {
                         feedbackDiv.innerHTML = '❌ Please write the correct answer.';
                         feedbackDiv.className = 'fix-feedback incorrect';
@@ -1332,6 +1606,7 @@
                     return false;
                 }
             }
+
             function validateOwnSentence(answer) {
                 const trimmed = answer.trim();
                 const feedbackDiv = document.getElementById('readingOwnSentenceFeedback');
@@ -1348,7 +1623,6 @@
                     hintDiv.className = 'feedback-hint';
                 }
 
-                // CASE 1: EMPTY FIELD
                 if (trimmed === "") {
                     feedbackDiv.innerHTML = '⚠️ Please write your sentence.';
                     feedbackDiv.className = 'fix-feedback empty';
@@ -1359,7 +1633,6 @@
                     return false;
                 }
 
-                // CASE 2: GIBBERISH (random letters/numbers)
                 if (isGibberish(trimmed)) {
                     feedbackDiv.innerHTML = '❌ Please write a meaningful sentence.';
                     feedbackDiv.className = 'fix-feedback incorrect';
@@ -1370,7 +1643,6 @@
                     return false;
                 }
 
-                // CASE 3: TOO SHORT (less than 5 words)
                 const wordCount = trimmed.split(/\s+/).length;
                 if (wordCount < 5) {
                     feedbackDiv.innerHTML = '⚠️ Please write a complete sentence.';
@@ -1382,7 +1654,6 @@
                     return false;
                 }
 
-                // CASE 4: CHECK FOR EVALUATION WORDS
                 const hasWhileOrAlthough = trimmed.toLowerCase().includes('while') || trimmed.toLowerCase().includes('although');
 
                 if (hasWhileOrAlthough && wordCount >= 5) {
@@ -1457,27 +1728,44 @@
                 });
             }
 
-            // ==================== GRAMMAR ACTIVITY ====================
+            // ==================== GRAMMAR ACTIVITY WITH CAPITALIZATION & PERIOD VALIDATION ====================
             const grammarCorrectAnswers = {
-                neutral: "the study states that renewable energy is cost-effective",
-                agree: "the study demonstrates that renewable energy is cost-effective",
-                question: "the study claims that renewable energy is cost-effective"
+                neutral: "The study states that renewable energy is cost-effective.",
+                agree: "The study demonstrates that renewable energy is cost-effective.",
+                question: "The study claims that renewable energy is cost-effective."
             };
 
             const grammarAlternatives = {
-                neutral: ["the study states that renewable energy is cost-effective", "the study notes that renewable energy is cost-effective"],
-                agree: ["the study demonstrates that renewable energy is cost-effective", "the study shows that renewable energy is cost-effective"],
-                question: ["the study claims that renewable energy is cost-effective", "the study asserts that renewable energy is cost-effective"]
+                neutral: [
+                    "The study states that renewable energy is cost-effective.",
+                    "The study notes that renewable energy is cost-effective.",
+                    "The study describes that renewable energy is cost-effective.",
+                    "The study presents that renewable energy is cost-effective."
+                ],
+                agree: [
+                    "The study demonstrates that renewable energy is cost-effective.",
+                    "The study shows that renewable energy is cost-effective.",
+                    "The study confirms that renewable energy is cost-effective.",
+                    "The study proves that renewable energy is cost-effective."
+                ],
+                question: [
+                    "The study claims that renewable energy is cost-effective.",
+                    "The study asserts that renewable energy is cost-effective.",
+                    "The study contends that renewable energy is cost-effective.",
+                    "The study maintains that renewable energy is cost-effective."
+                ]
             };
+
             const grammarHintsMap = {
-                neutral: "💡 Use a neutral reporting verb: states, notes, describes, presents",
-                agree: "💡 Use an agreeing reporting verb: demonstrates, shows, confirms, proves",
-                question: "💡 Use a questioning reporting verb: claims, asserts, contends, suggests"
+                neutral: "💡 Use a neutral reporting verb: states, notes, describes, presents. Start with capital letter and end with period.",
+                agree: "💡 Use an agreeing reporting verb: demonstrates, shows, confirms, proves. Start with capital letter and end with period.",
+                question: "💡 Use a questioning reporting verb: claims, asserts, contends, suggests. Start with capital letter and end with period."
             };
+
             let grammarResults = { neutral: false, agree: false, question: false };
 
             function validateGrammarAnswer(answer, correctAnswer, alternatives, type) {
-                const trimmed = answer.trim().toLowerCase();
+                let trimmed = answer.trim();
                 const feedbackDiv = document.getElementById(`grammar${type.charAt(0).toUpperCase() + type.slice(1)}Feedback`);
                 const hintDiv = document.getElementById(`grammar${type.charAt(0).toUpperCase() + type.slice(1)}Hint`);
 
@@ -1492,31 +1780,78 @@
                     hintDiv.className = 'feedback-hint';
                 }
 
-                // CASE 1: EMPTY FIELD - NO HINT
+                // CASE 1: EMPTY FIELD
                 if (trimmed === "") {
                     if (feedbackDiv) {
                         feedbackDiv.innerHTML = '⚠️ Please write your sentence.';
                         feedbackDiv.className = 'fix-feedback empty';
                     }
-                    // ❌ NO HINT for empty field
+                    if (hintDiv) {
+                        hintDiv.innerHTML = grammarHintsMap[type];
+                        hintDiv.style.display = 'block';
+                    }
                     return false;
                 }
 
-                // CASE 2: GIBBERISH - NO HINT (just error message)
+                // CASE 2: CHECK CAPITALIZATION (must start with capital letter)
+                const firstChar = trimmed.charAt(0);
+                if (firstChar !== firstChar.toUpperCase() || firstChar === firstChar.toLowerCase()) {
+                    if (feedbackDiv) {
+                        feedbackDiv.innerHTML = '❌ Sentence must start with a capital letter.';
+                        feedbackDiv.className = 'fix-feedback incorrect';
+                    }
+                    if (hintDiv) {
+                        hintDiv.innerHTML = grammarHintsMap[type];
+                        hintDiv.style.display = 'block';
+                    }
+                    return false;
+                }
+
+                // CASE 3: CHECK PERIOD AT THE END
+                if (!trimmed.endsWith('.')) {
+                    if (feedbackDiv) {
+                        feedbackDiv.innerHTML = '❌ Sentence must end with a period (.)';
+                        feedbackDiv.className = 'fix-feedback incorrect';
+                    }
+                    if (hintDiv) {
+                        hintDiv.innerHTML = grammarHintsMap[type];
+                        hintDiv.style.display = 'block';
+                    }
+                    return false;
+                }
+
+                // CASE 4: CHECK ONLY ONE PERIOD (should be only at the end)
+                const periodCount = (trimmed.match(/\./g) || []).length;
+                if (periodCount !== 1) {
+                    if (feedbackDiv) {
+                        feedbackDiv.innerHTML = '❌ Write only ONE sentence (one period only at the end).';
+                        feedbackDiv.className = 'fix-feedback incorrect';
+                    }
+                    if (hintDiv) {
+                        hintDiv.innerHTML = grammarHintsMap[type];
+                        hintDiv.style.display = 'block';
+                    }
+                    return false;
+                }
+
+                // CASE 5: CHECK GIBBERISH (random letters/numbers)
                 if (isGibberish(trimmed)) {
                     if (feedbackDiv) {
                         feedbackDiv.innerHTML = '❌ Please write a meaningful sentence.';
                         feedbackDiv.className = 'fix-feedback incorrect';
                     }
-                    // ❌ NO HINT for gibberish
+                    if (hintDiv) {
+                        hintDiv.innerHTML = grammarHintsMap[type];
+                        hintDiv.style.display = 'block';
+                    }
                     return false;
                 }
 
-                // CASE 3: TOO SHORT - SHOW HINT
-                const wordCount = trimmed.split(/\s+/).length;
-                if (wordCount < 5) {
+                // CASE 6: CHECK WORD COUNT (minimum 6 words after removing period)
+                const words = trimmed.replace(/\.$/, '').split(/\s+/);
+                if (words.length < 6) {
                     if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '⚠️ Please write a complete sentence.';
+                        feedbackDiv.innerHTML = `⚠️ Sentence too short (${words.length} words). Minimum 6 words required.`;
                         feedbackDiv.className = 'fix-feedback warning';
                     }
                     if (hintDiv) {
@@ -1526,9 +1861,46 @@
                     return false;
                 }
 
-                // CASE 4: EXACT MATCH WITH CORRECT ANSWER (check this first!)
-                let correctAnswerClean = correctAnswer.toLowerCase().replace(/\.$/, '');
-                if (trimmed === correctAnswerClean) {
+                // CASE 7: CHECK FOR MEANINGFUL WORDS (at least 3 real words)
+                let realWordCount = 0;
+                words.forEach(word => {
+                    const cleanWord = word.toLowerCase().replace(/[.,!?;:]/g, '');
+                    if (cleanWord.length >= 3 && /[aeiou]/i.test(cleanWord)) realWordCount++;
+                    else if (['a', 'an', 'the', 'and', 'or', 'but', 'so', 'for', 'nor', 'yet', 'in', 'on', 'at', 'to', 'of', 'by', 'with'].includes(cleanWord)) realWordCount++;
+                });
+                if (realWordCount < 4) {
+                    if (feedbackDiv) {
+                        feedbackDiv.innerHTML = '❌ Please write a meaningful sentence with proper words.';
+                        feedbackDiv.className = 'fix-feedback incorrect';
+                    }
+                    if (hintDiv) {
+                        hintDiv.innerHTML = grammarHintsMap[type];
+                        hintDiv.style.display = 'block';
+                    }
+                    return false;
+                }
+
+                // CASE 8: CHECK FOR REQUIRED CONTENT (must contain "renewable energy" or related)
+                const lowerTrimmed = trimmed.toLowerCase();
+                const hasRenewable = lowerTrimmed.includes('renewable') || lowerTrimmed.includes('solar') || lowerTrimmed.includes('wind') || lowerTrimmed.includes('energy');
+                if (!hasRenewable) {
+                    if (feedbackDiv) {
+                        feedbackDiv.innerHTML = '❌ Your sentence must be about renewable energy or cost-effectiveness.';
+                        feedbackDiv.className = 'fix-feedback incorrect';
+                    }
+                    if (hintDiv) {
+                        hintDiv.innerHTML = grammarHintsMap[type];
+                        hintDiv.style.display = 'block';
+                    }
+                    return false;
+                }
+
+                // Remove period for comparison
+                const trimmedNoPeriod = trimmed.replace(/\.$/, '').toLowerCase();
+                const correctAnswerClean = correctAnswer.toLowerCase().replace(/\.$/, '');
+
+                // CASE 9: EXACT MATCH WITH CORRECT ANSWER
+                if (trimmedNoPeriod === correctAnswerClean) {
                     if (feedbackDiv) {
                         feedbackDiv.innerHTML = '✅ Correct! Well done.';
                         feedbackDiv.className = 'fix-feedback correct';
@@ -1536,10 +1908,10 @@
                     return true;
                 }
 
-                // CASE 5: EXACT MATCH WITH ALTERNATIVES
+                // CASE 10: EXACT MATCH WITH ALTERNATIVES
                 for (let alt of alternatives) {
                     let altClean = alt.toLowerCase().replace(/\.$/, '');
-                    if (trimmed === altClean) {
+                    if (trimmedNoPeriod === altClean) {
                         if (feedbackDiv) {
                             feedbackDiv.innerHTML = '✅ Correct! Well done.';
                             feedbackDiv.className = 'fix-feedback correct';
@@ -1548,9 +1920,26 @@
                     }
                 }
 
-                // CASE 6: CALCULATE MATCH PERCENTAGE
+                // CASE 11: CHECK FOR CORRECT REPORTING VERB
+                let correctVerb = '';
+                if (type === 'neutral') correctVerb = 'states|notes|describes|presents|identifies|outlines';
+                else if (type === 'agree') correctVerb = 'demonstrates|shows|confirms|proves|establishes|substantiates';
+                else if (type === 'question') correctVerb = 'claims|asserts|contends|maintains|suggests';
+
+                const verbPattern = new RegExp(`\\b(${correctVerb})\\b`, 'i');
+                const hasCorrectVerb = verbPattern.test(trimmedNoPeriod);
+
+                if (hasCorrectVerb && trimmedNoPeriod.includes('renewable energy is cost-effective')) {
+                    if (feedbackDiv) {
+                        feedbackDiv.innerHTML = '✅ Correct! Well done.';
+                        feedbackDiv.className = 'fix-feedback correct';
+                    }
+                    return true;
+                }
+
+                // CASE 12: PARTIAL MATCH - CALCULATE MATCH PERCENTAGE
                 const correctWords = correctAnswerClean.split(/\s+/);
-                const userWords = trimmed.split(/\s+/);
+                const userWords = trimmedNoPeriod.split(/\s+/);
                 let matchCount = 0;
                 for (let uw of userWords) {
                     if (correctWords.includes(uw) && uw.length > 2) {
@@ -1559,7 +1948,7 @@
                 }
                 const matchPercentage = (matchCount / correctWords.length) * 100;
 
-                // CASE 7: 80-100% MATCH - CORRECT
+                // CASE 13: 80%+ MATCH - CORRECT
                 if (matchPercentage >= 80) {
                     if (feedbackDiv) {
                         feedbackDiv.innerHTML = '✅ Correct! Well done.';
@@ -1567,19 +1956,22 @@
                     }
                     return true;
                 }
-                // CASE 8: 30-79% MATCH - ALMOST CORRECT (show correct answer, NO HINT)
+                // CASE 14: 30-79% MATCH - ALMOST CORRECT
                 else if (matchPercentage >= 30) {
                     if (feedbackDiv) {
-                        feedbackDiv.innerHTML = `⚠️ Almost correct! The correct answer is: "${correctAnswerClean}"`;
+                        feedbackDiv.innerHTML = `⚠️ Almost correct! The correct answer is: "${correctAnswer}"`;
                         feedbackDiv.className = 'fix-feedback warning';
                     }
-                    // ❌ NO HINT for almost correct - showing correct answer instead
+                    if (hintDiv) {
+                        hintDiv.innerHTML = grammarHintsMap[type];
+                        hintDiv.style.display = 'block';
+                    }
                     return false;
                 }
-                // CASE 9: 0-29% MATCH - WRONG - SHOW HINT
+                // CASE 15: WRONG ANSWER
                 else {
                     if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '❌ Please write the correct sentence.';
+                        feedbackDiv.innerHTML = `❌ Incorrect. The correct answer is: "${correctAnswer}"`;
                         feedbackDiv.className = 'fix-feedback incorrect';
                     }
                     if (hintDiv) {
@@ -1591,56 +1983,104 @@
             }
 
             function checkAllGrammarAnswers() {
-                grammarResults.neutral = validateGrammarAnswer(document.getElementById('grammarNeutral')?.value || '', grammarCorrectAnswers.neutral, grammarAlternatives.neutral, 'neutral');
-                grammarResults.agree = validateGrammarAnswer(document.getElementById('grammarAgree')?.value || '', grammarCorrectAnswers.agree, grammarAlternatives.agree, 'agree');
-                grammarResults.question = validateGrammarAnswer(document.getElementById('grammarQuestion')?.value || '', grammarCorrectAnswers.question, grammarAlternatives.question, 'question');
+                grammarResults.neutral = validateGrammarAnswer(
+                    document.getElementById('grammarNeutral')?.value || '',
+                    grammarCorrectAnswers.neutral,
+                    grammarAlternatives.neutral,
+                    'neutral'
+                );
+                grammarResults.agree = validateGrammarAnswer(
+                    document.getElementById('grammarAgree')?.value || '',
+                    grammarCorrectAnswers.agree,
+                    grammarAlternatives.agree,
+                    'agree'
+                );
+                grammarResults.question = validateGrammarAnswer(
+                    document.getElementById('grammarQuestion')?.value || '',
+                    grammarCorrectAnswers.question,
+                    grammarAlternatives.question,
+                    'question'
+                );
 
                 const allCorrect = grammarResults.neutral && grammarResults.agree && grammarResults.question;
                 const grammarFeedbackDiv = document.getElementById('grammarFeedback');
                 const completeGrammarBtn = document.getElementById('completeGrammarBtn');
 
                 if (grammarFeedbackDiv) {
-                    grammarFeedbackDiv.innerHTML = allCorrect ?
-                        '<div style="background:#d1fae5;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">🎉 EXCELLENT! All reporting verbs correct!</p></div>' :
-                        `<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ Score: ${[grammarResults.neutral, grammarResults.agree, grammarResults.question].filter(Boolean).length}/3 correct.</p></div>`;
-                    grammarFeedbackDiv.style.display = 'block';
+                    if (allCorrect) {
+                        grammarFeedbackDiv.innerHTML = '<div style="background:#d1fae5;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">🎉 EXCELLENT! All 3 reporting verbs are correct!</p></div>';
+                        grammarFeedbackDiv.className = 'quiz-feedback correct';
+                        grammarFeedbackDiv.style.display = 'block';
+                    } else {
+                        const completedCount = [grammarResults.neutral, grammarResults.agree, grammarResults.question].filter(Boolean).length;
+                        grammarFeedbackDiv.innerHTML = `<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ Score: ${completedCount}/3 correct. Review the feedback above and try again.</p></div>`;
+                        grammarFeedbackDiv.className = 'quiz-feedback warning';
+                        grammarFeedbackDiv.style.display = 'block';
+                    }
                 }
 
                 if (completeGrammarBtn) {
                     completeGrammarBtn.disabled = !allCorrect;
-                    completeGrammarBtn.style.animation = allCorrect ? 'pulse 1.5s ease-in-out infinite' : 'none';
+                    if (allCorrect) {
+                        completeGrammarBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
+                        completeGrammarBtn.style.background = '#22c55e';
+                    } else {
+                        completeGrammarBtn.style.animation = 'none';
+                    }
                 }
             }
 
             function resetGrammarAnswers() {
                 ['Neutral', 'Agree', 'Question'].forEach(field => {
-                    const input = document.getElementById(`grammar${field}`);
-                    const feedback = document.getElementById(`grammar${field}Feedback`);
-                    if (input) input.value = '';
-                    if (feedback) { feedback.innerHTML = ''; feedback.style.display = 'none'; }
+                    const inputField = document.getElementById(`grammar${field}`);
+                    const feedbackDiv = document.getElementById(`grammar${field}Feedback`);
+                    const hintDiv = document.getElementById(`grammar${field}Hint`);
+                    if (inputField) inputField.value = '';
+                    if (feedbackDiv) {
+                        feedbackDiv.innerHTML = '';
+                        feedbackDiv.className = 'fix-feedback';
+                        feedbackDiv.style.display = 'none';
+                    }
+                    if (hintDiv) {
+                        hintDiv.innerHTML = '';
+                        hintDiv.style.display = 'none';
+                    }
                 });
+                const grammarFeedbackDiv = document.getElementById('grammarFeedback');
+                if (grammarFeedbackDiv) {
+                    grammarFeedbackDiv.innerHTML = '';
+                    grammarFeedbackDiv.style.display = 'none';
+                }
                 grammarResults = { neutral: false, agree: false, question: false };
-                document.getElementById('grammarFeedback').innerHTML = '';
-                document.getElementById('grammarFeedback').style.display = 'none';
-                document.getElementById('completeGrammarBtn').disabled = true;
+                const completeGrammarBtn = document.getElementById('completeGrammarBtn');
+                if (completeGrammarBtn) {
+                    completeGrammarBtn.disabled = true;
+                    completeGrammarBtn.style.animation = 'none';
+                }
             }
 
+            // Add event listeners
             document.getElementById('checkGrammarBtn')?.addEventListener('click', checkAllGrammarAnswers);
             document.getElementById('resetGrammarBtn')?.addEventListener('click', resetGrammarAnswers);
 
-            const grammarCompleteBtn = document.getElementById('completeGrammarBtn');
-            if (grammarCompleteBtn) {
-                const newGrammarBtn = grammarCompleteBtn.cloneNode(true);
-                grammarCompleteBtn.parentNode.replaceChild(newGrammarBtn, grammarCompleteBtn);
+            // Add event listener for complete button
+            const completeGrammarBtnElement = document.getElementById('completeGrammarBtn');
+            if (completeGrammarBtnElement) {
+                const newGrammarBtn = completeGrammarBtnElement.cloneNode(true);
+                completeGrammarBtnElement.parentNode.replaceChild(newGrammarBtn, completeGrammarBtnElement);
 
                 document.getElementById('completeGrammarBtn').addEventListener('click', function () {
                     if (!this.disabled && grammarResults.neutral && grammarResults.agree && grammarResults.question) {
-                        markActivityComplete('grammar', 'chk2');
+                        if (typeof markActivityComplete === 'function') {
+                            markActivityComplete('grammar', 'chk2');
+                        }
                     } else {
-                        alert('⚠️ Please correct all 3 grammar sentences first.');
+                        alert('⚠️ Please correct all 3 grammar sentences first. Make sure each sentence starts with a capital letter and ends with a period (.)');
                     }
                 });
             }
+
+
 
             // ==================== INITIAL PROGRESS UPDATE ====================
             setTimeout(updateProgressCounter, 100);

@@ -1,0 +1,1562 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 10: Advanced Writing — The Structured Argument | English for Engineers - Advanced</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'learning/css/advance.css' %}">
+    <style>
+        .argument-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .claim-badge { background: #d1fae5; color: #065f46; }
+        .evidence-badge { background: #e0e7ff; color: #3730a3; }
+        .counter-badge { background: #fef3c7; color: #92400e; }
+        .conclusion-badge { background: #f3e8ff; color: #6d28d9; }
+        .argument-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #8b5cf6;
+        }
+        .bridge-metaphor {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border-radius: 16px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .bridge-part {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            margin: 0.2rem;
+            background: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .speaking-feedback {
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin: 0.5rem 0;
+        }
+        .speaking-feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #22c55e;
+        }
+        .speaking-feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #dc2626;
+        }
+        .speaking-feedback.processing {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lesson-container">
+        <div class="lesson-hero">
+            <div class="hero-content">
+                <div class="day-badge">
+                    <span class="advanced-badge">Advanced Level</span> Day 10 • Week 2 • Advanced
+                </div>
+                <h1 class="hero-title">📝 ADVANCED WRITING — THE STRUCTURED ARGUMENT</h1>
+                <div class="power-line">💡 "An argument without structure is an opinion. Structure makes it a case."</div>
+            </div>
+        </div>
+
+        <!-- TIP OF THE DAY BANNER -->
+        <div class="tip-of-day-banner">
+            <div class="tip-icon">💡</div>
+            <div class="tip-content">
+                <h3>TIP OF THE DAY</h3>
+                <p>Advanced argumentation always anticipates the counterargument. Before you state your conclusion, write down the strongest objection to your position — then answer it. This technique, called <strong>'pre-empting the counterargument'</strong>, makes your writing bulletproof and demonstrates intellectual maturity to your reader.</p>
+            </div>
+        </div>
+
+        <div class="activities-grid">
+
+            <!-- 1. LISTENING ACTIVITY WITH AI -->
+            <div class="activity-card" id="listening-card">
+                <div class="card-header listening">
+                    <h2>🎧 1. Listening Activity · Argument Structure</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Focus</span></div>
+                        </div>
+                        <div class="task-content">Argument Structure — claim, evidence, reasoning, and conclusion.</div>
+                    </div>
+
+                    <audio id="listeningAudio" controls style="width: 100%; margin: 0.5rem 0;">
+                        <source src="{% static 'learning/audio/Advanced/day10.mp3' %}" type="audio/mpeg">
+                    </audio>
+
+                    <div id="listeningTextSection" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Listening Text</span></div>
+                            </div>
+                            <div class="task-content" style="font-style: italic; background: #fef9e3; line-height: 1.8;">
+                                "Solar energy is the optimal solution for our workshop. First, the region receives over 2,800 hours of sunlight annually — well above the national average. Second, the upfront cost is offset within four years based on current electricity rates. Third, maintenance requirements are demonstrably lower than diesel alternatives. The conclusion is clear: solar is the economically and environmentally superior choice."
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="postAudioListeningContent" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Task: Map the Argument</span></div>
+                            </div>
+                            <div class="task-content">
+                                Identify: Claim, Evidence 1, Evidence 2, Evidence 3, and Conclusion.
+                            </div>
+                        </div>
+
+                        <!-- Claim -->
+                        <div class="argument-section">
+                            <label style="font-weight: 700;">📌 1. CLAIM (Main position)</label>
+                            <input type="text" id="claim" class="grammar-input" placeholder="Write the claim from the script..." style="width: 100%; margin-top: 0.5rem;">
+                            <div id="claimFeedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <!-- Evidence 1 -->
+                        <div class="argument-section">
+                            <label style="font-weight: 700;">📌 2. EVIDENCE 1</label>
+                            <input type="text" id="evidence1" class="grammar-input" placeholder="First piece of evidence..." style="width: 100%; margin-top: 0.5rem;">
+                            <div id="evidence1Feedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <!-- Evidence 2 -->
+                        <div class="argument-section">
+                            <label style="font-weight: 700;">📌 3. EVIDENCE 2</label>
+                            <input type="text" id="evidence2" class="grammar-input" placeholder="Second piece of evidence..." style="width: 100%; margin-top: 0.5rem;">
+                            <div id="evidence2Feedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <!-- Evidence 3 -->
+                        <div class="argument-section">
+                            <label style="font-weight: 700;">📌 4. EVIDENCE 3</label>
+                            <input type="text" id="evidence3" class="grammar-input" placeholder="Third piece of evidence..." style="width: 100%; margin-top: 0.5rem;">
+                            <div id="evidence3Feedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <!-- Conclusion -->
+                        <div class="argument-section">
+                            <label style="font-weight: 700;">📌 5. CONCLUSION</label>
+                            <input type="text" id="conclusion" class="grammar-input" placeholder="Write the conclusion..." style="width: 100%; margin-top: 0.5rem;">
+                            <div id="conclusionFeedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <button class="btn-outline" id="checkListeningTaskBtn" style="background: #8b5cf6; color: white;">✓ Check My Answers with AI</button>
+                        <div id="listeningAttemptCounter" class="attempt-counter" style="display: none;">📊 Attempts remaining: <span>3</span></div>
+                        <div id="listeningOverallFeedback" style="margin-top: 1rem;"></div>
+
+                        <!-- Quiz Section -->
+                        <div class="quiz-section" style="margin-top: 1rem;">
+                            <p><strong>🧠 Quick Listening Check</strong></p><br>
+                            <div>
+                                <p><strong>1. What is the main claim?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q1" value="expensive"> Solar is expensive</label>
+                                <label class="quiz-option"><input type="radio" name="q1" value="optimal"> Solar is the optimal solution</label>
+                            </div>
+                            <div>
+                                <p><strong>2. How many pieces of evidence does the speaker provide?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q2" value="two"> Two</label>
+                                <label class="quiz-option"><input type="radio" name="q2" value="three"> Three</label>
+                            </div>
+                            <div id="listeningQuizFeedback" class="quiz-feedback" style="display: none;"></div>
+                            <button class="btn-outline" id="checkListeningWorkBtn" style="margin-top: 0.5rem;">✓ Check Answers</button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeListeningBtn" data-checklist="chk1" disabled>✓ Mark Listening as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SPEAKING ACTIVITY - Speech to Text -->
+            <div class="activity-card" id="speaking-card">
+                <div class="card-header speaking">
+                    <h2>🗣️ 2. Speaking Activity · Structured Argument Delivery</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Task</span></div>
+                        </div>
+                        <div class="task-content">
+                            Deliver a <strong>50-60 second spoken argument</strong> using the five-part framework. Your speech will be converted to text and evaluated.
+                        </div>
+                    </div>
+
+                    <div class="speaking-sentences-list">
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">1</div>
+                            <div class="sentence-text-content">
+                                <<span class="claim-badge argument-badge">>Claim</span> "I propose that [your position]..."
+                            </div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">2</div>
+                            <div class="sentence-text-content">
+                                <span class="evidence-badge argument-badge">Evidence 1</span> "First, the data shows that..."
+                            </div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">3</div>
+                            <div class="sentence-text-content">
+                                <span class="evidence-badge argument-badge">Evidence 2</span> "Additionally, research indicates that..."
+                            </div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">4</div>
+                            <div class="sentence-text-content">
+                                <span class="counter-badge argument-badge">Counterargument + Rebuttal</span> "One might argue... However, this overlooks..."
+                            </div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">5</div>
+                            <div class="sentence-text-content">
+                                <span class="conclusion-badge argument-badge">Conclusion</span> "Therefore, it is clear that..."
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Speech to Text Section -->
+                    <div class="word-pair-group">
+                        <label style="font-weight: 700;">🎤 Click the button below and speak your argument for 50-60 seconds:</label>
+                        <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+                            <button id="startSpeechBtn" class="speaking-record-btn" style="background: #22c55e;">Speak 50-60 seconds</button>
+                            <button id="stopSpeechBtn" class="speaking-stop-btn" style="display: none;">⏹️ Stop Speaking</button>
+                        </div>
+                        <div id="speechTimerDisplay" class="timer-display" style="display: none; margin: 0.5rem 0;">⏱️ Recording: <span id="speechTimer">00:00</span></div>
+                        <textarea id="speechTranscript" class="writing-textarea" rows="6" placeholder="Your speech will appear here after you stop speaking..." readonly style="background: #f8fafc;"></textarea>
+                        <div id="speechFeedback" class="speaking-feedback" style="display: none;"></div>
+                    </div>
+
+                    <div id="speakingAnswerFeedback" class="writing-feedback" style="display: none;"></div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button class="btn-outline" id="checkSpeakingAnswersBtn" style="background: #8b5cf6; color: white;">✓ Evaluate My Speech</button>
+                        <button class="btn-outline" id="resetSpeakingAnswersBtn">⟳ Reset</button>
+                    </div>
+
+                    <div class="speaking-complete-wrapper" style="margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeSpeakingBtn" data-checklist="chk2" disabled>✓ Mark Speaking as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+           <!-- 3. READING ACTIVITY -->
+<div class="activity-card" id="reading-card">
+    <div class="card-header reading">
+        <h2>📖 3. Reading Activity · The Bridge Metaphor</h2>
+    </div>
+    <div class="card-body">
+        <div class="reading-passage" style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+            <p><strong>Reading Passage:</strong></p>
+            <p style="line-height: 1.8;">A well-structured argument is like a well-built bridge: every component serves a purpose, and the removal of any single element causes the whole structure to weaken. The claim is the span — it crosses from the current situation to the desired conclusion. The evidence is the support pillars — without them, the claim collapses under scrutiny. The reasoning is the material that connects evidence to claim: it explains why the evidence matters. And the conclusion is the landing — it tells the reader exactly where they have arrived and what they should do next. Advanced writers also include a counterargument — not as a concession of weakness, but as a demonstration of intellectual confidence.</p>
+        </div>
+
+        <div class="bridge-metaphor">
+            <strong>🏗️ Bridge = Argument Structure</strong><br><br>
+            <span class="bridge-part">Claim = Span</span> → <span class="bridge-part">Evidence = Pillars</span> → <span class="bridge-part">Conclusion = Landing</span>
+        </div>
+
+        <!-- Q1: Map the metaphor -->
+        <div class="grammar-input-group" style="margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; background: white;">
+            <label style="font-weight: 700;">1. Map the author's metaphor: identify which part of a bridge corresponds to each argumentative element.</label>
+            <textarea id="readingQ1" class="writing-textarea" rows="4" placeholder="Write: Claim = ?, Evidence = ?, Conclusion = ?"></textarea>
+            <div id="readingQ1Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+           
+        </div>
+
+        <!-- Q2: Why counterargument shows confidence -->
+        <div class="grammar-input-group" style="margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; background: white;">
+            <label style="font-weight: 700;">2. Why does the author say including a counterargument is a 'demonstration of intellectual confidence'?</label>
+            <textarea id="readingQ2" class="writing-textarea" rows="3" placeholder="Write your answer here..."></textarea>
+            <div id="readingQ2Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+            <div class="feedback-hint" style="margin-top: 0.3rem; font-size: 0.7rem; color: #64748b;"> Hint: It shows strength, not weakness, by anticipating objections.</div>
+        </div>
+
+        <!-- Q3: Write counterargument -->
+        <div class="grammar-input-group" style="margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; background: white;">
+            <label style="font-weight: 700;">3. Write a one-sentence counterargument to this claim: 'All diploma students should be required to learn advanced English.'</label>
+            <input type="text" id="readingQ3" class="grammar-input" placeholder="Write your counterargument here...">
+            <div id="readingQ3Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+            <div class="feedback-hint" style="margin-top: 0.3rem; font-size: 0.7rem; color: #64748b;">Hint: Start with "Not all students..." or "Some might argue..."</div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+            <button class="btn-outline" id="checkReadingBtn">✓ Check Answers</button>
+            <button class="btn-outline" id="resetReadingBtn">⟳ Reset</button>
+        </div>
+
+        <div id="readingOverallFeedback" class="quiz-feedback" style="display: none;"></div>
+
+        <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+            <button class="complete-activity-btn" id="completeReadingBtn" data-checklist="chk3" disabled>✓ Mark Reading as Complete</button>
+        </div>
+    </div>
+</div>
+
+            <!-- 4. WRITING ACTIVITY - 100 words -->
+            <div class="activity-card" id="writing-card">
+                <div class="card-header vocabulary">
+                    <h2>✍️ 4. Writing Activity · Structured Argument (100 words)</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>📝</span><span>Task</span></div>
+                        </div>
+                        <div class="task-content">
+                            Write a <strong>100-word structured argument</strong> using: <strong>Claim → Evidence 1 → Evidence 2 → Counterargument → Rebuttal → Conclusion</strong>.
+                        </div>
+                    </div>
+
+                    <div class="writing-tip" style="background: #e0f2fe; border-radius: 12px; padding: 0.75rem; margin: 1rem 0;">
+                        <strong>💡 Writing Tip</strong>
+                        <p>Use: "One might argue X, however this overlooks Y." This shows advanced critical thinking.</p>
+                    </div>
+
+                    <textarea id="structuredArgument" class="writing-textarea" rows="8" placeholder="Write your 100-word structured argument here..."></textarea>
+                    
+                    <div id="writingWordCount" style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem; text-align: right;"></div>
+                    <div id="writingAttemptCounter" class="attempt-counter" style="display: none;">📊 Attempts remaining: <span>3</span></div>
+                    <div id="writingFeedback" class="writing-feedback" style="display: none;"></div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button class="btn-outline" id="checkWritingBtn" style="background: #8b5cf6; color: white;">✓ Check Answer</button>
+                        <button class="btn-outline" id="resetWritingBtn">⟳ Reset</button>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeWritingBtn" data-checklist="chk4" disabled>✓ Mark Writing as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. VOCABULARY TABLE -->
+            <div class="activity-card" id="vocabulary-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 5. Vocabulary of the Day</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead><tr><th>🔊</th><th>✅</th><th>Word</th><th>Pronunciation</th><th>Meaning</th><th>Synonym</th><th>Antonym</th></tr></thead>
+                            <tbody>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Premise" data-checkid="check-premise">🔊</button></td><td class="check-cell" id="check-premise">⬜</td><td><strong>Premise</strong></td><td><code>/ˈprem.ɪs/</code></td><td>A statement on which an argument is based</td><td>Assumption</td><td>Conclusion</td></tr>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Rebut" data-checkid="check-rebut">🔊</button></td><td class="check-cell" id="check-rebut">⬜</td><td><strong>Rebut</strong></td><td><code>/rɪˈbʌt/</code></td><td>To argue against with evidence</td><td>Counter</td><td>Concede</td></tr>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Incontestable" data-checkid="check-incontestable">🔊</button></td><td class="check-cell" id="check-incontestable">⬜</td><td><strong>Incontestable</strong></td><td><code>/ˌɪn.kənˈtes.tə.bəl/</code></td><td>Not able to be disputed</td><td>Undeniable</td><td>Debatable</td></tr>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Assert" data-checkid="check-assert">🔊</button></td><td class="check-cell" id="check-assert">⬜</td><td><strong>Assert</strong></td><td><code>/əˈsɜːt/</code></td><td>To state clearly and forcefully</td><td>Declare</td><td>Withdraw</td></tr>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Corroborate" data-checkid="check-corroborate">🔊</button></td><td class="check-cell" id="check-corroborate">⬜</td><td><strong>Corroborate</strong></td><td><code>/kəˈrɒb.ə.reɪt/</code></td><td>To confirm with evidence</td><td>Validate</td><td>Contradict</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="idiom-section">
+                        <div><span>💡</span><span>IDIOM: "STAND YOUR GROUND"</span></div>
+                        <p><strong>Meaning:</strong> Maintain your position under pressure</p>
+                        <p><strong>Example:</strong> "When questioned, the engineer stood her ground and presented the data."</p>
+                    </div>
+
+                    <div class="power-word-section">
+                        <div><span>🔥</span><span>POWER WORD: INCONTESTABLE</span></div>
+                        <p><strong>Meaning:</strong> Not able to be denied or disputed</p>
+                        <p><strong>Usage:</strong> "The results provided incontestable proof of superiority."</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeVocabularyBtn" data-checklist="chk5" disabled>✓ Mark Vocabulary as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. GRAMMAR HACK - Simplified -->
+            <div class="grammar-section" id="grammar-card">
+                <h3>🧠 6. Grammar Hack: Avoid Repetitive 'I'</h3><br>
+                
+                <div class="grammar-info-only">
+                    <p>❌ <strong>Weak:</strong> "I analysed the data. I found anomalies. I reported them."</p><br>
+                    <p>✅ <strong>Strong:</strong> "After analysing the data, anomalies were found and reported."</p><br>
+                    <p><strong>Alternative openers:</strong> 'The analysis revealed...', 'Upon investigation...'</p><br>
+                </div>
+
+                <div class="grammar-rule">
+                    <p><strong>Rewrite to avoid starting with 'I':</strong></p><br>
+                    <p>"I reviewed the results. I noticed a pattern. I recommended a diagnostic."</p>
+                    <input type="text" id="grammarAnswer" class="grammar-input" placeholder="Write your improved sentence...">
+                    <div id="grammarFeedback" class="fix-feedback"></div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="btn-outline" id="checkGrammarBtn">✓ Check Answer</button>
+                    <button class="btn-outline" id="resetGrammarBtn">⟳ Reset</button>
+                </div>
+                <div id="grammarOverallFeedback" class="quiz-feedback"></div>
+                
+                <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                    <button class="complete-activity-btn" id="completeGrammarBtn" data-checklist="chk6" disabled>✓ Mark Grammar as Complete</button>
+                </div>
+            </div>
+
+            <!-- CHECKLIST -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 10 COMPLETION CHECKLIST</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chk1" disabled><label> I mapped the claim-evidence-conclusion structure.</label></li>
+                        <li><input type="checkbox" id="chk2" disabled><label> I delivered a 60-second spoken argument.</label></li>
+                        <li><input type="checkbox" id="chk3" disabled><label> I answered the reading questions correctly.</label></li>
+                        <li><input type="checkbox" id="chk4" disabled><label> I wrote the 100-word structured argument.</label></li>
+                        <li><input type="checkbox" id="chk5" disabled><label> I listened to all vocabulary words.</label></li>
+                        <li><input type="checkbox" id="chk6" disabled><label> I fixed the repetitive 'I' sentence.</label></li>
+                    </ul>
+                    <div style="text-align:right;"><span class="badge" id="progressCounter">0/6 completed</span></div>
+                    <div style="display:flex; justify-content:center; margin-top:1rem;">
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>🏆 Complete Day 10</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+
+            function updateProgressCounter() {
+                const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6'];
+                let completed = 0;
+                checkboxes.forEach(id => {
+                    const cb = document.getElementById(id);
+                    if (cb && cb.checked) completed++;
+                });
+                document.getElementById('progressCounter').innerText = `${completed}/6 completed`;
+                const dayBtn = document.getElementById('dayCompleteBtn');
+                if (dayBtn) {
+                    dayBtn.disabled = (completed !== 6);
+                    dayBtn.style.opacity = (completed === 6) ? '1' : '0.6';
+                }
+            }
+
+            window.markActivityComplete = function (activityId, checklistId) {
+                document.getElementById(checklistId).checked = true;
+                const completeBtn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+                if (completeBtn) {
+                    completeBtn.disabled = true;
+                    completeBtn.textContent = '✓ Completed';
+                }
+                updateProgressCounter();
+            };
+
+// ==================== LISTENING ACTIVITY WITH IMPROVED FLEXIBLE VALIDATION ====================
+const listeningAudio = document.getElementById('listeningAudio');
+const listeningTextSection = document.getElementById('listeningTextSection');
+const postAudioContent = document.getElementById('postAudioListeningContent');
+let masterAudioFinished = false;
+let listeningTaskCompleted = false;
+let listeningQuizCompleted = false;
+let listeningAttemptCount = 0;
+let maxListeningAttempts = 3;
+
+// Define flexible validation criteria for each field
+function validateClaim(answer) {
+    const lower = answer.toLowerCase().trim();
+    if (!lower) return { valid: false, message: '⚠️ Please write the claim.' };
+    
+    // Check for key concepts - solar, optimal, solution, workshop
+    const hasSolar = lower.includes('solar');
+    const hasOptimal = lower.includes('optimal') || lower.includes('best') || lower.includes('ideal');
+    const hasSolution = lower.includes('solution') || lower.includes('choice') || lower.includes('option');
+    const hasWorkshop = lower.includes('workshop') || lower.includes('facility') || lower.includes('plant');
+    
+    if (hasSolar && (hasOptimal || hasSolution)) {
+        return { valid: true, message: '✅ Correct claim!' };
+    }
+    return { valid: false, message: '❌ Claim should state that solar energy is the optimal solution.' };
+}
+
+function validateEvidence1(answer) {
+    const lower = answer.toLowerCase().trim();
+    if (!lower) return { valid: false, message: '⚠️ Please write evidence 1.' };
+    
+    // Check for sunlight hours and annual/national average
+    const hasHours = lower.includes('2,800') || lower.includes('2800') || lower.includes('hours');
+    const hasSunlight = lower.includes('sunlight') || lower.includes('sun');
+    const hasAnnual = lower.includes('annually') || lower.includes('year') || lower.includes('national average');
+    
+    if (hasHours && hasSunlight) {
+        return { valid: true, message: '✅ Correct evidence 1!' };
+    }
+    return { valid: false, message: '❌ Evidence 1 should mention 2,800 hours of sunlight annually.' };
+}
+
+function validateEvidence2(answer) {
+    const lower = answer.toLowerCase().trim();
+    if (!lower) return { valid: false, message: '⚠️ Please write evidence 2.' };
+    
+    // Check for cost, offset/recovered, and time frame
+    const hasCost = lower.includes('cost') || lower.includes('price') || lower.includes('investment');
+    const hasOffset = lower.includes('offset') || lower.includes('recovered') || lower.includes('repaid') || lower.includes('payback');
+    const hasTime = lower.includes('four') || lower.includes('4') || lower.includes('years');
+    
+    if ((hasCost || hasOffset) && hasTime) {
+        return { valid: true, message: '✅ Correct evidence 2!' };
+    }
+    return { valid: false, message: '❌ Evidence 2 should mention cost offset/recovered within 4 years.' };
+}
+
+function validateEvidence3(answer) {
+    const lower = answer.toLowerCase().trim();
+    if (!lower) return { valid: false, message: '⚠️ Please write evidence 3.' };
+    
+    // Check for maintenance, lower/less, and diesel
+    const hasMaintenance = lower.includes('maintenance');
+    const hasLower = lower.includes('lower') || lower.includes('less') || lower.includes('fewer');
+    const hasDiesel = lower.includes('diesel') || lower.includes('generator') || lower.includes('conventional');
+    
+    if (hasMaintenance && hasLower && hasDiesel) {
+        return { valid: true, message: '✅ Correct evidence 3!' };
+    }
+    return { valid: false, message: '❌ Evidence 3 should mention lower maintenance than diesel alternatives.' };
+}
+
+function validateConclusion(answer) {
+    const lower = answer.toLowerCase().trim();
+    if (!lower) return { valid: false, message: '⚠️ Please write the conclusion.' };
+    
+    // Check for economically, environmentally, superior
+    const hasEconomically = lower.includes('economically') || lower.includes('cost-effective');
+    const hasEnvironmentally = lower.includes('environmentally') || lower.includes('green') || lower.includes('eco-friendly');
+    const hasSuperior = lower.includes('superior') || lower.includes('better') || lower.includes('best');
+    
+    if ((hasEconomically || hasEnvironmentally) && hasSuperior) {
+        return { valid: true, message: '✅ Correct conclusion!' };
+    }
+    return { valid: false, message: '❌ Conclusion should state solar is economically and environmentally superior.' };
+}
+
+if (listeningAudio && listeningTextSection && postAudioContent) {
+    listeningAudio.addEventListener('ended', function () {
+        if (!masterAudioFinished) {
+            masterAudioFinished = true;
+            listeningTextSection.style.display = 'block';
+            postAudioContent.style.display = 'block';
+        }
+    });
+}
+
+function showListeningCorrectAnswer() {
+    document.getElementById('listeningOverallFeedback').innerHTML = `
+        <div class="correct-answer-box">
+            <h4>📚 Correct Answers:</h4>
+            <p><strong>Claim:</strong> Solar energy is the optimal solution for the workshop.</p>
+            <p><strong>Evidence 1:</strong> The region receives over 2,800 hours of sunlight annually.</p>
+            <p><strong>Evidence 2:</strong> The upfront cost is recovered within four years.</p>
+            <p><strong>Evidence 3:</strong> Maintenance requirements are lower than diesel alternatives.</p>
+            <p><strong>Conclusion:</strong> Solar energy is the economically and environmentally superior choice.</p>
+        </div>`;
+}
+
+async function evaluateListening() {
+    const claim = document.getElementById('claim').value;
+    const evidence1 = document.getElementById('evidence1').value;
+    const evidence2 = document.getElementById('evidence2').value;
+    const evidence3 = document.getElementById('evidence3').value;
+    const conclusion = document.getElementById('conclusion').value;
+
+    if (!claim || !evidence1 || !evidence2 || !evidence3 || !conclusion) {
+        document.getElementById('listeningOverallFeedback').innerHTML = '<div class="listening-feedback-item incorrect">⚠️ Please fill in all 5 fields.</div>';
+        return;
+    }
+
+    if (listeningAttemptCount >= maxListeningAttempts) {
+        showListeningCorrectAnswer();
+        listeningTaskCompleted = true;
+        document.getElementById('completeListeningBtn').disabled = false;
+        return;
+    }
+
+    listeningAttemptCount++;
+    document.getElementById('listeningAttemptCounter').style.display = 'block';
+    document.getElementById('listeningAttemptCounter').querySelector('span').innerText = maxListeningAttempts - listeningAttemptCount;
+
+    const checkBtn = document.getElementById('checkListeningTaskBtn');
+    checkBtn.disabled = true;
+    checkBtn.textContent = '⏳ Evaluating...';
+
+    // Use local validation first (more reliable)
+    const resultClaim = validateClaim(claim);
+    const resultE1 = validateEvidence1(evidence1);
+    const resultE2 = validateEvidence2(evidence2);
+    const resultE3 = validateEvidence3(evidence3);
+    const resultCon = validateConclusion(conclusion);
+    
+    const fbClaim = document.getElementById('claimFeedback');
+    const fbE1 = document.getElementById('evidence1Feedback');
+    const fbE2 = document.getElementById('evidence2Feedback');
+    const fbE3 = document.getElementById('evidence3Feedback');
+    const fbCon = document.getElementById('conclusionFeedback');
+    
+    if (fbClaim) { fbClaim.innerHTML = resultClaim.message; fbClaim.className = resultClaim.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbClaim.style.display = 'block'; }
+    if (fbE1) { fbE1.innerHTML = resultE1.message; fbE1.className = resultE1.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbE1.style.display = 'block'; }
+    if (fbE2) { fbE2.innerHTML = resultE2.message; fbE2.className = resultE2.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbE2.style.display = 'block'; }
+    if (fbE3) { fbE3.innerHTML = resultE3.message; fbE3.className = resultE3.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbE3.style.display = 'block'; }
+    if (fbCon) { fbCon.innerHTML = resultCon.message; fbCon.className = resultCon.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbCon.style.display = 'block'; }
+    
+    const allCorrect = resultClaim.valid && resultE1.valid && resultE2.valid && resultE3.valid && resultCon.valid;
+    
+    // Also try AI for better feedback, but don't override local validation
+    try {
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({
+                text: `Claim: ${claim}\nEvidence1: ${evidence1}\nEvidence2: ${evidence2}\nEvidence3: ${evidence3}\nConclusion: ${conclusion}`,
+                task_type: 'argument_mapping',
+                day_number: 10,
+                level: 'advanced',
+                system_prompt: `Be flexible. Accept any answer that captures the core meaning, not exact wording.`
+            })
+        });
+    } catch (error) {
+        // AI failed, local validation already done
+    }
+    
+    checkBtn.disabled = false;
+    checkBtn.textContent = '✓ Check My Answers';
+    
+    if (allCorrect) {
+        listeningTaskCompleted = true;
+        document.getElementById('listeningOverallFeedback').innerHTML = '<div class="listening-feedback-item correct">🎉 All answers correct!</div>';
+        document.getElementById('completeListeningBtn').disabled = false;
+    } else if (listeningAttemptCount >= maxListeningAttempts) {
+        showListeningCorrectAnswer();
+        listeningTaskCompleted = true;
+        document.getElementById('completeListeningBtn').disabled = false;
+    } else {
+        document.getElementById('listeningOverallFeedback').innerHTML = `<div class="listening-feedback-item incorrect">📚 ${maxListeningAttempts - listeningAttemptCount} attempts left.</div>`;
+    }
+}
+
+document.getElementById('checkListeningTaskBtn')?.addEventListener('click', evaluateListening);
+
+// Listening quiz
+document.getElementById('checkListeningWorkBtn')?.addEventListener('click', function () {
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    const feedback = document.getElementById('listeningQuizFeedback');
+    if (!q1 || !q2) {
+        feedback.innerHTML = '⚠️ Answer both questions.';
+        feedback.className = 'quiz-feedback warning';
+        feedback.style.display = 'block';
+        return;
+    }
+    const q1Valid = q1.value === 'optimal';
+    const q2Valid = q2.value === 'three';
+    if (q1Valid && q2Valid) {
+        feedback.innerHTML = '✅ Correct!';
+        feedback.className = 'quiz-feedback correct';
+        listeningQuizCompleted = true;
+    } else {
+        feedback.innerHTML = q1Valid ? '❌ Q2: Three evidences.' : '❌ Q1: Solar is optimal.';
+        feedback.className = 'quiz-feedback incorrect';
+        listeningQuizCompleted = false;
+    }
+    feedback.style.display = 'block';
+    if (listeningTaskCompleted && listeningQuizCompleted && masterAudioFinished) {
+        document.getElementById('completeListeningBtn').disabled = false;
+    }
+});
+
+document.getElementById('completeListeningBtn')?.addEventListener('click', function () {
+    if (masterAudioFinished && listeningTaskCompleted && listeningQuizCompleted) {
+        markActivityComplete('listening', 'chk1');
+    }
+});
+
+            // ==================== SPEAKING - Speech to Text ====================
+            let speakingValid = false;
+            let speakingAttemptCount = 0;
+            let maxSpeakingAttempts = 3;
+            let recognition = null;
+            let speechSeconds = 0;
+            let speechTimerInterval = null;
+
+            const startSpeechBtn = document.getElementById('startSpeechBtn');
+            const stopSpeechBtn = document.getElementById('stopSpeechBtn');
+            const speechTranscript = document.getElementById('speechTranscript');
+            const speechTimerDisplay = document.getElementById('speechTimerDisplay');
+            const speechTimerSpan = document.getElementById('speechTimer');
+
+            if (startSpeechBtn) {
+                startSpeechBtn.addEventListener('click', function () {
+                    if (!('webkitSpeechRecognition' in window)) {
+                        document.getElementById('speechFeedback').innerHTML = '<div class="speaking-feedback incorrect">❌ Use Chrome browser.</div>';
+                        document.getElementById('speechFeedback').style.display = 'block';
+                        return;
+                    }
+
+                    recognition = new webkitSpeechRecognition();
+                    recognition.continuous = true;
+                    recognition.interimResults = true;
+                    recognition.lang = 'en-US';
+
+                    speechTranscript.value = '';
+                    speechSeconds = 0;
+                    speechTimerSpan.textContent = '00:00';
+                    speechTimerDisplay.style.display = 'flex';
+                    startSpeechBtn.style.display = 'none';
+                    stopSpeechBtn.style.display = 'inline-flex';
+                    document.getElementById('speechFeedback').style.display = 'none';
+
+                    if (speechTimerInterval) clearInterval(speechTimerInterval);
+                    speechTimerInterval = setInterval(() => {
+                        speechSeconds++;
+                        const mins = Math.floor(speechSeconds / 60);
+                        const secs = speechSeconds % 60;
+                        speechTimerSpan.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                        if (speechSeconds >= 60) recognition.stop();
+                    }, 1000);
+
+                    recognition.onresult = (event) => {
+                        let final = '';
+                        for (let i = event.resultIndex; i < event.results.length; i++) {
+                            if (event.results[i].isFinal) final += event.results[i][0].transcript + ' ';
+                        }
+                        speechTranscript.value = final;
+                    };
+
+                    recognition.onend = () => {
+                        clearInterval(speechTimerInterval);
+                        startSpeechBtn.style.display = 'inline-flex';
+                        stopSpeechBtn.style.display = 'none';
+                        if (speechSeconds < 30) {
+                            document.getElementById('speechFeedback').innerHTML = '<div class="speaking-feedback incorrect">❌ Speak at least 30 seconds.</div>';
+                        } else {
+                            document.getElementById('speechFeedback').innerHTML = '<div class="speaking-feedback correct">✅ Speech recorded! Click "Evaluate".</div>';
+                        }
+                        document.getElementById('speechFeedback').style.display = 'block';
+                        recognition = null;
+                    };
+                    recognition.start();
+                });
+            }
+
+            if (stopSpeechBtn) {
+                stopSpeechBtn.addEventListener('click', function () {
+                    if (recognition) recognition.stop();
+                });
+            }
+
+            async function evaluateSpeech() {
+                const transcript = speechTranscript.value.trim();
+                if (!transcript) {
+                    document.getElementById('speakingAnswerFeedback').innerHTML = '<div class="writing-feedback incorrect">⚠️ Speak first using microphone.</div>';
+                    document.getElementById('speakingAnswerFeedback').style.display = 'block';
+                    return;
+                }
+
+                if (speakingAttemptCount >= maxSpeakingAttempts) {
+                    document.getElementById('speakingAnswerFeedback').innerHTML = `
+                        <div class="correct-answer-box">
+                            <h4>📚 Sample Argument:</h4>
+                            <p>I propose cloud storage. First, 40% cost reduction. Second, better security. One might argue cloud is expensive, but this overlooks long-term savings. Therefore, cloud is better.</p>
+                        </div>`;
+                    document.getElementById('speakingAnswerFeedback').style.display = 'block';
+                    speakingValid = true;
+                    document.getElementById('completeSpeakingBtn').disabled = false;
+                    return;
+                }
+
+                speakingAttemptCount++;
+                const checkBtn = document.getElementById('checkSpeakingAnswersBtn');
+                checkBtn.disabled = true;
+                checkBtn.textContent = '⏳ Evaluating...';
+
+                try {
+                    const response = await fetch('/learning/ai/evaluate/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                        body: JSON.stringify({
+                            text: transcript,
+                            task_type: 'spoken_argument',
+                            day_number: 10,
+                            level: 'advanced',
+                            system_prompt: `Check for: claim, evidence (2), counterargument+rebuttal, conclusion. Return JSON: {"correct": true/false, "feedback": "short"}`
+                        })
+                    });
+                    const data = await response.json();
+
+                    if (data.correct) {
+                        speakingValid = true;
+                        document.getElementById('speakingAnswerFeedback').innerHTML = `<div class="writing-feedback correct">✅ ${data.feedback || 'Good argument!'}</div>`;
+                        document.getElementById('completeSpeakingBtn').disabled = false;
+                    } else {
+                        document.getElementById('speakingAnswerFeedback').innerHTML = `<div class="writing-feedback incorrect">❌ ${data.feedback || 'Missing structure'}</div>`;
+                        speakingValid = false;
+                    }
+                } catch (error) {
+                    const lower = transcript.toLowerCase();
+                    const hasClaim = lower.includes('propose') || lower.includes('should');
+                    const hasEvidence = lower.includes('first') || lower.includes('data');
+                    const hasCounter = lower.includes('however') || lower.includes('argue');
+                    if (hasClaim && hasEvidence && hasCounter) {
+                        speakingValid = true;
+                        document.getElementById('speakingAnswerFeedback').innerHTML = '<div class="writing-feedback correct">✅ Good argument!</div>';
+                        document.getElementById('completeSpeakingBtn').disabled = false;
+                    } else {
+                        document.getElementById('speakingAnswerFeedback').innerHTML = '<div class="writing-feedback incorrect">❌ Add claim, evidence, counterargument.</div>';
+                        speakingValid = false;
+                    }
+                }
+                checkBtn.disabled = false;
+                checkBtn.textContent = '✓ Evaluate My Speech with AI';
+                document.getElementById('speakingAnswerFeedback').style.display = 'block';
+            }
+
+            function resetSpeaking() {
+                speechTranscript.value = '';
+                document.getElementById('speechFeedback').innerHTML = '';
+                document.getElementById('speakingAnswerFeedback').innerHTML = '';
+                speakingValid = false;
+                speakingAttemptCount = 0;
+                document.getElementById('completeSpeakingBtn').disabled = true;
+            }
+
+            document.getElementById('checkSpeakingAnswersBtn')?.addEventListener('click', evaluateSpeech);
+            document.getElementById('resetSpeakingAnswersBtn')?.addEventListener('click', resetSpeaking);
+            document.getElementById('completeSpeakingBtn')?.addEventListener('click', function () {
+                if (speakingValid) markActivityComplete('speaking', 'chk2');
+            });
+
+            // ==================== READING ACTIVITY WITH AI (Bridge Metaphor) ====================
+let readingResults = { q1: false, q2: false, q3: false };
+let readingAttemptCount = 0;
+let maxReadingAttempts = 3;
+
+// ========== LOCAL VALIDATION FUNCTIONS (STRICT FALLBACK) ==========
+
+function validateReadingQ1Local(answer) {
+    const trimmed = answer.trim().toLowerCase();
+    
+    if (!trimmed) {
+        return { valid: false, message: '⚠️ Please write your answer.' };
+    }
+    
+    // Check for correct mappings (STRICT)
+    const hasCorrectClaim = (trimmed.includes('claim') && trimmed.includes('span')) || 
+                            (trimmed.includes('claim') && trimmed.includes('crosses'));
+    const hasCorrectEvidence = (trimmed.includes('evidence') && trimmed.includes('pillar')) || 
+                               (trimmed.includes('evidence') && trimmed.includes('support'));
+    const hasCorrectConclusion = (trimmed.includes('conclusion') && trimmed.includes('landing')) || 
+                                 (trimmed.includes('conclusion') && trimmed.includes('arrives'));
+    
+    // REJECT incorrect mappings like "Claim = Pillars"
+    const hasIncorrectMapping = (trimmed.includes('claim') && trimmed.includes('pillar')) ||
+                                 (trimmed.includes('evidence') && trimmed.includes('landing')) ||
+                                 (trimmed.includes('conclusion') && trimmed.includes('span'));
+    
+    if (hasIncorrectMapping) {
+        return { valid: false, message: '❌ Incorrect mapping. Claim=span, Evidence=pillars, Conclusion=landing.' };
+    }
+    
+    if (!hasCorrectClaim) {
+        return { valid: false, message: '❌ Claim = span (crosses from current situation to conclusion).' };
+    }
+    if (!hasCorrectEvidence) {
+        return { valid: false, message: '❌ Evidence = support pillars (without them, claim collapses).' };
+    }
+    if (!hasCorrectConclusion) {
+        return { valid: false, message: '❌ Conclusion = landing (tells reader where they arrived).' };
+    }
+    
+    return { valid: true, message: '✅ Correct! Claim=span, Evidence=pillars, Conclusion=landing.' };
+}
+
+function validateReadingQ2Local(answer) {
+    const trimmed = answer.trim().toLowerCase();
+    
+    if (!trimmed) {
+        return { valid: false, message: '⚠️ Please write your answer.' };
+    }
+    
+    if (trimmed.length < 15) {
+        return { valid: false, message: '❌ Answer too short.' };
+    }
+    
+    const showsStrength = trimmed.includes('strength') || trimmed.includes('confident') || trimmed.includes('not weakness') || trimmed.includes('intellectual');
+    const anticipates = trimmed.includes('anticipat') || trimmed.includes('address') || trimmed.includes('foresee') || trimmed.includes('expect') || trimmed.includes('objection');
+    
+    if (!showsStrength) {
+        return { valid: false, message: '❌ Counterargument shows intellectual strength, not weakness.' };
+    }
+    if (!anticipates) {
+        return { valid: false, message: '❌ It anticipates potential objections.' };
+    }
+    
+    return { valid: true, message: '✅ Correct! Counterargument shows confidence by anticipating objections.' };
+}
+
+function validateReadingQ3Local(answer) {
+    const trimmed = answer.trim().toLowerCase();
+    
+    if (!trimmed) {
+        return { valid: false, message: '⚠️ Please write a counterargument.' };
+    }
+    
+    if (trimmed.length < 15) {
+        return { valid: false, message: '❌ Write a complete sentence.' };
+    }
+    
+    // Check that it OPPOSES the original claim
+    const opposesOriginal = trimmed.includes('not all') || trimmed.includes('should not') || 
+                            trimmed.includes('may not') || trimmed.includes('depends') || 
+                            trimmed.includes('instead') || trimmed.includes('however') ||
+                            trimmed.includes('but') || trimmed.includes('not necessary');
+    
+    const agrees = (trimmed.includes('should learn') && !trimmed.includes('not')) ||
+                   (trimmed.includes('important') && !trimmed.includes('not'));
+    
+    if (agrees) {
+        return { valid: false, message: '❌ That agrees with the claim. Write an OPPOSING view.' };
+    }
+    if (!opposesOriginal) {
+        return { valid: false, message: '❌ Write a genuine counterargument that opposes the claim.' };
+    }
+    
+    return { valid: true, message: '✅ Correct counterargument!' };
+}
+
+function showReadingCorrectAnswer() {
+    document.getElementById('readingOverallFeedback').innerHTML = `
+        <div class="correct-answer-box">
+            <p><strong>Q1:</strong> Claim = span, Evidence = pillars, Conclusion = landing</p>
+            <p><strong>Q2:</strong> Counterargument shows intellectual confidence by anticipating objections</p>
+            <p><strong>Q3:</strong> "Not all students need advanced English; technical roles may only require basic communication skills."</p>
+        </div>`;
+}
+
+// ========== AI VALIDATION ==========
+async function evaluateReading() {
+    const q1 = document.getElementById('readingQ1').value;
+    const q2 = document.getElementById('readingQ2').value;
+    const q3 = document.getElementById('readingQ3').value;
+
+    if (!q1 || !q2 || !q3) {
+        document.getElementById('readingOverallFeedback').innerHTML = '<div class="quiz-feedback warning">⚠️ Answer all 3 questions</div>';
+        document.getElementById('readingOverallFeedback').style.display = 'block';
+        return;
+    }
+
+    if (readingAttemptCount >= maxReadingAttempts) {
+        showReadingCorrectAnswer();
+        readingResults = { q1: true, q2: true, q3: true };
+        document.getElementById('completeReadingBtn').disabled = false;
+        return;
+    }
+
+    readingAttemptCount++;
+    const checkBtn = document.getElementById('checkReadingBtn');
+    checkBtn.disabled = true;
+    checkBtn.textContent = '⏳ AI Evaluating...';
+
+    let result1, result2, result3;
+    let aiSuccess = false;
+
+    try {
+        const readingData = `Q1 (Bridge metaphor mapping): ${q1}
+Q2 (Why counterargument shows confidence): ${q2}
+Q3 (Counterargument to "All students should learn advanced English"): ${q3}`;
+        
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({
+                text: readingData,
+                task_type: 'reading_comprehension',
+                day_number: 10,
+                level: 'advanced',
+                system_prompt: `You are evaluating answers about argument structure and counterarguments.
+
+Q1: "Map the metaphor: which part of a bridge = claim? which = evidence? which = conclusion?"
+- CORRECT: Claim = span, Evidence = pillars, Conclusion = landing
+- INCORRECT: Claim = pillars, Evidence = landing, Conclusion = span
+- ACCEPT variations like "Claim is the span that crosses" or "Evidence is the supporting pillars"
+
+Q2: "Why does including a counterargument show 'intellectual confidence'?"
+- CORRECT: It shows you have thought about opposing views and can address them
+- It demonstrates strength, not weakness
+- It anticipates and addresses potential objections
+
+Q3: "Write a counterargument to: 'All students should learn advanced English'"
+- Must OPPOSE the original claim
+- Examples: "Not all students need advanced English; technical roles may only need basic communication."
+- "Students in specialized fields may not have time for advanced language courses."
+- Must NOT agree with the original claim
+
+Return JSON with short feedback:
+{
+"q1_correct": true/false,
+"q2_correct": true/false,
+"q3_correct": true/false,
+"feedback_q1": "short (max 12 words)",
+"feedback_q2": "short (max 12 words)",
+"feedback_q3": "short (max 12 words)",
+"overall": "short summary"
+}`
+            })
+        });
+        
+        const data = await response.json();
+        aiSuccess = true;
+        
+        result1 = { valid: data.q1_correct, message: data.feedback_q1 || (data.q1_correct ? '✅ Correct' : '❌ Needs work') };
+        result2 = { valid: data.q2_correct, message: data.feedback_q2 || (data.q2_correct ? '✅ Correct' : '❌ Needs work') };
+        result3 = { valid: data.q3_correct, message: data.feedback_q3 || (data.q3_correct ? '✅ Correct' : '❌ Must oppose the claim') };
+        
+    } catch (error) {
+        console.error('AI Error:', error);
+        aiSuccess = false;
+        
+        // Fallback to local validation
+        result1 = validateReadingQ1Local(q1);
+        result2 = validateReadingQ2Local(q2);
+        result3 = validateReadingQ3Local(q3);
+    }
+    
+    // Update UI
+    const fb1 = document.getElementById('readingQ1Feedback');
+    const fb2 = document.getElementById('readingQ2Feedback');
+    const fb3 = document.getElementById('readingQ3Feedback');
+    const overallFb = document.getElementById('readingOverallFeedback');
+    
+    if (fb1) { fb1.innerHTML = result1.message; fb1.className = result1.valid ? 'fix-feedback correct' : 'fix-feedback incorrect'; fb1.style.display = 'block'; }
+    if (fb2) { fb2.innerHTML = result2.message; fb2.className = result2.valid ? 'fix-feedback correct' : 'fix-feedback incorrect'; fb2.style.display = 'block'; }
+    if (fb3) { fb3.innerHTML = result3.message; fb3.className = result3.valid ? 'fix-feedback correct' : 'fix-feedback incorrect'; fb3.style.display = 'block'; }
+    
+    readingResults.q1 = result1.valid;
+    readingResults.q2 = result2.valid;
+    readingResults.q3 = result3.valid;
+    
+    const allCorrect = readingResults.q1 && readingResults.q2 && readingResults.q3;
+    
+    if (allCorrect) {
+        overallFb.innerHTML = '<div class="quiz-feedback correct">✅ All correct!</div>';
+        overallFb.className = 'quiz-feedback correct';
+        overallFb.style.display = 'block';
+        document.getElementById('completeReadingBtn').disabled = false;
+    } else {
+        let errorMsg = '';
+        if (!readingResults.q1) errorMsg += '❌ Q1: Claim=span, Evidence=pillars, Conclusion=landing. ';
+        if (!readingResults.q2) errorMsg += '❌ Q2: Shows confidence by anticipating objections. ';
+        if (!readingResults.q3) errorMsg += '❌ Q3: Must oppose the original claim. ';
+        overallFb.innerHTML = `<div class="quiz-feedback warning">⚠️ ${errorMsg}</div>`;
+        overallFb.className = 'quiz-feedback warning';
+        overallFb.style.display = 'block';
+        document.getElementById('completeReadingBtn').disabled = true;
+    }
+    
+    checkBtn.disabled = false;
+    checkBtn.textContent = '✓ Check Reading Answers';
+}
+
+function resetReading() {
+    document.getElementById('readingQ1').value = '';
+    document.getElementById('readingQ2').value = '';
+    document.getElementById('readingQ3').value = '';
+    
+    document.getElementById('readingQ1Feedback').innerHTML = '';
+    document.getElementById('readingQ2Feedback').innerHTML = '';
+    document.getElementById('readingQ3Feedback').innerHTML = '';
+    document.getElementById('readingOverallFeedback').innerHTML = '';
+    document.getElementById('readingOverallFeedback').style.display = 'none';
+    
+    readingResults = { q1: false, q2: false, q3: false };
+    readingAttemptCount = 0;
+    document.getElementById('completeReadingBtn').disabled = true;
+}
+
+document.getElementById('checkReadingBtn')?.addEventListener('click', evaluateReading);
+document.getElementById('resetReadingBtn')?.addEventListener('click', resetReading);
+
+document.getElementById('completeReadingBtn')?.addEventListener('click', function () {
+    if (readingResults.q1 && readingResults.q2 && readingResults.q3) {
+        markActivityComplete('reading', 'chk3');
+    } else {
+        document.getElementById('readingOverallFeedback').innerHTML = '<div class="quiz-feedback warning">⚠️ Correct all answers first</div>';
+        document.getElementById('readingOverallFeedback').style.display = 'block';
+    }
+});
+            // ==================== WRITING ====================
+            let writingValid = false;
+            let writingAttemptCount = 0;
+            let maxWritingAttempts = 3;
+            const writingTextarea = document.getElementById('structuredArgument');
+            const wordCountDisplay = document.getElementById('writingWordCount');
+
+            function updateWordCount() {
+                const text = writingTextarea.value;
+                const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+                const count = words.length;
+                wordCountDisplay.innerHTML = `📝 Words: ${count} / 100 min`;
+                wordCountDisplay.style.color = count >= 100 ? '#22c55e' : '#dc2626';
+                return count;
+            }
+            writingTextarea.addEventListener('input', updateWordCount);
+
+            async function evaluateWriting() {
+                const text = writingTextarea.value;
+                const wordCount = updateWordCount();
+
+                if (wordCount < 100) {
+                    document.getElementById('writingFeedback').innerHTML = `<div class="writing-feedback incorrect">❌ Need ${100 - wordCount} more words.</div>`;
+                    document.getElementById('writingFeedback').style.display = 'block';
+                    return;
+                }
+
+                if (writingAttemptCount >= maxWritingAttempts) {
+                    document.getElementById('writingFeedback').innerHTML = `
+                        <div class="correct-answer-box">
+                            <h4>📚 Sample (100 words):</h4>
+                            <p>I propose solar power. First, data shows 40% cost reduction. Second, minimal maintenance. One might argue high initial cost, but this overlooks long-term savings. Therefore, solar is superior.</p>
+                        </div>`;
+                    writingValid = true;
+                    document.getElementById('completeWritingBtn').disabled = false;
+                    return;
+                }
+
+                writingAttemptCount++;
+                document.getElementById('writingAttemptCounter').style.display = 'block';
+                document.getElementById('writingAttemptCounter').querySelector('span').innerText = maxWritingAttempts - writingAttemptCount;
+
+                const checkBtn = document.getElementById('checkWritingBtn');
+                checkBtn.disabled = true;
+                checkBtn.textContent = '⏳ Evaluating...';
+
+                try {
+                    const response = await fetch('/learning/ai/evaluate/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                        body: JSON.stringify({
+                            text: text,
+                            task_type: 'structured_argument',
+                            day_number: 10,
+                            level: 'advanced',
+                            system_prompt: `Check: claim, evidence (2), counterargument+rebuttal, conclusion. Return JSON: {"correct": true/false, "feedback": "short"}`
+                        })
+                    });
+                    const data = await response.json();
+
+                    if (data.correct) {
+                        writingValid = true;
+                        document.getElementById('writingFeedback').innerHTML = `<div class="writing-feedback correct">✅ ${data.feedback || 'Good argument!'}</div>`;
+                        document.getElementById('completeWritingBtn').disabled = false;
+                    } else {
+                        document.getElementById('writingFeedback').innerHTML = `<div class="writing-feedback incorrect">❌ ${data.feedback || 'Add all 5 parts.'}</div>`;
+                        writingValid = false;
+                    }
+                } catch (error) {
+                    const lower = text.toLowerCase();
+                    const hasClaim = lower.includes('propose') || lower.includes('should');
+                    const hasEvidence = lower.includes('first') || lower.includes('data');
+                    const hasCounter = lower.includes('however') || lower.includes('argue');
+                    const hasConclusion = lower.includes('therefore') || lower.includes('conclusion');
+
+                    if (hasClaim && hasEvidence && hasCounter && hasConclusion && wordCount >= 100) {
+                        writingValid = true;
+                        document.getElementById('writingFeedback').innerHTML = '<div class="writing-feedback correct">✅ Good argument!</div>';
+                        document.getElementById('completeWritingBtn').disabled = false;
+                    } else {
+                        document.getElementById('writingFeedback').innerHTML = '<div class="writing-feedback incorrect">❌ Add claim, evidence, counterargument, conclusion.</div>';
+                        writingValid = false;
+                    }
+                }
+                checkBtn.disabled = false;
+                checkBtn.textContent = '✓ Check My Argument with AI';
+                document.getElementById('writingFeedback').style.display = 'block';
+            }
+
+            function resetWriting() {
+                writingTextarea.value = '';
+                document.getElementById('writingFeedback').innerHTML = '';
+                document.getElementById('completeWritingBtn').disabled = true;
+                document.getElementById('writingAttemptCounter').style.display = 'none';
+                writingValid = false;
+                writingAttemptCount = 0;
+                updateWordCount();
+            }
+
+            document.getElementById('checkWritingBtn')?.addEventListener('click', evaluateWriting);
+            document.getElementById('resetWritingBtn')?.addEventListener('click', resetWriting);
+            document.getElementById('completeWritingBtn')?.addEventListener('click', function () {
+                if (writingValid) markActivityComplete('writing', 'chk4');
+            });
+
+            // ==================== VOCABULARY ====================
+            const vocabAudioBtns = document.querySelectorAll('.vocab-audio-btn');
+            const completeVocabularyBtn = document.getElementById('completeVocabularyBtn');
+            const vocabHeard = {
+                'check-premise': false, 'check-rebut': false, 'check-incontestable': false,
+                'check-assert': false, 'check-corroborate': false
+            };
+
+            function checkAllVocabularyListened() {
+                const allHeard = Object.values(vocabHeard).every(v => v === true);
+                if (completeVocabularyBtn) completeVocabularyBtn.disabled = !allHeard;
+                return allHeard;
+            }
+
+            function updateVocabCheckMark(checkId) {
+                if (!vocabHeard[checkId]) {
+                    vocabHeard[checkId] = true;
+                    const cell = document.getElementById(checkId);
+                    if (cell && cell.innerHTML !== '✅') {
+                        cell.innerHTML = '✅';
+                        cell.style.color = '#22c55e';
+                    }
+                    checkAllVocabularyListened();
+                }
+            }
+
+            function speakWordWithCheckmark(word, checkId) {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    utterance.onend = () => { if (checkId) updateVocabCheckMark(checkId); };
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    if (checkId) updateVocabCheckMark(checkId);
+                }
+            }
+
+            vocabAudioBtns.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const word = this.getAttribute('data-word');
+                    const checkId = this.getAttribute('data-checkid');
+                    if (word && checkId && !vocabHeard[checkId]) {
+                        speakWordWithCheckmark(word, checkId);
+                    } else if (word && checkId && vocabHeard[checkId]) {
+                        const utterance = new SpeechSynthesisUtterance(word);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.85;
+                        window.speechSynthesis.speak(utterance);
+                    }
+                });
+            });
+
+            if (completeVocabularyBtn) {
+                completeVocabularyBtn.addEventListener('click', function () {
+                    if (checkAllVocabularyListened()) markActivityComplete('vocabulary', 'chk5');
+                    else alert('Listen to all 5 vocabulary words first.');
+                });
+            }
+
+            // ==================== GRAMMAR ACTIVITY WITH AI (Avoid Repetitive 'I') ====================
+let grammarValid = false;
+let grammarAttemptCount = 0;
+let maxGrammarAttempts = 3;
+
+// ========== LOCAL VALIDATION FUNCTION (STRICT FALLBACK) ==========
+function validateGrammarLocal(answer) {
+    const trimmed = answer.trim();
+    const lower = trimmed.toLowerCase();
+    
+    // Check for empty
+    if (!trimmed) {
+        return { valid: false, message: '⚠️ Please write your sentence.' };
+    }
+    
+    // Check minimum length (should be a complete sentence)
+    if (trimmed.length < 15) {
+        return { valid: false, message: '❌ Sentence too short. Write a complete sentence.' };
+    }
+    
+    // Check if it ends with a period
+    if (!trimmed.endsWith('.')) {
+        return { valid: false, message: '❌ End your sentence with a period.' };
+    }
+    
+    // Check if it starts with "I" (repetitive pattern)
+    const startsWithI = /^i\s+/i.test(trimmed);
+    const hasMultipleI = (trimmed.match(/\bi\s+/gi) || []).length > 1;
+    
+    // Check for sentence fragments (starts with verb without subject)
+    const isFragment = /^(reviewed|noticed|recommended|analysed|checked|tested)/i.test(trimmed);
+    
+    if (isFragment) {
+        return { valid: false, message: '❌ Sentence fragment. Add a subject (e.g., "The review revealed...")' };
+    }
+    
+    // Check for good alternative structures
+    const hasGoodStructure = lower.includes('the analysis revealed') || 
+                             lower.includes('review revealed') || 
+                             lower.includes('after reviewing') || 
+                             lower.includes('upon investigation') ||
+                             lower.includes('the results showed') ||
+                             lower.includes('the data indicated');
+    
+    // Check if it still has repetitive "I" pattern
+    const hasRepetitiveI = startsWithI || hasMultipleI;
+    
+    if (hasGoodStructure && !hasRepetitiveI) {
+        return { valid: true, message: '✅ Correct! Good structure without repetitive "I".' };
+    }
+    
+    if (!hasRepetitiveI && trimmed.length >= 20) {
+        return { valid: true, message: '✅ Correct! Avoided repetitive "I".' };
+    }
+    
+    if (hasRepetitiveI) {
+        return { valid: false, message: '❌ Still starts with "I". Use "The analysis revealed..."' };
+    }
+    
+    return { valid: false, message: '❌ Combine into one sentence. Avoid "I reviewed. I noticed. I recommended."' };
+}
+
+function showGrammarCorrectAnswer() {
+    document.getElementById('grammarOverallFeedback').innerHTML = `
+        <div class="correct-answer-box">
+            <p><strong>Correct Example:</strong> "After reviewing the test results, a pattern of intermittent failures was noticed, leading to a recommendation for a full system diagnostic."</p>
+            <p><strong>Alternative:</strong> "The review of test results revealed a pattern of intermittent failures, which led to a recommendation for a full system diagnostic."</p>
+        </div>`;
+}
+
+// ========== AI VALIDATION ==========
+async function validateGrammar() {
+    const answer = document.getElementById('grammarAnswer').value.trim();
+    const fb = document.getElementById('grammarFeedback');
+    const overallFb = document.getElementById('grammarOverallFeedback');
+    const completeBtn = document.getElementById('completeGrammarBtn');
+    const checkBtn = document.getElementById('checkGrammarBtn');
+
+    if (!answer) {
+        fb.innerHTML = '⚠️ Please write your sentence.';
+        fb.className = 'fix-feedback warning';
+        grammarValid = false;
+        completeBtn.disabled = true;
+        fb.style.display = 'block';
+        return;
+    }
+
+    if (grammarAttemptCount >= maxGrammarAttempts) {
+        showGrammarCorrectAnswer();
+        grammarValid = true;
+        completeBtn.disabled = false;
+        return;
+    }
+
+    grammarAttemptCount++;
+    
+    // Show loading state
+    checkBtn.disabled = true;
+    checkBtn.textContent = '⏳ AI Checking...';
+    overallFb.innerHTML = '<div class="ai-feedback processing">🤖 Evaluating your sentence...</div>';
+    overallFb.style.display = 'block';
+
+    try {
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({
+                text: answer,
+                task_type: 'grammar_repetitive_I',
+                day_number: 10,
+                level: 'advanced',
+                system_prompt: `You are evaluating a student's attempt to rewrite a paragraph without repetitive "I" starters.
+
+ORIGINAL PARAGRAPH: "I reviewed the test results. I noticed a pattern of intermittent failures. I recommended a full system diagnostic."
+
+STUDENT'S REWRITE: "${answer}"
+
+REQUIREMENTS for a correct answer:
+1. Must NOT start multiple sentences with "I"
+2. Must be a single, coherent sentence (not fragments)
+3. Must include all key information: reviewed results, noticed pattern, recommended diagnostic
+4. Must be grammatically complete (subject + verb + object)
+5. Must end with a period
+
+CORRECT examples:
+- "After reviewing the test results, a pattern of intermittent failures was noticed, leading to a recommendation for a full system diagnostic."
+- "The review of test results revealed a pattern of intermittent failures, which led to a recommendation for a full system diagnostic."
+
+INCORRECT examples (REJECT these):
+- "Reviewed the results. Noticed a pattern. Recommended a diagnostic." (sentence fragments, missing subjects)
+- "I reviewed the results. I noticed a pattern. I recommended a diagnostic." (still repetitive "I")
+- "The results were reviewed. A pattern was noticed. A diagnostic was recommended." (still fragmented)
+
+Return JSON with short feedback:
+{
+"correct": true/false,
+"hasFragments": true/false,
+"hasRepetitiveI": true/false,
+"isComplete": true/false,
+"feedback": "short feedback (max 15 words)",
+"suggestion": "short tip (max 12 words)"
+}`
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.correct) {
+            grammarValid = true;
+            fb.innerHTML = '✅ Correct! Good structure without repetitive "I".';
+            fb.className = 'fix-feedback correct';
+            overallFb.innerHTML = '✅ Correct! You can mark as complete.';
+            overallFb.className = 'quiz-feedback correct';
+            completeBtn.disabled = false;
+        } else {
+            let errorMsg = '';
+            if (data.hasFragments) {
+                errorMsg = '❌ Sentence fragments detected. Combine into one complete sentence.';
+            } else if (data.hasRepetitiveI) {
+                errorMsg = '❌ Still starts with "I". Use passive voice or alternative openers.';
+            } else if (!data.isComplete) {
+                errorMsg = '❌ Incomplete sentence. Add a subject and verb.';
+            } else {
+                errorMsg = data.feedback || '❌ Needs improvement. Combine all ideas into one sentence.';
+            }
+            
+            fb.innerHTML = errorMsg;
+            fb.className = 'fix-feedback incorrect';
+            overallFb.innerHTML = `❌ ${data.suggestion || 'Try: "After reviewing the results, a pattern was noticed, leading to a recommendation."'}`;
+            overallFb.className = 'quiz-feedback incorrect';
+            grammarValid = false;
+            completeBtn.disabled = true;
+        }
+        
+        fb.style.display = 'block';
+        overallFb.style.display = 'block';
+        
+    } catch (error) {
+        console.error('AI Error:', error);
+        // Fallback to local validation
+        const result = validateGrammarLocal(answer);
+        
+        fb.innerHTML = result.message;
+        fb.className = result.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+        fb.style.display = 'block';
+        
+        grammarValid = result.valid;
+        
+        if (result.valid) {
+            overallFb.innerHTML = '✅ Correct! (Validated locally)';
+            overallFb.className = 'quiz-feedback correct';
+            completeBtn.disabled = false;
+        } else {
+            overallFb.innerHTML = '❌ Please revise your sentence.';
+            overallFb.className = 'quiz-feedback incorrect';
+            completeBtn.disabled = true;
+        }
+        overallFb.style.display = 'block';
+    }
+    
+    // Restore button
+    checkBtn.disabled = false;
+    checkBtn.textContent = '✓ Check Grammar Answer';
+    
+    // Show sample after max attempts
+    if (grammarAttemptCount >= maxGrammarAttempts && !grammarValid) {
+        showGrammarCorrectAnswer();
+        grammarValid = true;
+        completeBtn.disabled = false;
+    }
+}
+
+function resetGrammar() {
+    document.getElementById('grammarAnswer').value = '';
+    document.getElementById('grammarFeedback').innerHTML = '';
+    document.getElementById('grammarOverallFeedback').innerHTML = '';
+    grammarValid = false;
+    grammarAttemptCount = 0;
+    document.getElementById('completeGrammarBtn').disabled = true;
+}
+
+document.getElementById('checkGrammarBtn')?.addEventListener('click', validateGrammar);
+document.getElementById('resetGrammarBtn')?.addEventListener('click', resetGrammar);
+
+document.getElementById('completeGrammarBtn')?.addEventListener('click', function () {
+    if (grammarValid) {
+        markActivityComplete('grammar', 'chk6');
+    } else {
+        document.getElementById('grammarOverallFeedback').innerHTML = '<div class="quiz-feedback warning">⚠️ Please correct your sentence first.</div>';
+        document.getElementById('grammarOverallFeedback').style.display = 'block';
+    }
+});
+            // ==================== DAY COMPLETION ====================
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            if (dayBtn) {
+                const newBtn = dayBtn.cloneNode(true);
+                dayBtn.parentNode.replaceChild(newBtn, dayBtn);
+                newBtn.addEventListener('click', function () {
+                    const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6'];
+                    let allCompleted = true;
+                    for (let id of checkboxes) {
+                        if (!document.getElementById(id)?.checked) allCompleted = false;
+                    }
+                    if (!allCompleted) {
+                        alert('⚠️ Complete all 6 activities first!');
+                        return;
+                    }
+                    this.innerHTML = '✨ Completing Day 10...';
+                    this.disabled = true;
+                    if (typeof confetti !== 'undefined') {
+                        confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                        setTimeout(() => confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.3 } }), 200);
+                        setTimeout(() => confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.7 } }), 400);
+                    }
+                    setTimeout(() => {
+                        window.location.href = '/learning/level/advanced/?celebrate=true&completed=10';
+                    }, 1500);
+                });
+            }
+
+            setTimeout(updateProgressCounter, 500);
+        });
+    </script>
+</body>
+
+</html>

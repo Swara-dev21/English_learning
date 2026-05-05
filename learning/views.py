@@ -274,37 +274,37 @@ def get_day_title(level, day):
             30: "THE FULL MASTERPIECE",
         },
         'advanced': {
-            1: "Mastering Nuance",
-            2: "Rhetorical Devices",
-            3: "Academic Writing",
-            4: "Research Presentation",
-            5: "Debate & Argumentation",
-            6: "Business Strategy Communication",
-            7: "Week 1 Synthesis",
-            8: "Literature Analysis",
-            9: "Technical Specifications",
-            10: "Executive Summaries",
-            11: "Crisis Communication",
-            12: "Persuasive Speaking",
-            13: "Negotiation Mastery",
-            14: "Cross-functional Leadership",
-            15: "Advanced Grammar",
-            16: "Editing & Proofreading",
-            17: "Translation Skills",
-            18: "Conference Presentation",
-            19: "Mentoring Language",
-            20: "Strategic Planning",
-            21: "Week 3 Review",
-            22: "Innovation Pitching",
-            23: "Change Management",
-            24: "Global Communication",
-            25: "Thought Leadership",
-            26: "Publishing & Writing",
-            27: "Executive Presence",
-            28: "Boardroom Communication",
-            29: "Legacy Building",
-            30: "Capstone Project & Celebration",
-        }
+            1: "COMMANDING AUTHORITY IN SPEECH",
+            2: "MASTERING COMPLEX SENTENCE STRUCTURES",
+            3: "THE ART OF PROFESSIONAL NEGOTIATION LANGUAGE",
+            4: "TECHNICAL PRESENTATION MASTERY",
+            5: "ADVANCED LISTENING --- READING BETWEEN THE LINES",
+            6: "PRECISION VOCABULARY FOR TECHNICAL WRITING",
+            7: "STORYTELLING FOR ENGINEERS",
+            8: "GRAMMAR DEEP DIVE --- PERFECT TENSES IN PROFESSIONAL USE",
+            9: "READING ACADEMIC AND TECHNICAL ENGLISH",
+            10: "ADVANCED WRITING --- THE STRUCTURED ARGUMENT",
+            11: "PROFESSIONAL EMAIL AND REPORT LANGUAGE",
+            12: "SPOKEN GRAMMAR --- FLUENCY PATTERNS",
+            13: "LISTENING FOR CRITICAL INFORMATION --- FILTERING NOISE",
+            14: "MID-COURSE REVIEW AND SELF-ASSESSMENT",
+            15: "ADVANCED READING --- INFERRING AUTHOR'S PURPOSE",
+            16: "SPEAKING UNDER PRESSURE --- MANAGING DIFFICULT QUESTIONS",
+            17: "THE LANGUAGE OF LEADERSHIP",
+            18: "ADVANCED GRAMMAR --- PASSIVE VOICE MASTERY",
+            19: "VOCABULARY IN CONTEXT --- ENGINEERING APPLICATIONS",
+            20: "CRITICAL THINKING THROUGH LANGUAGE --- ARGUMENT ANALYSIS",
+            21: "ADVANCED SPEAKING --- IMPROMPTU DELIVERY",
+            22: "WRITING COMPLEX REPORTS --- STRUCTURE AND FLOW",
+            23: "READING SPEED AND COMPREHENSION --- ADVANCED TECHNIQUES",
+            24: "SOCIAL AND NETWORKING ENGLISH FOR PROFESSIONALS",
+            25: "INTERVIEW AND VIVA LANGUAGE MASTERY",
+            26: "ADVANCED IDIOMS AND FIXED EXPRESSIONS IN CONTEXT",
+            27: "PRECISION WRITING --- EDITING AND PROOFREADING",
+            28: "CROSS-CULTURAL COMMUNICATION IN TECHNICAL SETTINGS",
+            29: "COMPLETE LANGUAGE INTEGRATION --- THE CAPSTONE DAY",
+            30: "GRADUATION DAY --- YOUR ADVANCED COMMUNICATOR'S MANIFESTO"
+}
     }
     return titles.get(level, {}).get(day, f"Day {day}")
 
@@ -376,36 +376,36 @@ def get_day_power_line(level, day):
             30: "You came here to improve your English. You leave with the language of a professional.",
         },
         'advanced': {
-            1: "Mastery is not about knowing everything — it's about knowing what matters.",
-            2: "The most powerful communicators make the complex feel simple.",
-            3: "Academic writing is clarity dressed in precision.",
-            4: "A great presentation doesn't inform — it transforms.",
-            5: "In debate, the goal isn't to win — it's to find the truth.",
-            6: "Strategy without communication is just a plan that never happens.",
-            7: "Synthesis is the highest form of understanding.",
-            8: "Literature teaches us the grammar of the human heart.",
-            9: "Technical writing is the art of making the invisible visible.",
-            10: "An executive summary respects everyone's time while delivering value.",
-            11: "In crisis, clarity is compassion.",
-            12: "Persuasion is the intersection of logic, emotion, and credibility.",
-            13: "True negotiation creates value — it doesn't just divide it.",
-            14: "Leadership communication is about alignment, not authority.",
-            15: "Advanced grammar isn't about rules — it's about choices.",
-            16: "Editing is where good writing becomes great writing.",
-            17: "Translation is the art of carrying meaning across cultural bridges.",
-            18: "A conference presentation is your ideas in their best light.",
-            19: "Mentoring language builds capacity, not dependency.",
-            20: "Strategic planning is storytelling with deadlines.",
-            21: "Review is where reflection meets action.",
-            22: "An innovation pitch is a promise of a better future.",
-            23: "Change management communication turns resistance into readiness.",
-            24: "Global communication respects difference while finding common ground.",
-            25: "Thought leadership is having opinions that matter, backed by expertise.",
-            26: "Publishing is how expertise becomes legacy.",
-            27: "Executive presence is earned, not declared.",
-            28: "Boardroom communication is precision under pressure.",
-            29: "Legacy building is what you build that outlasts you.",
-            30: "A capstone project proves you've transformed from learner to leader.",
+            1: "Your voice is not just sound --- it is your signature in every room you enter.",
+            2: "Simple sentences tell. Complex sentences persuade.",
+            3: "Every negotiation is a conversation between two futures. Choose your words with that awareness.",
+            4: "Data without delivery is just noise. Be the signal.",
+            5: "What is not said is often more important than what is said.",
+            6: "Every unnecessary word is a credibility leak. Plug it.",
+            7: "Facts inform. Stories transform. Master both.",
+            8: "Perfect tenses show not just what happened --- but what it means now.",
+            9: "The more you read precisely, the more precisely you think.",
+            10: "An argument without structure is an opinion. Structure makes it a case.",
+            11: "Your email is your handshake in a world you cannot see.",
+            12: "Fluency is not speed. It is the absence of unintended pauses.",
+            13: "Experts listen for what matters. Everyone else listens to everything.",
+            14: "Progress is not linear --- it is cumulative. Every day adds to your foundation.",
+            15: "Reading is not receiving. It is a conversation with the writer's intent.",
+            16: "The question is not the problem. Your response to it is your opportunity.",
+            17: "Leaders do not merely direct --- they elevate everyone around them through language.",
+            18: "The passive voice does not hide action --- it redirects focus to what matters most.",
+            19: "A word without context is a tool without purpose.",
+            20: "Language is not just how you communicate --- it is how you think.",
+            21: "The ability to think on your feet is the rarest professional skill. Develop it deliberately.",
+            22: "A report is not a dump of information --- it is a guided journey for the reader.",
+            23: "Read faster, understand deeper. These are not opposites --- they are partners.",
+            24: "Careers are built in conversations that most people consider small talk.",
+            25: "Every question in a viva or interview is an invitation to demonstrate your thinking.",
+            26: "Idioms are shortcuts to cultural fluency. Use them wisely.",
+            27: "The first draft shows thinking. The edited draft shows professionalism.",
+            28: "In a global team, cultural intelligence is as important as technical intelligence.",
+            29: "You do not learn a language to speak it --- you speak it to become it.",
+            30: "Thirty days ago you were prepared. Today you are equipped. Tomorrow you will lead."
         }
     }
     return power_lines.get(level, {}).get(day, "Keep pushing forward! Every day is a step toward mastery.")
@@ -559,28 +559,7 @@ def complete_day(request, level_name, day_number):
     
     return JsonResponse({'success': False, 'error': 'Day already completed'}, status=400)
 
-@login_required
-@require_http_methods(["POST"])
-def save_recording(request, level_name, day_number, activity_type):
-    """Save audio recording for speaking/listening activities"""
-    if 'audio' not in request.FILES:
-        return JsonResponse({'success': False, 'error': 'No audio file provided'}, status=400)
-    
-    audio_file = request.FILES['audio']
-    file_path = f'recordings/{request.user.id}/{level_name}/day{day_number}/{activity_type}_{timezone.now().timestamp()}.webm'
-    saved_path = default_storage.save(file_path, ContentFile(audio_file.read()))
-    
-    activity, _ = DailyActivity.objects.get_or_create(
-        user=request.user,
-        level=level_name,
-        day_number=day_number,
-        activity_type=activity_type,
-        defaults={'recording_url': saved_path}
-    )
-    activity.recording_url = saved_path
-    activity.save()
-    
-    return JsonResponse({'success': True, 'url': saved_path})
+
 
 @login_required
 @require_http_methods(["POST"])
@@ -602,23 +581,7 @@ def save_vocabulary(request):
     else:
         return JsonResponse({'success': True, 'message': f'"{word}" is already in your vocabulary'})
 
-@login_required
-def save_writing_response(request, level_name, day_number):
-    """Save writing activity responses"""
-    data = json.loads(request.body)
-    response_data = data.get('response')
-    
-    activity, _ = DailyActivity.objects.get_or_create(
-        user=request.user,
-        level=level_name,
-        day_number=day_number,
-        activity_type='writing',
-        defaults={'response_data': response_data}
-    )
-    activity.response_data = response_data
-    activity.save()
-    
-    return JsonResponse({'success': True})
+
 
 @login_required
 def take_final_test(request, level_name):
@@ -1215,7 +1178,7 @@ def collect_reward(request, level_name, day_number):
         'already_collected': True
     }, status=400)
 
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "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"
 
 @login_required
 @csrf_exempt
@@ -1223,6 +1186,7 @@ def ai_evaluate(request):
     """
     Generic AI evaluation endpoint for all days.
     Receives text and system prompt from frontend, calls Groq API, returns score and feedback.
+    Implements model rotation to handle rate limits.
     """
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'POST required'}, status=400)
@@ -1253,51 +1217,87 @@ def ai_evaluate(request):
                 {{"score": 0-100, "correct": true/false, "feedback": "short feedback (max 15 words)", "suggestion": "improvement tip (max 15 words)"}}
                 Be encouraging. Keep feedback VERY SHORT."""
         
-        # Call Groq API
-        headers = {
-            'Authorization': f'Bearer {GROQ_API_KEY}',
-            'Content-Type': 'application/json'
-        }
+        # List of models to try in order (handles rate limits)
+        models = [
+            'llama-3.3-70b-versatile',
+            'llama-3.1-70b-versatile',
+            'mixtral-8x7b-32768',
+            'llama-3.1-8b-instant'
+        ]
         
-        payload = {
-            'model':'llama-3.3-70b-versatile',
-            'messages': [
-                {'role': 'system', 'content': system_prompt},
-                {'role': 'user', 'content': f"Student's response: {user_text}\n\nEvaluate this response."}
-            ],
-            'temperature': 0.3,
-            'max_tokens': 300,
-            'response_format': {'type': 'json_object'}
-        }
+        last_error = None
+        for model_name in models:
+            try:
+                # Call Groq API
+                headers = {
+                    'Authorization': f'Bearer {GROQ_API_KEY}',
+                    'Content-Type': 'application/json'
+                }
+                
+                payload = {
+                    'model': model_name,
+                    'messages': [
+                        {'role': 'system', 'content': system_prompt},
+                        {'role': 'user', 'content': f"Student's response: {user_text}\n\nEvaluate this response."}
+                    ],
+                    'temperature': 0.3,
+                    'max_tokens': 300,
+                    'response_format': {'type': 'json_object'}
+                }
+                
+                response = requests.post(
+                    'https://api.groq.com/openai/v1/chat/completions',
+                    headers=headers,
+                    json=payload,
+                    timeout=30
+                )
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    ai_output = json.loads(result['choices'][0]['message']['content'])
+                    
+                    # Merging AI output into the response while keeping defaults
+                    response_data = {
+                        'success': True,
+                        'score': ai_output.get('score', 50),
+                        'correct': ai_output.get('correct', False),
+                        'feedback': ai_output.get('feedback', 'Good attempt!'),
+                        'suggestion': ai_output.get('suggestion', 'Keep practicing!'),
+                        'model_used': model_name
+                    }
+                    response_data.update(ai_output)
+                    return JsonResponse(response_data)
+                
+                elif response.status_code == 429:
+                    print(f"GROQ RATE LIMIT (429) for {model_name}. Trying next model...")
+                    last_error = response.text
+                    continue  # Try next model
+                
+                else:
+                    print(f"GROQ API ERROR ({response.status_code}) for {model_name}: {response.text}")
+                    last_error = response.text
+                    continue # Try next model or fail at end
+                    
+            except Exception as e:
+                print(f"GROQ REQUEST EXCEPTION for {model_name}: {str(e)}")
+                last_error = str(e)
+                continue
         
-        response = requests.post(
-            'https://api.groq.com/openai/v1/chat/completions',
-            headers=headers,
-            json=payload,
-            timeout=30
-        )
-        
-        if response.status_code == 200:
-            result = response.json()
-            ai_output = json.loads(result['choices'][0]['message']['content'])
-            
-            return JsonResponse({
-                'success': True,
-                'score': ai_output.get('score', 50),
-                'correct': ai_output.get('correct', False),
-                'feedback': ai_output.get('feedback', 'Good attempt!'),
-                'suggestion': ai_output.get('suggestion', 'Keep practicing!')
-            })
-        else:
-            return JsonResponse({
-                'success': False,
-                'feedback': 'AI service error. Please try again.',
-                'suggestion': 'Check your connection and retry.'
-            }, status=500)
-            
-    except Exception as e:
+        # If we get here, all models failed
         return JsonResponse({
             'success': False,
-            'feedback': f'Error: {str(e)[:100]}',
-            'suggestion': 'Please try again.'
-        }, status=500)
+            'feedback': 'The AI evaluation service is currently busy.',
+            'suggestion': 'We are processing many requests. Please try again in a moment.',
+            'debug_info': last_error
+        }, status=200) # Use 200 to allow UI to handle it gracefully
+            
+    except Exception as e:
+        print(f"AI EVALUATION TOP-LEVEL EXCEPTION: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'feedback': 'Something went wrong with the evaluation.',
+            'suggestion': 'Please refresh the page and try again.',
+            'debug_info': str(e)
+        }, status=200)

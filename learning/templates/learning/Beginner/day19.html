@@ -1873,57 +1873,132 @@
             const commonObjects = ['laptop', 'book', 'pen', 'bag', 'chair', 'table', 'phone', 'key', 'notebook', 'bottle', 'cup', 'glass', 'pencil', 'charger', 'mouse', 'keyboard'];
 
             // ==================== Helper Functions ====================
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-            csrftoken = getCookie('csrftoken');
+            // ========== LOCALSTORAGE PERSISTENCE ==========
+            const STORAGE_KEY = 'progress_beginner_day19';
 
-            function updateChecklistProgress() {
-                const allCheckboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
-                const completedCount = Array.from(allCheckboxes).filter(cb => cb.checked).length;
-                const totalCheckboxes = allCheckboxes.length;
-                const progressSpan = document.getElementById('progressCounter');
-                if (progressSpan) progressSpan.innerText = `${completedCount}/${totalCheckboxes} completed`;
-                const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-                if (dayCompleteBtn) {
-                    dayCompleteBtn.disabled = completedCount !== totalCheckboxes;
-                    dayCompleteBtn.style.opacity = completedCount === totalCheckboxes ? '1' : '0.5';
-                }
+            function saveProgress() {
+                const data = {
+                    activityCompleted: activityCompleted,
+                    inputs: {},
+                    radios: {},
+                    vocabHeard: vocabHeard
+                };
+
+                // Save all text inputs and textareas
+                document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                    if (el.id) data.inputs[el.id] = el.value;
+                });
+
+                // Save all radio selections
+                document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
+                    if (el.name) data.radios[el.name] = el.value;
+                });
+
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
+
+            function loadProgress() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (!saved) return;
+                try {
+                    const data = JSON.parse(saved);
+
+                    // 1. Restore activity completion
+                    if (data.activityCompleted) {
+                        activityCompleted = data.activityCompleted;
+                        const checklistMap = {
+                            listening: 'chk1', speaking: 'chk2', reading: 'chk3',
+                            writing: 'chk4', grammar: 'chk5', game: 'chk6', vocabulary: 'chk7'
+                        };
+                        Object.keys(activityCompleted).forEach(id => {
+                            if (activityCompleted[id]) {
+                                const cb = document.getElementById(checklistMap[id]);
+                                if (cb) cb.checked = true;
+                                const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
+                                if (btn) {
+                                    btn.classList.add('completed');
+                                    btn.textContent = '✓ Completed';
+                                    btn.disabled = true;
+                                    btn.style.pointerEvents = 'none';
+                                    btn.style.animation = 'none';
+                                }
+                            }
+                        });
+                    }
+
+                    // 2. Restore text inputs
+                    if (data.inputs) {
+                        Object.keys(data.inputs).forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.value = data.inputs[id];
+                        });
+                    }
+
+                    // 3. Restore radios
+                    if (data.radios) {
+                        Object.keys(data.radios).forEach(name => {
+                            const val = data.radios[name];
+                            const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+                            if (radio) {
+                                radio.checked = true;
+                                radio.dispatchEvent(new Event('change'));
+                            }
+                        });
+                    }
+
+                    // 4. Restore Vocab progress
+                    if (data.vocabHeard) {
+                        vocabHeard = data.vocabHeard;
+                        Object.keys(vocabHeard).forEach(word => {
+                            if (vocabHeard[word]) {
+                                const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
+                                if (checkCell) {
+                                    checkCell.innerHTML = '✅';
+                                    checkCell.style.color = '#16a34a';
+                                }
+                            }
+                        });
+                        updateVocabularyButtonStatus();
+                    }
+
+                    updateChecklistProgress();
+                } catch (e) { console.warn("Load progress failed", e); }
             }
 
             function markActivityComplete(activityId, checklistId) {
                 if (activityCompleted[activityId]) return;
                 activityCompleted[activityId] = true;
-                const checkbox = document.getElementById(checklistId);
-                if (checkbox) checkbox.checked = true;
+                const cb = document.getElementById(checklistId);
+                if (cb) cb.checked = true;
                 const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-                if (btn) { btn.classList.add('completed'); btn.textContent = '✓ Completed'; btn.disabled = true; }
+                if (btn) {
+                    btn.classList.add('completed');
+                    btn.textContent = '✓ Completed';
+                    btn.disabled = true;
+                    btn.style.pointerEvents = 'none';
+                    btn.style.animation = 'none';
+                }
                 updateChecklistProgress();
-                fetch(`/learning/day/19/complete/${activityId}/`, {
-                    method: 'POST', headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ completed: true })
-                }).catch(err => console.error('Error:', err));
+                saveProgress(); // Local persistence
             }
 
             function completeDay() {
                 const btn = document.getElementById('dayCompleteBtn');
                 if (btn.disabled) {
-                    alert('Please complete all activities first!');
+                    const msgDiv = document.createElement('div');
+                    msgDiv.style.color = '#dc2626';
+                    msgDiv.style.textAlign = 'center';
+                    msgDiv.innerHTML = '⚠️ Please complete all activities first!';
+                    btn.parentNode.insertBefore(msgDiv, btn.nextSibling);
+                    setTimeout(() => msgDiv.remove(), 3000);
                     return;
                 }
                 btn.innerHTML = '🎉 Saving...';
                 btn.disabled = true;
+
+                // Clear local storage upon completion
+                localStorage.removeItem(STORAGE_KEY);
+
                 if (typeof confetti !== 'undefined') {
                     confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
                 }
@@ -1932,7 +2007,24 @@
                 }, 2000);
             }
 
-            // ==================== Vocabulary Audio ====================
+            // Auto-save on any input change
+            document.addEventListener('input', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    saveProgress();
+                }
+            });
+            document.addEventListener('change', (e) => {
+                if (e.target.type === 'radio') {
+                    saveProgress();
+                }
+            });
+
+            // Initial load
+            loadProgress();
+
+            // Reading init — handled in initReading() call below
+
+            // Vocabulary Audio
             function updateVocabularyButtonStatus() {
                 const allHeard = vocabWordsList.every(word => vocabHeard[word] === true);
                 const vocabCompleteBtn = document.getElementById('completeVocabularyBtn');
@@ -1941,22 +2033,12 @@
                 }
             }
 
-            window.playAudio = function (word) {
+            function playAudioVocab(word) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(word);
                 utterance.lang = 'en-IN';
                 utterance.rate = 0.85;
-                utterance.pitch = 1.0;
-                function setVoiceAndSpeak() {
-                    const voices = window.speechSynthesis.getVoices();
-                    let selectedVoice = voices.find(voice => voice.lang === 'en-IN' || voice.name.includes('Indian'));
-                    if (!selectedVoice) selectedVoice = voices.find(voice => voice.lang === 'en-GB');
-                    if (!selectedVoice) selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
-                    if (selectedVoice) utterance.voice = selectedVoice;
-                    window.speechSynthesis.speak(utterance);
-                }
-                if (window.speechSynthesis.getVoices().length === 0) window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
-                else setVoiceAndSpeak();
+                window.speechSynthesis.speak(utterance);
 
                 if (vocabHeard.hasOwnProperty(word)) {
                     vocabHeard[word] = true;
@@ -1966,13 +2048,14 @@
                         checkCell.style.color = '#16a34a';
                     }
                     updateVocabularyButtonStatus();
+                    saveProgress();
                 }
-            };
+            }
 
             document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
                 btn.addEventListener('click', function () {
                     const word = this.getAttribute('data-word');
-                    playAudio(word);
+                    playAudioVocab(word);
                 });
             });
 

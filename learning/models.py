@@ -118,10 +118,6 @@ class DailyActivity(models.Model):
     completed = models.BooleanField(default=False)
     completed_at = models.DateTimeField(null=True, blank=True)
     
-    # For storing recordings or responses
-    recording_url = models.URLField(null=True, blank=True)
-    response_data = models.JSONField(null=True, blank=True)
-    
     class Meta:
         unique_together = ['user', 'level', 'day_number', 'activity_type']
         ordering = ['day_number', 'activity_type']

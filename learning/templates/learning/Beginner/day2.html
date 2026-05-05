@@ -947,7 +947,6 @@
         <div class="lesson-hero">
             <div class="hero-content">
                 <div class="day-badge">Day 2 • Week 1</div>
-                <strong>🌅</strong>
                 <h1 class="hero-title"> THE MORNING ROUTINE</h1>
                 <div class="power-line">💡 "Every new morning is a fresh chance—what you do today builds who you become
                     tomorrow."</div>
@@ -1203,7 +1202,7 @@
                     </div>
                     <div class="flex-buttons">
                         <button class="btn-outline" id="checkReadingBtn">Check Answers</button>
-                        <button class="btn-outline" id="resetReadingBtn">⟳ Reset Selections</button>
+
                     </div>
                     <div id="readingFeedback" style="margin-top:0.8rem;"></div>
                     <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
@@ -1451,13 +1450,12 @@
                             <div class="match-column">
                                 <h4>📖 MEANINGS</h4>
                                 <div id="rightMeanings">
-                                    <div class="match-card" data-id="plan_match" data-match="plan">I practice every day.
-                                    </div>
+                                    <div class="match-card" data-id="habit_match" data-match="habit">I practice every
+                                        day.</div>
                                     <div class="match-card" data-id="routine_match" data-match="routine">I wake up at 6
                                         AM</div>
                                     <div class="match-card" data-id="plan_match" data-match="plan">I organize my study
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -1508,55 +1506,19 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
     <script>
-        // ==================== Activity Completion Tracking ====================
-        let activityCompleted = { listening: false, speaking: false, reading: false, writing: false, vocabulary: false, game: false };
-
-        function updateChecklistProgress() {
-            let checked = 0;
-            for (let i = 1; i <= 6; i++) {
-                let chk = document.getElementById(`chk${i}`);
-                if (chk && chk.checked) checked++;
-            }
-            document.getElementById('progressCounter').innerText = `${checked}/6 completed`;
-            const dayBtn = document.getElementById('dayCompleteBtn');
-            if (dayBtn) {
-                dayBtn.disabled = checked !== 6;
-                dayBtn.style.opacity = checked === 6 ? '1' : '0.5';
-            }
-        }
-
-        function markActivityComplete(activityId, checklistId) {
-            if (activityCompleted[activityId]) return;
-            activityCompleted[activityId] = true;
-            const cb = document.getElementById(checklistId);
-            if (cb) cb.checked = true;
-            const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-            if (btn) {
-                btn.classList.add('completed');
-                btn.textContent = '✓ Completed';
-                btn.disabled = true;
-                btn.style.pointerEvents = 'none';
-                btn.style.animation = 'none';
-            }
-            updateChecklistProgress();
-        }
-
-        function completeDay() {
-            const btn = document.getElementById('dayCompleteBtn');
-            if (btn.disabled) {
-                alert('Please complete all activities first!');
-                return;
-            }
-            btn.innerHTML = '🎉 Saving...';
-            btn.disabled = true;
-            if (typeof confetti !== 'undefined') {
-                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-            }
-            setTimeout(() => {
-                window.location.href = '/learning/level/beginner/?celebrate=true&completed=2';
-            }, 2000);
-        }
+        // Initialize Day 2 with shared logic
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeDay(2, 'beginner', {
+                listening: false,
+                speaking: false,
+                reading: false,
+                writing: false,
+                game: false,
+                vocabulary: false
+            });
+        });
 
         // ==================== VOCABULARY VALIDATION - AUTO CHECK ON AUDIO CLICK ====================
         const completeVocabularyBtn = document.getElementById('completeVocabularyBtn');
@@ -1907,7 +1869,7 @@
         });
 
         // ==================== READING ACTIVITY ====================
-        const passageWords = "A successful engineer starts the day with a goal. He wakes up early. He takes a moment to think. He plans his technical tasks. This habit makes him efficient in his work.";
+        const passageWords = "A successful engineer starts the day with a goal. He wakes up early. He takes a moment to think. He plans his technical task. This habit makes him efficient in his work.";
         const expectedWords = ['starts', 'wakes', 'takes', 'plans', 'makes'];
         let readingSpans = [];
         let selectedIndices = new Set();
@@ -2516,6 +2478,144 @@
             if (gameCorrect) markActivityComplete('game', 'chk5');
             else alert('Please complete the unscramble words and match all pairs correctly.');
         });
+
+        // ========== LOCALSTORAGE PERSISTENCE ==========
+        const STORAGE_KEY = 'progress_beginner_day2';
+
+        function saveProgress() {
+            const data = {
+                activityCompleted: activityCompleted,
+                inputs: {},
+                radios: {}
+            };
+
+            // Save all text inputs and textareas
+            document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                if (el.id) data.inputs[el.id] = el.value;
+            });
+
+            // Save all radio selections
+            document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
+                if (el.name) data.radios[el.name] = el.value;
+            });
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+
+                // 1. Restore activity completion
+                if (data.activityCompleted) {
+                    activityCompleted = data.activityCompleted;
+                    const checklistMap = {
+                        listening: 'chk1', speaking: 'chk2', reading: 'chk3',
+                        writing: 'chk4', game: 'chk5', vocabulary: 'chk6'
+                    };
+                    Object.keys(activityCompleted).forEach(id => {
+                        if (activityCompleted[id]) {
+                            const cb = document.getElementById(checklistMap[id]);
+                            if (cb) cb.checked = true;
+                            const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
+                            if (btn) {
+                                btn.classList.add('completed');
+                                btn.textContent = '✓ Completed';
+                                btn.disabled = true;
+                            }
+                        }
+                    });
+                }
+
+                // 2. Restore text inputs
+                if (data.inputs) {
+                    Object.keys(data.inputs).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = data.inputs[id];
+                    });
+                }
+
+                // 3. Restore radios
+                if (data.radios) {
+                    Object.keys(data.radios).forEach(name => {
+                        const val = data.radios[name];
+                        const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+                        if (radio) {
+                            radio.checked = true;
+                            radio.dispatchEvent(new Event('change'));
+                        }
+                    });
+                }
+
+                updateChecklistProgress();
+            } catch (e) { console.warn("Load progress failed", e); }
+        }
+
+        function markActivityComplete(activityId, checklistId) {
+            if (activityCompleted[activityId]) return;
+            activityCompleted[activityId] = true;
+            document.getElementById(checklistId).checked = true;
+            const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+            if (btn) {
+                btn.classList.add('completed');
+                btn.textContent = '✓ Completed';
+                btn.disabled = true;
+            }
+            updateChecklistProgress();
+            saveProgress(); // Local persistence
+
+            // Also save to backend
+            fetch(`/learning/level/${currentLevel}/day/${currentDay}/complete/${activityId}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' },
+                body: JSON.stringify({ completed: true })
+            }).catch(err => console.error('Error saving activity:', err));
+        }
+
+        function updateChecklistProgress() {
+            const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6'];
+            let completed = 0;
+            checkboxes.forEach(id => {
+                if (document.getElementById(id)?.checked) completed++;
+            });
+            const counter = document.getElementById('progressCounter');
+            if (counter) counter.innerText = `${completed}/6 completed`;
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            if (dayBtn) {
+                dayBtn.disabled = (completed !== 6);
+                dayBtn.style.opacity = (completed === 6) ? '1' : '0.5';
+            }
+        }
+
+        function completeDay() {
+            const btn = document.getElementById('dayCompleteBtn');
+            if (btn.disabled) { alert('Please complete all activities first!'); return; }
+            btn.innerHTML = '🎉 Saving...';
+            btn.disabled = true;
+
+            // Clear local storage upon completion
+            localStorage.removeItem(STORAGE_KEY);
+
+            if (typeof confetti !== 'undefined') confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+            setTimeout(() => { window.location.href = '/learning/level/beginner/?celebrate=true&completed=2'; }, 2000);
+        }
+
+        // Auto-save on any input change
+        document.addEventListener('input', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                saveProgress();
+            }
+        });
+        document.addEventListener('change', (e) => {
+            if (e.target.type === 'radio') {
+                saveProgress();
+            }
+        });
+
+        // Initial load
+        loadProgress();
 
         document.getElementById('dayCompleteBtn')?.addEventListener('click', completeDay);
         updateChecklistProgress();

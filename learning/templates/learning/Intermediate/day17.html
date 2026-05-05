@@ -9,6 +9,166 @@
     <title>Day 17: Advanced Listening · Inference & Implication | English for Engineers</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <style>
+        .listening-feedback-item {
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .listening-feedback-item.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 3px solid #22c55e;
+        }
+
+        .listening-feedback-item.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 3px solid #dc2626;
+        }
+
+        .listening-feedback-item.warning {
+            background: #fef9e3;
+            color: #92400e;
+            border-left: 3px solid #f59e0b;
+        }
+
+        .listening-overall-feedback {
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .listening-overall-feedback.green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .listening-overall-feedback.yellow {
+            background: #fef9e3;
+            color: #92400e;
+        }
+
+        .listening-overall-feedback.red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .teaching-tip {
+            background: #e0f2fe;
+            border-radius: 12px;
+            padding: 0.75rem;
+            font-size: 0.85rem;
+            color: #075985;
+            text-align: center;
+        }
+
+        .correct-answer-box {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .attempt-counter {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+            text-align: center;
+            padding: 0.5rem;
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+
+        .modern-record-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .modern-record-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .modern-record-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .ai-feedback {
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin: 0.5rem 0;
+        }
+
+        .ai-feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #22c55e;
+        }
+
+        .ai-feedback.incorrect {
+            background: #fef9e3;
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .ai-feedback.processing {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .fix-feedback.empty {
+            background: #fef9e3;
+            color: #92400e;
+        }
+
+        .fix-feedback.warning {
+            background: #fef9e3;
+            color: #92400e;
+        }
+
+        .feedback-hint {
+            background: #f0fdf4;
+            border-radius: 8px;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            color: #166534;
+            margin-top: 0.5rem;
+        }
+
+        .clickable-word.temp-underlined {
+            background-color: #fef9c3;
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-decoration-color: #eab308;
+        }
+
+        .clickable-word.underline-correct {
+            background-color: #bbf7d0;
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-decoration-color: #22c55e;
+        }
+
+        .clickable-word.underline-incorrect {
+            background-color: #fecaca;
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-decoration-color: #ef4444;
+        }
+    </style>
 </head>
 
 <body>
@@ -22,7 +182,7 @@
             </div>
         </div>
         <div class="activities-grid">
-            <!-- 1. LISTENING ACTIVITY - UPDATED -->
+            <!-- 1. LISTENING ACTIVITY - UPDATED WITH AI EVALUATION -->
             <div class="activity-card" id="listening-card">
                 <div class="card-header listening">
                     <h2>🎧 1. Listening Activity · Reading Between the Lines</h2>
@@ -40,7 +200,7 @@
 
                     <!-- Audio Player -->
                     <audio id="listeningAudio" controls style="width: 100%; margin: 0.5rem 0;">
-                        <source src="{% static 'learning/audio/day17.mp3' %}" type="audio/mpeg">
+                        <source src="{% static 'learning/audio/Intermediate/day18.mp3' %}" type="audio/mpeg">
                     </audio>
 
                     <!-- Listening Text (Hidden until audio ends) -->
@@ -68,7 +228,8 @@
                             <div class="task-content"> Listen to the audio and read the script above. The speaker
                                 <strong>never directly says</strong> certain things, but they <strong>imply</strong>
                                 them.<br>Write down <strong>3 implied meanings</strong> (what is suggested but NOT
-                                directly stated) in the box below.</div>
+                                directly stated) in the box below.
+                            </div>
                         </div>
 
                         <!-- ONE UNIFIED WHITE BOX for all 3 implied meanings -->
@@ -93,7 +254,7 @@
                                     <span style="font-weight: 600; color: #1e293b;">Implied Meaning 1</span>
                                 </div>
                                 <textarea id="implied1" class="thoughtful-textarea" rows="2"
-                                    placeholder="Write your answer here"
+                                    placeholder="What does the speaker imply about the delay?"
                                     style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 12px;"></textarea>
                                 <div id="implied1Feedback" class="listening-feedback-item"
                                     style="display: none; margin-top: 0.5rem;"></div>
@@ -107,7 +268,7 @@
                                     <span style="font-weight: 600; color: #1e293b;">Implied Meaning 2</span>
                                 </div>
                                 <textarea id="implied2" class="thoughtful-textarea" rows="2"
-                                    placeholder="Write your answer here"
+                                    placeholder="What does 'client was understandably concerned' imply?"
                                     style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 12px;"></textarea>
                                 <div id="implied2Feedback" class="listening-feedback-item"
                                     style="display: none; margin-top: 0.5rem;"></div>
@@ -121,25 +282,45 @@
                                     <span style="font-weight: 600; color: #1e293b;">Implied Meaning 3</span>
                                 </div>
                                 <textarea id="implied3" class="thoughtful-textarea" rows="2"
-                                    placeholder="Write your answer here"
+                                    placeholder="What does 'taken all necessary steps to address the situation' imply?"
                                     style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 12px;"></textarea>
                                 <div id="implied3Feedback" class="listening-feedback-item"
                                     style="display: none; margin-top: 0.5rem;"></div>
                             </div>
+
                             <button class="btn-outline" id="checkImpliedAnswersBtn"
-                                style="display: inline-block; width: auto; background: #8b5cf6; color: white; border: none; padding: 0.4rem 1rem; font-size: 0.8rem;">
+                                style="display: inline-block; width: auto; background: #8b5cf6; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 40px; cursor: pointer;">
                                 ✓ Check My Answers
                             </button>
-
-                            <div id="listeningOverallFeedback" style="margin-top: 1rem;"></div>
+                            <div id="impliedAttemptCounter" class="attempt-counter" style="margin-top: 0.75rem;">📊
+                                Attempts remaining: <span>5</span></div>
+                            <div id="listeningOverallFeedback" style="margin: 1rem 1rem 0 1rem;"></div>
                             <div id="listeningTeachingTip" class="teaching-tip"
-                                style="display: none; margin-top: 1rem;"></div>
+                                style="display: none; margin: 0 1rem 1rem 1rem;"></div>
                         </div>
 
+                        <!-- Recording Section -->
+                        <div style="font-weight: 600; margin: 1rem 0 0.5rem;">🎙️ Record Your Implied Meanings</div>
+                        <div class="recording-controls">
+                            <button id="listeningRecordBtn" class="modern-record-btn" disabled>🎙️ Start Recording
+                                (Validate first)</button>
+                            <button id="listeningStopBtn" class="modern-record-btn"
+                                style="background: #64748b; display: none;">⏹️ Stop Recording</button>
+                        </div>
+                        <div id="listeningPlaybackCard" style="display: none;">
+                            <audio id="listeningPlayback" controls style="width: 100%;"></audio>
+                        </div>
+                        <div id="comparisonSection" style="display: none;">
+                            <div class="comparison-message">Did you read all 3 implied meanings clearly?</div>
+                            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                                <button id="yesComparisonBtn" class="yes-btn">✓ Yes, correct</button>
+                                <button id="noComparisonBtn" class="no-btn">✗ No, record again</button>
+                            </div>
+                            <div id="comparisonFeedback" style="margin-top: 0.5rem;"></div>
+                        </div>
 
-
-                        <!-- QUIZ SECTION (Keep as is) -->
-                        <div class="quiz-section">
+                        <!-- QUIZ SECTION -->
+                        <div class="quiz-section" style="margin-top: 1rem;">
                             <p><strong>🧠 Quick Listening Check</strong></p><br>
                             <div>
                                 <p><strong>1. What was the installation described as?</strong></p>
@@ -161,7 +342,6 @@
                         </div>
                     </div>
 
-
                     <!-- Complete Button -->
                     <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
                         <button class="complete-activity-btn" id="completeListeningBtn" data-checklist="chk4" disabled>✓
@@ -169,6 +349,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- 2. SPEAKING ACTIVITY - The Diplomatic Briefing (UNCHANGED) -->
             <div class="activity-card" id="speaking-card">
                 <div class="card-header speaking">
@@ -275,7 +456,8 @@
 
                 </div>
             </div>
-            <!-- ==================== 3. READING ACTIVITY - WITH LOCAL VALIDATION ==================== -->
+
+            <!-- ==================== 3. READING ACTIVITY - UPDATED ==================== -->
             <div class="activity-card" id="reading-card">
                 <div class="card-header reading">
                     <h2>📖 3. Reading Activity · The Meeting Notes</h2>
@@ -287,19 +469,20 @@
                         style="background: white; border-radius: 12px; padding: 1rem; border: 2px solid #e2e8f0; line-height: 1.8; margin-bottom: 1rem;">
                     </div>
 
-                    <!-- ==================== TASK 1: UNDERLINE MODE ==================== -->
+                    <!-- ==================== TASK 1: UNDERLINE MODE - UPDATED TARGET PHRASE ==================== -->
                     <div class="analysis-instruction"
                         style="background: #fef9e3; padding: 0.8rem; border-radius: 12px; margin: 1rem 0; border-left: 4px solid #eab308;">
                         <strong>Task 1: Underline the phrase that implies negative emotion</strong>
                         <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.3rem;">Click <strong>"Underline
-                                Mode"</strong>, then click on each word which is in phrase and click on check underlines
-                        </p>
+                                Mode"</strong>, then click on each word in the phrase <strong>"raised questions
+                                regarding the revised scope"</strong>. Click "Check Underlines" to verify.</p>
                     </div>
                     <div style="display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap;">
                         <button id="underlineModeBtn" class="btn-outline"
                             style="background: #f59e0b; color: white; border: none; padding: 0.5rem 1rem; border-radius: 40px; cursor: pointer;">Underline
                             Mode</button>
                         <button class="btn-outline" id="checkUnderlinesBtn">✓ Check Underlines</button>
+                        <button class="btn-outline" id="resetUnderlinesBtn">⟳ Reset</button>
                     </div>
 
                     <!-- Underline Feedback Section -->
@@ -313,7 +496,7 @@
                             <strong>🔍 Task 2 : For each statement, write what is implied but not directly
                                 stated.</strong>
                             <p style="font-size: 0.75rem; color: #075985; margin-top: 0.2rem;">What is NOT directly
-                                stated?</p>
+                                stated? (Start with a capital letter and end with a period)</p>
                         </div>
 
                         <!-- Statement 1 -->
@@ -387,6 +570,8 @@
                             <div id="readingImplied5Hint" class="feedback-hint"
                                 style="display: none; margin-top: 0.3rem;"></div>
                         </div>
+
+                        <!-- Task 3: Double Negative Analysis -->
                         <div
                             style="background: #e0f2fe; border-radius: 10px; padding: 0.5rem 0.8rem; margin-bottom: 0.8rem;">
                             <strong>🔍 Task 3: Double Negative Analysis</strong>
@@ -411,7 +596,6 @@
                     </div>
 
                     <div id="readingOverallFeedback" class="quiz-feedback" style="display: none;"></div>
-                    <div id="readingValidationMsg" class="validation-message"></div>
 
                     <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
                         <button class="complete-activity-btn" id="completeReadingBtn" disabled>✓ Mark Reading as
@@ -419,6 +603,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- 4. VOCABULARY TABLE (UNCHANGED) -->
             <div class="activity-card" id="vocabulary-card">
                 <div class="card-header vocabulary">
@@ -441,53 +626,53 @@
                             <tbody>
                                 <tr>
                                     <td class="audio-cell"><button class="vocab-audio-btn" data-word="Implication"
-                                            data-checkid="check-implication">🔊</button></td>
-                                    <td class="check-cell" id="check-implication">⬜</td>
-                                    <td><strong>Implication</strong></td>
-                                    <td><code>/ˌɪm.plɪˈkeɪ.ʃən/</code></td>
-                                    <td>A conclusion drawn from something implied</td>
-                                    <td>Inference</td>
-                                    <td>Statement</td>
+                                            data-checkid="check-implication">🔊</button></span>
+                                    <td class="check-cell" id="check-implication">⬜</span>
+                                    <td class="word-cell"><strong>Implication</strong></span>
+                                    <td><code>/ˌɪm.plɪˈkeɪ.ʃən/</code></span>
+                                    <td>A conclusion drawn from something implied</span>
+                                    <td>Inference</span>
+                                    <td>Statement</span>
                                 </tr>
                                 <tr>
                                     <td class="audio-cell"><button class="vocab-audio-btn" data-word="Inference"
-                                            data-checkid="check-inference">🔊</button></td>
-                                    <td class="check-cell" id="check-inference">⬜</td>
-                                    <td><strong>Inference</strong></td>
-                                    <td><code>/ˈɪn.fər.əns/</code></td>
-                                    <td>A conclusion reached from evidence</td>
-                                    <td>Deduction</td>
-                                    <td>Assumption</td>
+                                            data-checkid="check-inference">🔊</button></span>
+                                    <td class="check-cell" id="check-inference">⬜</span>
+                                    <td class="word-cell"><strong>Inference</strong></span>
+                                    <td><code>/ˈɪn.fər.əns/</code></span>
+                                    <td>A conclusion reached from evidence</span>
+                                    <td>Deduction</span>
+                                    <td>Assumption</span>
                                 </tr>
                                 <tr>
                                     <td class="audio-cell"><button class="vocab-audio-btn" data-word="Deferred"
-                                            data-checkid="check-deferred">🔊</button></td>
-                                    <td class="check-cell" id="check-deferred">⬜</td>
-                                    <td><strong>Deferred</strong></td>
-                                    <td><code>/dɪˈfɜːd/</code></td>
-                                    <td>Postponed to a later time</td>
-                                    <td>Delayed</td>
-                                    <td>Cancelled</td>
+                                            data-checkid="check-deferred">🔊</button></span>
+                                    <td class="check-cell" id="check-deferred">⬜</span>
+                                    <td class="word-cell"><strong>Deferred</strong></span>
+                                    <td><code>/dɪˈfɜːd/</code></span>
+                                    <td>Postponed to a later time</span>
+                                    <td>Delayed</span>
+                                    <td>Cancelled</span>
                                 </tr>
                                 <tr>
                                     <td class="audio-cell"><button class="vocab-audio-btn" data-word="Allocation"
-                                            data-checkid="check-allocation">🔊</button></td>
-                                    <td class="check-cell" id="check-allocation">⬜</td>
-                                    <td><strong>Allocation</strong></td>
-                                    <td><code>/ˌæl.əˈkeɪ.ʃən/</code></td>
-                                    <td>The distribution of resources for a purpose</td>
-                                    <td>Distribution</td>
-                                    <td>Withdrawal</td>
+                                            data-checkid="check-allocation">🔊</button></span>
+                                    <td class="check-cell" id="check-allocation">⬜</span>
+                                    <td class="word-cell"><strong>Allocation</strong></span>
+                                    <td><code>/ˌæl.əˈkeɪ.ʃən/</code></span>
+                                    <td>The distribution of resources for a purpose</span>
+                                    <td>Distribution</span>
+                                    <td>Withdrawal</span>
                                 </tr>
                                 <tr>
                                     <td class="audio-cell"><button class="vocab-audio-btn" data-word="Conservative"
-                                            data-checkid="check-conservative">🔊</button></td>
-                                    <td class="check-cell" id="check-conservative">⬜</td>
-                                    <td><strong>Conservative</strong></td>
-                                    <td><code>/kənˈsɜː.və.tɪv/</code></td>
-                                    <td>Cautiously low or moderate (of estimates)</td>
-                                    <td>Understated</td>
-                                    <td>Exaggerated</td>
+                                            data-checkid="check-conservative">🔊</button></span>
+                                    <td class="check-cell" id="check-conservative">⬜</span>
+                                    <td class="word-cell"><strong>Conservative</strong></span>
+                                    <td><code>/kənˈsɜː.və.tɪv/</code></span>
+                                    <td>Cautiously low or moderate (of estimates)</span>
+                                    <td>Understated</span>
+                                    <td>Exaggerated</span>
                                 </tr>
                             </tbody>
                         </table>
@@ -497,21 +682,19 @@
                         <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #166534;">
                             <span>💡</span><span>IDIOM OF THE DAY: "READ THE ROOM"</span>
                         </div><br>
-                        <p style="margin-bottom:0.5rem"><strong>Marathi Meaning:</strong> परिस्थितीचा अंदाज घेणे</p>
-                        <p style="margin-bottom:0.5rem"><strong>Meaning:</strong> To understand the mood or reaction of
-                            a group</p>
-                        <p style="margin-bottom:0.5rem"><strong>Example:</strong> "Before beginning his presentation, he
-                            paused to read the room and adjusted his tone accordingly."</p>
+                        <p><strong>Marathi Meaning:</strong> परिस्थितीचा अंदाज घेणे</p>
+                        <p><strong>Meaning:</strong> To understand the mood or reaction of a group</p>
+                        <p><strong>Example:</strong> "Before beginning his presentation, he paused to read the room and
+                            adjusted his tone accordingly."</p>
                     </div>
 
                     <div class="power-word-section">
                         <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
                             <span>🔥</span><span>POWER WORD: NUANCED (NOO-ahnsed)</span>
                         </div><br>
-                        <p style="margin-bottom:0.5rem"><strong>Meaning:</strong> Characterised by subtle distinctions
-                        </p>
-                        <p style="margin-bottom:0.5rem"><strong>Usage:</strong> "A nuanced understanding of the client's
-                            concerns allowed the team to craft a more effective proposal."</p>
+                        <p><strong>Meaning:</strong> Characterised by subtle distinctions</p>
+                        <p><strong>Usage:</strong> "A nuanced understanding of the client's concerns allowed the team to
+                            craft a more effective proposal."</p>
                     </div>
 
                     <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
@@ -593,12 +776,12 @@
                     <button class="btn-outline" id="resetGrammarBtn">⟳ Reset All</button>
                 </div>
                 <div id="grammarFeedback" class="quiz-feedback"></div>
-                <div id="grammarValidationMsg" class="validation-message"></div>
                 <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
                     <button class="complete-activity-btn" id="completeGrammarBtn" disabled>✓ Mark Grammar as
                         Complete</button>
                 </div>
             </div>
+
             <!-- CHECKLIST -->
             <div class="activity-card">
                 <div class="card-header vocabulary">
@@ -627,205 +810,11 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="{% static 'learning/js/intermediate/main.js' %}"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
-            // ==================== ADDED: ACTIVITY COMPLETION FUNCTIONS ====================
-            // This section adds the missing markActivityComplete and progress tracking functions
-
-            function updateDayProgress() {
-                const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
-                let completed = 0;
-                checkboxes.forEach(cb => {
-                    if (cb.checked) completed++;
-                });
-                const counter = document.getElementById('progressCounter');
-                if (counter) counter.innerText = `${completed}/5 completed`;
-
-                const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-                if (dayCompleteBtn) {
-                    const isComplete = (completed === 5);
-                    dayCompleteBtn.disabled = !isComplete;
-
-                    if (isComplete) {
-                        dayCompleteBtn.style.background = '#16a34a';  // ← DARK GREEN
-                        dayCompleteBtn.style.animation = 'pulse-day 2s ease-in-out infinite';
-                        dayCompleteBtn.style.cursor = 'pointer';
-                        dayCompleteBtn.style.opacity = '1';
-                    } else {
-                        dayCompleteBtn.style.background = '#94a3b8';  // ← GRAY
-                        dayCompleteBtn.style.animation = 'none';
-                        dayCompleteBtn.style.cursor = 'not-allowed';
-                        dayCompleteBtn.style.opacity = '0.6';
-                    }
-                }
-            }
-
-            // Define markActivityComplete function
-            window.markActivityComplete = function (activityId, checklistId) {
-                // Check the checklist item
-                const checkbox = document.getElementById(checklistId);
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-
-                // Update the complete button
-                const completeBtn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-                if (completeBtn) {
-                    completeBtn.disabled = true;
-                    completeBtn.textContent = '✓ Completed';
-                    completeBtn.style.animation = 'none';
-                    completeBtn.style.background = '#94a3b8';
-                }
-
-                // Update progress counter
-                updateDayProgress();
-
-                // Show success message
-                console.log(`✅ Activity "${activityId}" marked as complete!`);
-            };
-
-            // ==================== VOCABULARY COMPLETION FUNCTION ====================
-            function checkVocabularyCompletion() {
-                const checkCells = document.querySelectorAll('.check-cell');
-                let allChecked = true;
-                checkCells.forEach(cell => {
-                    if (cell.innerHTML !== '✅') {
-                        allChecked = false;
-                    }
-                });
-
-                const vocabCompleteBtn = document.getElementById('completeVocabularyBtn');
-                if (vocabCompleteBtn) {
-                    vocabCompleteBtn.disabled = !allChecked;
-                    if (allChecked) {
-                        vocabCompleteBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
-                    } else {
-                        vocabCompleteBtn.style.animation = 'none';
-                    }
-                }
-            }
-
-            // ==================== VOCABULARY AUDIO BUTTONS ====================
-            document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const word = this.getAttribute('data-word');
-                    const checkId = this.getAttribute('data-checkid');
-                    const checkCell = document.getElementById(checkId);
-
-                    if ('speechSynthesis' in window) {
-                        window.speechSynthesis.cancel();
-                        const utterance = new SpeechSynthesisUtterance(word);
-                        utterance.lang = 'en-US';
-                        utterance.rate = 0.9;
-                        utterance.onend = () => {
-                            if (checkCell && checkCell.innerHTML !== '✅') {
-                                checkCell.innerHTML = '✅';
-                                checkCell.style.color = '#22c55e';
-                                checkVocabularyCompletion();
-                            }
-                        };
-                        window.speechSynthesis.speak(utterance);
-                    } else {
-                        // Fallback for browsers without speech synthesis
-                        if (checkCell && checkCell.innerHTML !== '✅') {
-                            checkCell.innerHTML = '✅';
-                            checkCell.style.color = '#22c55e';
-                            checkVocabularyCompletion();
-                        }
-                    }
-                });
-            });
-
-            // ==================== VOCABULARY COMPLETE BUTTON ====================
-            const vocabCompleteBtn = document.getElementById('completeVocabularyBtn');
-            if (vocabCompleteBtn) {
-                vocabCompleteBtn.addEventListener('click', function () {
-                    if (!vocabCompleteBtn.disabled && typeof markActivityComplete === 'function') {
-                        markActivityComplete('vocabulary', 'chk5');
-                    }
-                });
-            }
-
-            // Initialize vocabulary button state
-            checkVocabularyCompletion();
-
-            // ==================== GRAMMAR COMPLETE BUTTON ====================
-            const grammarCompleteBtn = document.getElementById('completeGrammarBtn');
-            if (grammarCompleteBtn) {
-                grammarCompleteBtn.addEventListener('click', function () {
-                    if (!grammarCompleteBtn.disabled && typeof markActivityComplete === 'function') {
-                        markActivityComplete('grammar', 'chk2');
-                    }
-                });
-            }
-
-            // ==================== DAY COMPLETE BUTTON ====================
-            const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-            if (dayCompleteBtn) {
-                dayCompleteBtn.addEventListener('click', function () {
-                    const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
-                    let allChecked = true;
-                    checkboxes.forEach(cb => {
-                        if (!cb.checked) allChecked = false;
-                    });
-
-                    if (!allChecked) {
-                        alert('⚠️ Please complete all 5 activities before completing the day!');
-                        return;
-                    }
-
-                    this.innerHTML = '✨ Completing Day 17...';
-                    this.disabled = true;
-
-                    if (typeof confetti !== 'undefined') {
-                        confetti({
-                            particleCount: 200,
-                            spread: 100,
-                            origin: { y: 0.6 }
-                        });
-                        setTimeout(() => {
-                            confetti({
-                                particleCount: 150,
-                                spread: 80,
-                                origin: { y: 0.5, x: 0.3 }
-                            });
-                        }, 200);
-                        setTimeout(() => {
-                            confetti({
-                                particleCount: 150,
-                                spread: 80,
-                                origin: { y: 0.5, x: 0.7 }
-                            });
-                        }, 400);
-                    }
-
-                    setTimeout(() => {
-                        window.location.href = '/learning/level/intermediate/?celebrate=true&completed=17';
-                    }, 1500);
-                });
-            }
-
-            // ==================== INITIAL PROGRESS UPDATE ====================
-            setTimeout(updateDayProgress, 100);
-
-            // ==================== ORIGINAL CODE STARTS HERE (UNCHANGED) ====================
-
-            if (typeof initializeDay === 'function') {
-                initializeDay(17, 'intermediate', {
-                    quizAnswers: { q1: 'three weeks late', q2: 'concerned' },
-                    vocabularyWords: ['implication', 'inference', 'deferred', 'allocation', 'conservative'],
-                    powerWord: 'nuanced',
-                    grammarAnswers: {
-                        q1: { keyword: 'not', message: '✅ Correct litotes!', errorMessage: '❌ Try using "not" + opposite adjective' },
-                        q2: { keyword: 'not', message: '✅ Correct litotes!', errorMessage: '❌ Try using "not" + opposite adjective' },
-                        q3: { keyword: 'not', message: '✅ Correct litotes!', errorMessage: '❌ Try using "not" + opposite adjective' }
-                    }
-                });
-            }
-
-            // ==================== HELPER FUNCTION ====================
             function getCookie(name) {
                 let cookieValue = null;
                 if (document.cookie && document.cookie !== '') {
@@ -840,8 +829,92 @@
                 }
                 return cookieValue;
             }
+            const csrftoken = getCookie('csrftoken');
 
-            // ==================== LISTENING ACTIVITY - AI EVALUATION ====================
+            // ==================== ACTIVITY COMPLETION FUNCTIONS ====================
+            function updateDayProgress() {
+                const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+                let completed = 0;
+                checkboxes.forEach(cb => {
+                    if (cb.checked) completed++;
+                });
+                const counter = document.getElementById('progressCounter');
+                if (counter) counter.innerText = `${completed}/5 completed`;
+
+                const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+                if (dayCompleteBtn) {
+                    const isComplete = (completed === 5);
+                    dayCompleteBtn.disabled = !isComplete;
+                    if (isComplete) {
+                        dayCompleteBtn.style.background = '#16a34a';
+                        dayCompleteBtn.style.cursor = 'pointer';
+                        dayCompleteBtn.style.opacity = '1';
+                    } else {
+                        dayCompleteBtn.style.background = '#94a3b8';
+                        dayCompleteBtn.style.cursor = 'not-allowed';
+                        dayCompleteBtn.style.opacity = '0.6';
+                    }
+                }
+            }
+
+            window.markActivityComplete = function (activityId, checklistId) {
+                const checkbox = document.getElementById(checklistId);
+                if (checkbox) checkbox.checked = true;
+                const completeBtn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+                if (completeBtn) {
+                    completeBtn.disabled = true;
+                    completeBtn.textContent = '✓ Completed';
+                }
+                updateDayProgress();
+            };
+
+            // ==================== VOCABULARY ====================
+            function checkVocabularyCompletion() {
+                const checkCells = document.querySelectorAll('.check-cell');
+                let allChecked = true;
+                checkCells.forEach(cell => {
+                    if (cell.innerHTML !== '✅') allChecked = false;
+                });
+                const vocabCompleteBtn = document.getElementById('completeVocabularyBtn');
+                if (vocabCompleteBtn) vocabCompleteBtn.disabled = !allChecked;
+            }
+
+            document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const word = this.getAttribute('data-word');
+                    const checkId = this.getAttribute('data-checkid');
+                    const checkCell = document.getElementById(checkId);
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const utterance = new SpeechSynthesisUtterance(word);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.9;
+                        utterance.onend = () => {
+                            if (checkCell && checkCell.innerHTML !== '✅') {
+                                checkCell.innerHTML = '✅';
+                                checkCell.style.color = '#22c55e';
+                                checkVocabularyCompletion();
+                            }
+                        };
+                        window.speechSynthesis.speak(utterance);
+                    } else {
+                        if (checkCell && checkCell.innerHTML !== '✅') {
+                            checkCell.innerHTML = '✅';
+                            checkCell.style.color = '#22c55e';
+                            checkVocabularyCompletion();
+                        }
+                    }
+                });
+            });
+
+            document.getElementById('completeVocabularyBtn')?.addEventListener('click', function () {
+                if (!this.disabled && typeof markActivityComplete === 'function') {
+                    markActivityComplete('vocabulary', 'chk5');
+                }
+            });
+            checkVocabularyCompletion();
+
+            // ==================== LISTENING ACTIVITY - AI EVALUATION FOR IMPLIED MEANINGS ====================
 
             // Get DOM elements
             const implied1 = document.getElementById('implied1');
@@ -853,99 +926,159 @@
             const feedback1 = document.getElementById('implied1Feedback');
             const feedback2 = document.getElementById('implied2Feedback');
             const feedback3 = document.getElementById('implied3Feedback');
+            const impliedAttemptCounterSpan = document.querySelector('#impliedAttemptCounter span');
+            const listenRecordBtn = document.getElementById('listeningRecordBtn');
 
-            // ========== CHANGED: Track if AI evaluation has been done (not if correct) ==========
-            let aiEvaluationDone = false;
+            let aiEvaluationCompleted = false;
+            let listeningQuizCompleted = false;
+            let attemptCount = 0;
+            let maxAttempts = 5;
+            let showCorrectAnswerTriggered = false;
+            let impliedMeaningsValid = false;
+            let listeningRecorded = false;
+            let listeningConfirmed = false;
 
-            // ========== CHANGED: Function to check both conditions ==========
-            function checkListeningCompletion() {
-                const completeListeningBtn = document.getElementById('completeListeningBtn');
-                // Check if AI evaluation is done AND quiz is correct
-                if (typeof listeningQuizCompleted !== 'undefined') {
-                    // CHANGED: Now only requires aiEvaluationDone (attempted) AND quiz correct
-                    if (aiEvaluationDone && listeningQuizCompleted) {
-                        if (completeListeningBtn) {
-                            completeListeningBtn.disabled = false;
-                            completeListeningBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
-                        }
+            function updateImpliedAttemptDisplay() {
+                const remaining = maxAttempts - attemptCount;
+                if (impliedAttemptCounterSpan) impliedAttemptCounterSpan.innerText = remaining;
+                if (attemptCount >= maxAttempts && checkImpliedBtn) {
+                    checkImpliedBtn.disabled = true;
+                    checkImpliedBtn.textContent = '🔒 No attempts left';
+                }
+            }
+
+            function showCorrectAnswersExample() {
+                if (showCorrectAnswerTriggered) return;
+                showCorrectAnswerTriggered = true;
+
+                const correctAnswerHtml = `
+                    <div class="correct-answer-box">
+                        <h4>📚 Correct Implied Meanings (Based on the audio):</h4>
+                        <p><strong>1. About the delay:</strong> "The project was delayed due to some internal problem or mismanagement."</p>
+                        <p><strong>2. About the client being concerned:</strong> "The client was unhappy or dissatisfied with the delay and may have lost confidence."</p>
+                        <p><strong>3. About 'taken necessary steps':</strong> "The team made mistakes and is now trying to fix them or do damage control."</p>
+                        <hr style="margin: 0.75rem 0;">
+                        <p><strong>🎯 How to identify implied meanings:</strong><br>
+                        • Ask: "What is the speaker NOT directly saying?"<br>
+                        • Look for what the speaker is avoiding or softening<br>
+                        • Use inference words like "may", "might", "suggests", "implies"</p>
+                    </div>
+                `;
+                overallFeedbackDiv.insertAdjacentHTML('afterend', correctAnswerHtml);
+            }
+
+            // Fallback local validation when AI fails
+            function fallbackValidation(answer, questionNum) {
+                const trimmed = answer.trim().toLowerCase();
+                const listeningText = "The installation was completed three weeks later than originally planned The client was understandably concerned We have taken all necessary steps to address the situation";
+
+                if (!trimmed) return { correct: false, feedback: "Please write your answer.", correctAnswer: "" };
+                if (trimmed.length < 20) return { correct: false, feedback: "Your answer is too short. Write a complete sentence.", correctAnswer: "" };
+
+                // Check for inference keywords
+                const inferenceWords = ['may', 'might', 'could', 'suggests', 'implies', 'indicates', 'likely', 'probably'];
+                let hasInference = false;
+                for (let word of inferenceWords) {
+                    if (trimmed.includes(word)) { hasInference = true; break; }
+                }
+
+                if (questionNum === 1) {
+                    if ((trimmed.includes('internal') || trimmed.includes('problem') || trimmed.includes('mismanagement') || trimmed.includes('issue') || trimmed.includes('inefficiency')) && hasInference) {
+                        return { correct: true, feedback: "Correct! You identified the implication about internal problems.", correctAnswer: "" };
+                    } else if (trimmed.includes('delay') && trimmed.length > 15) {
+                        return { correct: false, feedback: "You mentioned the delay but not the cause. What does the delay imply about their planning?", correctAnswer: "The project was delayed due to some internal problem or mismanagement." };
                     } else {
-                        if (completeListeningBtn) {
-                            completeListeningBtn.disabled = true;
-                            completeListeningBtn.style.animation = 'none';
-                        }
+                        return { correct: false, feedback: "Not quite. Think about why the delay happened. What does it suggest about their planning?", correctAnswer: "The project was delayed due to some internal problem or mismanagement." };
+                    }
+                } else if (questionNum === 2) {
+                    if ((trimmed.includes('unhappy') || trimmed.includes('dissatisfied') || trimmed.includes('frustrated') || trimmed.includes('lost confidence') || trimmed.includes('trust')) && hasInference) {
+                        return { correct: true, feedback: "Correct! You identified the client's true feelings.", correctAnswer: "" };
+                    } else if (trimmed.includes('concerned')) {
+                        return { correct: false, feedback: "You just repeated the word 'concerned'. What does that really mean about the client's feelings?", correctAnswer: "The client was unhappy or dissatisfied with the delay and may have lost confidence." };
+                    } else {
+                        return { correct: false, feedback: "Think about how a client feels when a project is delayed. They are not just 'concerned' - they are unhappy.", correctAnswer: "The client was unhappy or dissatisfied with the delay and may have lost confidence." };
+                    }
+                } else {
+                    if ((trimmed.includes('mistake') || trimmed.includes('error') || trimmed.includes('damage control') || trimmed.includes('fix') || trimmed.includes('problem')) && hasInference) {
+                        return { correct: true, feedback: "Correct! You identified that something went wrong.", correctAnswer: "" };
+                    } else if (trimmed.includes('steps') || trimmed.includes('address')) {
+                        return { correct: false, feedback: "You just stated the obvious. What does 'address the situation' imply about what happened earlier?", correctAnswer: "The team made mistakes and is now trying to fix them or do damage control." };
+                    } else {
+                        return { correct: false, feedback: "Think about why they need to 'address' something. What must have happened first?", correctAnswer: "The team made mistakes and is now trying to fix them or do damage control." };
                     }
                 }
             }
 
-            // Function to send answers to Groq AI
             async function evaluateImpliedMeanings() {
                 const answer1 = implied1?.value.trim() || '';
                 const answer2 = implied2?.value.trim() || '';
                 const answer3 = implied3?.value.trim() || '';
 
-                // Check if any answer is empty
                 if (!answer1 || !answer2 || !answer3) {
-                    if (overallFeedbackDiv) {
-                        overallFeedbackDiv.innerHTML = '<div class="listening-overall-feedback yellow">⚠️ Please write all 3 implied meanings before checking.</div>';
+                    overallFeedbackDiv.innerHTML = '<div class="listening-overall-feedback yellow">⚠️ Please write all 3 implied meanings before checking.</div>';
+                    return;
+                }
+
+                if (attemptCount >= maxAttempts) {
+                    overallFeedbackDiv.innerHTML = '<div class="listening-overall-feedback red">🔒 You have used all 5 attempts. Please review the correct answers below.</div>';
+                    showCorrectAnswersExample();
+                    // Allow recording even after attempts exhausted
+                    impliedMeaningsValid = true;
+                    if (listenRecordBtn) {
+                        listenRecordBtn.disabled = false;
+                        listenRecordBtn.textContent = '🎙️ Start Recording';
                     }
                     return;
                 }
 
-                // Show loading state
                 if (checkImpliedBtn) {
-                    checkImpliedBtn.textContent = '⏳ Evaluating...';
                     checkImpliedBtn.disabled = true;
+                    checkImpliedBtn.textContent = '⏳ Evaluating...';
                 }
 
-                // Correct answers for reference
-                const correctAnswersList = [
-                    "The project was delayed due to some issue or inefficiency.",
-                    "The client was unhappy or concerned about the delay.",
-                    "There were problems and the team is trying to fix them."
-                ];
+                // Prepare the answers array
+                const answers = [answer1, answer2, answer3];
+                const results = [];
+                let allCorrect = true;
 
-                // Send each answer separately to get individual feedback
-                try {
-                    const results = [];
-                    const answers = [answer1, answer2, answer3];
+                // The listening script for context
+                const listeningScript = "The installation was completed... three weeks later than originally planned... The client was... understandably concerned... We have taken all necessary steps to... address the situation...";
 
-                    for (let i = 0; i < answers.length; i++) {
-                        const systemPrompt = `You are a friendly English teacher helping a student learn about implied meanings.
+                for (let i = 0; i < answers.length; i++) {
+                    let questionNum = i + 1;
+                    let systemPrompt = `You are an encouraging English teacher evaluating a student understanding of implied meanings (reading between the lines).
 
-The listening text was: "The installation was completed... three weeks later than originally planned... The client was... understandably concerned... We have taken all necessary steps to... address the situation..."
+LISTENING SCRIPT: "${listeningScript}"
 
-The CORRECT implied meanings are:
-1. The project was delayed due to some issue or inefficiency.
-2. The client was unhappy or concerned about the delay.
-3. There were problems and the team is trying to fix them.
+The student's answer for implied meaning ${questionNum}: "${answers[i]}"
 
-Student's answer ${i + 1}: "${answers[i]}"
+TASK: Evaluate if this answer correctly identifies what the speaker is IMPLYING (not directly stating).
 
-Evaluate this answer. TEACH the student, don't just say correct/incorrect.
+CORRECT IMPLIED MEANINGS:
+1. The project was delayed due to some internal problem or mismanagement. (Not just "it was delayed" - WHY?)
+2. The client was unhappy, dissatisfied, frustrated, or losing trust because of the delay. (Not just "concerned")
+3. The team made mistakes and is now trying to fix them or do damage control. (Not just "taking steps")
 
-Return ONLY JSON with:
+EVALUATION RULES:
+- Be GENEROUS - accept different wordings that capture the same meaning
+- If answer captures the core implication (internal problem, client dissatisfaction, mistakes), mark correct=true
+- If answer is just restating the text (e.g., "the project was late"), mark correct=false
+- If answer is completely wrong, mark correct=false
+
+OUTPUT ONLY JSON:
 {
-  "score": 0-100,
-  "correct": true/false,
-  "feedback": "Teaching feedback (max 20 words)",
-  "suggestion": "Hint or improvement tip (max 15 words)",
-  "correctAnswer": "The full correct answer for this implied meaning"
-}
+"correct": true/false,
+"feedback": "Very short teaching feedback (max 25 words)",
+"suggestion": "Short hint if incorrect (max 20 words)",
+"correctAnswer": "The correct answer for this implied meaning"
+}`;
 
-RULES:
-- If answer is FULLY CORRECT: score 100, correct=true, feedback="✅ Excellent! [positive confirmation]"
-- If answer is PARTIAL (has right idea but incomplete): score 60, correct=false, feedback="📝 Almost correct! You're missing: [what's missing]", correctAnswer="[full correct answer]"
-- If answer is WRONG: score 20, correct=false, feedback="❌ Not quite. [explain why]", correctAnswer="[full correct answer]"
-- If answer is TOO SHORT (less than 4 words): score 30, correct=false, feedback="📝 Please write a complete sentence.", correctAnswer="[full correct answer]"
-
-Be encouraging and specific about what's missing or wrong.
-For partial/wrong answers, ALWAYS provide the correctAnswer field with the full correct answer.`;
-
+                    try {
                         const response = await fetch('/learning/ai/evaluate/', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRFToken': getCookie('csrftoken')
+                                'X-CSRFToken': csrftoken
                             },
                             body: JSON.stringify({
                                 text: answers[i],
@@ -957,110 +1090,98 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                         });
 
                         const data = await response.json();
-                        console.log(`Answer ${i + 1} response:`, data);
-                        results.push(data);
-                    }
+                        console.log(`Answer ${questionNum} response:`, data);
 
-                    // Calculate correct count (score >= 70 means correct)
-                    let correctCount = 0;
-                    results.forEach(result => {
-                        if (result.correct === true || (result.score && result.score >= 70)) {
-                            correctCount++;
+                        if (data.success && data.correct !== undefined) {
+                            results.push({
+                                correct: data.correct,
+                                feedback: data.feedback || (data.correct ? "Correct!" : "Needs improvement."),
+                                suggestion: data.suggestion || "",
+                                correctAnswer: data.correctAnswer || ""
+                            });
+                        } else {
+                            // Fallback if AI response invalid
+                            const fallback = fallbackValidation(answers[i], questionNum);
+                            results.push(fallback);
                         }
-                    });
+                    } catch (error) {
+                        console.error(`AI Error for answer ${questionNum}:`, error);
+                        // Fallback to local validation
+                        const fallback = fallbackValidation(answers[i], questionNum);
+                        results.push(fallback);
+                    }
+                }
 
-                    // ========== CHANGED: Mark AI evaluation as done (regardless of correct count) ==========
-                    aiEvaluationDone = true;
+                attemptCount++;
+                updateImpliedAttemptDisplay();
 
-                    // Display individual feedback
-                    const feedbackDivs = [feedback1, feedback2, feedback3];
-                    for (let i = 0; i < results.length; i++) {
-                        const result = results[i];
-                        const score = result.score || 0;
-                        const isCorrect = result.correct === true || score >= 70;
-                        const isPartial = (score >= 50 && score < 70) || (result.feedback && result.feedback.includes('Almost'));
-                        const isTooShort = score <= 35 || (result.feedback && result.feedback.includes('complete sentence'));
+                let correctCount = 0;
+                const feedbackDivs = [feedback1, feedback2, feedback3];
 
-                        if (feedbackDivs[i]) {
-                            let feedbackHtml = '';
-                            let statusClass = '';
+                for (let i = 0; i < results.length; i++) {
+                    const result = results[i];
+                    const isCorrect = result.correct === true;
 
-                            if (isCorrect) {
-                                statusClass = 'correct';
-                                feedbackHtml = result.feedback || '✅ Correct! Well done.';
+                    if (isCorrect) correctCount++;
+                    else allCorrect = false;
 
-                            } else if (isPartial) {
-                                statusClass = 'warning';
-                                const correctAnswer = result.correctAnswer || correctAnswersList[i];
-                                feedbackHtml = `${result.feedback || '📝 Almost correct!'}<br><br>
-                                    <strong>✅ Correct answer:</strong> "${correctAnswer}"<br>
-                                    ${result.suggestion ? `<br><span style="font-size: 0.75rem; color: #64748b;">💡 ${result.suggestion}</span>` : ''}`;
-
-                            } else if (isTooShort) {
-                                statusClass = 'warning';
-                                feedbackHtml = `${result.feedback || '📝 Please write a complete sentence.'}<br><br>
-                                    <span style="font-size: 0.75rem; color: #64748b;">💡 ${result.suggestion || 'Write a full sentence explaining what the speaker is implying.'}</span>`;
-
-                            } else {
-                                statusClass = 'incorrect';
-                                feedbackHtml = `${result.feedback || '❌ Not quite.'}<br><br>
-                                    <span style="font-size: 0.75rem; color: #64748b;">💡 ${result.suggestion || 'Think about what is NOT directly stated in the audio.'}</span>`;
-                            }
-
-                            feedbackDivs[i].innerHTML = feedbackHtml;
-                            feedbackDivs[i].className = `listening-feedback-item ${statusClass}`;
-                            feedbackDivs[i].style.display = 'block';
+                    if (feedbackDivs[i]) {
+                        if (isCorrect) {
+                            feedbackDivs[i].innerHTML = `✅ ${result.feedback || 'Correct! You identified the implied meaning well.'}`;
+                            feedbackDivs[i].className = 'listening-feedback-item correct';
+                        } else {
+                            let errorMsg = `📚 ${result.feedback || 'Not quite.'}`;
+                            if (result.suggestion) errorMsg += `<br>💡 ${result.suggestion}`;
+                            if (result.correctAnswer && !result.correct) errorMsg += `<br><br>✅ Correct answer: "${result.correctAnswer}"`;
+                            feedbackDivs[i].innerHTML = errorMsg;
+                            feedbackDivs[i].className = 'listening-feedback-item incorrect';
                         }
+                        feedbackDivs[i].style.display = 'block';
                     }
+                }
 
-                    // Display overall feedback with color coding
-                    let overallClass = '';
-                    let overallMessage = '';
+                let overallClass = '';
+                let overallMessage = '';
 
-                    if (correctCount === 3) {
-                        overallClass = 'green';
-                        overallMessage = '🎉 Excellent! All 3 implied meanings are correct!';
-                    } else if (correctCount === 2) {
-                        overallClass = 'yellow';
-                        overallMessage = '👍 Good job! 2 out of 3 correct. Review the feedback above for the incorrect one.';
-                    } else if (correctCount === 1) {
-                        overallClass = 'yellow';
-                        overallMessage = '📝 You found 1 correct meaning. Listen again for the other two implied meanings.';
-                    } else {
-                        overallClass = 'red';
-                        overallMessage = '📖 None of your answers are implied meanings. Review the correct answers above.';
+                if (correctCount === 3) {
+                    overallClass = 'green';
+                    overallMessage = '🎉 EXCELLENT! All 3 implied meanings are correct! You can now record.';
+                    impliedMeaningsValid = true;
+                    if (listenRecordBtn) {
+                        listenRecordBtn.disabled = false;
+                        listenRecordBtn.textContent = '🎙️ Start Recording';
                     }
+                } else if (correctCount === 2) {
+                    overallClass = 'yellow';
+                    overallMessage = `👍 Good progress! 2 out of 3 correct. ${maxAttempts - attemptCount} attempt(s) remaining. Review the feedback above.`;
+                    impliedMeaningsValid = false;
+                } else if (correctCount === 1) {
+                    overallClass = 'yellow';
+                    overallMessage = `📝 You found 1 correct meaning. ${maxAttempts - attemptCount} attempt(s) remaining. Listen again for the other two implied meanings.`;
+                    impliedMeaningsValid = false;
+                } else {
+                    overallClass = 'red';
+                    overallMessage = `📖 None of your answers capture the implied meanings. ${maxAttempts - attemptCount} attempt(s) remaining. Think about what the speaker is NOT directly saying.`;
+                    impliedMeaningsValid = false;
+                }
 
-                    if (overallFeedbackDiv) {
-                        overallFeedbackDiv.innerHTML = `
-                <div class="listening-overall-feedback ${overallClass}">
-                    <strong>📊 Score: ${correctCount}/3</strong><br>
-                    ${overallMessage}
-                </div>
-            `;
-                    }
+                overallFeedbackDiv.innerHTML = `<div class="listening-overall-feedback ${overallClass}"><strong>📊 Score: ${correctCount}/3</strong><br>${overallMessage}</div>`;
+                teachingTipDiv.innerHTML = '💡 An implied meaning is something suggested but not directly stated. Ask: "What is the speaker really trying to say but avoiding?"';
+                teachingTipDiv.style.display = 'block';
 
-                    if (teachingTipDiv) {
-                        teachingTipDiv.innerHTML = '💡 An implied meaning is something suggested but not directly stated. Ask yourself: "What is the speaker really trying to say?"';
-                        teachingTipDiv.style.display = 'block';
+                if (attemptCount >= maxAttempts && correctCount !== 3) {
+                    showCorrectAnswersExample();
+                    // Allow recording even if not all correct after max attempts (they can read from example)
+                    impliedMeaningsValid = true;
+                    if (listenRecordBtn) {
+                        listenRecordBtn.disabled = false;
+                        listenRecordBtn.textContent = '🎙️ Start Recording';
                     }
+                }
 
-                    // ========== CHANGED: Check listening completion after evaluation ==========
-                    checkListeningCompletion();
-
-                } catch (error) {
-                    console.error('Error:', error);
-                    if (overallFeedbackDiv) {
-                        overallFeedbackDiv.innerHTML = '<div class="listening-overall-feedback red">❌ Unable to evaluate. Please try again.</div>';
-                    }
-                    // CHANGED: Even on error, mark as attempted so they can proceed
-                    aiEvaluationDone = true;
-                    checkListeningCompletion();
-                } finally {
-                    if (checkImpliedBtn) {
-                        checkImpliedBtn.textContent = '✓ Check My Implied Meanings';
-                        checkImpliedBtn.disabled = false;
-                    }
+                if (checkImpliedBtn) {
+                    checkImpliedBtn.disabled = false;
+                    checkImpliedBtn.textContent = '✓ Check My Answers';
                 }
             }
 
@@ -1070,149 +1191,209 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
             }
 
             // ==================== LISTENING AUDIO REVEAL ====================
-            const listeningAudio = document.getElementById('listeningAudio');
-            const listeningTextSection = document.getElementById('listeningTextSection');
-            const postAudioContent = document.getElementById('postAudioListeningContent');
+            const listeningAudioElem = document.getElementById('listeningAudio');
+            const listeningTextSectionElem = document.getElementById('listeningTextSection');
+            const postAudioContentElem = document.getElementById('postAudioListeningContent');
 
-            if (listeningAudio && listeningTextSection && postAudioContent) {
-                listeningAudio.addEventListener('ended', function () {
-                    listeningTextSection.style.display = 'block';
-                    postAudioContent.style.display = 'block';
+            let masterAudioFinished = false;
+
+            if (listeningAudioElem && listeningTextSectionElem && postAudioContentElem) {
+                listeningAudioElem.addEventListener('ended', function () {
+                    if (!masterAudioFinished) {
+                        masterAudioFinished = true;
+                        listeningTextSectionElem.style.display = 'block';
+                        postAudioContentElem.style.display = 'block';
+                    }
+                });
+            }
+
+            // ==================== LISTENING RECORDING ====================
+            const listenStopBtn = document.getElementById('listeningStopBtn');
+            const listenPlaybackCard = document.getElementById('listeningPlaybackCard');
+            const listenPlaybackAudio = document.getElementById('listeningPlayback');
+            const comparisonSection = document.getElementById('comparisonSection');
+            const yesComparisonBtn = document.getElementById('yesComparisonBtn');
+            const noComparisonBtn = document.getElementById('noComparisonBtn');
+            const comparisonFeedbackDiv = document.getElementById('comparisonFeedback');
+            const completeListeningBtn = document.getElementById('completeListeningBtn');
+            let listeningMediaRecorder, listeningChunks = [], listeningIsRecording = false;
+
+            if (listenRecordBtn) {
+                listenRecordBtn.addEventListener('click', async function () {
+                    if (!impliedMeaningsValid && attemptCount < maxAttempts) {
+                        alert('Please get your implied meanings correct first! Click "Check My Answers" button.');
+                        return;
+                    }
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        listeningMediaRecorder = new MediaRecorder(stream);
+                        listeningChunks = [];
+                        listeningMediaRecorder.ondataavailable = e => listeningChunks.push(e.data);
+                        listeningMediaRecorder.onstop = () => {
+                            const blob = new Blob(listeningChunks, { type: 'audio/webm' });
+                            if (listenPlaybackAudio) listenPlaybackAudio.src = URL.createObjectURL(blob);
+                            if (listenPlaybackCard) listenPlaybackCard.style.display = 'block';
+                            if (comparisonSection) comparisonSection.style.display = 'block';
+                            listeningRecorded = true;
+                            stream.getTracks().forEach(t => t.stop());
+                        };
+                        listeningMediaRecorder.start();
+                        listeningIsRecording = true;
+                        listenRecordBtn.style.display = 'none';
+                        if (listenStopBtn) listenStopBtn.style.display = 'inline-flex';
+                    } catch (e) { console.error('Microphone error'); alert('Please allow microphone access.'); }
+                });
+            }
+
+            if (listenStopBtn) {
+                listenStopBtn.addEventListener('click', function () {
+                    if (listeningMediaRecorder && listeningIsRecording) {
+                        listeningMediaRecorder.stop();
+                        listeningIsRecording = false;
+                        listenRecordBtn.style.display = 'inline-flex';
+                        listenStopBtn.style.display = 'none';
+                    }
+                });
+            }
+
+            if (yesComparisonBtn) {
+                yesComparisonBtn.addEventListener('click', function () {
+                    listeningConfirmed = true;
+                    if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #22c55e;">✅ Great! Recording confirmed.</span>';
+                    if (completeListeningBtn && listeningRecorded && listeningConfirmed && listeningQuizCompleted && masterAudioFinished) {
+                        completeListeningBtn.disabled = false;
+                    }
+                });
+            }
+
+            if (noComparisonBtn) {
+                noComparisonBtn.addEventListener('click', function () {
+                    comparisonFeedbackDiv.innerHTML = '<span style="color: #dc2626;">⚠️ Please record again clearly.</span>';
+                    listeningRecorded = false;
+                    listeningConfirmed = false;
+                    listenPlaybackCard.style.display = 'none';
+                    comparisonSection.style.display = 'none';
+                    listenRecordBtn.style.display = 'inline-flex';
+                    listenStopBtn.style.display = 'none';
+                    if (completeListeningBtn) completeListeningBtn.disabled = true;
                 });
             }
 
             // ==================== QUIZ VALIDATION ====================
             const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
             const listeningQuizFeedback = document.getElementById('listeningQuizFeedback');
-            const completeListeningBtn = document.getElementById('completeListeningBtn');
-            let listeningQuizCompleted = false;
 
             if (checkListeningWorkBtn) {
                 checkListeningWorkBtn.addEventListener('click', function () {
                     const q1Selected = document.querySelector('input[name="q1"]:checked');
                     const q2Selected = document.querySelector('input[name="q2"]:checked');
 
-                    // Clear previous feedback
-                    listeningQuizFeedback.innerHTML = '';
-                    listeningQuizFeedback.style.display = 'none';
-
-                    // Check if both questions are answered
                     if (!q1Selected || !q2Selected) {
                         listeningQuizFeedback.innerHTML = '⚠️ Please answer both questions.';
                         listeningQuizFeedback.className = 'quiz-feedback warning';
                         listeningQuizFeedback.style.display = 'block';
                         listeningQuizCompleted = false;
-                        // CHANGED: Check completion after quiz
-                        checkListeningCompletion();
+                        if (completeListeningBtn) completeListeningBtn.disabled = true;
                         return;
                     }
 
                     const q1Correct = q1Selected.value === 'three weeks late';
                     const q2Correct = q2Selected.value === 'concerned';
 
-                    let errorMessages = [];
-
-                    // Collect error messages for wrong answers
-                    if (!q1Correct) {
-                        errorMessages.push(' Question 1: The installation was three weeks late.');
-                    }
-                    if (!q2Correct) {
-                        errorMessages.push(' Question 2: The client was understandably concerned.');
-                    }
-
-                    // Display combined message
                     if (q1Correct && q2Correct) {
                         listeningQuizFeedback.innerHTML = '✅ Great job! Both answers are correct.';
                         listeningQuizFeedback.className = 'quiz-feedback correct';
                         listeningQuizCompleted = true;
                     } else {
                         let errorHtml = '';
-                        if (errorMessages.length === 1) {
-                            errorHtml = errorMessages[0];
-                        } else if (errorMessages.length === 2) {
-                            errorHtml = `${errorMessages[0]}<br>${errorMessages[1]}`;
-                        }
+                        if (!q1Correct) errorHtml += '❌ Question 1: The installation was three weeks late.<br>';
+                        if (!q2Correct) errorHtml += '❌ Question 2: The client was understandably concerned.';
                         listeningQuizFeedback.innerHTML = errorHtml;
-                        listeningQuizFeedback.className = 'quiz-feedback warning';
+                        listeningQuizFeedback.className = 'quiz-feedback incorrect';
                         listeningQuizCompleted = false;
                     }
                     listeningQuizFeedback.style.display = 'block';
-                    checkListeningCompletion();
+
+                    if (completeListeningBtn && listeningRecorded && listeningConfirmed && listeningQuizCompleted && masterAudioFinished) {
+                        completeListeningBtn.disabled = false;
+                    }
                 });
             }
 
             if (completeListeningBtn) {
                 completeListeningBtn.addEventListener('click', function () {
-                    // CHANGED: Now only checks: AI evaluation done AND quiz correct
-                    if (aiEvaluationDone && listeningQuizCompleted && typeof markActivityComplete === 'function') {
+                    if (!masterAudioFinished) {
+                        alert('⚠️ Please listen to the complete audio first.');
+                        return;
+                    }
+                    if (!impliedMeaningsValid && attemptCount < maxAttempts) {
+                        alert('⚠️ Please get your implied meanings correct first. Click "Check My Answers" button.');
+                        return;
+                    }
+                    if (!listeningRecorded) {
+                        alert('⚠️ Please record your voice.');
+                        return;
+                    }
+                    if (!listeningConfirmed) {
+                        alert('⚠️ Please confirm your recording.');
+                        return;
+                    }
+                    if (!listeningQuizCompleted) {
+                        alert('⚠️ Please answer the quiz questions correctly.');
+                        return;
+                    }
+                    if (typeof markActivityComplete === 'function') {
                         markActivityComplete('listening', 'chk4');
                     }
                 });
+                completeListeningBtn.disabled = true;
             }
 
-            // ==================== READING ACTIVITY - DAY 17 (LOCAL VALIDATION) ====================
+            // Initialize attempts counter
+            updateImpliedAttemptDisplay();
 
-            // Passage text for underline task
+            // ==================== READING ACTIVITY (UPDATED) ====================
+            // Reading passage text
             const readingPassageText = "The project manager indicated that the initial estimates had been somewhat conservative, and that additional resource allocation would be beneficial. Several team members raised questions regarding the revised scope, noting that the changes were 'not insignificant.' The client representative was observed to be taking extensive notes throughout the discussion. The agenda item for timeline revision was deferred to the next meeting. The meeting concluded forty minutes over the scheduled time.";
 
-            // Target words for underline
-            const underlineTargetWords = ['taking', 'extensive', 'notes', 'throughout', 'the', 'discussion'];
+            // NEW TARGET PHRASE FOR UNDERLINE TASK
+            const underlineTargetWords = ['raised', 'questions', 'regarding', 'the', 'revised', 'scope'];
 
-            // ==================== TASK 2 & 3 CORRECT ANSWERS ====================
-            const impliedCorrectAnswers = {
-                1: "the initial plan may not have been accurate and more resources are needed",
-                2: "the changes are significant and may cause concern",
-                3: "the client is concerned or dissatisfied and is carefully monitoring the situation",
-                4: "there are delays or unresolved issues in the project timeline",
-                5: "the meeting was inefficient or had more problems than expected"
+            let currentMode = 'underline';
+            let userUnderlinedWords = new Set();
+            let underlineCheckDone = false;
+            let underlineCompleted = false;
+            let impliedResults = { 1: false, 2: false, 3: false, 4: false, 5: false };
+            let doubleNegativeCompleted = false;
+
+            // Updated correct answers with proper capitalization and period
+            const readingImpliedCorrectAnswers = {
+                1: "The initial plan may not have been accurate and more resources are needed.",
+                2: "The changes are significant and may cause concern.",
+                3: "The client is concerned or dissatisfied and is carefully monitoring the situation.",
+                4: "There are delays or unresolved issues in the project timeline.",
+                5: "The meeting was inefficient or had more problems than expected."
             };
 
-            const impliedAlternativeAnswers = {
-                1: [
-                    "the initial estimates were wrong and need more resources",
-                    "the plan was not accurate so need extra resources",
-                    "the estimates are not accurate so now they need more resources",
-                    "the plan had problems and needs more help",
-                    "the initial estimates are conservative so we need more resources"
-                ],
-                2: [
-                    "the changes are important and might be a problem",
-                    "the changes matter a lot and could cause issues",
-                    "the changes are significant and concerning",
-                    "the revisions are not small changes"
-                ],
-                3: [
-                    "the client is worried and paying close attention",
-                    "the client is unhappy and watching carefully",
-                    "the client has concerns and is observing closely",
-                    "the client is dissatisfied and taking careful notes"
-                ],
-                4: [
-                    "the timeline has problems and was postponed",
-                    "there are delays in the schedule",
-                    "timeline issues remain unresolved",
-                    "the schedule needs to be fixed later"
-                ],
-                5: [
-                    "the meeting ran too long and was poorly managed",
-                    "the meeting was not efficient",
-                    "the meeting had time management problems",
-                    "the meeting was longer than planned"
-                ]
+            const readingImpliedAlternatives = {
+                1: ["The initial plan may not have been accurate and more resources are needed.", "The initial estimates were wrong, so more resources are needed.", "The plan was not accurate and requires additional resources."],
+                2: ["The changes are significant and may cause concern.", "The changes are important and could be problematic."],
+                3: ["The client is concerned or dissatisfied and is carefully monitoring the situation.", "The client is worried and paying close attention.", "The client is unhappy and taking detailed notes."],
+                4: ["There are delays or unresolved issues in the project timeline.", "The timeline has problems that need to be addressed later.", "Issues remain unresolved regarding the schedule."],
+                5: ["The meeting was inefficient or had more problems than expected.", "The meeting ran too long and was poorly managed.", "The meeting was not well-organized or efficient."]
             };
 
-            const doubleNegativeCorrectAnswer = "it means the changes are important and have a noticeable impact";
-            const doubleNegativeAlternatives = [
-                "the changes are important",
-                "the changes matter",
-                "it is significant",
-                "it means important",
-                "the changes are not small",
-                "it has impact"
+            // Updated double negative correct answers - more flexible
+            const doubleNegativeCorrectAnswersList = [
+                "It means the changes are important and have a noticeable impact.",
+                "It means significant or important, but expressed in a softer way.",
+                "It means important or significant.",
+                "The changes are significant.",
+                "The changes are important.",
+                "It means the opposite of insignificant, so it is important."
             ];
 
-            // Hints for each question
-            const impliedHints = {
+            const readingImpliedHints = {
                 1: "💡 Hint: The estimates were 'conservative' (too optimistic/not accurate), so now they need more resources.",
                 2: "💡 Hint: 'Not insignificant' means the opposite of insignificant = important or concerning.",
                 3: "💡 Hint: 'Taking extensive notes' often shows concern, worry, or careful monitoring.",
@@ -1220,23 +1401,19 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                 5: "💡 Hint: Running 40 minutes over time suggests poor time management or inefficiency."
             };
 
-            const doubleNegativeHint = "💡 Hint: 'Not insignificant' is a double negative that actually means 'important' or 'significant'.";
-
-            // Gibberish detection
             function isGibberish(text) {
                 const gibberishPatterns = /^[0-9\W]+$|^[asdfghjkl;'zxcvbnm,.\/]+$/i;
                 const meaningfulWords = text.split(/\s+/).filter(w => w.length > 2);
                 return gibberishPatterns.test(text) || meaningfulWords.length === 0;
             }
 
-            // Validate implied answer - UPDATED THRESHOLDS (30-79% = Almost correct, 80%+ = Correct)
-            function validateImpliedAnswer(questionNum, userAnswer) {
-                const trimmed = userAnswer.trim().toLowerCase();
+            function validateReadingImpliedAnswer(questionNum, userAnswer) {
+                let trimmed = userAnswer.trim();
                 const feedbackDiv = document.getElementById(`readingImplied${questionNum}Feedback`);
                 const hintDiv = document.getElementById(`readingImplied${questionNum}Hint`);
-                const correctAnswer = impliedCorrectAnswers[questionNum];
-                const alternatives = impliedAlternativeAnswers[questionNum] || [];
-                const hint = impliedHints[questionNum];
+                const correctAnswer = readingImpliedCorrectAnswers[questionNum];
+                const alternatives = readingImpliedAlternatives[questionNum] || [];
+                const hint = readingImpliedHints[questionNum];
 
                 if (feedbackDiv) {
                     feedbackDiv.innerHTML = '';
@@ -1246,24 +1423,29 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                 if (hintDiv) {
                     hintDiv.innerHTML = '';
                     hintDiv.style.display = 'none';
-                    hintDiv.className = 'feedback-hint';
                 }
 
-                // Empty field
                 if (trimmed === "") {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '⚠️ Please write your answer.';
-                        feedbackDiv.className = 'fix-feedback empty';
-                    }
+                    if (feedbackDiv) feedbackDiv.innerHTML = '⚠️ Please write your answer.';
                     return false;
                 }
 
-                // Gibberish check
-                if (isGibberish(trimmed)) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '❌ Please write a meaningful sentence.';
-                        feedbackDiv.className = 'fix-feedback incorrect';
+                // Check for capitalization and period
+                if (trimmed.length > 0) {
+                    const firstChar = trimmed.charAt(0);
+                    const lastChar = trimmed.charAt(trimmed.length - 1);
+                    if (firstChar !== firstChar.toUpperCase()) {
+                        if (feedbackDiv) feedbackDiv.innerHTML = '⚠️ Please start your sentence with a capital letter.';
+                        return false;
                     }
+                    if (lastChar !== '.') {
+                        if (feedbackDiv) feedbackDiv.innerHTML = '⚠️ Please end your sentence with a period (.)';
+                        return false;
+                    }
+                }
+
+                if (isGibberish(trimmed.toLowerCase())) {
+                    if (feedbackDiv) feedbackDiv.innerHTML = '❌ Please write a meaningful sentence.';
                     if (hintDiv) {
                         hintDiv.innerHTML = hint;
                         hintDiv.style.display = 'block';
@@ -1271,13 +1453,9 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                     return false;
                 }
 
-                // Too short (<5 words)
                 const wordCount = trimmed.split(/\s+/).length;
-                if (wordCount < 5) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '⚠️ Please write a complete sentence.';
-                        feedbackDiv.className = 'fix-feedback warning';
-                    }
+                if (wordCount < 4) {
+                    if (feedbackDiv) feedbackDiv.innerHTML = '⚠️ Please write a complete sentence.';
                     if (hintDiv) {
                         hintDiv.innerHTML = hint;
                         hintDiv.style.display = 'block';
@@ -1285,59 +1463,37 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                     return false;
                 }
 
-                // ✅ CHECK EXACT MATCH WITH MAIN CORRECT ANSWER FIRST
-                if (trimmed === correctAnswer.toLowerCase()) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '✅ Correct! Well done.';
-                        feedbackDiv.className = 'fix-feedback correct';
-                    }
+                const trimmedLower = trimmed.toLowerCase();
+                const correctLower = correctAnswer.toLowerCase();
+
+                if (trimmedLower === correctLower) {
+                    if (feedbackDiv) feedbackDiv.innerHTML = '✅ Correct! Well done.';
                     return true;
                 }
 
-                // ✅ CHECK EXACT MATCH WITH ALTERNATIVES
                 for (let alt of alternatives) {
-                    if (trimmed === alt.toLowerCase()) {
-                        if (feedbackDiv) {
-                            feedbackDiv.innerHTML = '✅ Correct! Well done.';
-                            feedbackDiv.className = 'fix-feedback correct';
-                        }
+                    if (trimmedLower === alt.toLowerCase()) {
+                        if (feedbackDiv) feedbackDiv.innerHTML = '✅ Correct! Well done.';
                         return true;
                     }
                 }
 
-                // Calculate word match percentage with correct answer
-                const correctWords = correctAnswer.split(/\s+/);
-                const userWords = trimmed.split(/\s+/);
+                const correctWords = correctAnswer.toLowerCase().split(/\s+/);
+                const userWords = trimmedLower.split(/\s+/);
                 let matchCount = 0;
                 for (let uw of userWords) {
-                    if (correctWords.includes(uw) && uw.length > 2) {
-                        matchCount++;
-                    }
+                    if (correctWords.includes(uw) && uw.length > 2) matchCount++;
                 }
                 const matchPercentage = (matchCount / correctWords.length) * 100;
 
-                // 80-100%: CORRECT
                 if (matchPercentage >= 80) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '✅ Correct! Well done.';
-                        feedbackDiv.className = 'fix-feedback correct';
-                    }
+                    if (feedbackDiv) feedbackDiv.innerHTML = '✅ Correct! Well done.';
                     return true;
-                }
-                // 30-79%: ALMOST CORRECT
-                else if (matchPercentage >= 30) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = `⚠️ Almost correct! The correct answer is: "${correctAnswer}"`;
-                        feedbackDiv.className = 'fix-feedback warning';
-                    }
+                } else if (matchPercentage >= 30) {
+                    if (feedbackDiv) feedbackDiv.innerHTML = `⚠️ Almost correct! The correct answer is: "${correctAnswer}"`;
                     return false;
-                }
-                // 0-29%: WRONG
-                else {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '❌ Please write the correct meaning.';
-                        feedbackDiv.className = 'fix-feedback incorrect';
-                    }
+                } else {
+                    if (feedbackDiv) feedbackDiv.innerHTML = '❌ Please write the correct meaning.';
                     if (hintDiv) {
                         hintDiv.innerHTML = hint;
                         hintDiv.style.display = 'block';
@@ -1345,9 +1501,9 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                     return false;
                 }
             }
-            // Validate double negative answer - UPDATED THRESHOLDS (30-79% = Almost correct, 80%+ = Correct)
-            function validateDoubleNegativeAnswer(userAnswer) {
-                const trimmed = userAnswer.trim().toLowerCase();
+
+            function validateDoubleNegativeReadingAnswer(userAnswer) {
+                let trimmed = userAnswer.trim();
                 const feedbackDiv = document.getElementById('doubleNegativeFeedback');
                 const hintDiv = document.getElementById('doubleNegativeHint');
 
@@ -1359,105 +1515,73 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                 if (hintDiv) {
                     hintDiv.innerHTML = '';
                     hintDiv.style.display = 'none';
-                    hintDiv.className = 'feedback-hint';
                 }
 
-                // Empty field
                 if (trimmed === "") {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '⚠️ Please write your answer.';
-                        feedbackDiv.className = 'fix-feedback empty';
-                    }
+                    if (feedbackDiv) feedbackDiv.innerHTML = '⚠️ Please write your answer.';
                     return false;
                 }
 
-                // Gibberish check
-                if (isGibberish(trimmed)) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '❌ Please write a meaningful sentence.';
-                        feedbackDiv.className = 'fix-feedback incorrect';
+                // Check for capitalization and period (optional for double negative, but good practice)
+                if (trimmed.length > 0) {
+                    const firstChar = trimmed.charAt(0);
+                    if (firstChar !== firstChar.toUpperCase()) {
+                        if (feedbackDiv) feedbackDiv.innerHTML = '⚠️ Please start your sentence with a capital letter.';
+                        return false;
                     }
+                    // Period is encouraged but not strictly required for this short answer
+                    const lastChar = trimmed.charAt(trimmed.length - 1);
+                    if (lastChar !== '.') {
+                        if (feedbackDiv) feedbackDiv.innerHTML = '⚠️ Please end your sentence with a period (.)';
+                        return false;
+                    }
+                }
+
+                if (isGibberish(trimmed.toLowerCase())) {
+                    if (feedbackDiv) feedbackDiv.innerHTML = '❌ Please write a meaningful sentence.';
                     if (hintDiv) {
-                        hintDiv.innerHTML = doubleNegativeHint;
+                        hintDiv.innerHTML = "💡 Hint: 'Not insignificant' is a double negative that actually means 'important' or 'significant'.";
                         hintDiv.style.display = 'block';
                     }
                     return false;
                 }
 
-                // Too short (<4 words)
                 const wordCount = trimmed.split(/\s+/).length;
-                if (wordCount < 4) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '⚠️ Please write a complete sentence.';
-                        feedbackDiv.className = 'fix-feedback warning';
-                    }
-                    if (hintDiv) {
-                        hintDiv.innerHTML = doubleNegativeHint;
-                        hintDiv.style.display = 'block';
-                    }
+                if (wordCount < 3) {
+                    if (feedbackDiv) feedbackDiv.innerHTML = '⚠️ Please write a complete sentence.';
                     return false;
                 }
 
-                // Check alternatives
-                for (let alt of doubleNegativeAlternatives) {
-                    if (trimmed.includes(alt.toLowerCase())) {
-                        if (feedbackDiv) {
-                            feedbackDiv.innerHTML = '✅ Correct! Well done.';
-                            feedbackDiv.className = 'fix-feedback correct';
-                        }
+                const trimmedLower = trimmed.toLowerCase();
+
+                // Check against correct answers list
+                for (let correct of doubleNegativeCorrectAnswersList) {
+                    if (trimmedLower === correct.toLowerCase()) {
+                        if (feedbackDiv) feedbackDiv.innerHTML = '✅ Correct! Well done.';
                         return true;
                     }
                 }
 
-                // Calculate word match percentage with correct answer
-                const correctWords = doubleNegativeCorrectAnswer.split(/\s+/);
-                const userWords = trimmed.split(/\s+/);
-                let matchCount = 0;
-                for (let uw of userWords) {
-                    if (correctWords.includes(uw) && uw.length > 2) {
-                        matchCount++;
-                    }
-                }
-                const matchPercentage = (matchCount / correctWords.length) * 100;
-
-                // NEW THRESHOLD LOGIC - Option A
-                // 80-100%: CORRECT
-                if (matchPercentage >= 80) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '✅ Correct! Well done.';
-                        feedbackDiv.className = 'fix-feedback correct';
-                    }
+                // Check for key phrases
+                if ((trimmedLower.includes('important') || trimmedLower.includes('significant')) &&
+                    (trimmedLower.includes('means') || trimmedLower.includes('expressed') || trimmedLower.includes('but'))) {
+                    if (feedbackDiv) feedbackDiv.innerHTML = '✅ Correct! Well done.';
                     return true;
                 }
-                // 30-79%: ALMOST CORRECT
-                else if (matchPercentage >= 30) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = `⚠️ Almost correct! The correct answer is: "${doubleNegativeCorrectAnswer}"`;
-                        feedbackDiv.className = 'fix-feedback warning';
-                    }
-                    return false;
-                }
-                // 0-29%: WRONG
-                else {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '❌ Please write the correct meaning.';
-                        feedbackDiv.className = 'fix-feedback incorrect';
-                    }
-                    if (hintDiv) {
-                        hintDiv.innerHTML = doubleNegativeHint;
-                        hintDiv.style.display = 'block';
-                    }
-                    return false;
-                }
-            }
 
-            // ==================== TASK 1: UNDERLINE LOGIC (FIXED - USING UNIQUE IDs) ====================
-            let currentMode = 'underline';
-            let userUnderlinedWords = new Set();  // Now stores unique IDs
-            let underlineCheckDone = false;
-            let underlineCompleted = false;
-            let impliedResults = { 1: false, 2: false, 3: false, 4: false, 5: false };
-            let doubleNegativeCompleted = false;
+                // Check if answer captures the meaning of "significant/important"
+                if (trimmedLower.includes('important') || trimmedLower.includes('significant')) {
+                    if (feedbackDiv) feedbackDiv.innerHTML = '✅ Correct! Well done.';
+                    return true;
+                }
+
+                if (feedbackDiv) feedbackDiv.innerHTML = '❌ Incorrect. "Not insignificant" means important or significant.';
+                if (hintDiv) {
+                    hintDiv.innerHTML = "💡 Hint: 'Not insignificant' is a double negative that actually means 'important' or 'significant'.";
+                    hintDiv.style.display = 'block';
+                }
+                return false;
+            }
 
             function buildInteractivePassage() {
                 const container = document.getElementById('interactivePassage');
@@ -1473,20 +1597,10 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                     let cleanWord = word.replace(/[^a-zA-Z]/g, '').toLowerCase();
 
                     if (cleanWord.length > 0) {
-                        result.push({
-                            text: word,
-                            type: 'normal',
-                            value: cleanWord,
-                            id: wordIndex  // ← UNIQUE ID
-                        });
+                        result.push({ text: word, type: 'normal', value: cleanWord, id: wordIndex });
                         wordIndex++;
                     } else if (word.trim().length > 0) {
-                        result.push({
-                            text: word,
-                            type: 'punctuation',
-                            value: word,
-                            id: wordIndex  // ← UNIQUE ID for punctuation
-                        });
+                        result.push({ text: word, type: 'punctuation', value: word, id: wordIndex });
                         wordIndex++;
                     }
                     rem = rem.substring(word.length);
@@ -1510,7 +1624,7 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
             function handleWordClick(e) {
                 e.stopPropagation();
                 const word = e.currentTarget;
-                let wordId = word.dataset.id;  // ← USE UNIQUE ID, not value
+                let wordId = word.dataset.id;
 
                 if (currentMode === 'underline') {
                     if (userUnderlinedWords.has(wordId)) {
@@ -1528,7 +1642,7 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
 
             function updateAllVisuals() {
                 document.querySelectorAll('#interactivePassage .clickable-word').forEach(w => {
-                    let wordId = w.dataset.id;  // ← USE UNIQUE ID
+                    let wordId = w.dataset.id;
                     let wordValue = w.dataset.value;
 
                     w.classList.remove('temp-underlined', 'underline-correct', 'underline-incorrect');
@@ -1557,7 +1671,6 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                     return;
                 }
 
-                // Get all underlined word VALUES (for checking against target)
                 const underlinedValues = new Set();
                 document.querySelectorAll('#interactivePassage .clickable-word').forEach(w => {
                     let wordId = w.dataset.id;
@@ -1587,8 +1700,14 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                 if (wrong.length) fb += `<p style="color:#dc2626;">⚠️ Remove these: ${wrong.join(', ')}</p>`;
                 fb += `</div>`;
 
+                if (correct === underlineTargetWords.length && wrong.length === 0) {
+                    fb = `<div style="background:#d1fae5;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">✅ Perfect! You have correctly underlined the phrase "raised questions regarding the revised scope".</p></div>`;
+                    underlineCompleted = true;
+                } else {
+                    underlineCompleted = false;
+                }
+
                 feedbackDiv.innerHTML = fb;
-                underlineCompleted = (correct === underlineTargetWords.length && wrong.length === 0);
                 updateAllVisuals();
                 checkReadingCompletion();
             }
@@ -1605,34 +1724,28 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
             function switchToUnderlineMode() {
                 currentMode = 'underline';
                 const btn = document.getElementById('underlineModeBtn');
-                if (btn) {
-                    btn.style.background = '#f59e0b';
-                }
+                if (btn) btn.style.background = '#f59e0b';
                 updateAllVisuals();
             }
 
-            // ==================== CHECK ALL ANSWERS (TASK 2 & 3) ====================
             function checkAllReadingAnswers() {
                 let allCorrect = true;
                 let correctCount = 0;
 
-                // Check implied questions 1-5
                 for (let i = 1; i <= 5; i++) {
                     const userAnswer = document.getElementById(`readingImplied${i}`)?.value || '';
-                    const isValid = validateImpliedAnswer(i, userAnswer);
+                    const isValid = validateReadingImpliedAnswer(i, userAnswer);
                     impliedResults[i] = isValid;
                     if (isValid) correctCount++;
                     else allCorrect = false;
                 }
 
-                // Check double negative
                 const dnAnswer = document.getElementById('doubleNegative')?.value || '';
-                const dnValid = validateDoubleNegativeAnswer(dnAnswer);
+                const dnValid = validateDoubleNegativeReadingAnswer(dnAnswer);
                 doubleNegativeCompleted = dnValid;
                 if (dnValid) correctCount++;
                 else allCorrect = false;
 
-                // Show overall feedback
                 const overallDiv = document.getElementById('readingOverallFeedback');
                 if (overallDiv) {
                     if (allCorrect && underlineCompleted) {
@@ -1654,12 +1767,10 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
             }
 
             function resetReadingAnswers() {
-                // Reset implied questions
                 for (let i = 1; i <= 5; i++) {
                     const input = document.getElementById(`readingImplied${i}`);
                     const feedback = document.getElementById(`readingImplied${i}Feedback`);
                     const hint = document.getElementById(`readingImplied${i}Hint`);
-
                     if (input) input.value = '';
                     if (feedback) {
                         feedback.innerHTML = '';
@@ -1672,11 +1783,9 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                     impliedResults[i] = false;
                 }
 
-                // Reset double negative
                 const dnInput = document.getElementById('doubleNegative');
                 const dnFeedback = document.getElementById('doubleNegativeFeedback');
                 const dnHint = document.getElementById('doubleNegativeHint');
-
                 if (dnInput) dnInput.value = '';
                 if (dnFeedback) {
                     dnFeedback.innerHTML = '';
@@ -1686,10 +1795,8 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                     dnHint.innerHTML = '';
                     dnHint.style.display = 'none';
                 }
-
                 doubleNegativeCompleted = false;
 
-                // Reset overall feedback
                 const overallDiv = document.getElementById('readingOverallFeedback');
                 if (overallDiv) {
                     overallDiv.innerHTML = '';
@@ -1703,25 +1810,15 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                 const allImpliedCorrect = impliedResults[1] && impliedResults[2] && impliedResults[3] && impliedResults[4] && impliedResults[5];
                 const allComplete = underlineCompleted && allImpliedCorrect && doubleNegativeCompleted;
                 const completeBtn = document.getElementById('completeReadingBtn');
-
-                if (completeBtn) {
-                    completeBtn.disabled = !allComplete;
-                    if (allComplete) {
-                        completeBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
-                    } else {
-                        completeBtn.style.animation = 'none';
-                    }
-                }
+                if (completeBtn) completeBtn.disabled = !allComplete;
             }
 
-            // ==================== EVENT LISTENERS ====================
             document.getElementById('underlineModeBtn')?.addEventListener('click', switchToUnderlineMode);
             document.getElementById('checkUnderlinesBtn')?.addEventListener('click', checkUnderlines);
             document.getElementById('resetUnderlinesBtn')?.addEventListener('click', resetUnderlines);
             document.getElementById('checkReadingAnswersBtn')?.addEventListener('click', checkAllReadingAnswers);
             document.getElementById('resetReadingAnswersBtn')?.addEventListener('click', resetReadingAnswers);
 
-            // ==================== UPDATED: READING COMPLETE BUTTON ====================
             document.getElementById('completeReadingBtn')?.addEventListener('click', () => {
                 const allImpliedCorrect = impliedResults[1] && impliedResults[2] && impliedResults[3] && impliedResults[4] && impliedResults[5];
                 if (underlineCompleted && allImpliedCorrect && doubleNegativeCompleted) {
@@ -1733,46 +1830,32 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                 }
             });
 
-            // Initialize
             buildInteractivePassage();
 
             // ==================== GRAMMAR HACK - DAY 17 (LITOTES) ====================
-
+            // ==================== GRAMMAR HACK - DAY 17 (LITOTES) ====================
             const grammarCorrectAnswers = {
-                1: "the project was not without challenges",
-                2: "this finding is not without significance",
-                3: "the presentation was not unsatisfactory"
+                1: "The project was not without challenges.",
+                2: "This finding is not without significance.",
+                3: "The presentation was not unsatisfactory."
             };
 
             const grammarAlternativeAnswers = {
-                1: [
-                    "the project was not without challenges",
-                    "the project was no small challenge",
-                    "the project was not easy",
-                    "the project was not trivial"
-                ],
-                2: [
-                    "this finding is not without significance",
-                    "this finding is not unimportant",
-                    "this finding is no small matter"
-                ],
-                3: [
-                    "the presentation was not unsatisfactory",
-                    "the presentation was not bad",
-                    "the presentation was not without merit"
-                ]
+                1: ["The project was not without challenges.", "The project was no small challenge.", "The project was not easy."],
+                2: ["This finding is not without significance.", "This finding is not unimportant.", "This finding is no small matter."],
+                3: ["The presentation was not unsatisfactory.", "The presentation was not bad.", "The presentation was not without merit."]
             };
 
             const grammarHints = {
-                1: "💡 Use litotes: 'The project was not without challenges' or 'The project was no small challenge'.",
-                2: "💡 Use litotes: 'This finding is not without significance' or 'This finding is not unimportant'.",
-                3: "💡 Use litotes: 'The presentation was not unsatisfactory' or 'The presentation was not without merit'."
+                1: "💡 Use litotes: 'The project was not without challenges.' or 'The project was no small challenge.'",
+                2: "💡 Use litotes: 'This finding is not without significance.' or 'This finding is not unimportant.'",
+                3: "💡 Use litotes: 'The presentation was not unsatisfactory.' or 'The presentation was not without merit.'"
             };
 
             let grammarCorrectState = { 1: false, 2: false, 3: false };
 
             function validateGrammarFix(questionNum, userAnswer) {
-                const trimmed = userAnswer.trim().toLowerCase();
+                let trimmed = userAnswer.trim();
                 const feedbackDiv = document.getElementById(`grammar${questionNum}Feedback`);
                 const hintDiv = document.getElementById(`grammar${questionNum}Hint`);
                 const correctAnswer = grammarCorrectAnswers[questionNum];
@@ -1787,61 +1870,68 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                 if (hintDiv) {
                     hintDiv.innerHTML = '';
                     hintDiv.style.display = 'none';
-                    hintDiv.className = 'feedback-hint';
                 }
 
-                // Empty field
                 if (trimmed === "") {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '⚠️ Please write your sentence before checking.';
-                        feedbackDiv.className = 'fix-feedback empty';
-                    }
+                    if (feedbackDiv) feedbackDiv.innerHTML = '⚠️ Please write your sentence before checking.';
                     return false;
                 }
 
-                // Exact match
+                // Check for capitalization and period
+                if (trimmed.length > 0) {
+                    const firstChar = trimmed.charAt(0);
+                    const lastChar = trimmed.charAt(trimmed.length - 1);
+                    if (firstChar !== firstChar.toUpperCase()) {
+                        if (feedbackDiv) feedbackDiv.innerHTML = '⚠️ Please start your sentence with a capital letter.';
+                        return false;
+                    }
+                    if (lastChar !== '.') {
+                        if (feedbackDiv) feedbackDiv.innerHTML = '⚠️ Please end your sentence with a period (.)';
+                        return false;
+                    }
+                }
+
+                // Check for exact match with correct answer
                 if (trimmed === correctAnswer) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '✅ Correct! Well done.';
-                        feedbackDiv.className = 'fix-feedback correct';
-                    }
+                    if (feedbackDiv) feedbackDiv.innerHTML = '✅ Correct! Well done.';
                     return true;
                 }
 
-                // Alternative match
-                let matchedAlternative = false;
+                // Check against alternatives
                 for (let alt of alternatives) {
-                    if (trimmed === alt.toLowerCase()) {
-                        matchedAlternative = true;
-                        break;
+                    if (trimmed === alt) {
+                        if (feedbackDiv) feedbackDiv.innerHTML = '✅ Correct! Well done.';
+                        return true;
                     }
                 }
 
-                if (matchedAlternative) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '✅ Correct! Well done.';
-                        feedbackDiv.className = 'fix-feedback correct';
-                    }
+                // Check for case-insensitive match
+                const trimmedLower = trimmed.toLowerCase();
+                const correctLower = correctAnswer.toLowerCase();
+
+                if (trimmedLower === correctLower) {
+                    if (feedbackDiv) feedbackDiv.innerHTML = '✅ Correct! Well done.';
                     return true;
                 }
 
-                // Word match percentage
-                const correctWords = correctAnswer.split(/\s+/);
-                const userWords = trimmed.split(/\s+/);
+                for (let alt of alternatives) {
+                    if (trimmedLower === alt.toLowerCase()) {
+                        if (feedbackDiv) feedbackDiv.innerHTML = '✅ Correct! Well done.';
+                        return true;
+                    }
+                }
+
+                // Partial matching for leniency
+                const correctWords = correctAnswer.toLowerCase().replace(/\.$/, '').split(/\s+/);
+                const userWords = trimmedLower.replace(/\.$/, '').split(/\s+/);
                 let matchCount = 0;
                 for (let uw of userWords) {
-                    if (correctWords.includes(uw) && uw.length > 2) {
-                        matchCount++;
-                    }
+                    if (correctWords.includes(uw) && uw.length > 2) matchCount++;
                 }
                 const matchPercentage = (matchCount / correctWords.length) * 100;
 
-                // Too short
                 if (userWords.length <= 2 || (userWords.length < correctWords.length && userWords.length <= 3)) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = '⚠️ Please write a complete sentence.';
-                        feedbackDiv.className = 'fix-feedback warning';
-                    }
+                    if (feedbackDiv) feedbackDiv.innerHTML = '⚠️ Please write a complete sentence.';
                     if (hintDiv) {
                         hintDiv.innerHTML = hint;
                         hintDiv.style.display = 'block';
@@ -1849,29 +1939,12 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                     return false;
                 }
 
-                // Partial correct
-                if (matchPercentage >= 40 && matchPercentage < 90) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = `⚠️ Almost correct! The correct answer is: "${correctAnswer}"`;
-                        feedbackDiv.className = 'fix-feedback warning';
-                    }
+                if (matchPercentage >= 50) {
+                    if (feedbackDiv) feedbackDiv.innerHTML = `⚠️ Almost correct! The correct answer is: "${correctAnswer}"`;
                     return false;
                 }
 
-                // Almost correct
-                if (matchPercentage >= 90 && matchPercentage < 100) {
-                    if (feedbackDiv) {
-                        feedbackDiv.innerHTML = `✅ Correct answer: "${correctAnswer}"`;
-                        feedbackDiv.className = 'fix-feedback correct';
-                    }
-                    return true;
-                }
-
-                // Wrong answer
-                if (feedbackDiv) {
-                    feedbackDiv.innerHTML = '❌ Please write the correct litotes sentence.';
-                    feedbackDiv.className = 'fix-feedback incorrect';
-                }
+                if (feedbackDiv) feedbackDiv.innerHTML = '❌ Please write the correct litotes sentence.';
                 if (hintDiv) {
                     hintDiv.innerHTML = hint;
                     hintDiv.style.display = 'block';
@@ -1881,7 +1954,6 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
 
             function checkAllGrammarAnswers() {
                 let allCorrect = true;
-
                 for (let i = 1; i <= 3; i++) {
                     const userAnswer = document.getElementById(`grammar${i}`)?.value || '';
                     const isValid = validateGrammarFix(i, userAnswer);
@@ -1889,7 +1961,13 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                     if (!isValid) allCorrect = false;
                 }
 
-                checkGrammarCompletion();
+                // Enable/disable the complete button based on all answers being correct
+                const completeGrammarBtn = document.getElementById('completeGrammarBtn');
+                if (completeGrammarBtn) {
+                    completeGrammarBtn.disabled = !allCorrect;
+                    // Also store the state for the click event
+                    completeGrammarBtn.setAttribute('data-all-correct', allCorrect);
+                }
 
                 const grammarFeedbackDiv = document.getElementById('grammarFeedback');
                 if (grammarFeedbackDiv) {
@@ -1911,8 +1989,11 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                     const inputField = document.getElementById(`grammar${i}`);
                     const feedbackDiv = document.getElementById(`grammar${i}Feedback`);
                     const hintDiv = document.getElementById(`grammar${i}Hint`);
-
-                    if (inputField) inputField.value = '';
+                    if (inputField) {
+                        inputField.value = '';
+                        // Trigger input event to reset any stored state if needed
+                        inputField.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
                     if (feedbackDiv) {
                         feedbackDiv.innerHTML = '';
                         feedbackDiv.style.display = 'none';
@@ -1922,39 +2003,35 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                         hintDiv.style.display = 'none';
                     }
                 }
-
                 const grammarFeedbackDiv = document.getElementById('grammarFeedback');
                 if (grammarFeedbackDiv) {
                     grammarFeedbackDiv.innerHTML = '';
                     grammarFeedbackDiv.style.display = 'none';
                 }
-
                 grammarCorrectState = { 1: false, 2: false, 3: false };
-
                 const completeGrammarBtn = document.getElementById('completeGrammarBtn');
                 if (completeGrammarBtn) {
                     completeGrammarBtn.disabled = true;
-                    completeGrammarBtn.style.animation = 'none';
+                    completeGrammarBtn.setAttribute('data-all-correct', 'false');
                 }
             }
 
-            function checkGrammarCompletion() {
-                const allCorrect = grammarCorrectState[1] && grammarCorrectState[2] && grammarCorrectState[3];
-                const completeGrammarBtn = document.getElementById('completeGrammarBtn');
-                if (completeGrammarBtn) {
-                    completeGrammarBtn.disabled = !allCorrect;
-                    if (allCorrect && !completeGrammarBtn.classList.contains('completed')) {
-                        completeGrammarBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
-                    } else {
-                        completeGrammarBtn.style.animation = 'none';
-                    }
-                }
-            }
-
-            // Event listeners
+            // Add event listeners for grammar check and reset
             document.getElementById('checkGrammarBtn')?.addEventListener('click', checkAllGrammarAnswers);
             document.getElementById('resetGrammarBtn')?.addEventListener('click', resetGrammarAnswers);
 
+            // Add event listener for the complete grammar button
+            document.getElementById('completeGrammarBtn')?.addEventListener('click', function () {
+                // Check if all grammar answers are correct before allowing completion
+                const allCorrect = grammarCorrectState[1] && grammarCorrectState[2] && grammarCorrectState[3];
+                if (allCorrect) {
+                    if (typeof markActivityComplete === 'function') {
+                        markActivityComplete('grammar', 'chk2');
+                    }
+                } else {
+                    alert('⚠️ Please check your grammar answers first. All 3 answers must be correct.');
+                }
+            });
             // ==================== SPEAKING RECORDING ====================
             let speakingRecorded = false;
             const speakRecordBtn = document.getElementById('speakingRecordBtn');
@@ -2026,7 +2103,46 @@ For partial/wrong answers, ALWAYS provide the correctAnswer field with the full 
                     }
                 });
             }
+            // ... existing code ...
 
+            setTimeout(updateDayProgress, 500);
+
+            // ==================== DAY COMPLETION BUTTON ====================
+            const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+            if (dayCompleteBtn) {
+                const newDayBtn = dayCompleteBtn.cloneNode(true);
+                dayCompleteBtn.parentNode.replaceChild(newDayBtn, dayCompleteBtn);
+
+                newDayBtn.addEventListener('click', function () {
+                    const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+                    let allChecked = true;
+                    checkboxes.forEach(cb => {
+                        if (!cb.checked) allChecked = false;
+                    });
+
+                    if (!allChecked) {
+                        alert('⚠️ Please complete all 5 activities before completing the day!');
+                        return;
+                    }
+
+                    this.innerHTML = '✨ Completing Day 17...';
+                    this.disabled = true;
+
+                    if (typeof confetti !== 'undefined') {
+                        confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                        setTimeout(() => {
+                            confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.3 } });
+                        }, 200);
+                        setTimeout(() => {
+                            confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.7 } });
+                        }, 400);
+                    }
+
+                    setTimeout(() => {
+                        window.location.href = '/learning/level/intermediate/?celebrate=true&completed=17';
+                    }, 1500);
+                });
+            }
         });
     </script>
 </body>

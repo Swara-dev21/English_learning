@@ -38,7 +38,7 @@
                     </div>
 
                     <audio id="listeningAudio" controls>
-                        <source src="{% static 'learning/audio/day13.mp3' %}" type="audio/mpeg">
+                        <source src="{% static 'learning/audio/Intermediate/day13.mp3' %}" type="audio/mpeg">
                     </audio>
 
                     <div id="listeningTextSection" style="display: none;">
@@ -392,7 +392,7 @@ Yours sincerely,
                                     <td class="word-cell"><strong>Coordinator</strong></span>
                                     <td><code>/kəʊˈɔː.dɪ.neɪ.tər/</code></span>
                                     <td>A person who organises activities</span>
-                                    <td>Organiser</span>
+                                    <td>Organizer</span>
                                     <td>Obstacle</span>
                                 </tr>
                             </tbody>
@@ -401,7 +401,8 @@ Yours sincerely,
 
                     <div class="power-word-section" style="border-left-color: #22c55e;">
                         <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #166534;">
-                            <span>💡</span><span>IDIOM OF THE DAY: "PUT IT IN WRITING"</span></div>
+                            <span>💡</span><span>IDIOM OF THE DAY: "PUT IT IN WRITING"</span>
+                        </div>
                         <p><strong>Marathi Meaning:</strong> लिखित स्वरूपात नोंद करणे</p>
                         <p><strong>Meaning:</strong> To record something officially in a document</p>
                         <p><strong>Example:</strong> "The client verbally agreed to the revised terms, but we asked them
@@ -410,7 +411,8 @@ Yours sincerely,
 
                     <div class="power-word-section">
                         <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
-                            <span>🔥</span><span>POWER WORD: SUCCINCT (Suk-SINKT)</span></div>
+                            <span>🔥</span><span>POWER WORD: SUCCINCT (Suk-SINKT)</span>
+                        </div>
                         <p><strong>Meaning:</strong> Briefly and clearly expressed</p>
                         <p><strong>Usage:</strong> "Your project report should be succinct — no more than two pages,
                             with all key findings clearly stated."</p>
@@ -542,50 +544,91 @@ Yours sincerely,
             }
             const csrftoken = getCookie('csrftoken');
 
-            // ==================== VOCABULARY AUDIO ====================
+            // ==================== VOCABULARY AUDIO - SIMPLIFIED (WORKS LIKE DAY 11) ====================
             const audioBtns = document.querySelectorAll('.vocab-audio-btn');
             const completeVocabularyBtn = document.getElementById('completeVocabularyBtn');
-            let vocabularyCompleted = false;
+
+            // Track which words have been listened to
+            const vocabHeard = {
+                'check-commencement': false,
+                'check-expedite': false,
+                'check-procurement': false,
+                'check-gantt': false,
+                'check-coordinator': false
+            };
 
             function checkAllVocabularyListened() {
-                const checkCells = ['check-commencement', 'check-expedite', 'check-procurement', 'check-gantt', 'check-coordinator'];
-                let allListened = true;
-                for (let id of checkCells) {
-                    const cell = document.getElementById(id);
-                    if (cell && cell.innerHTML !== '✅') { allListened = false; break; }
+                const allHeard = Object.values(vocabHeard).every(v => v === true);
+                if (completeVocabularyBtn) {
+                    completeVocabularyBtn.disabled = !allHeard;
                 }
-                if (allListened && completeVocabularyBtn) { completeVocabularyBtn.disabled = false; vocabularyCompleted = true; }
-                else if (completeVocabularyBtn) { completeVocabularyBtn.disabled = true; vocabularyCompleted = false; }
+                return allHeard;
             }
 
-            function speakWord(word) {
-                if (window.speechSynthesis) window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(word);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
+            function updateVocabCheckMark(checkId) {
+                if (!vocabHeard[checkId]) {
+                    vocabHeard[checkId] = true;
+                    const cell = document.getElementById(checkId);
+                    if (cell && cell.innerHTML !== '✅') {
+                        cell.innerHTML = '✅';
+                        cell.style.color = '#22c55e';
+                        cell.style.fontSize = '1rem';
+                    }
+                    checkAllVocabularyListened();
+                }
+            }
+
+            // Simple speak function - NO complex retry logic, just like Day 11
+            function speakWord(word, checkId) {
+                if ('speechSynthesis' in window) {
+                    // Don't cancel here - let the utterance play naturally
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    utterance.onend = function () {
+                        if (checkId) {
+                            updateVocabCheckMark(checkId);
+                        }
+                    };
+                    utterance.onerror = function () {
+                        // If error occurs, still mark as heard to avoid blocking user
+                        if (checkId) {
+                            updateVocabCheckMark(checkId);
+                        }
+                    };
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    if (checkId) updateVocabCheckMark(checkId);
+                }
             }
 
             audioBtns.forEach(btn => {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
                     const word = this.getAttribute('data-word');
                     const checkId = this.getAttribute('data-checkid');
-                    speakWord(word);
-                    if (checkId) {
-                        const checkCell = document.getElementById(checkId);
-                        if (checkCell && checkCell.innerHTML === '⬜') { checkCell.innerHTML = '✅'; checkCell.style.color = '#22c55e'; checkCell.style.fontSize = '1rem'; }
+
+                    if (word && checkId && !vocabHeard[checkId]) {
+                        speakWord(word, checkId);
+                    } else if (word && checkId && vocabHeard[checkId]) {
+                        // Already heard, just play audio without marking
+                        const utterance = new SpeechSynthesisUtterance(word);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.85;
+                        window.speechSynthesis.speak(utterance);
                     }
-                    checkAllVocabularyListened();
                 });
             });
 
             if (completeVocabularyBtn) {
                 completeVocabularyBtn.addEventListener('click', function () {
-                    if (vocabularyCompleted && typeof markActivityComplete === 'function') markActivityComplete('vocabulary', 'chk5');
-                    else alert('Please listen to all 5 vocabulary words first.');
+                    if (checkAllVocabularyListened() && typeof markActivityComplete === 'function') {
+                        markActivityComplete('vocabulary', 'chk5');
+                    } else {
+                        alert('Please listen to all 5 vocabulary words first. Click the 🔊 button next to each word.');
+                    }
                 });
             }
-
             // ==================== AI EMAIL EVALUATION FOR LISTENING ====================
             let aiEvaluationDone = false;
             let aiCorrect = false;
@@ -1302,7 +1345,40 @@ R. Desai`;
 
             // ==================== PROGRESS TRACKING ====================
             if (typeof updateChecklistProgress === 'function') { updateChecklistProgress(); }
+
+
+            // ==================== DAY COMPLETION ====================
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            if (dayBtn) {
+                const newBtn = dayBtn.cloneNode(true);
+                dayBtn.parentNode.replaceChild(newBtn, dayBtn);
+                newBtn.addEventListener('click', function () {
+                    const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'];
+                    let allCompleted = true;
+                    for (let id of checkboxes) {
+                        if (!document.getElementById(id)?.checked) {
+                            allCompleted = false;
+                            break;
+                        }
+                    }
+                    if (!allCompleted) {
+                        alert('⚠️ Please complete all 5 activities before completing the day!');
+                        return;
+                    }
+                    this.innerHTML = '✨ Completing day...';
+                    this.disabled = true;
+                    if (typeof canvasConfetti !== 'undefined') {
+                        canvasConfetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                    }
+                    setTimeout(() => {
+                        window.location.href = '/learning/level/intermediate/?celebrate=true&completed=13';
+                    }, 500);
+                });
+            }
+            setTimeout(updateDayProgress, 500);
         });
+
+
     </script>
 </body>
 

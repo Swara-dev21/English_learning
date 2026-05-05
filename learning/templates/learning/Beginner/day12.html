@@ -331,14 +331,37 @@
             transition: all 0.2s ease;
         }
 
+        .complete-activity-btn:not(:disabled) {
+            animation: softPulse 1.8s infinite ease-in-out;
+        }
+
+        @keyframes softPulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+
         .complete-activity-btn.completed {
             background: #94a3b8;
             cursor: default;
+            animation: none;
         }
 
         .complete-activity-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            animation: none;
         }
 
         .day-complete-btn {
@@ -886,43 +909,99 @@
             margin-top: 0.2rem;
         }
 
-        .habit-line {
-            margin-bottom: 0.6rem;
-            background: #f8f9fa;
-            padding: 12px 16px;
-            margin: 12px 0;
+        /* Premium Section Styling */
+        .grammar-section {
+            background: linear-gradient(135deg, #ede9fe 0%, #e0e7ff 100%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .grammar-rule {
+            background: white;
             border-radius: 12px;
-            border-left: 4px solid #2c7da0;
+            padding: 1rem;
+            margin: 0.75rem 0;
         }
 
-        .upgraded-word {
-            background: #fef3c7;
-            color: #b45309;
+        .game-section {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 1px solid #bbf7d0;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1);
+        }
+
+        .game-word {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin: 1rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .game-question {
+            font-weight: 800;
+            color: #166534;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .grammar-input,
+        .game-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .grammar-input:focus,
+        .game-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        /* Fix feedback messages */
+        .fix-feedback {
+            font-size: 0.85rem;
             font-weight: 600;
-            padding: 0.1rem 0.3rem;
-            border-radius: 6px;
-            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            display: none;
         }
 
-        .radio-option {
-            margin-right: 1.5rem;
-            cursor: pointer;
+        .fix-feedback.correct {
+            display: block;
+            background: #d1fae5;
+            color: #065f46;
         }
 
-        .radio-option input {
-            margin-right: 0.3rem;
-            cursor: pointer;
+        .fix-feedback.incorrect {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .fix-feedback.warning {
+            display: block;
+            background: #fef3c7;
+            color: #92400e;
         }
 
         @media (max-width: 480px) {
-            .radio-option {
-                display: block;
-                margin-bottom: 0.5rem;
-            }
 
-            .game-word>div {
-                flex-direction: column;
-                align-items: flex-start !important;
+            .grammar-section,
+            .game-section {
+                padding: 1.25rem;
             }
         }
     </style>
@@ -1407,28 +1486,25 @@
                 <div class="grammar-rule">
                     <p><strong>⚠️ Activity:</strong> Combine these using "Had" (Write the complete sentence):</p>
 
-                    <div style="background: white; border-radius: 12px; padding: 1rem; margin: 1rem 0;">
+                    <div class="grammar-rule">
                         <p style="font-weight: 500; margin-bottom: 0.5rem;">1. I (finish) my work. Then my friend
                             called.</p>
-                        <p style="color: #475569; font-size: 0.9rem;"></p>
                         <input type="text" id="grammar1" class="grammar-input" placeholder="Write complete sentence:">
                         <div id="grammar1Feedback" class="fix-feedback"></div>
                         <div id="grammar1Hint" class="inline-hint" style="display: none;"></div>
                     </div>
 
-                    <div style="background: white; border-radius: 12px; padding: 1rem; margin: 1rem 0;">
+                    <div class="grammar-rule">
                         <p style="font-weight: 500; margin-bottom: 0.5rem;">2. She (prepare) for the viva. Then she felt
                             confident.</p>
-                        <p style="color: #475569; font-size: 0.9rem;"></p>
                         <input type="text" id="grammar2" class="grammar-input" placeholder="Write complete sentence:">
                         <div id="grammar2Feedback" class="fix-feedback"></div>
                         <div id="grammar2Hint" class="inline-hint" style="display: none;"></div>
                     </div>
 
-                    <div style="background: white; border-radius: 12px; padding: 1rem; margin: 1rem 0;">
+                    <div class="grammar-rule">
                         <p style="font-weight: 500; margin-bottom: 0.5rem;">3. The machine (stop). Then the technician
                             arrived.</p>
-                        <p style="color: #475569; font-size: 0.9rem;"></p>
                         <input type="text" id="grammar3" class="grammar-input" placeholder="Write complete sentence:">
                         <div id="grammar3Feedback" class="fix-feedback"></div>
                         <div id="grammar3Hint" class="inline-hint" style="display: none;"></div>
@@ -1450,10 +1526,8 @@
             <div class="game-section" id="game-card">
                 <h3 style="margin: 0 0 1rem 0;">🎲 7. Solo Game: "The Resilience Swap" 🧩</h3>
 
-                <div style="background: white; border-radius: 16px; padding: 1rem; margin-bottom: 1.5rem;">
+                <div class="game-word">
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
-                        <span
-                            style="background: #8b5cf6; width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
                         <span style="font-weight: 700; color: #1e293b; font-size: 1rem;">🔤 Part A: Smart Swap (Write
                             the complete sentence)</span>
                     </div>
@@ -1481,137 +1555,157 @@
                     <div id="partAGameStatus" style="margin-top: 0.75rem; font-size: 0.85rem; font-weight: 500;"></div>
                 </div>
 
-                <div style="background: white; border-radius: 16px; padding: 1rem; margin-bottom: 1rem;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
-                        <span
-                            style="background: #f59e0b; width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
-                        <span style="font-weight: 700; color: #1e293b; font-size: 1rem;">🔍 Part B: The Past Perfect
-                            Logic</span>
-                    </div>
-
-                    <div class="game-word">
-                        <div class="game-question">"The class had commenced when I entered." Which happened first?</div>
-                        <div style="display: flex; gap: 2rem; margin-top: 0.5rem; flex-wrap: wrap;">
-                            <label class="radio-option"><input type="radio" name="hadLogic" value="I entered first"> I
-                                entered the class first</label>
-                            <label class="radio-option"><input type="radio" name="hadLogic" value="Class started first">
-                                The class started first</label>
-                        </div>
-                        <div id="game4Feedback" class="fix-feedback" style="display: none;"></div>
-                    </div>
-
-                    <button class="btn-outline" id="checkPartBGameBtn" style="margin-top: 0.5rem;">✓ Check Part
-                        B</button>
-                    <div id="partBGameStatus" style="margin-top: 0.75rem; font-size: 0.85rem; font-weight: 500;"></div>
+                <div class="game-word">
+                    <span style="font-weight: 700; color: #1e293b; font-size: 1rem;">🔍 Part B: The Past Perfect
+                        Logic</span>
                 </div>
 
-                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                    <button class="complete-activity-btn" id="completeGameBtn" disabled>✓ Mark Game as Complete</button>
+                <div class="game-word">
+                    <div class="game-question">"The class had commenced when I entered." Which happened first?</div>
+                    <div style="display: flex; gap: 2rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                        <label class="radio-option"><input type="radio" name="hadLogic" value="I entered first"> I
+                            entered the class first</label>
+                        <label class="radio-option"><input type="radio" name="hadLogic" value="Class started first"> The
+                            class started first</label>
+                    </div>
+                    <div id="game4Feedback" class="fix-feedback" style="display: none;"></div>
                 </div>
+
+                <button class="btn-outline" id="checkPartBGameBtn" style="margin-top: 0.5rem;">✓ Check Part B</button>
+                <div id="partBGameStatus" style="margin-top: 0.75rem; font-size: 0.85rem; font-weight: 500;"></div>
             </div>
 
-            <!-- ==================== COMPLETION CHECKLIST ==================== -->
-            <div class="activity-card">
-                <div class="card-header vocabulary">
-                    <h2>✅ DAY 12 COMPLETION CHECKLIST</h2>
-                </div>
-                <div class="card-body">
-                    <ul class="checklist">
-                        <li><input type="checkbox" id="chk1" disabled> <label> I practiced the "Exam Stress" dialogue
-                                with determination.</label></li>
-                        <li><input type="checkbox" id="chk2" disabled> <label> I identified the Past Perfect phrases in
-                                the reading passage.</label></li>
-                        <li><input type="checkbox" id="chk3" disabled> <label> I correctly used Past Perfect in the
-                                Grammar Hack.</label></li>
-                        <li><input type="checkbox" id="chk4" disabled> <label> I used Past Perfect to describe what I
-                                had done before sleeping.</label></li>
-                        <li><input type="checkbox" id="chk5" disabled> <label> I completed the listening activity with a
-                                determined tone.</label></li>
-                        <li><input type="checkbox" id="chk6" disabled> <label> I completed the "Resilience Swap" game
-                                correctly.</label></li>
-                        <li><input type="checkbox" id="chk7" disabled> <label> I listened to all vocabulary words and
-                                completed the vocabulary activity.</label></li>
-                    </ul>
-                    <div style="text-align: right; margin-bottom: 1rem;"><span class="badge" id="progressCounter">0/7
-                            completed</span></div>
-                    <div style="display: flex; justify-content: center;">
-                        <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 12 </button>
-                    </div>
-                </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                <button class="complete-activity-btn" id="completeGameBtn" disabled>✓ Mark Game as Complete</button>
             </div>
-
         </div>
+
+        <!-- ==================== COMPLETION CHECKLIST ==================== -->
+        <div class="activity-card">
+            <div class="card-header vocabulary">
+                <h2>✅ DAY 12 COMPLETION CHECKLIST</h2>
+            </div>
+            <div class="card-body">
+                <ul class="checklist">
+                    <li><input type="checkbox" id="chk1" disabled> <label> I practiced the "Exam Stress" dialogue
+                            with determination.</label></li>
+                    <li><input type="checkbox" id="chk2" disabled> <label> I identified the Past Perfect phrases in
+                            the reading passage.</label></li>
+                    <li><input type="checkbox" id="chk3" disabled> <label> I correctly used Past Perfect in the
+                            Grammar Hack.</label></li>
+                    <li><input type="checkbox" id="chk4" disabled> <label> I used Past Perfect to describe what I
+                            had done before sleeping.</label></li>
+                    <li><input type="checkbox" id="chk5" disabled> <label> I completed the listening activity with a
+                            determined tone.</label></li>
+                    <li><input type="checkbox" id="chk6" disabled> <label> I completed the "Resilience Swap" game
+                            correctly.</label></li>
+                    <li><input type="checkbox" id="chk7" disabled> <label> I listened to all vocabulary words and
+                            completed the vocabulary activity.</label></li>
+                </ul>
+                <div style="text-align: right; margin-bottom: 1rem;"><span class="badge" id="progressCounter">0/7
+                        completed</span></div>
+                <div style="display: flex; justify-content: center;">
+                    <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 12 </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
-        // ==================== Global Variables ====================
+        // ==================== Global State ====================
+        const STORAGE_KEY = 'progress_beginner_day12';
         let activityCompleted = {
             listening: false, speaking: false, reading: false,
             writing: false, game: false, grammar: false, vocabulary: false
         };
 
-        let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
         let writingValid = { w3: false, w4: false };
-
-        // Speaking recordings tracking (6 lines)
         let speakingRecorded = { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
-        let speakingBlobs = { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null };
+        let vocabHeard = { 'Strenuous': false, 'Setback': false, 'Attained': false, 'Encountered': false, 'Enhance': false };
 
-        // Reading variables
         let readingSelectedIndices = new Set();
         let readingAllSpans = [];
         let phrasePositions = [];
         let readingCompleteEnabled = false;
-        const correctFullPhrases = [
-            "had prepared", "had studied", "had struggled",
-            "had sought", "had implemented", "had paid"
-        ];
 
-        // Game variables
+        const correctFullPhrases = ["had prepared", "had studied", "had struggled", "had sought", "had implemented", "had paid"];
+        const readingPassageText = "By the time the results arrived, the students had prepared themselves for the worst. Rahul had studied day and night, but he had struggled with the math section. However, he had sought assistance from his seniors a week before. Because he had implemented their advice, he attained a substantial score. He realized that his hard work had paid off.";
+
         let gamePartAComplete = false;
         let gamePartBComplete = false;
 
-        // Vocabulary variables
-        let vocabWordsList = ['Strenuous', 'Setback', 'Attained', 'Encountered', 'Enhance'];
-        let vocabHeard = {
-            'Strenuous': false,
-            'Setback': false,
-            'Attained': false,
-            'Encountered': false,
-            'Enhance': false
-        };
+        // ==================== Core Functions ====================
 
-        // ==================== Helper Functions ====================
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
+        function saveProgress() {
+            const data = {
+                activityCompleted,
+                vocabHeard,
+                inputs: {},
+                radios: {}
+            };
+            document.querySelectorAll('input[type="text"], textarea').forEach(el => { if (el.id) data.inputs[el.id] = el.value; });
+            document.querySelectorAll('input[type="radio"]:checked').forEach(el => { if (el.name) data.radios[el.name] = el.value; });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         }
 
-        csrftoken = getCookie('csrftoken');
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+                if (data.activityCompleted) {
+                    activityCompleted = data.activityCompleted;
+                    const checklistMap = { speaking: 'chk1', reading: 'chk2', grammar: 'chk3', writing: 'chk4', listening: 'chk5', game: 'chk6', vocabulary: 'chk7' };
+                    Object.keys(activityCompleted).forEach(id => {
+                        if (activityCompleted[id]) {
+                            const cb = document.getElementById(checklistMap[id]);
+                            if (cb) cb.checked = true;
+                            const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
+                            if (btn) setButtonCompleted(btn);
+                        }
+                    });
+                }
+                if (data.inputs) {
+                    Object.keys(data.inputs).forEach(id => { const el = document.getElementById(id); if (el) el.value = data.inputs[id]; });
+                }
+                if (data.radios) {
+                    Object.keys(data.radios).forEach(name => {
+                        const val = data.radios[name];
+                        const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+                        if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
+                    });
+                }
+                if (data.vocabHeard) {
+                    vocabHeard = data.vocabHeard;
+                    Object.keys(vocabHeard).forEach(word => {
+                        if (vocabHeard[word]) {
+                            const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
+                            if (checkCell) { checkCell.innerHTML = '✅'; checkCell.style.color = '#16a34a'; }
+                        }
+                    });
+                }
+                updateChecklistProgress();
+            } catch (e) { console.error("Load progress failed", e); }
+        }
+
+        function setButtonCompleted(btn) {
+            btn.classList.add('completed');
+            btn.textContent = '✓ Completed';
+            btn.disabled = true;
+            btn.style.pointerEvents = 'none';
+            btn.style.animation = 'none';
+        }
 
         function updateChecklistProgress() {
             const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6', 'chk7'];
             let completedCount = 0;
             checkboxes.forEach(id => { if (document.getElementById(id)?.checked) completedCount++; });
-            const progressSpan = document.getElementById('progressCounter');
-            if (progressSpan) progressSpan.innerText = `${completedCount}/7 completed`;
-
-            const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-            if (dayCompleteBtn) {
-                dayCompleteBtn.disabled = completedCount !== 7;
-                dayCompleteBtn.style.opacity = completedCount === 7 ? '1' : '0.5';
-            }
+            document.getElementById('progressCounter').innerText = `${completedCount}/7 completed`;
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            dayBtn.disabled = completedCount !== 7;
         }
 
         function markActivityComplete(activityId, checklistId) {
@@ -1620,806 +1714,364 @@
             const checkbox = document.getElementById(checklistId);
             if (checkbox) checkbox.checked = true;
             const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-            if (btn) {
-                btn.classList.add('completed');
-                btn.textContent = '✓ Completed';
-                btn.disabled = true;
-            }
+            if (btn) setButtonCompleted(btn);
             updateChecklistProgress();
+            saveProgress();
         }
 
-        function completeDay() {
-            const btn = document.getElementById('dayCompleteBtn');
-            if (btn.disabled) {
-                alert('Please complete all activities first!');
-                return;
-            }
-            btn.innerHTML = '🎉 Saving...';
-            btn.disabled = true;
-            if (typeof confetti !== 'undefined') {
-                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-            }
-            setTimeout(() => {
-                window.location.href = '/learning/level/beginner/?celebrate=true&completed=12';
-            }, 2000);
-        }
-
-        // ==================== Vocabulary Audio ====================
-        function updateVocabularyButtonStatus() {
-            const allHeard = vocabWordsList.every(word => vocabHeard[word] === true);
-            const vocabCompleteBtn = document.getElementById('completeVocabularyBtn');
-            if (vocabCompleteBtn) {
-                vocabCompleteBtn.disabled = !allHeard;
-            }
-        }
-
-        function playAudio(word) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.85;
-            function setVoiceAndSpeak() {
-                const voices = window.speechSynthesis.getVoices();
-                let selectedVoice = voices.find(voice => voice.lang === 'en-US' || voice.lang === 'en-GB');
-                if (selectedVoice) utterance.voice = selectedVoice;
-                window.speechSynthesis.speak(utterance);
-            }
-            if (window.speechSynthesis.getVoices().length === 0) window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
-            else setVoiceAndSpeak();
-
-            if (vocabHeard.hasOwnProperty(word)) {
-                vocabHeard[word] = true;
-                const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
-                if (checkCell) {
-                    checkCell.innerHTML = '✅';
-                    checkCell.style.color = '#16a34a';
-                }
-                updateVocabularyButtonStatus();
-            }
-        }
-
-        document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const word = this.getAttribute('data-word');
-                playAudio(word);
-            });
-        });
-
-        document.getElementById('completeVocabularyBtn')?.addEventListener('click', () => {
-            const allHeard = vocabWordsList.every(word => vocabHeard[word] === true);
-            if (!allHeard) {
-                alert('Please listen to all vocabulary words before marking as complete.');
-                return;
-            }
-            markActivityComplete('vocabulary', 'chk7');
-        });
-
-        // ==================== Listening Activity ====================
-        let listeningMediaRecorder, listeningAudioChunks = [], listeningStream = null;
-        let hasListeningRecording = false, listeningQuizAnswers = { q1: null, q2: null };
-        let listeningQuizCorrect = false;
-        let listeningVoiceConfirmed = false;
+        // ==================== 1. Listening ====================
         let masterAudioFinished = false;
-        const listeningCompleteBtn = document.getElementById('completeListeningBtn');
-        const listeningAudioElem = document.getElementById('listeningAudio');
-        const listeningTextSection = document.getElementById('listeningTextSection');
-        const postAudioListeningContent = document.getElementById('postAudioListeningContent');
+        let hasListeningRecording = false;
+        let listeningVoiceConfirmed = false;
+        let listeningQuizCorrect = false;
 
-        if (listeningAudioElem) {
-            listeningAudioElem.addEventListener('ended', function () {
-                if (!masterAudioFinished) {
-                    masterAudioFinished = true;
-                    if (listeningTextSection) listeningTextSection.style.display = 'block';
-                    if (postAudioListeningContent) postAudioListeningContent.style.display = 'block';
-                }
-            });
-        }
+        function setupListening() {
+            const audio = document.getElementById('listeningAudio');
+            const textSec = document.getElementById('listeningTextSection');
+            const postSec = document.getElementById('postAudioListeningContent');
+            const completeBtn = document.getElementById('completeListeningBtn');
 
-        function updateListeningCompleteButton() {
-            if (listeningCompleteBtn) {
-                listeningCompleteBtn.disabled = !(hasListeningRecording && listeningVoiceConfirmed && listeningQuizCorrect && masterAudioFinished);
+            audio.onended = () => {
+                masterAudioFinished = true;
+                textSec.style.display = 'block';
+                postSec.style.display = 'block';
+                updateListeningStatus();
+            };
+
+            function updateListeningStatus() {
+                completeBtn.disabled = !(masterAudioFinished && hasListeningRecording && listeningVoiceConfirmed && listeningQuizCorrect);
             }
-        }
 
-        const listeningRecordBtn = document.getElementById('listeningRecordBtn');
-        const listeningStopBtn = document.getElementById('listeningStopBtn');
-        const listeningPlayback = document.getElementById('listeningPlayback');
-        const listeningPlaybackCard = document.getElementById('listeningPlaybackCard');
-        const comparisonSection = document.getElementById('comparisonSection');
-        const yesComparisonBtn = document.getElementById('yesComparisonBtn');
-        const noComparisonBtn = document.getElementById('noComparisonBtn');
-        const comparisonFeedback = document.getElementById('comparisonFeedback');
-        const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
-        const listeningQuizFeedback = document.getElementById('listeningQuizFeedback');
+            // Recording
+            let recorder, chunks = [];
+            const recordBtn = document.getElementById('listeningRecordBtn');
+            const stopBtn = document.getElementById('listeningStopBtn');
+            const playback = document.getElementById('listeningPlayback');
+            const playbackCard = document.getElementById('listeningPlaybackCard');
 
-        if (listeningRecordBtn) {
-            listeningRecordBtn.addEventListener('click', async () => {
-                try {
-                    listeningStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    listeningMediaRecorder = new MediaRecorder(listeningStream);
-                    listeningAudioChunks = [];
-                    listeningMediaRecorder.ondataavailable = (event) => listeningAudioChunks.push(event.data);
-                    listeningMediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(listeningAudioChunks, { type: 'audio/webm' });
-                        listeningPlayback.src = URL.createObjectURL(audioBlob);
-                        listeningPlaybackCard.style.display = 'block';
-                        if (listeningStream) listeningStream.getTracks().forEach(t => t.stop());
-                        hasListeningRecording = true;
-                        comparisonSection.style.display = 'block';
-                        updateListeningCompleteButton();
-                    };
-                    listeningMediaRecorder.start();
-                    listeningRecordBtn.style.display = 'none';
-                    listeningStopBtn.style.display = 'inline-flex';
-                    listeningRecordBtn.classList.add('recording');
-                } catch (err) { alert('Unable to access microphone.'); }
-            });
-        }
-        if (listeningStopBtn) {
-            listeningStopBtn.addEventListener('click', () => {
-                if (listeningMediaRecorder?.state === 'recording') {
-                    listeningMediaRecorder.stop();
-                    listeningStopBtn.style.display = 'none';
-                    listeningRecordBtn.style.display = 'inline-flex';
-                    listeningRecordBtn.classList.remove('recording');
-                }
-            });
-        }
-
-        if (yesComparisonBtn) {
-            yesComparisonBtn.addEventListener('click', () => {
-                listeningVoiceConfirmed = true;
-                comparisonFeedback.innerHTML = '✅ Great! Your voice sounds ready for a second attempt!';
-                updateListeningCompleteButton();
-            });
-        }
-        if (noComparisonBtn) {
-            noComparisonBtn.addEventListener('click', () => {
-                listeningPlaybackCard.style.display = 'none';
-                listeningPlayback.src = '';
-                comparisonSection.style.display = 'none';
-                listeningRecordBtn.style.display = 'inline-flex';
-                listeningStopBtn.style.display = 'none';
-                listeningRecordBtn.classList.remove('recording');
-                hasListeningRecording = false;
-                listeningVoiceConfirmed = false;
-                listeningQuizCorrect = false;
-                comparisonFeedback.innerHTML = '';
-                if (listeningStream) listeningStream.getTracks().forEach(t => t.stop());
-                updateListeningCompleteButton();
-            });
-        }
-
-        document.querySelectorAll('input[name="q1"]').forEach(radio => radio.addEventListener('change', e => { listeningQuizAnswers.q1 = e.target.value; updateListeningCompleteButton(); }));
-        document.querySelectorAll('input[name="q2"]').forEach(radio => radio.addEventListener('change', e => { listeningQuizAnswers.q2 = e.target.value; updateListeningCompleteButton(); }));
-
-        if (checkListeningWorkBtn) {
-            checkListeningWorkBtn.addEventListener('click', () => {
-                if (!hasListeningRecording) {
-                    listeningQuizFeedback.innerHTML = '⚠️ Please record your voice first.';
-                    listeningQuizFeedback.className = 'quiz-feedback warning';
-                    listeningQuizFeedback.style.display = 'block';
-                    return;
-                }
-                if (!listeningQuizAnswers.q1 || !listeningQuizAnswers.q2) {
-                    listeningQuizFeedback.innerHTML = '⚠️ Please answer both questions.';
-                    listeningQuizFeedback.className = 'quiz-feedback warning';
-                    listeningQuizFeedback.style.display = 'block';
-                    return;
-                }
-                let q1Correct = (listeningQuizAnswers.q1 === 'Improvement');
-                let q2Correct = (listeningQuizAnswers.q2 === 'Learning');
-
-                if (q1Correct && q2Correct) {
-                    listeningQuizFeedback.innerHTML = '✅ Correct! Great job!';
-                    listeningQuizFeedback.className = 'quiz-feedback correct';
-                    listeningQuizCorrect = true;
-                } else {
-                    let errorMsg = '❌ Incorrect. ';
-                    if (!q1Correct) errorMsg += 'Check question 1 again. ';
-                    if (!q2Correct) errorMsg += 'Check question 2 again.';
-                    listeningQuizFeedback.innerHTML = errorMsg;
-                    listeningQuizFeedback.className = 'quiz-feedback incorrect';
-                    listeningQuizCorrect = false;
-                }
-                listeningQuizFeedback.style.display = 'block';
-                updateListeningCompleteButton();
-            });
-        }
-
-        if (listeningCompleteBtn) {
-            listeningCompleteBtn.addEventListener('click', () => {
-                if (!masterAudioFinished) { alert('Please listen to the complete master audio first.'); return; }
-                if (!hasListeningRecording) { alert('Please record your voice first.'); return; }
-                if (!listeningVoiceConfirmed) { alert('Please confirm your voice sounds ready for a second attempt.'); return; }
-                if (!listeningQuizCorrect) { alert('Please answer both quiz questions correctly.'); return; }
-                markActivityComplete('listening', 'chk5');
-            });
-        }
-
-        // ==================== Speaking Activity ====================
-        function setupSpeakingRecording(sentenceNum) {
-            const recordBtn = document.getElementById(`speakingRecordBtn${sentenceNum}`);
-            const stopBtn = document.getElementById(`speakingStopBtn${sentenceNum}`);
-            const playbackCard = document.getElementById(`speakingPlaybackCard${sentenceNum}`);
-            const playback = document.getElementById(`speakingPlayback${sentenceNum}`);
-            let mediaRecorder, audioChunks = [];
-
-            if (!recordBtn) return;
-
-            recordBtn.addEventListener('click', async () => {
+            recordBtn.onclick = async () => {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    audioChunks = [];
-                    mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
-                    mediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        playback.src = URL.createObjectURL(audioBlob);
+                    recorder = new MediaRecorder(stream);
+                    chunks = [];
+                    recorder.ondataavailable = e => chunks.push(e.data);
+                    recorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'audio/webm' });
+                        playback.src = URL.createObjectURL(blob);
                         playbackCard.style.display = 'block';
-                        speakingBlobs[sentenceNum] = audioBlob;
-                        speakingRecorded[sentenceNum] = true;
+                        hasListeningRecording = true;
+                        document.getElementById('comparisonSection').style.display = 'block';
+                        updateListeningStatus();
                         stream.getTracks().forEach(t => t.stop());
-                        recordBtn.style.display = 'inline-flex';
-                        stopBtn.style.display = 'none';
-                        recordBtn.classList.remove('recording');
-
-                        const allRecorded = [1, 2, 3, 4, 5, 6].every(num => speakingRecorded[num]);
-                        const completeBtn = document.getElementById('completeSpeakingBtn');
-                        if (completeBtn) completeBtn.disabled = !allRecorded;
                     };
-                    mediaRecorder.start();
+                    recorder.start();
                     recordBtn.style.display = 'none';
                     stopBtn.style.display = 'inline-flex';
-                    recordBtn.classList.add('recording');
-                } catch (err) { alert('Unable to access microphone.'); }
-            });
-            if (stopBtn) {
-                stopBtn.addEventListener('click', () => { if (mediaRecorder?.state === 'recording') mediaRecorder.stop(); });
-            }
+                } catch (e) { alert("Microphone access denied."); }
+            };
+
+            stopBtn.onclick = () => {
+                recorder.stop();
+                stopBtn.style.display = 'none';
+                recordBtn.style.display = 'inline-flex';
+            };
+
+            document.getElementById('yesComparisonBtn').onclick = () => {
+                listeningVoiceConfirmed = true;
+                document.getElementById('comparisonFeedback').innerHTML = '✅ Confirmed!';
+                updateListeningStatus();
+            };
+            document.getElementById('noComparisonBtn').onclick = () => {
+                hasListeningRecording = false;
+                listeningVoiceConfirmed = false;
+                playbackCard.style.display = 'none';
+                document.getElementById('comparisonSection').style.display = 'none';
+                updateListeningStatus();
+            };
+
+            document.getElementById('checkListeningWorkBtn').onclick = () => {
+                const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+                const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+                const fb = document.getElementById('listeningQuizFeedback');
+                fb.style.display = 'block';
+                if (!q1 || !q2) {
+                    fb.innerHTML = '⚠️ Please select an answer for both questions';
+                    fb.className = 'quiz-feedback warning';
+                    listeningQuizCorrect = false;
+                } else if (q1 === 'Improvement' && q2 === 'Learning') {
+                    fb.innerHTML = '✅ Correct!';
+                    fb.className = 'quiz-feedback correct';
+                    listeningQuizCorrect = true;
+                } else {
+                    fb.innerHTML = '❌ Incorrect. Hint: Practice makes improvement, and failure is part of learning.';
+                    fb.className = 'quiz-feedback incorrect';
+                    listeningQuizCorrect = false;
+                }
+                updateListeningStatus();
+            };
+
+            completeBtn.onclick = () => markActivityComplete('listening', 'chk5');
         }
 
-        for (let i = 1; i <= 6; i++) setupSpeakingRecording(i);
+        // ==================== 2. Speaking ====================
+        function setupSpeaking() {
+            const completeBtn = document.getElementById('completeSpeakingBtn');
+            for (let i = 1; i <= 6; i++) {
+                const rBtn = document.getElementById(`speakingRecordBtn${i}`);
+                const sBtn = document.getElementById(`speakingStopBtn${i}`);
+                const pCard = document.getElementById(`speakingPlaybackCard${i}`);
+                const pElem = document.getElementById(`speakingPlayback${i}`);
+                let rec, chks = [];
 
-        document.getElementById('completeSpeakingBtn')?.addEventListener('click', () => {
-            const allRecorded = [1, 2, 3, 4, 5, 6].every(num => speakingRecorded[num]);
-            if (!allRecorded) { alert('Please record all 6 sentences before submitting.'); return; }
-            markActivityComplete('speaking', 'chk1');
-        });
+                rBtn.onclick = async () => {
+                    try {
+                        const str = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        rec = new MediaRecorder(str);
+                        chks = [];
+                        rec.ondataavailable = e => chks.push(e.data);
+                        rec.onstop = () => {
+                            pElem.src = URL.createObjectURL(new Blob(chks, { type: 'audio/webm' }));
+                            pCard.style.display = 'block';
+                            speakingRecorded[i] = true;
+                            str.getTracks().forEach(t => t.stop());
+                            rBtn.style.display = 'inline-flex';
+                            sBtn.style.display = 'none';
+                            completeBtn.disabled = !Object.values(speakingRecorded).every(v => v);
+                        };
+                        rec.start();
+                        rBtn.style.display = 'none';
+                        sBtn.style.display = 'inline-flex';
+                    } catch (e) { alert("Mic error."); }
+                };
+                sBtn.onclick = () => rec.stop();
+            }
+            completeBtn.onclick = () => markActivityComplete('speaking', 'chk1');
+        }
 
-        // ==================== Reading Activity ====================
-        const readingPassageText = "By the time the results arrived, the students had prepared themselves for the worst. Rahul had studied day and night, but he had struggled with the math section. However, he had sought assistance from his seniors a week before. Because he had implemented their advice, he attained a substantial score. He realized that his hard work had paid off.";
-
-        function setupReadingActivity() {
-            const passageElement = document.getElementById('interactivePassage');
-            if (!passageElement) return;
+        // ==================== 3. Reading ====================
+        function setupReading() {
+            const passage = document.getElementById('interactivePassage');
             const words = readingPassageText.split(/\s+/);
-            passageElement.innerHTML = '';
+            passage.innerHTML = '';
             readingAllSpans = [];
-            readingSelectedIndices.clear();
-            phrasePositions = [];
 
-            words.forEach((word, index) => {
-                const cleanWord = word.toLowerCase().replace(/[.,!?;]/g, '');
+            words.forEach((word, idx) => {
+                const clean = word.toLowerCase().replace(/[.,!?;]/g, '');
                 const span = document.createElement('span');
                 span.className = 'clickable-word';
                 span.textContent = word + ' ';
-                span.style.cursor = 'pointer';
-                span.style.padding = '0.1rem 0.2rem';
-                span.style.margin = '0';
-                span.style.borderRadius = '4px';
-                span.style.display = 'inline-block';
-                span.dataset.index = index;
-                span.dataset.word = cleanWord;
-                span.onclick = () => toggleReadingWordSelection(span);
-                passageElement.appendChild(span);
-                readingAllSpans.push(span);
+                span.onclick = () => {
+                    if (readingSelectedIndices.has(idx)) {
+                        readingSelectedIndices.delete(idx);
+                        span.style.backgroundColor = '';
+                    } else {
+                        readingSelectedIndices.add(idx);
+                        span.style.backgroundColor = '#e0e7ff';
+                    }
+                    document.getElementById('selectedCount').innerText = readingSelectedIndices.size;
+                };
+                passage.appendChild(span);
+                readingAllSpans.push({ span, clean, idx });
             });
 
-            for (let phrase of correctFullPhrases) {
-                const phraseWords = phrase.split(' ');
-                for (let i = 0; i <= readingAllSpans.length - phraseWords.length; i++) {
-                    let match = true;
-                    for (let j = 0; j < phraseWords.length; j++) {
-                        if (readingAllSpans[i + j].dataset.word !== phraseWords[j]) {
-                            match = false;
-                            break;
+            phrasePositions = [];
+            correctFullPhrases.forEach(phrase => {
+                const pWords = phrase.split(' ');
+                for (let i = 0; i <= readingAllSpans.length - pWords.length; i++) {
+                    if (pWords.every((w, j) => readingAllSpans[i + j].clean === w)) {
+                        phrasePositions.push({ phrase, start: i, end: i + pWords.length - 1 });
+                    }
+                }
+            });
+
+            document.getElementById('checkReadingBtn').onclick = () => {
+                let foundCount = 0;
+                readingAllSpans.forEach(s => s.span.style.backgroundColor = readingSelectedIndices.has(s.idx) ? '#e0e7ff' : '');
+
+                phrasePositions.forEach(p => {
+                    let allSelected = true;
+                    for (let i = p.start; i <= p.end; i++) if (!readingSelectedIndices.has(i)) allSelected = false;
+                    if (allSelected) {
+                        foundCount++;
+                        for (let i = p.start; i <= p.end; i++) {
+                            readingAllSpans[i].span.style.backgroundColor = '#bbf7d0';
+                            readingAllSpans[i].span.style.border = '1px solid #22c55e';
                         }
                     }
-                    if (match) {
-                        phrasePositions.push({ phrase: phrase, startIndex: i, endIndex: i + phraseWords.length - 1 });
-                        break;
-                    }
-                }
-            }
-            document.getElementById('selectedCount').innerText = '0';
-            document.getElementById('correctCount').innerText = '0';
-        }
-
-        function toggleReadingWordSelection(element) {
-            const index = parseInt(element.dataset.index);
-            if (readingSelectedIndices.has(index)) {
-                readingSelectedIndices.delete(index);
-                element.classList.remove('selected');
-                element.style.backgroundColor = '';
-                element.style.border = '';
-            } else {
-                readingSelectedIndices.add(index);
-                element.classList.add('selected');
-                element.style.backgroundColor = '#e0e7ff';
-                element.style.border = '2px solid #667eea';
-            }
-            document.getElementById('selectedCount').innerText = readingSelectedIndices.size;
-        }
-
-        function checkReadingAnswers() {
-            readingAllSpans.forEach(span => { span.style.backgroundColor = ''; span.style.border = ''; span.style.borderRadius = ''; span.style.padding = ''; });
-            let correctPhrasesFound = [];
-            for (let phraseInfo of phrasePositions) {
-                let allWordsSelected = true;
-                for (let i = phraseInfo.startIndex; i <= phraseInfo.endIndex; i++) {
-                    if (!readingSelectedIndices.has(i)) { allWordsSelected = false; break; }
-                }
-                if (allWordsSelected) {
-                    correctPhrasesFound.push(phraseInfo.phrase);
-                    for (let i = phraseInfo.startIndex; i <= phraseInfo.endIndex; i++) {
-                        readingAllSpans[i].style.backgroundColor = '#bbf7d0';
-                        readingAllSpans[i].style.border = '2px solid #22c55e';
-                        readingAllSpans[i].style.borderRadius = '4px';
-                        readingAllSpans[i].style.padding = '0.1rem 0.3rem';
-                    }
-                }
-            }
-            const correctCount = correctPhrasesFound.length;
-            const totalNeeded = phrasePositions.length;
-            document.getElementById('correctCount').innerText = correctCount;
-            const feedback = document.getElementById('readingFeedback');
-            if (correctCount === totalNeeded) {
-                feedback.innerHTML = `<div style="background: #d1fae5; padding: 0.75rem; border-radius: 10px;"><p style="color: #065f46; font-weight: 600;">✅ Perfect! You found all ${totalNeeded} Past Perfect phrases!</p></div>`;
-                document.getElementById('completeReadingBtn').disabled = false;
-                readingCompleteEnabled = true;
-            } else {
-                feedback.innerHTML = `<div style="background: #fef9e3; padding: 0.75rem 1rem; border-radius: 12px;"><p style="color: #92400e;">⚠️ You found ${correctCount} out of ${totalNeeded} correct phrases. ${totalNeeded - correctCount} more to find!</p></div>`;
-                document.getElementById('completeReadingBtn').disabled = true;
-                readingCompleteEnabled = false;
-            }
-        }
-
-        document.getElementById('checkReadingBtn')?.addEventListener('click', checkReadingAnswers);
-        document.getElementById('resetReadingBtn')?.addEventListener('click', () => {
-            readingSelectedIndices.clear();
-            readingAllSpans.forEach(span => {
-                span.classList.remove('selected');
-                span.style.backgroundColor = '';
-                span.style.border = '';
-                span.style.borderRadius = '';
-                span.style.padding = '';
-            });
-            document.getElementById('selectedCount').innerText = '0';
-            document.getElementById('correctCount').innerText = '0';
-            document.getElementById('readingFeedback').innerHTML = '';
-            document.getElementById('completeReadingBtn').disabled = true;
-            readingCompleteEnabled = false;
-        });
-
-        document.getElementById('completeReadingBtn')?.addEventListener('click', () => {
-            if (!readingCompleteEnabled) {
-                alert('Please click "Check Answers" first and ensure all 6 phrases are correct.');
-                return;
-            }
-            markActivityComplete('reading', 'chk2');
-        });
-
-        // ==================== Writing Activity ====================
-        function checkWritingSentence(inputId, feedbackId) {
-            const input = document.getElementById(inputId);
-            const feedback = document.getElementById(feedbackId);
-            if (!input) return false;
-            const userAnswer = input.value.trim();
-
-            if (!userAnswer) {
-                if (feedback) {
-                    feedback.innerHTML = '⚠️ Please write a sentence.';
-                    feedback.className = 'fix-feedback warning';
-                    feedback.style.display = 'block';
-                }
-                input.style.borderColor = '#dc2626';
-                return false;
-            }
-
-            const pastPerfectPattern = /\bhad\s+(?:\w+ed|\w+en|\b(?:gone|done|seen|written|spoken|taken|given|made|come|known|thought|said|finished|completed|checked|prepared|studied|reviewed|eaten|drunk|washed|cleaned)\b)/i;
-            const isValid = pastPerfectPattern.test(userAnswer) && userAnswer.split(/\s+/).length >= 4;
-
-            if (isValid) {
-                if (feedback) {
-                    feedback.innerHTML = '✅ Correct! Good use of Past Perfect!';
-                    feedback.className = 'fix-feedback correct';
-                    feedback.style.display = 'block';
-                }
-                input.style.borderColor = '#22c55e';
-                return true;
-            } else {
-                if (feedback) {
-                    feedback.innerHTML = '⚠️ Use Past Perfect: "had + past participle" (e.g., "had finished", "had completed")';
-                    feedback.className = 'fix-feedback warning';
-                    feedback.style.display = 'block';
-                }
-                input.style.borderColor = '#dc2626';
-                return false;
-            }
-        }
-
-        function checkWritingAnswers() {
-            const valid3 = checkWritingSentence('pastPerfect3', 'pastPerfect3Feedback');
-            const valid4 = checkWritingSentence('pastPerfect4', 'pastPerfect4Feedback');
-
-            writingValid.w3 = valid3;
-            writingValid.w4 = valid4;
-
-            const feedback = document.getElementById('writingFeedback');
-
-            if (valid3 && valid4) {
-                feedback.innerHTML = '✅ All sentences are correct! You can now mark Writing as Complete.';
-                feedback.className = 'quiz-feedback correct';
-                feedback.style.display = 'block';
-                document.getElementById('completeWritingBtn').disabled = false;
-            } else {
-                feedback.innerHTML = '⚠️ Please correct the sentences above. Use "had + past participle".';
-                feedback.className = 'quiz-feedback warning';
-                feedback.style.display = 'block';
-                document.getElementById('completeWritingBtn').disabled = true;
-            }
-        }
-
-        document.getElementById('checkWritingBtn')?.addEventListener('click', checkWritingAnswers);
-        document.getElementById('completeWritingBtn')?.addEventListener('click', () => {
-            if (writingValid.w3 && writingValid.w4) {
-                markActivityComplete('writing', 'chk4');
-            } else {
-                alert('⚠️ Please check your answers first using "Check Answers" button.');
-            }
-        });
-
-        // ==================== GRAMMAR SECTION - STRICT VALIDATION ====================
-        const grammarBtn = document.getElementById('completeGrammarBtn');
-
-        const grammarExpectedSentences = {
-            1: [
-                "i had finished my work when my friend called",
-                "i had finished my work before my friend called",
-                "i had finished my work then my friend called",
-                "i had finished my work and then my friend called",
-                "i had completed my work when my friend called",
-                "i had completed my work before my friend called"
-            ],
-            2: [
-                "she had prepared for the viva so she felt confident",
-                "she had prepared for the viva, so she felt confident",
-                "she had prepared for the viva therefore she felt confident",
-                "she had prepared for the viva and then she felt confident",
-                "she had studied for the viva so she felt confident"
-            ],
-            3: [
-                "the machine had stopped before the technician arrived",
-                "the machine had stopped when the technician arrived",
-                "the machine had stopped by the time the technician arrived",
-                "the machine had stopped then the technician arrived",
-                "the machine had stopped before the technician came",
-                "the machine had stopped when the technician came"
-            ]
-        };
-
-        let grammarAllCorrect = false;
-
-        function updateGrammarCompleteButton() {
-            if (grammarBtn) {
-                grammarBtn.disabled = !grammarAllCorrect;
-            }
-        }
-
-        function normalizeGrammarSentence(sentence) {
-            let normalized = sentence.trim().toLowerCase();
-            normalized = normalized.replace(/\s+/g, ' ');
-            normalized = normalized.replace(/[.!?]+$/, '');
-            return normalized.trim();
-        }
-
-        function checkGrammarSentence(num, userAnswer, validAnswers) {
-            const feedback = document.getElementById(`grammar${num}Feedback`);
-            const hint = document.getElementById(`grammar${num}Hint`);
-            const input = document.getElementById(`grammar${num}`);
-
-            if (!userAnswer || userAnswer === "") {
-                if (feedback) {
-                    feedback.innerHTML = '⚠️ Please write the complete sentence.';
-                    feedback.className = 'fix-feedback warning';
-                    feedback.style.display = 'block';
-                }
-                if (input) input.style.borderColor = '#dc2626';
-                if (hint) hint.style.display = 'none';
-                return false;
-            }
-
-            const normalizedAnswer = normalizeGrammarSentence(userAnswer);
-            const isValid = validAnswers.some(correct => normalizedAnswer === normalizeGrammarSentence(correct));
-
-            if (isValid) {
-                if (feedback) {
-                    feedback.innerHTML = '✅ Correct! Good use of Past Perfect!';
-                    feedback.className = 'fix-feedback correct';
-                    feedback.style.display = 'block';
-                }
-                if (input) input.style.borderColor = '#22c55e';
-                if (hint) hint.style.display = 'none';
-                return true;
-            } else {
-                if (feedback) {
-                    feedback.innerHTML = '❌ Incorrect. Make sure you use "had + past participle" correctly.';
-                    feedback.className = 'fix-feedback incorrect';
-                    feedback.style.display = 'block';
-                }
-                if (input) input.style.borderColor = '#dc2626';
-                if (hint) {
-                    hint.innerHTML = `💡 Correct example: "${validAnswers[0].charAt(0).toUpperCase() + validAnswers[0].slice(1)}"`;
-                    hint.style.display = 'block';
-                }
-                return false;
-            }
-        }
-
-        function checkGrammarAnswers() {
-            const answer1 = document.getElementById('grammar1')?.value.trim();
-            const answer2 = document.getElementById('grammar2')?.value.trim();
-            const answer3 = document.getElementById('grammar3')?.value.trim();
-
-            const feedback = document.getElementById('grammarFeedback');
-
-            if (!answer1 || !answer2 || !answer3) {
-                feedback.innerHTML = '⚠️ Please write your answers in all fields before checking.';
-                feedback.className = 'quiz-feedback warning';
-                feedback.style.display = 'block';
-                grammarAllCorrect = false;
-                updateGrammarCompleteButton();
-                return;
-            }
-
-            const valid1 = checkGrammarSentence(1, answer1, grammarExpectedSentences[1]);
-            const valid2 = checkGrammarSentence(2, answer2, grammarExpectedSentences[2]);
-            const valid3 = checkGrammarSentence(3, answer3, grammarExpectedSentences[3]);
-
-            grammarAllCorrect = valid1 && valid2 && valid3;
-
-            if (grammarAllCorrect) {
-                feedback.innerHTML = '✅ Perfect! All sentences are correct! You can now mark Grammar as Complete.';
-                feedback.className = 'quiz-feedback correct';
-                feedback.style.display = 'block';
-            } else {
-                feedback.innerHTML = '⚠️ Some answers are incorrect. Please correct the sentences marked in red.';
-                feedback.className = 'quiz-feedback warning';
-                feedback.style.display = 'block';
-            }
-            updateGrammarCompleteButton();
-        }
-
-        function resetGrammarAnswers() {
-            const inputs = ['grammar1', 'grammar2', 'grammar3'];
-
-            inputs.forEach(id => {
-                const input = document.getElementById(id);
-                const feedback = document.getElementById(`${id}Feedback`);
-                const hint = document.getElementById(`${id}Hint`);
-
-                if (input) {
-                    input.value = '';
-                    input.style.borderColor = '#e2e8f0';
-                }
-                if (feedback) {
-                    feedback.innerHTML = '';
-                    feedback.style.display = 'none';
-                    feedback.className = 'fix-feedback';
-                }
-                if (hint) {
-                    hint.innerHTML = '';
-                    hint.style.display = 'none';
-                }
-            });
-
-            const feedback = document.getElementById('grammarFeedback');
-            if (feedback) {
-                feedback.innerHTML = '';
-                feedback.style.display = 'none';
-                feedback.className = 'quiz-feedback';
-            }
-
-            grammarAllCorrect = false;
-            updateGrammarCompleteButton();
-        }
-
-        for (let i = 1; i <= 3; i++) {
-            const input = document.getElementById(`grammar${i}`);
-            if (input) {
-                input.addEventListener('input', function () {
-                    const feedback = document.getElementById(`grammar${i}Feedback`);
-                    const hint = document.getElementById(`grammar${i}Hint`);
-                    if (feedback) {
-                        feedback.innerHTML = '';
-                        feedback.style.display = 'none';
-                    }
-                    if (hint) hint.style.display = 'none';
-                    this.style.borderColor = '#e2e8f0';
-
-                    const overallFeedback = document.getElementById('grammarFeedback');
-                    if (overallFeedback) {
-                        overallFeedback.innerHTML = '';
-                        overallFeedback.style.display = 'none';
-                    }
-
-                    grammarAllCorrect = false;
-                    updateGrammarCompleteButton();
                 });
-            }
-        }
 
-        document.getElementById('checkGrammarBtn')?.addEventListener('click', checkGrammarAnswers);
-        document.getElementById('resetGrammarBtn')?.addEventListener('click', resetGrammarAnswers);
-
-        if (grammarBtn) {
-            grammarBtn.addEventListener('click', () => {
-                if (!grammarAllCorrect) {
-                    alert('⚠️ Please correct all grammar answers first. Click "Check Answers" to see feedback.');
-                    return;
-                }
-                markActivityComplete('grammar', 'chk3');
-            });
-        }
-
-        // ==================== GAME SECTION ====================
-        const gameBtn2 = document.getElementById('completeGameBtn');
-
-        const partAValidPatterns = {
-            game1: { pattern: /^it was a (strenuous|arduous|demanding|tough|challenging|difficult) exam\.?$/i, hint: 'strenuous' },
-            game2: { pattern: /^i (attained|achieved|accomplished|reached|earned|secured) my goal\.?$/i, hint: 'attained' },
-            game3: { pattern: /^we (encountered|faced|confronted|experienced) a problem\.?$/i, hint: 'encountered' }
-        };
-
-        function updateGameCompleteButton() {
-            if (gameBtn2) {
-                gameBtn2.disabled = !(gamePartAComplete && gamePartBComplete);
-            }
-        }
-
-        function checkGamePartA(inputId, validation) {
-            const input = document.getElementById(inputId);
-            const feedback = document.getElementById(`${inputId}Feedback`);
-
-            if (!input) return false;
-            const userAnswer = input.value.trim();
-
-            if (userAnswer === "") {
-                if (feedback) {
-                    feedback.innerHTML = '⚠️ Please write the complete sentence.';
-                    feedback.className = 'fix-feedback warning';
-                    feedback.style.display = 'block';
-                }
-                input.style.borderColor = '#dc2626';
-                return false;
-            }
-
-            const isValid = validation.pattern.test(userAnswer);
-
-            if (isValid) {
-                if (feedback) {
-                    feedback.innerHTML = '✅ Correct! Good use of smart word!';
-                    feedback.className = 'fix-feedback correct';
-                    feedback.style.display = 'block';
-                }
-                input.style.borderColor = '#22c55e';
-                return true;
-            } else {
-                if (feedback) {
-                    feedback.innerHTML = `❌ Incorrect. Expected a sentence like "It was a ${validation.hint} exam."`;
-                    feedback.className = 'fix-feedback incorrect';
-                    feedback.style.display = 'block';
-                }
-                input.style.borderColor = '#dc2626';
-                return false;
-            }
-        }
-
-        document.getElementById('checkPartAGameBtn')?.addEventListener('click', () => {
-            const q1Valid = checkGamePartA('game1', partAValidPatterns.game1);
-            const q2Valid = checkGamePartA('game2', partAValidPatterns.game2);
-            const q3Valid = checkGamePartA('game3', partAValidPatterns.game3);
-
-            gamePartAComplete = q1Valid && q2Valid && q3Valid;
-
-            const statusDiv = document.getElementById('partAGameStatus');
-            if (gamePartAComplete) {
-                statusDiv.innerHTML = '<div style="background:#d1fae5;padding:0.75rem;border-radius:10px;color:#065f46;">✅ Part A Complete! All sentences use the correct smart words!</div>';
-            } else {
-                statusDiv.innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:10px;color:#92400e;">⚠️ Please correct the sentences above.</div>';
-            }
-            updateGameCompleteButton();
-        });
-
-        document.getElementById('checkPartBGameBtn')?.addEventListener('click', () => {
-            const selected = document.querySelector('input[name="hadLogic"]:checked');
-            const fb = document.getElementById('game4Feedback');
-
-            if (!selected) {
-                fb.innerHTML = '⚠️ Please select an answer.';
-                fb.className = 'fix-feedback warning';
-                fb.style.display = 'block';
-                gamePartBComplete = false;
-            } else if (selected.value === 'Class started first') {
-                fb.innerHTML = '✅ Correct! "Had commenced" means the class started before I entered.';
-                fb.className = 'fix-feedback correct';
-                fb.style.display = 'block';
-                gamePartBComplete = true;
-            } else {
-                fb.innerHTML = '❌ Incorrect. "Had commenced" means the class started first.';
-                fb.className = 'fix-feedback incorrect';
-                fb.style.display = 'block';
-                gamePartBComplete = false;
-            }
-
-            const statusDiv = document.getElementById('partBGameStatus');
-            statusDiv.innerHTML = gamePartBComplete ?
-                '<div style="background:#d1fae5;padding:0.75rem;border-radius:10px;color:#065f46;">✅ Part B Complete!</div>' :
-                '<div style="background:#fef9e3;padding:0.75rem;border-radius:10px;color:#92400e;">⚠️ Please correct the answer above.</div>';
-            updateGameCompleteButton();
-        });
-
-        ['game1', 'game2', 'game3'].forEach(id => {
-            document.getElementById(id)?.addEventListener('input', () => {
-                const fb = document.getElementById(`${id}Feedback`);
-                if (fb) {
-                    fb.innerHTML = '';
-                    fb.style.display = 'none';
-                }
-                document.getElementById('partAGameStatus').innerHTML = '';
-                gamePartAComplete = false;
-                updateGameCompleteButton();
-            });
-        });
-
-        document.querySelectorAll('input[name="hadLogic"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                const fb = document.getElementById('game4Feedback');
-                if (fb) {
-                    fb.innerHTML = '';
-                    fb.style.display = 'none';
-                }
-                document.getElementById('partBGameStatus').innerHTML = '';
-                gamePartBComplete = false;
-                updateGameCompleteButton();
-            });
-        });
-
-        if (gameBtn2) {
-            gameBtn2.addEventListener('click', () => {
-                if (gamePartAComplete && gamePartBComplete) {
-                    markActivityComplete('game', 'chk6');
+                document.getElementById('correctCount').innerText = foundCount;
+                const fb = document.getElementById('readingFeedback');
+                if (foundCount === phrasePositions.length) {
+                    fb.innerHTML = '✅ Found all Past Perfect phrases!';
+                    document.getElementById('completeReadingBtn').disabled = false;
                 } else {
-                    alert('Please complete both parts first. Click "Check Part A" and "Check Part B" to validate your answers.');
+                    fb.innerHTML = `❌ Found ${foundCount}/${phrasePositions.length}. Keep looking!`;
                 }
-            });
+            };
+
+            document.getElementById('resetReadingBtn').onclick = () => {
+                readingSelectedIndices.clear();
+                readingAllSpans.forEach(s => { s.span.style.backgroundColor = ''; s.span.style.border = 'none'; });
+                document.getElementById('selectedCount').innerText = '0';
+                document.getElementById('correctCount').innerText = '0';
+                document.getElementById('completeReadingBtn').disabled = true;
+            };
+
+            document.getElementById('completeReadingBtn').onclick = () => markActivityComplete('reading', 'chk2');
         }
 
-        // ==================== Initialize ====================
-        document.addEventListener('DOMContentLoaded', function () {
-            setupReadingActivity();
-            updateChecklistProgress();
+        // ==================== 4. Writing ====================
+        function setupWriting() {
+            document.getElementById('checkWritingBtn').onclick = () => {
+                const w3 = document.getElementById('pastPerfect3').value.trim().toLowerCase();
+                const w4 = document.getElementById('pastPerfect4').value.trim().toLowerCase();
+                const pattern = /\bhad\s+(?:\w+ed|\w+en|gone|done|seen|written|taken|made|prepared|studied|finished|reviewed)\b/i;
 
-            document.getElementById('completeWritingBtn').disabled = true;
-            document.getElementById('completeReadingBtn').disabled = true;
-            document.getElementById('completeSpeakingBtn').disabled = true;
-            document.getElementById('completeGrammarBtn').disabled = true;
-            document.getElementById('completeGameBtn').disabled = true;
+                const valid3 = pattern.test(w3) && w3.split(' ').length >= 4;
+                const valid4 = pattern.test(w4) && w4.split(' ').length >= 4;
 
-            const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-            if (dayCompleteBtn) dayCompleteBtn.addEventListener('click', completeDay);
+                const fb3 = document.getElementById('pastPerfect3Feedback');
+                const fb4 = document.getElementById('pastPerfect4Feedback');
+                fb3.style.display = 'block'; fb4.style.display = 'block';
+
+                if (!w3) {
+                    fb3.innerHTML = '⚠️ Please write something'; fb3.className = 'fix-feedback warning';
+                } else {
+                    fb3.innerHTML = valid3 ? '✅ Good!' : '❌ Use "had + past participle"';
+                    fb3.className = 'fix-feedback ' + (valid3 ? 'correct' : 'incorrect');
+                }
+
+                if (!w4) {
+                    fb4.innerHTML = '⚠️ Please write something'; fb4.className = 'fix-feedback warning';
+                } else {
+                    fb4.innerHTML = valid4 ? '✅ Good!' : '❌ Use "had + past participle"';
+                    fb4.className = 'fix-feedback ' + (valid4 ? 'correct' : 'incorrect');
+                }
+
+                document.getElementById('completeWritingBtn').disabled = !(valid3 && valid4);
+            };
+            document.getElementById('completeWritingBtn').onclick = () => markActivityComplete('writing', 'chk4');
+        }
+
+        // ==================== 5. Vocabulary ====================
+        function setupVocabulary() {
+            document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const word = btn.dataset.word;
+                    window.speechSynthesis.cancel();
+                    const utt = new SpeechSynthesisUtterance(word);
+                    utt.rate = 0.8;
+                    window.speechSynthesis.speak(utt);
+
+                    vocabHeard[word] = true;
+                    const cell = document.getElementById(`check-${word.toLowerCase()}`);
+                    if (cell) { cell.innerHTML = '✅'; cell.style.color = '#16a34a'; }
+
+                    const allHeard = Object.values(vocabHeard).every(v => v);
+                    document.getElementById('completeVocabularyBtn').disabled = !allHeard;
+                    saveProgress();
+                };
+            });
+            document.getElementById('completeVocabularyBtn').onclick = () => markActivityComplete('vocabulary', 'chk7');
+        }
+
+        // ==================== 6. Grammar ====================
+        function setupGrammar() {
+            const answers = {
+                1: "i had finished my work when my friend called",
+                2: "she had prepared for the viva so she felt confident",
+                3: "the machine had stopped before the technician arrived"
+            };
+
+            document.getElementById('checkGrammarBtn').onclick = () => {
+                let correctCount = 0;
+                for (let i = 1; i <= 3; i++) {
+                    const val = document.getElementById(`grammar${i}`).value.trim().toLowerCase().replace(/[.!?]$/, '');
+                    const fb = document.getElementById(`grammar${i}Feedback`);
+                    fb.style.display = 'block';
+                    if (!val) {
+                        fb.innerHTML = '⚠️ Please write something';
+                        fb.className = 'fix-feedback warning';
+                    } else if (val === answers[i]) {
+                        fb.innerHTML = '✅ Correct!';
+                        fb.className = 'fix-feedback correct';
+                        correctCount++;
+                    } else {
+                        fb.innerHTML = `❌ Incorrect. Correct: "${answers[i]}"`;
+                        fb.className = 'fix-feedback incorrect';
+                    }
+                }
+                document.getElementById('completeGrammarBtn').disabled = (correctCount !== 3);
+            };
+            document.getElementById('completeGrammarBtn').onclick = () => markActivityComplete('grammar', 'chk3');
+        }
+
+        // ==================== 7. Game ====================
+        function setupGame() {
+            document.getElementById('checkPartAGameBtn').onclick = () => {
+                const patterns = {
+                    game1: ["it was a strenuous exam", "it was a demanding exam"],
+                    game2: ["i attained my goal", "i achieved my goal"],
+                    game3: ["we encountered a problem", "we faced a problem"]
+                };
+                let count = 0;
+                for (let i = 1; i <= 3; i++) {
+                    const val = document.getElementById(`game${i}`).value.trim().toLowerCase().replace(/[.!?]$/, '');
+                    const fb = document.getElementById(`game${i}Feedback`);
+                    fb.style.display = 'block';
+                    if (!val) {
+                        fb.innerHTML = '⚠️ Please write something';
+                        fb.className = 'fix-feedback warning';
+                    } else if (patterns[`game${i}`].includes(val)) {
+                        fb.innerHTML = '✅ Correct!'; fb.className = 'fix-feedback correct'; count++;
+                    } else {
+                        fb.innerHTML = `❌ Incorrect. Correct: "${patterns[`game${i}`][0]}"`;
+                        fb.className = 'fix-feedback incorrect';
+                    }
+                }
+                gamePartAComplete = (count === 3);
+                document.getElementById('completeGameBtn').disabled = !(gamePartAComplete && gamePartBComplete);
+            };
+
+            document.getElementById('checkPartBGameBtn').onclick = () => {
+                const sel = document.querySelector('input[name="hadLogic"]:checked')?.value;
+                const fb = document.getElementById('game4Feedback');
+                fb.style.display = 'block';
+                if (!sel) {
+                    fb.innerHTML = '⚠️ Please select an answer';
+                    fb.className = 'fix-feedback warning';
+                    gamePartBComplete = false;
+                } else if (sel === 'Class started first') {
+                    fb.innerHTML = '✅ Correct!'; fb.className = 'fix-feedback correct';
+                    gamePartBComplete = true;
+                } else {
+                    fb.innerHTML = '❌ Incorrect. "Had commenced" indicates it happened first.'; fb.className = 'fix-feedback incorrect';
+                    gamePartBComplete = false;
+                }
+                document.getElementById('completeGameBtn').disabled = !(gamePartAComplete && gamePartBComplete);
+            };
+
+            document.getElementById('completeGameBtn').onclick = () => markActivityComplete('game', 'chk6');
+        }
+
+        // ==================== Initialization ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProgress();
+            setupListening();
+            setupSpeaking();
+            setupReading();
+            setupWriting();
+            setupVocabulary();
+            setupGrammar();
+            setupGame();
+
+            document.getElementById('dayCompleteBtn').onclick = () => {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                setTimeout(() => { window.location.href = '/learning/level/beginner/?celebrate=true&completed=12'; }, 2000);
+            };
         });
+    </script>
     </script>
 </body>
 

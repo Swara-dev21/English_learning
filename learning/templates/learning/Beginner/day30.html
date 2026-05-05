@@ -1607,19 +1607,138 @@
             }
         }
 
+        // ========== LOCALSTORAGE PERSISTENCE ==========
+        const STORAGE_KEY = 'progress_beginner_day30';
+
+        function saveProgress() {
+            const data = {
+                activityCompleted: activityCompleted,
+                inputs: {},
+                radios: {}
+            };
+            
+            // Save all text inputs and textareas
+            document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                if (el.id) data.inputs[el.id] = el.value;
+            });
+            
+            // Save all radio selections
+            document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
+                if (el.name) data.radios[el.name] = el.value;
+            });
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+                
+                // 1. Restore activity completion
+                if (data.activityCompleted) {
+                    activityCompleted = data.activityCompleted;
+                    const checklistMap = { 
+                        listening: 'chk1', speaking: 'chk2', reading: 'chk3', 
+                        writing: 'chk4', game: 'chk7'
+                    };
+                    Object.keys(activityCompleted).forEach(id => {
+                        if (activityCompleted[id]) {
+                            const cb = document.getElementById(checklistMap[id]);
+                            if (cb) cb.checked = true;
+                            const btnId = `complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`;
+                            const btn = document.getElementById(btnId);
+                            if (btn) {
+                                btn.classList.add('completed');
+                                btn.textContent = '✓ Completed';
+                                btn.disabled = true;
+                                btn.style.pointerEvents = 'none';
+                            }
+                        }
+                    });
+                }
+                
+                // 2. Restore text inputs
+                if (data.inputs) {
+                    Object.keys(data.inputs).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = data.inputs[id];
+                    });
+                }
+                
+                // 3. Restore radios
+                if (data.radios) {
+                    Object.keys(data.radios).forEach(name => {
+                        const val = data.radios[name];
+                        const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+                        if (radio) {
+                            radio.checked = true;
+                            radio.dispatchEvent(new Event('change'));
+                        }
+                    });
+                }
+                
+                updateChecklistProgress();
+            } catch (e) { console.warn("Load progress failed", e); }
+        }
+
         function markActivityComplete(activityId, checklistId) {
             if (activityCompleted[activityId]) return;
             activityCompleted[activityId] = true;
-            document.getElementById(checklistId).checked = true;
-            const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-            if (btn) { btn.classList.add('completed'); btn.textContent = '✓ Completed'; btn.disabled = true; }
+            const cb = document.getElementById(checklistId);
+            if (cb) cb.checked = true;
+            const btnId = `complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`;
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                btn.classList.add('completed');
+                btn.textContent = '✓ Completed';
+                btn.disabled = true;
+                btn.style.pointerEvents = 'none';
+            }
             updateChecklistProgress();
-
-            fetch(`/learning/day/30/complete/${activityId}/`, {
-                method: 'POST', headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ completed: true })
-            }).catch(err => console.error('Error saving progress:', err));
+            saveProgress(); // Local persistence
         }
+
+        function completeDay() {
+            const btn = document.getElementById('dayCompleteBtn');
+            if (btn.disabled) {
+                const msgDiv = document.createElement('div');
+                msgDiv.style.color = '#dc2626';
+                msgDiv.style.textAlign = 'center';
+                msgDiv.innerHTML = '⚠️ Please complete all activities first!';
+                btn.parentNode.insertBefore(msgDiv, btn.nextSibling);
+                setTimeout(() => msgDiv.remove(), 3000);
+                return;
+            }
+            btn.innerHTML = '🎉 Saving...';
+            btn.disabled = true;
+            
+            // Clear local storage upon completion
+            localStorage.removeItem(STORAGE_KEY);
+            
+            if (typeof confetti !== 'undefined') {
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+            }
+            setTimeout(() => {
+                window.location.href = '/learning/level/beginner/?celebrate=true&completed=30';
+            }, 2000);
+        }
+
+        // Auto-save on any input change
+        document.addEventListener('input', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                saveProgress();
+            }
+        });
+        document.addEventListener('change', (e) => {
+            if (e.target.type === 'radio') {
+                saveProgress();
+            }
+        });
+
+        // Initial load
+        loadProgress();
 
         function showValidationMessage(elementId, message, isError = true) {
             const msgDiv = document.getElementById(elementId);

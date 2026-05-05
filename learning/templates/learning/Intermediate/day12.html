@@ -1,1149 +1,1388 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="user-id" content="{{ request.user.id }}">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Day 12: Hedging Language · The Diplomat's Toolkit | English for Engineers</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 12: Hedging Language · The Diplomat's Toolkit | English for Engineers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <style>
+        .writing-container {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .hedge-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            resize: vertical;
+            margin-top: 0.5rem;
+            margin-bottom: 0.75rem;
+            box-sizing: border-box;
+        }
+
+        .hedge-textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .correct-answer-box {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .attempts-left {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+            text-align: center;
+            padding: 0.5rem;
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+
+        .modern-record-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .modern-record-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .modern-record-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .ai-feedback {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .ai-feedback.correct {
+            background: #d1fae5;
+            border-left: 4px solid #22c55e;
+            color: #166534;
+        }
+
+        .ai-feedback.incorrect {
+            background: #fee2e2;
+            border-left: 4px solid #dc2626;
+            color: #991b1b;
+        }
+
+        .ai-feedback.processing {
+            background: #e0e7ff;
+            border-left: 4px solid #6366f1;
+            color: #3730a3;
+        }
+
+        .correct-answer-box {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .interactive-passage {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 2px solid #e2e8f0;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .clickable-word {
+            display: inline-block;
+            padding: 0.1rem 0.2rem;
+            margin: 0 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: transparent;
+            border-radius: 0;
+        }
+
+        .clickable-word:hover {
+            background: #e0e7ff;
+        }
+
+        .temp-underlined {
+            text-decoration: underline !important;
+            text-decoration-thickness: 3px !important;
+            text-decoration-color: #3b82f6 !important;
+            background: #eff6ff !important;
+            display: inline-block;
+        }
+
+        .underline-correct {
+            text-decoration: underline !important;
+            text-decoration-thickness: 3px !important;
+            text-decoration-color: #22c55e !important;
+            background: #f0fdf4 !important;
+            display: inline-block;
+        }
+
+        .underline-incorrect {
+            text-decoration: underline !important;
+            text-decoration-thickness: 3px !important;
+            text-decoration-color: #dc2626 !important;
+            background: #fee2e2 !important;
+            display: inline-block;
+        }
+    </style>
 </head>
+
 <body>
-<div class="lesson-container">
-    <div class="lesson-hero"><div class="hero-content"><div class="day-badge">Day 12 • Week 2 • Intermediate</div><h1 class="hero-title">🎭 HEDGING LANGUAGE: THE DIPLOMAT'S TOOLKIT</h1><div class="power-line">💡 "To hedge is not to hide — it is to be honest about the limits of what you know."</div></div></div>
-    
-    <div class="activities-grid">
-        <!-- LISTENING ACTIVITY -->
-        <div class="activity-card" id="listening-card">
-            <div class="card-header listening"><h2>🎧 1. Listening Activity · Hedging Tone</h2></div>
-            <div class="card-body">
-                <div class="task-box"><div class="task-header"><div class="title"><span>🎯</span><span>Focus</span></div></div><div class="task-content">Notice how the speaker sounds professional and honest, not weak or uncertain.</div></div>
-                <audio id="listeningAudio" controls><source src="{% static 'learning/audio/day12.mp3' %}" type="audio/mpeg"></audio>
-                <div id="listeningTextSection" style="display:none"><div class="task-box"><div class="task-header"><div class="title"><span>📝</span><span>Listening Text</span></div></div><div class="task-content" style="font-style:italic;background:#fef9e3">"The preliminary data tends to indicate a possible improvement in output... It would appear that the revised method may offer certain advantages... However, there seems to be some inconsistency in the results across different test conditions... This could potentially be attributed to variations in the ambient environment..."</div></div></div>
-                <div id="postAudioListeningContent" style="display:none">
-                    <div class="listening-container"><div class="task-header"><div class="title"><span>🎯</span><span>Task</span></div></div><div class="task-content">Rewrite <strong>3 overconfident statements</strong> using hedging language and record them.</div></div>
-                    <div id="listeningAIFeedback"></div>
-                    <div class="quiz-section">
-                        <p><strong>🧠 Quick Listening Check</strong></p>
-                        <div><p><strong>1. What does the speaker say about 'variation'?</strong></p><label class="quiz-option"><input type="radio" name="listening_quiz" value="definite"> It's definite</label><label class="quiz-option"><input type="radio" name="listening_quiz" value="tends"> It tends to occur</label><div id="q1Feedback" class="ind-quiz-feedback"></div></div>
-                        <div><p><strong>2. What might be causing the issue?</strong></p><label class="quiz-option"><input type="radio" name="practice_quiz" value="environmental"> Environmental factors (possible)</label><label class="quiz-option"><input type="radio" name="practice_quiz" value="human"> Human error (certain)</label><div id="q2Feedback" class="ind-quiz-feedback"></div></div>
-                        <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+    <div class="lesson-container">
+        <div class="lesson-hero">
+            <div class="hero-content">
+                <div class="day-badge">Day 12 • Week 2 • Intermediate</div>
+                <h1 class="hero-title">🎭 HEDGING LANGUAGE: THE DIPLOMAT'S TOOLKIT</h1>
+                <div class="power-line">💡 "To hedge is not to hide — it is to be honest about the limits of what you
+                    know."</div>
+            </div>
+        </div>
+
+        <div class="activities-grid">
+            <!-- LISTENING ACTIVITY - UPDATED WITH NEW SENTENCES -->
+            <div class="activity-card" id="listening-card">
+                <div class="card-header listening">
+                    <h2>🎧 1. Listening Activity · Hedging Tone</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Focus</span></div>
+                        </div>
+                        <div class="task-content">Notice how the speaker sounds professional and honest, not weak or
+                            uncertain.</div>
                     </div>
-                    <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answers</button>
+                    <audio id="listeningAudio" controls>
+                        <source src="{% static 'learning/audio/Intermediate/day12.mp3' %}" type="audio/mpeg">
+                    </audio>
+                    <div id="listeningTextSection" style="display:none">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Listening Text</span></div>
+                            </div>
+                            <div class="task-content" style="font-style:italic;background:#fef9e3">"The preliminary data
+                                tends to indicate a possible improvement in output... It would appear that the revised
+                                method may offer certain advantages... However, there seems to be some inconsistency in
+                                the results across different test conditions... This could potentially be attributed to
+                                variations in the ambient environment..."</div>
+                        </div>
+                    </div>
+                    <div id="postAudioListeningContent" style="display:none">
+
+                        <!-- Step 1: Write 3 Hedged Sentences (NEW SENTENCES - Different from Grammar) -->
+                        <div class="writing-container">
+                            <div class="task-header">
+                                <div class="title"><span>✍️</span><span>Step 1: Write 3 Hedged Sentences</span></div>
+                            </div>
+                            <div class="task-content">Rewrite these <strong>3 overconfident statements</strong> using
+                                hedging language:</div>
+
+                            <div style="background: #fef3c7; padding: 0.75rem; border-radius: 8px; margin: 0.75rem 0;">
+                                <p><strong>📌 Statement 1:</strong> "The new manufacturing process will definitely
+                                    increase productivity by 50%."</p>
+                                <textarea id="hedgeSentence1" class="hedge-textarea" rows="2"
+                                    placeholder="Write hedged version..."></textarea>
+                            </div>
+
+                            <div style="background: #fef3c7; padding: 0.75rem; border-radius: 8px; margin: 0.75rem 0;">
+                                <p><strong>📌 Statement 2:</strong> "The software update completely solves all security
+                                    issues."</p>
+                                <textarea id="hedgeSentence2" class="hedge-textarea" rows="2"
+                                    placeholder="Write hedged version..."></textarea>
+                            </div>
+
+                            <div style="background: #fef3c7; padding: 0.75rem; border-radius: 8px; margin: 0.75rem 0;">
+                                <p><strong>📌 Statement 3:</strong> "Our team's solution is the most efficient approach
+                                    available."</p>
+                                <textarea id="hedgeSentence3" class="hedge-textarea" rows="2"
+                                    placeholder="Write hedged version.."></textarea>
+                            </div>
+
+                            <div id="sentencesValidationMsg" style="margin-top: 0.75rem; font-size: 0.85rem;"></div>
+                            <button class="btn-outline" id="validateSentencesBtn"
+                                style="width: 40%; margin-top: 0.5rem;">✓ Submit for AI Evaluation</button>
+                        </div>
+
+                        <div id="sentencesAIFeedback" style="margin-top: 0.75rem;"></div>
+                        <div id="sentencesAttemptCounter" class="attempts-left">📊 Attempts remaining: <span>3</span>
+                        </div>
+
+                        <!-- Step 2: Record Hedged Sentences -->
+                        <div style="font-weight: 600; margin: 1rem 0 0.5rem;">🎙️ Step 2: Record Your Hedged Sentences
+                        </div>
+                        <div class="recording-controls">
+                            <button id="listeningRecordBtn" class="modern-record-btn" disabled>🎙️ Start Recording
+                                (Validate first)</button>
+                            <button id="listeningStopBtn" class="modern-record-btn"
+                                style="background: #64748b; display: none;">⏹️ Stop Recording</button>
+                        </div>
+                        <div id="listeningPlaybackCard" style="display: none;">
+                            <audio id="listeningPlayback" controls style="width: 100%;"></audio>
+                        </div>
+                        <div id="comparisonSection" style="display: none;">
+                            <div class="comparison-message">Did you record all 3 hedged sentences correctly?</div>
+                            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                                <button id="yesComparisonBtn" class="yes-btn">✓ Yes, correct</button>
+                                <button id="noComparisonBtn" class="no-btn">✗ No, record again</button>
+                            </div>
+                            <div id="comparisonFeedback" style="margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <div class="quiz-section" style="margin-top: 1rem;">
+                            <p><strong>🧠 Quick Listening Check</strong></p>
+                            <div>
+                                <p><strong>1. What does the speaker say about 'variation'?</strong></p><label
+                                    class="quiz-option"><input type="radio" name="listening_quiz" value="definite"> It's
+                                    definite</label><label class="quiz-option"><input type="radio" name="listening_quiz"
+                                        value="tends"> It tends to occur</label>
+                                <div id="q1Feedback" class="ind-quiz-feedback"></div>
+                            </div>
+                            <div>
+                                <p><strong>2. What might be causing the issue?</strong></p><label
+                                    class="quiz-option"><input type="radio" name="practice_quiz" value="environmental">
+                                    Environmental factors (possible)</label><label class="quiz-option"><input
+                                        type="radio" name="practice_quiz" value="human"> Human error (certain)</label>
+                                <div id="q2Feedback" class="ind-quiz-feedback"></div>
+                            </div>
+                            <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                        </div>
+                        <button class="btn-outline" id="checkListeningWorkBtn">✓ Check My Answers</button>
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;margin-top:1rem"><button
+                            class="complete-activity-btn" id="completeListeningBtn" data-checklist="chkListening"
+                            disabled>✓ Mark Listening as Complete</button></div>
                 </div>
-                <div style="display:flex;justify-content:flex-end;margin-top:1rem"><button class="complete-activity-btn" id="completeListeningBtn" data-checklist="chk2" disabled>✓ Mark Listening as Complete</button></div>
+            </div>
+
+            <!-- SPEAKING ACTIVITY -->
+            <div class="activity-card" id="speaking-card">
+                <div class="card-header speaking">
+                    <h2>🗣️ 2. Speaking Activity · The Academic Presentation</h2>
+                </div>
+                <div class="card-body">
+                    <p>In research, you never overstate your conclusions. Hedging language shows intellectual integrity.
+                    </p>
+                    <div class="speaking-sentences-list">
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">1</div>
+                            <div class="sentence-text-content">"The data <strong>appears to indicate</strong> that the
+                                composite material exhibits superior thermal resistance."</div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">2</div>
+                            <div class="sentence-text-content">"<strong>It would seem that</strong> further
+                                investigation is warranted before a definitive conclusion can be drawn."</div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">3</div>
+                            <div class="sentence-text-content">"This finding <strong>may well have</strong> significant
+                                implications for the design of future structures."</div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">4</div>
+                            <div class="sentence-text-content">"<strong>There appears to be a degree of</strong>
+                                correlation between increased load and micro-fracture formation."</div>
+                        </div>
+                        <div class="speaking-sentence-item">
+                            <div class="sentence-number-badge">5</div>
+                            <div class="sentence-text-content">"<strong>To some extent,</strong> the results are
+                                consistent with the theoretical predictions of the model."</div>
+                        </div>
+                    </div>
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎙️</span><span>Your Academic Presentation Recording</span></div>
+                        </div>
+                        <div class="task-content">
+                            <div class="recording-controls"><button id="speakingRecordBtn" class="modern-record-btn">🎤
+                                    Start Recording</button><button id="speakingStopBtn" class="modern-record-btn"
+                                    style="background:#64748b;display:none">⏹️ Stop Recording</button></div>
+                            <div id="speakingPlaybackCard" style="display:none;margin-top:1rem"><audio
+                                    id="speakingPlayback" controls></audio>
+                                <div id="speakingFeedback" style="margin-top:.5rem;font-size:.85rem"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;margin-top:1rem"><button
+                            class="complete-activity-btn" id="completeSpeakingBtn" data-checklist="chkSpeaking"
+                            disabled>✓ Mark Speaking as Complete</button></div>
+                    <div class="speaking-why-works">
+                        <div class="why-works-content"><span class="why-works-icon">👉</span><span
+                                class="why-works-text"><strong>WHY THIS WORKS:</strong> Overconfident language in
+                                technical reports creates legal and professional liability. Hedging is a sign of rigour,
+                                not weakness.</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- READING ACTIVITY -->
+            <div class="activity-card" id="reading-card">
+                <div class="card-header reading">
+                    <h2>📖 3. Reading Activity · The Research Conclusions</h2>
+                </div>
+                <div class="card-body">
+                    <div id="interactivePassage" class="interactive-passage"></div>
+                    <div style="background:#e0f2fe;border-radius:16px;padding:1rem;margin:1rem 0"><strong>🔍 Analysis
+                            Tasks:</strong><br> Underline every hedging expression in the passage.</div>
+
+                    <div id="underlineSection">
+                        <div class="action-buttons"><button class="btn-outline" id="checkUnderlinesBtn">✓ Check
+                                Underline Answers</button><button class="btn-outline" id="resetUnderlinesBtn">⟳ Reset
+                                Underlines</button></div>
+                        <div id="underlineFeedback" style="margin-top:.5rem"></div>
+                    </div>
+
+                    <!-- Task 2: Most/Least Uncertainty -->
+                    <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin:1rem 0">
+                        <p><strong>📝 Task 2: Identify Uncertainty Levels</strong></p>
+                        <p style="font-size:.8rem;color:#64748b;margin-bottom:.5rem">Write the COMPLETE sentence that
+                            expresses the MOST uncertainty and the COMPLETE sentence that expresses the LEAST
+                            uncertainty.</p>
+                        <div class="hedging-input-group"><label>MOST uncertain sentence (write the full
+                                sentence):</label><textarea id="task2Most" class="grammar-input" rows="3"
+                                placeholder="Write the complete sentence that expresses the most uncertainty..."></textarea>
+                        </div>
+                        <div class="hedging-input-group"><label>LEAST uncertain sentence (write the full
+                                sentence):</label><textarea id="task2Least" class="grammar-input" rows="3"
+                                placeholder="Write the complete sentence that expresses the least uncertainty..."></textarea>
+                        </div>
+                        <div class="action-buttons"><button class="btn-outline" id="checkTask2Btn">✓ Check
+                                Answers</button></div>
+                        <div id="task2Feedback" class="fix-feedback"></div>
+                    </div>
+
+                    <!-- Task 3: Rewrite without hedging -->
+                    <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin:1rem 0">
+                        <p><strong>📝 Task 3: Rewrite Without Hedging (Overconfident Version)</strong></p>
+                        <p style="font-size:.8rem;color:#64748b;margin-bottom:.5rem">Original: "Based on the available
+                            evidence, it would appear that the new polymer exhibits a higher resistance to corrosion
+                            under saline conditions."</p>
+                        <textarea id="task3Rewrite" class="grammar-input" rows="3"
+                            placeholder="Write the overconfident version without any hedging language..."></textarea>
+                        <div class="action-buttons"><button class="btn-outline" id="checkTask3Btn">✓ Check
+                                Answer</button></div>
+                        <div id="task3Feedback" class="fix-feedback"></div>
+                    </div>
+
+                    <div style="display:flex;justify-content:flex-end;margin-top:1rem"><button
+                            class="complete-activity-btn" id="completeReadingBtn" data-checklist="chkReading" disabled>✓
+                            Mark Reading as Complete</button></div>
+                </div>
+            </div>
+
+            <!-- VOCABULARY TABLE -->
+            <div class="activity-card" id="vocabulary-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 4. Vocabulary of the Day</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>🔊</th>
+                                    <th>✅</th>
+                                    <th>Word</th>
+                                    <th>Pronunciation</th>
+                                    <th>Meaning</th>
+                                    <th>Synonym</th>
+                                    <th>Antonym</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Corrosion"
+                                            data-checkid="check-corrosion">🔊</button></span>
+                                    <td class="check-cell" id="check-corrosion">⬜</span>
+                                    <td class="word-cell"><strong>Corrosion</strong></span>
+                                    <td><code>/kəˈrəʊ.ʒən/</code></span>
+                                    <td>Gradual destruction of metal by chemical reaction</span>
+                                    <td>Degradation</span>
+                                    <td>Preservation</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Saline"
+                                            data-checkid="check-saline">🔊</button></span>
+                                    <td class="check-cell" id="check-saline">⬜</span>
+                                    <td class="word-cell"><strong>Saline</strong></span>
+                                    <td><code>/ˈseɪ.laɪn/</code></span>
+                                    <td>Containing salt</span>
+                                    <td>Salty</span>
+                                    <td>Fresh</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Generalisable"
+                                            data-checkid="check-generalisable">🔊</button></span>
+                                    <td class="check-cell" id="check-generalisable">⬜</span>
+                                    <td class="word-cell"><strong>Generalisable</strong></span>
+                                    <td><code>/ˈdʒen.ər.ə.laɪ.zə.bəl/</code></span>
+                                    <td>Applicable to a wider population</span>
+                                    <td>Transferable</span>
+                                    <td>Specific</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Rigour"
+                                            data-checkid="check-rigour">🔊</button></span>
+                                    <td class="check-cell" id="check-rigour">⬜</span>
+                                    <td class="word-cell"><strong>Rigour</strong></span>
+                                    <td><code>/ˈrɪɡ.ər/</code></span>
+                                    <td>Thoroughness and care</span>
+                                    <td>Precision</span>
+                                    <td>Carelessness</span>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Polymer"
+                                            data-checkid="check-polymer">🔊</button></span>
+                                    <td class="check-cell" id="check-polymer">⬜</span>
+                                    <td class="word-cell"><strong>Polymer</strong></span>
+                                    <td><code>/ˈpɒl.ɪ.mər/</code></span>
+                                    <td>Large molecule of repeating units</span>
+                                    <td>Compound</span>
+                                    <td>Element</span>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="power-word-section" style="border-left-color:#22c55e">
+                        <div style="display:flex;align-items:center;gap:.5rem;font-weight:700;color:#166534">
+                            <span>💡</span><span>IDIOM OF THE DAY: "KEEP YOUR OPTIONS OPEN"</span></div>
+                        <p><strong>Marathi Meaning:</strong> पर्याय खुले ठेवणे</p>
+                        <p><strong>Meaning:</strong> To avoid making a final decision so you can change later</p>
+                        <p><strong>Example:</strong> "Until we receive the full test results, I'd rather keep our
+                            options open on the material selection."</p>
+                    </div>
+                    <div class="power-word-section">
+                        <div style="display:flex;align-items:center;gap:.5rem;font-weight:700;color:#854d0e">
+                            <span>🔥</span><span>POWER WORD: TENTATIVE (TEN-tuh-tiv)</span></div>
+                        <p><strong>Meaning:</strong> Not certain or confirmed; provisional</p>
+                        <p><strong>Usage:</strong> "We have reached a tentative agreement on the timeline, pending
+                            approval from the head office."</p>
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;margin-top:1rem"><button
+                            class="complete-activity-btn" id="completeVocabularyBtn" data-checklist="chkVocabulary"
+                            disabled>✓ Mark Vocabulary as Complete</button></div>
+                </div>
+            </div>
+
+            <!-- GRAMMAR HACK -->
+            <div class="grammar-section" id="grammar-card">
+                <h3 style="margin:0 0 1rem 0">🧠 Grammar Hack: Hedging Language — The 5 Tools</h3>
+                <div class="grammar-rule">
+                    <p><strong>1. MODAL VERBS:</strong> may / might / could / would / should — "This could indicate a
+                        structural weakness."</p>
+                    <p><strong>2. ADVERBS:</strong> apparently / seemingly / presumably / arguably / possibly / perhaps
+                        — "The results are arguably the most significant finding."</p>
+                    <p><strong>3. VERBS:</strong> appear to / seem to / tend to / suggest / indicate — "The data appears
+                        to suggest a correlation."</p>
+                    <p><strong>4. NOUNS/ADJECTIVES:</strong> a tendency / a degree of / some evidence / certain
+                        limitations — "There is a tendency for performance to decrease."</p>
+                    <p><strong>5. QUALIFYING PHRASES:</strong> to some extent / in many cases / under certain conditions
+                        / in general — "To some extent, the theory is supported."</p>
+                </div>
+                <div class="grammar-rule">
+                    <p><strong>⚠️ Activity:</strong> Rewrite these overconfident sentences using hedging language:</p>
+                    <p><strong>1. "The new alloy is definitely better than the old one."</strong></p><textarea
+                        id="grammar1" class="grammar-input" rows="2" placeholder="Write a hedged version..."></textarea>
+                    <div id="grammar1Feedback" class="fix-feedback"></div>
+                    <p><strong>2. "The project will certainly succeed."</strong></p><textarea id="grammar2"
+                        class="grammar-input" rows="2" placeholder="Write a hedged version..."></textarea>
+                    <div id="grammar2Feedback" class="fix-feedback"></div>
+                    <p><strong>3. "This approach always works better than traditional methods."</strong></p><textarea
+                        id="grammar3" class="grammar-input" rows="2" placeholder="Write a hedged version..."></textarea>
+                    <div id="grammar3Feedback" class="fix-feedback"></div>
+                </div>
+                <div style="display:flex;gap:1rem;margin-top:1rem"><button class="btn-outline" id="checkGrammarBtn">✓
+                        Check Answers</button><button class="btn-outline" id="resetGrammarBtn">⟳ Reset</button></div>
+                <div id="grammarFeedback" class="quiz-feedback"></div>
+                <div style="display:flex;justify-content:flex-end;margin-top:1rem"><button class="complete-activity-btn"
+                        id="completeGrammarBtn" data-checklist="chkGrammar" disabled>✓ Mark Grammar as Complete</button>
+                </div>
+            </div>
+
+            <!-- CHECKLIST - FIXED ORDER -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 12 COMPLETION CHECKLIST</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chkReading" class="day-check" disabled><label> I underlined all
+                                hedging expressions in the reading passage. (Reading Activity)</label></li>
+                        <li><input type="checkbox" id="chkListening" class="day-check" disabled><label> I rewrote 3
+                                overconfident statements using hedging language and recorded them. (Listening
+                                Activity)</label></li>
+                        <li><input type="checkbox" id="chkSpeaking" class="day-check" disabled><label> I practised the
+                                'Academic Presentation' with appropriate hedging tone. (Speaking Activity)</label></li>
+                        <li><input type="checkbox" id="chkGrammar" class="day-check" disabled><label> I completed the
+                                grammar hedging activity correctly. (Grammar Activity)</label></li>
+                        <li><input type="checkbox" id="chkVocabulary" class="day-check" disabled><label> I listened to
+                                all vocabulary words pronunciation. (Vocabulary Activity)</label></li>
+                    </ul>
+                    <div style="text-align:right"><span class="badge" id="progressCounter">0/5 completed</span></div>
+                    <div style="display:flex;justify-content:center;margin-top:1rem"><button class="day-complete-btn"
+                            id="dayCompleteBtn" disabled>🏆 Complete Day 12</button></div>
+                </div>
             </div>
         </div>
-        
-        <!-- SPEAKING ACTIVITY -->
-        <div class="activity-card" id="speaking-card">
-            <div class="card-header speaking"><h2>🗣️ 2. Speaking Activity · The Academic Presentation</h2></div>
-            <div class="card-body">
-                <p>In research, you never overstate your conclusions. Hedging language shows intellectual integrity.</p>
-                <div class="speaking-sentences-list">
-                    <div class="speaking-sentence-item"><div class="sentence-number-badge">1</div><div class="sentence-text-content">"The data <strong>appears to indicate</strong> that the composite material exhibits superior thermal resistance."</div></div>
-                    <div class="speaking-sentence-item"><div class="sentence-number-badge">2</div><div class="sentence-text-content">"<strong>It would seem that</strong> further investigation is warranted before a definitive conclusion can be drawn."</div></div>
-                    <div class="speaking-sentence-item"><div class="sentence-number-badge">3</div><div class="sentence-text-content">"This finding <strong>may well have</strong> significant implications for the design of future structures."</div></div>
-                    <div class="speaking-sentence-item"><div class="sentence-number-badge">4</div><div class="sentence-text-content">"<strong>There appears to be a degree of</strong> correlation between increased load and micro-fracture formation."</div></div>
-                    <div class="speaking-sentence-item"><div class="sentence-number-badge">5</div><div class="sentence-text-content">"<strong>To some extent,</strong> the results are consistent with the theoretical predictions of the model."</div></div>
-                </div>
-                <div class="task-box"><div class="task-header"><div class="title"><span>🎙️</span><span>Your Academic Presentation Recording</span></div></div><div class="task-content"><div class="recording-controls"><button id="speakingRecordBtn" class="modern-record-btn"> Start Recording</button><button id="speakingStopBtn" class="modern-record-btn" style="background:#64748b;display:none"> Stop Recording</button></div><div id="speakingPlaybackCard" style="display:none;margin-top:1rem"><audio id="speakingPlayback" controls></audio><div id="speakingFeedback" style="margin-top:.5rem;font-size:.85rem"></div></div></div></div>
-                <div style="display:flex;justify-content:flex-end;margin-top:1rem"><button class="complete-activity-btn" id="completeSpeakingBtn" data-checklist="chk3" disabled>✓ Mark Speaking as Complete</button></div>
-                <div class="speaking-why-works"><div class="why-works-content"><span class="why-works-icon">👉</span><span class="why-works-text"><strong>WHY THIS WORKS:</strong> Overconfident language in technical reports creates legal and professional liability. Hedging is a sign of rigour, not weakness.</span></div></div>
-            </div>
-        </div>
-        
-        <!-- READING ACTIVITY -->
-        <div class="activity-card" id="reading-card">
-            <div class="card-header reading"><h2>📖 3. Reading Activity · The Research Conclusions</h2></div>
-            <div class="card-body">
-                <div id="interactivePassage" class="interactive-passage"></div>
-                <div style="background:#e0f2fe;border-radius:16px;padding:1rem;margin:1rem 0"><strong>🔍 Analysis Tasks:</strong><br> Underline every hedging expression in the passage.
-                
-                <div id="underlineSection">
-                    <div class="action-buttons"><button class="btn-outline" id="checkUnderlinesBtn">✓ Check Underline Answers</button><button class="btn-outline" id="resetUnderlinesBtn">⟳ Reset Underlines</button></div>
-                    <div id="underlineFeedback" style="margin-top:.5rem"></div>
-                </div>
-                
-                <!-- Task 2: Most/Least Uncertainty -->
-                <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin:1rem 0">
-                    <p><strong>📝 Task 2: Identify Uncertainty Levels</strong></p>
-                    <p style="font-size:.8rem;color:#64748b;margin-bottom:.5rem">Write the COMPLETE sentence that expresses the MOST uncertainty and the COMPLETE sentence that expresses the LEAST uncertainty.</p>
-                    <div class="hedging-input-group"><label>MOST uncertain sentence (write the full sentence):</label><textarea id="task2Most" class="grammar-input" rows="3" placeholder="Write the complete sentence that expresses the most uncertainty..."></textarea></div>
-                    <div class="hedging-input-group"><label>LEAST uncertain sentence (write the full sentence):</label><textarea id="task2Least" class="grammar-input" rows="3" placeholder="Write the complete sentence that expresses the least uncertainty..."></textarea></div>
-                    <div class="action-buttons"><button class="btn-outline" id="checkTask2Btn">✓ Check Answers</button></div>
-                    <div id="task2Feedback" class="fix-feedback"></div>
-                </div>
-                
-                <!-- Task 3: Rewrite without hedging -->
-                <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin:1rem 0">
-                    <p><strong>📝 Task 3: Rewrite Without Hedging (Overconfident Version)</strong></p>
-                    <p style="font-size:.8rem;color:#64748b;margin-bottom:.5rem">Original: "Based on the available evidence, it would appear that the new polymer exhibits a higher resistance to corrosion under saline conditions."</p>
-                    <textarea id="task3Rewrite" class="grammar-input" rows="3" placeholder="Write the overconfident version without any hedging language..."></textarea>
-                    <div class="action-buttons"><button class="btn-outline" id="checkTask3Btn">✓ Check Answer</button></div>
-                    <div id="task3Feedback" class="fix-feedback"></div>
-                </div>
-                
-                <div style="display:flex;justify-content:flex-end;margin-top:1rem"><button class="complete-activity-btn" id="completeReadingBtn" data-checklist="chk1" disabled>✓ Mark Reading as Complete</button></div>
-            </div>
-        </div>
-        
-        <!-- VOCABULARY TABLE -->
-        <div class="activity-card" id="vocabulary-card">
-            <div class="card-header vocabulary"><h2>📘 4. Vocabulary of the Day</h2></div>
-            <div class="card-body">
-                <div class="vocab-table-container"><table class="vocab-table"><thead><tr><th>🔊</th><th>✅</th><th>Word</th><th>Pronunciation</th><th>Meaning</th><th>Synonym</th><th>Antonym</th></tr></thead>
-                <tbody>
-                    <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Corrosion" data-checkid="check-corrosion">🔊</button></td><td class="check-cell" id="check-corrosion">⬜</td><td class="word-cell"><strong>Corrosion</strong></td><td><code>/kəˈrəʊ.ʒən/</code></td><td>Gradual destruction of metal by chemical reaction</td><td>Degradation</td><td>Preservation</td></tr>
-                    <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Saline" data-checkid="check-saline">🔊</button></td><td class="check-cell" id="check-saline">⬜</td><td class="word-cell"><strong>Saline</strong></td><td><code>/ˈseɪ.laɪn/</code></td><td>Containing salt</td><td>Salty</td><td>Fresh</td></tr>
-                    <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Generalisable" data-checkid="check-generalisable">🔊</button></td><td class="check-cell" id="check-generalisable">⬜</td><td class="word-cell"><strong>Generalisable</strong></td><td><code>/ˈdʒen.ər.ə.laɪ.zə.bəl/</code></td><td>Applicable to a wider population</td><td>Transferable</td><td>Specific</td></tr>
-                    <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Rigour" data-checkid="check-rigour">🔊</button></td><td class="check-cell" id="check-rigour">⬜</td><td class="word-cell"><strong>Rigour</strong></td><td><code>/ˈrɪɡ.ər/</code></td><td>Thoroughness and care</td><td>Precision</td><td>Carelessness</td></tr>
-                    <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Polymer" data-checkid="check-polymer">🔊</button></td><td class="check-cell" id="check-polymer">⬜</td><td class="word-cell"><strong>Polymer</strong></td><td><code>/ˈpɒl.ɪ.mər/</code></td><td>Large molecule of repeating units</td><td>Compound</td><td>Element</td></tr>
-                </tbody>
-                </table></div>
-                <div class="power-word-section" style="border-left-color:#22c55e"><div style="display:flex;align-items:center;gap:.5rem;font-weight:700;color:#166534"><span>💡</span><span>IDIOM OF THE DAY: "KEEP YOUR OPTIONS OPEN"</span></div><p><strong>Marathi Meaning:</strong> पर्याय खुले ठेवणे</p><p><strong>Meaning:</strong> To avoid making a final decision so you can change later</p><p><strong>Example:</strong> "Until we receive the full test results, I'd rather keep our options open on the material selection."</p></div>
-                <div class="power-word-section"><div style="display:flex;align-items:center;gap:.5rem;font-weight:700;color:#854d0e"><span>🔥</span><span>POWER WORD: TENTATIVE (TEN-tuh-tiv)</span></div><p><strong>Meaning:</strong> Not certain or confirmed; provisional</p><p><strong>Usage:</strong> "We have reached a tentative agreement on the timeline, pending approval from the head office."</p></div>
-                <div style="display:flex;justify-content:flex-end;margin-top:1rem"><button class="complete-activity-btn" id="completeVocabularyBtn" data-checklist="chk5" disabled>✓ Mark Vocabulary as Complete</button></div>
-            </div>
-        </div>
-        
-        <!-- GRAMMAR HACK -->
-        <div class="grammar-section" id="grammar-card">
-            <h3 style="margin:0 0 1rem 0">🧠 Grammar Hack: Hedging Language — The 5 Tools</h3>
-            <div class="grammar-rule"><p><strong>1. MODAL VERBS:</strong> may / might / could / would / should — "This could indicate a structural weakness."</p><p><strong>2. ADVERBS:</strong> apparently / seemingly / presumably / arguably / possibly / perhaps — "The results are arguably the most significant finding."</p><p><strong>3. VERBS:</strong> appear to / seem to / tend to / suggest / indicate — "The data appears to suggest a correlation."</p><p><strong>4. NOUNS/ADJECTIVES:</strong> a tendency / a degree of / some evidence / certain limitations — "There is a tendency for performance to decrease."</p><p><strong>5. QUALIFYING PHRASES:</strong> to some extent / in many cases / under certain conditions / in general — "To some extent, the theory is supported."</p></div>
-            <div class="grammar-rule"><p><strong>⚠️ Activity:</strong> Rewrite these overconfident sentences using hedging language:</p>
-                <p><strong>1. "The new alloy is better than the old one."</strong></p><textarea id="grammar1" class="grammar-input" rows="2" placeholder="Write a hedged version..."></textarea><div id="grammar1Feedback" class="fix-feedback"></div>
-                <p><strong>2. "The failure was caused by poor maintenance."</strong></p><textarea id="grammar2" class="grammar-input" rows="2" placeholder="Write a hedged version..."></textarea><div id="grammar2Feedback" class="fix-feedback"></div>
-                <p><strong>3. "This design will reduce costs by 30%."</strong></p><textarea id="grammar3" class="grammar-input" rows="2" placeholder="Write a hedged version..."></textarea><div id="grammar3Feedback" class="fix-feedback"></div>
-            </div>
-            <div style="display:flex;gap:1rem;margin-top:1rem"><button class="btn-outline" id="checkGrammarBtn">✓ Check Answers</button></div>
-            <div id="grammarFeedback" class="quiz-feedback"></div>
-            <div style="display:flex;justify-content:flex-end;margin-top:1rem"><button class="complete-activity-btn" id="completeGrammarBtn" data-checklist="chk4" disabled>✓ Mark Grammar as Complete</button></div>
-        </div>
-        
-        <!-- CHECKLIST -->
-        <div class="activity-card"><div class="card-header vocabulary"><h2>✅ DAY 12 COMPLETION CHECKLIST</h2></div><div class="card-body"><ul class="checklist"><li><input type="checkbox" id="chk1" class="day-check" disabled><label> I underlined all hedging expressions in the reading passage.</label></li><li><input type="checkbox" id="chk2" class="day-check" disabled><label> I rewrote 3 overconfident statements using hedging language and recorded them.</label></li><li><input type="checkbox" id="chk3" class="day-check" disabled><label> I practised the 'Academic Presentation' with appropriate hedging tone.</label></li><li><input type="checkbox" id="chk4" class="day-check" disabled><label> I identified which hedging tool (modal, adverb, verb, noun, phrase) I used.</label></li><li><input type="checkbox" id="chk5" class="day-check" disabled><label> I used the Power Word 'Tentative' in a sentence.</label></li></ul><div style="text-align:right"><span class="badge" id="progressCounter">0/5 completed</span></div><div style="display:flex;justify-content:center;margin-top:1rem"><button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 12</button></div></div></div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<script src="{% static 'learning/js/main.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // ==================== CSRF TOKEN ====================
-    function getCookie(n) {
-        let v = null;
-        if (document.cookie && document.cookie !== '') {
-            const c = document.cookie.split(';');
-            for (let i = 0; i < c.length; i++) {
-                const t = c[i].trim();
-                if (t.substring(0, n.length + 1) === (n + '=')) {
-                    v = decodeURIComponent(t.substring(n.length + 1));
-                    break;
-                }
-            }
-        }
-        return v;
-    }
-    
-    const csrftoken = getCookie('csrftoken');
-    
-    // ==================== INITIALIZATION ====================
-    if (typeof initializeDay === 'function') {
-        initializeDay(12, 'intermediate', {
-            quizAnswers: { q1: 'tends', q2: 'environmental' },
-            vocabularyWords: ['corrosion', 'saline', 'generalisable', 'rigour', 'polymer'],
-            powerWord: 'tentative'
-        });
-    }
-    
-    // ==================== STATE VARIABLES ====================
-    let listeningQuizCorrect = false;
-    let listeningQuizAnswers = { q1: null, q2: null };
-    let masterAudioFinished = false;
-    let aiEvaluationDone = false;
-    let aiCorrect = false;
-    let attemptCount = 0;
-    let maxAttempts = 3;
-    let userResponses = [];
-    let speakingRecorded = false;
-    let readingTask2Done = false;
-    let readingTask3Done = false;
-    let grammarCompleted = false;
-    let showCorrectAnswerTriggered = false;
-    
-    // ==================== HELPER FUNCTIONS ====================
-    function updateDayProgress() {
-        const c = document.querySelectorAll('.checklist input.day-check');
-        let completed = 0;
-        c.forEach(cb => { if (cb.checked) completed++; });
-        document.getElementById('progressCounter').innerText = `${completed}/5 completed`;
-        const btn = document.getElementById('dayCompleteBtn');
-        if (btn) {
-            btn.disabled = (completed !== 5);
-            btn.style.opacity = (completed === 5) ? '1' : '0.5';
-        }
-    }
-    
-    function showValidationMessage(id, msg) {
-        const e = document.getElementById(id);
-        if (e) {
-            e.innerHTML = msg;
-            e.style.display = 'block';
-            setTimeout(() => { e.style.display = 'none'; }, 3000);
-        } else alert(msg);
-    }
-    
-    if (typeof markActivityComplete === 'function') {
-        const orig = window.markActivityComplete;
-        window.markActivityComplete = function(aid, cid) {
-            orig(aid, cid);
-            document.getElementById(cid).checked = true;
-            setTimeout(updateDayProgress, 100);
-        };
-    } else {
-        window.markActivityComplete = function(aid, cid) {
-            document.getElementById(cid).checked = true;
-            const btn = document.getElementById(`complete${aid.charAt(0).toUpperCase() + aid.slice(1)}Btn`);
-            if (btn) {
-                btn.disabled = true;
-                btn.textContent = '✓ Completed';
-            }
-            setTimeout(updateDayProgress, 100);
-        };
-    }
-    
-    // ==================== LISTENING ACTIVITY WITH AI ====================
-    const listeningAudioElem = document.getElementById('listeningAudio');
-    const listeningTextSection = document.getElementById('listeningTextSection');
-    const postAudioListeningContent = document.getElementById('postAudioListeningContent');
-    const listeningAIFeedbackDiv = document.getElementById('listeningAIFeedback');
-    const listeningCompleteBtn = document.getElementById('completeListeningBtn');
-    const listeningQuizFeedbackDiv = document.getElementById('listeningQuizFeedback');
-    const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
-    
-    if (listeningAudioElem) {
-        listeningAudioElem.addEventListener('ended', function() {
-            if (!masterAudioFinished) {
-                masterAudioFinished = true;
-                if (listeningTextSection) listeningTextSection.style.display = 'block';
-                if (postAudioListeningContent) postAudioListeningContent.style.display = 'block';
-            }
-        });
-    }
-    
-    // Speech Recognition Setup
-    function startLiveSpeechRecognition() {
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            showValidationMessage('listeningValidationMsg', '⚠️ Speech recognition not supported. Please use Chrome browser.');
-            return null;
-        }
-        const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-        const recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = false;
-        recognition.lang = 'en-US';
-        recognition.maxAlternatives = 1;
-        return recognition;
-    }
-    
-    // Create speak button
-    const speakBtn = document.createElement('button');
-    speakBtn.textContent = '🎤 Click to Speak Hedged Sentences';
-    speakBtn.className = 'modern-record-btn';
-    speakBtn.style.width = '100%';
-    speakBtn.style.marginTop = '0.5rem';
-    speakBtn.style.padding = '0.75rem';
-    
-    // Create attempt counter display
-    const attemptDisplay = document.createElement('div');
-    attemptDisplay.style.cssText = 'font-size: 0.8rem; color: #64748b; margin-top: 0.5rem; text-align: center;';
-    
-    // Insert elements
-    const listeningContainer = document.querySelector('#postAudioListeningContent .listening-container');
-    if (listeningContainer) {
-        listeningContainer.appendChild(speakBtn);
-        listeningContainer.appendChild(attemptDisplay);
-    }
-    
-    let currentRecognition = null;
-    
-    function updateAttemptDisplay() {
-        const remaining = maxAttempts - attemptCount;
-        attemptDisplay.innerHTML = `📊 Attempts remaining: ${remaining}`;
-        if (attemptCount >= maxAttempts) {
-            speakBtn.disabled = true;
-            speakBtn.style.background = '#94a3b8';
-            speakBtn.style.cursor = 'not-allowed';
-            speakBtn.textContent = '🔒 No attempts left. See the correct answer below.';
-        }
-    }
-    
-    // Function to show correct answer after 3 failed attempts
-    function showCorrectAnswer() {
-        if (showCorrectAnswerTriggered) return;
-        showCorrectAnswerTriggered = true;
-        
-        const correctHedgedSentences = [
-            "1. \"The new alloy appears to be better than the old one in certain respects.\"",
-            "2. \"The failure may have been caused by poor maintenance, though other factors could also be involved.\"",
-            "3. \"This design could potentially reduce costs by up to 30% under optimal conditions.\""
-        ];
-        
-        const correctAnswerHtml = `
-            <div class="correct-answer-box">
-                <h4>📚 Here are 3 Correct Hedged Sentences:</h4>
-                ${correctHedgedSentences.map(sentence => `<p>${sentence}</p>`).join('')}
-                <hr style="margin: 0.75rem 0;">
-                <p><strong>🎯 Hedging Tools Used:</strong><br>
-                • "appears to be" (verb hedge)<br>
-                • "in certain respects" (qualifying phrase)<br>
-                • "may have been" (modal verb)<br>
-                • "could potentially" (modal + adverb)<br>
-                • "up to 30%" (range hedge)<br>
-                • "under optimal conditions" (conditional hedge)</p>
-                <p style="margin-top: 0.5rem; color: #6d28d9;"><strong>💡 Tip:</strong> Hedging shows intellectual honesty and protects you from being wrong!</p>
-            </div>
-        `;
-        
-        listeningAIFeedbackDiv.innerHTML += correctAnswerHtml;
-    }
-    
-    // Teaching feedback generator for hedging
-    function getTeachingFeedback(userText) {
-        const lowerText = userText.toLowerCase();
-        const hedgingTools = [
-            'appears', 'seems', 'tends', 'suggests', 'indicates',
-            'may', 'might', 'could', 'would', 'should',
-            'possibly', 'potentially', 'arguably', 'presumably',
-            'to some extent', 'a degree of', 'in certain', 'under certain',
-            'up to', 'approximately', 'roughly'
-        ];
-        
-        let foundTools = [];
-        for (let tool of hedgingTools) {
-            if (lowerText.includes(tool)) {
-                foundTools.push(tool);
-            }
-        }
-        
-        // If no attempts left, show correct answer
-        if (attemptCount >= maxAttempts) {
-            showCorrectAnswer();
-            return {
-                correct: false,
-                feedback: "📚 You've used all your attempts. Please study the correct hedged sentences above.",
-                suggestion: "Practice these hedging techniques and try again tomorrow!",
-                lesson: "Hedging shows intellectual honesty and precision."
-            };
-        }
-        
-        if (foundTools.length >= 3 && userText.length > 50) {
-            return {
-                correct: true,
-                feedback: `✅ Excellent hedging! You used ${foundTools.length} hedging expressions correctly!`,
-                suggestion: "🎉 Great job! Your language is appropriately cautious and professional.",
-                lesson: "📖 Hedging makes your claims more accurate and defensible."
-            };
-        } else if (foundTools.length >= 1) {
-            return {
-                correct: false,
-                feedback: `📚 Good start! You used ${foundTools.length} hedging expression(s).`,
-                suggestion: `💡 Try adding more hedging: 'appears to be', 'may', 'could', 'to some extent'`,
-                lesson: "📖 Use modal verbs (may/might/could) or verbs like 'appear to' to hedge your claims."
-            };
-        } else {
-            return {
-                correct: false,
-                feedback: "❌ No hedging language detected.",
-                suggestion: "💡 Try: 'The new alloy appears to be better...' or 'This design could potentially reduce costs...'",
-                lesson: "📖 Hedging = being honest about uncertainty. Use 'may', 'might', 'could', 'appears', 'seems'."
-            };
-        }
-    }
-    
-    speakBtn.onclick = () => {
-        if (attemptCount >= maxAttempts) {
-            listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback show-answer">🔒 You have used all 3 attempts. Please review the correct answer below.</div>';
-            listeningAIFeedbackDiv.style.display = 'block';
-            showCorrectAnswer();
-            return;
-        }
-        
-        if (!masterAudioFinished) {
-            listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">⚠️ Please listen to the audio first.</div>';
-            listeningAIFeedbackDiv.style.display = 'block';
-            return;
-        }
-        
-        if (currentRecognition) {
-            currentRecognition.stop();
-            currentRecognition = null;
-            speakBtn.textContent = '🎤 Click to Speak Hedged Sentences';
-            speakBtn.style.background = '#8b5cf6';
-            return;
-        }
-        
-        const recognition = startLiveSpeechRecognition();
-        if (!recognition) return;
-        
-        currentRecognition = recognition;
-        speakBtn.textContent = '🔴 Speaking... Click to Stop';
-        speakBtn.style.background = '#ef4444';
-        
-        let fullTranscript = '';
-        
-        recognition.onresult = (event) => {
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                if (event.results[i].isFinal) {
-                    fullTranscript += event.results[i][0].transcript + ' ';
-                }
-            }
-        };
-        
-        recognition.onend = async () => {
-            currentRecognition = null;
-            speakBtn.textContent = '🎤 Click to Speak Hedged Sentences';
-            speakBtn.style.background = '#8b5cf6';
-            
-            attemptCount++;
-            updateAttemptDisplay();
-            
-            if (fullTranscript.trim().length < 30) {
-                listeningAIFeedbackDiv.innerHTML = `
-                    <div class="ai-feedback incorrect">
-                        <strong>⚠️ Speech too short.</strong><br>
-                        💡 Please speak at least 2-3 hedged sentences clearly.<br>
-                        📖 Example: "The new alloy appears to be better than the old one in certain respects."
-                    </div>`;
-                listeningAIFeedbackDiv.style.display = 'block';
-                return;
-            }
-            
-            listeningAIFeedbackDiv.innerHTML = '<div class="ai-feedback processing">🤖 Evaluating your hedging language...</div>';
-            listeningAIFeedbackDiv.style.display = 'block';
-            
-            userResponses.push({
-                attempt: attemptCount,
-                text: fullTranscript,
-                timestamp: new Date().toLocaleTimeString()
-            });
-            
-            try {
-                const response = await fetch('/learning/ai/evaluate/', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': csrftoken,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        text: fullTranscript,
-                        task_type: 'hedging',
-                        day_number: 12,
-                        level: 'intermediate',
-                        system_prompt: `You are a supportive English teacher evaluating hedging language usage.
-
-Hedging tools to look for:
-- Modal verbs: may, might, could, would, should
-- Verbs: appears, seems, tends, suggests, indicates
-- Adverbs: possibly, potentially, arguably, presumably
-- Qualifying phrases: to some extent, in certain cases, under certain conditions
-
-Evaluation Criteria:
-- 3+ hedging expressions with proper usage → correct = true
-- Less than 3 hedging expressions → correct = false
-
-Output JSON: {"correct": true/false, "hedges_found": number, "feedback": "short text", "suggestion": "improvement tip", "teaching_tip": "one sentence about hedging"}`
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    aiCorrect = result.correct;
-                    aiEvaluationDone = true;
-                    
-                    let feedbackHtml = '';
-                    
-                    if (result.correct) {
-                        feedbackHtml = `
-                            <div class="ai-feedback correct">
-                                <strong>✅ ${result.feedback || 'Great job!'}</strong><br>
-                                <strong>🎤 You said:</strong> "${fullTranscript.substring(0, 200)}${fullTranscript.length > 200 ? '...' : ''}"<br>
-                                <strong>💡 ${result.suggestion || 'Keep practicing!'}</strong><br>
-                                <em>📖 ${result.teaching_tip || 'Hedging shows intellectual honesty.'}</em>
-                            </div>
-                        `;
-                    } else {
-                        feedbackHtml = `
-                            <div class="ai-feedback incorrect">
-                                <strong>📚 ${result.feedback || 'Good effort!'}</strong><br>
-                                <strong>🎤 You said:</strong> "${fullTranscript.substring(0, 200)}${fullTranscript.length > 200 ? '...' : ''}"<br>
-                                <strong>💡 ${result.suggestion || 'Try adding "appears to be", "may", or "could potentially"'}</strong><br>
-                                <em>📖 ${result.teaching_tip || 'Hedging makes your claims more accurate.'}</em>
-                            </div>
-                        `;
-                    }
-                    
-                    listeningAIFeedbackDiv.innerHTML = feedbackHtml;
-                    
-                    // If this was the last attempt and still not correct, show correct answer
-                    if (!result.correct && attemptCount >= maxAttempts) {
-                        showCorrectAnswer();
-                    }
-                    
-                } else {
-                    throw new Error('AI response not successful');
-                }
-                
-            } catch (error) {
-                console.error('AI Error:', error);
-                const teachingFeedback = getTeachingFeedback(fullTranscript);
-                aiCorrect = teachingFeedback.correct;
-                aiEvaluationDone = true;
-                
-                listeningAIFeedbackDiv.innerHTML = `
-                    <div class="ai-feedback ${teachingFeedback.correct ? 'correct' : 'incorrect'}">
-                        <strong>${teachingFeedback.feedback}</strong><br>
-                        <strong>🎤 You said:</strong> "${fullTranscript.substring(0, 200)}${fullTranscript.length > 200 ? '...' : ''}"<br>
-                        <strong>💡 ${teachingFeedback.suggestion}</strong><br>
-                        <em>📖 ${teachingFeedback.lesson}</em>
-                        <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #64748b;">(Using local evaluation)</div>
-                    </div>
-                `;
-                
-                // If this was the last attempt and still not correct, show correct answer
-                if (!teachingFeedback.correct && attemptCount >= maxAttempts) {
-                    showCorrectAnswer();
-                }
-            }
-            
-            updateListeningCompleteButton();
-        };
-        
-        recognition.onerror = (event) => {
-            console.error('Speech recognition error:', event.error);
-            currentRecognition = null;
-            speakBtn.textContent = '🎤 Click to Speak Hedged Sentences';
-            speakBtn.style.background = '#8b5cf6';
-            listeningAIFeedbackDiv.innerHTML = `<div class="ai-feedback incorrect">⚠️ Error: ${event.error}. Please click the button and speak clearly.</div>`;
-            listeningAIFeedbackDiv.style.display = 'block';
-        };
-        
-        recognition.start();
-    };
-    
-    // Quiz validation
-    document.querySelectorAll('input[name="listening_quiz"]').forEach(r => r.addEventListener('change', e => { 
-        listeningQuizAnswers.q1 = e.target.value; 
-        updateListeningCompleteButton(); 
-    }));
-    
-    document.querySelectorAll('input[name="practice_quiz"]').forEach(r => r.addEventListener('change', e => { 
-        listeningQuizAnswers.q2 = e.target.value; 
-        updateListeningCompleteButton(); 
-    }));
-    
-    if (checkListeningWorkBtn) {
-        checkListeningWorkBtn.addEventListener('click', () => {
-            if (!listeningQuizAnswers.q1 || !listeningQuizAnswers.q2) {
-                listeningQuizFeedbackDiv.innerHTML = '⚠️ Please answer both questions.';
-                listeningQuizFeedbackDiv.className = 'quiz-feedback warning';
-                listeningQuizFeedbackDiv.style.display = 'block';
-                return;
-            }
-            let q1Correct = (listeningQuizAnswers.q1 === 'tends');
-            let q2Correct = (listeningQuizAnswers.q2 === 'environmental');
-            
-            const q1fb = document.getElementById('q1Feedback');
-            const q2fb = document.getElementById('q2Feedback');
-            
-            if (q1fb) {
-                q1fb.innerHTML = q1Correct ? '✅ Correct! Variation tends to occur.' : '💡 Hint: The speaker said "there seems to be some inconsistency"';
-                q1fb.className = q1Correct ? 'ind-quiz-feedback correct' : 'ind-quiz-feedback incorrect';
-            }
-            if (q2fb) {
-                q2fb.innerHTML = q2Correct ? '✅ Correct! Environmental factors (possible).' : '💡 Hint: The speaker said "could potentially be attributed to variations in the ambient environment"';
-                q2fb.className = q2Correct ? 'ind-quiz-feedback correct' : 'ind-quiz-feedback incorrect';
-            }
-            
-            listeningQuizCorrect = q1Correct && q2Correct;
-            listeningQuizFeedbackDiv.innerHTML = listeningQuizCorrect ? '✅ Correct! Great job!' : '📚 Some answers need review.';
-            listeningQuizFeedbackDiv.className = listeningQuizCorrect ? 'quiz-feedback correct' : 'quiz-feedback incorrect';
-            listeningQuizFeedbackDiv.style.display = 'block';
-            updateListeningCompleteButton();
-        });
-    }
-    
-    function updateListeningCompleteButton() {
-        if (listeningCompleteBtn) {
-            const canComplete = masterAudioFinished && aiEvaluationDone && listeningQuizCorrect;
-            listeningCompleteBtn.disabled = !canComplete;
-            if (!listeningCompleteBtn.disabled) {
-                listeningCompleteBtn.classList.add('pulse');
-            } else {
-                listeningCompleteBtn.classList.remove('pulse');
-            }
-        }
-    }
-    
-    if (listeningCompleteBtn) {
-        listeningCompleteBtn.onclick = () => {
-            if (!masterAudioFinished) { 
-                showValidationMessage('listeningValidationMsg', '⚠️ Please listen to the complete audio first.'); 
-                return; 
-            }
-            if (!aiEvaluationDone) { 
-                showValidationMessage('listeningValidationMsg', '⚠️ Please click the speak button and say your hedged sentences.'); 
-                return; 
-            }
-            if (!listeningQuizCorrect) { 
-                showValidationMessage('listeningValidationMsg', '⚠️ Please answer both quiz questions correctly.'); 
-                return; 
-            }
-            markActivityComplete('listening', 'chk2');
-        };
-        listeningCompleteBtn.disabled = true;
-    }
-    
-    // ==================== SPEAKING ACTIVITY ====================
-    const sRecord = document.getElementById('speakingRecordBtn');
-    const sStop = document.getElementById('speakingStopBtn');
-    const sPlayCard = document.getElementById('speakingPlaybackCard');
-    const sPlayAudio = document.getElementById('speakingPlayback');
-    const sComplete = document.getElementById('completeSpeakingBtn');
-    const sFeedback = document.getElementById('speakingFeedback');
-    let sMediaRecorder, sChunks = [], sIsRecording = false, sStartTime = 0;
-    
-    if (sRecord) {
-        sRecord.addEventListener('click', async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                sMediaRecorder = new MediaRecorder(stream);
-                sChunks = [];
-                sStartTime = Date.now();
-                sMediaRecorder.ondataavailable = e => sChunks.push(e.data);
-                sMediaRecorder.onstop = () => {
-                    const dur = (Date.now() - sStartTime) / 1000;
-                    const blob = new Blob(sChunks, { type: 'audio/webm' });
-                    if (dur < 6) {
-                        sFeedback.innerHTML = `⚠️ Speak for at least 6 seconds.`;
-                        sFeedback.style.color = '#dc2626';
-                        speakingRecorded = false;
-                        if (sComplete) sComplete.disabled = true;
-                        return;
-                    }
-                    if (sPlayAudio) sPlayAudio.src = URL.createObjectURL(blob);
-                    if (sPlayCard) sPlayCard.style.display = 'block';
-                    speakingRecorded = true;
-                    sFeedback.innerHTML = `✅ Recording saved! (${Math.round(dur)}s)`;
-                    sFeedback.style.color = '#22c55e';
-                    stream.getTracks().forEach(t => t.stop());
-                    if (sComplete) sComplete.disabled = false;
-                };
-                sMediaRecorder.start();
-                sIsRecording = true;
-                sRecord.style.display = 'none';
-                if (sStop) sStop.style.display = 'inline-flex';
-                sFeedback.innerHTML = '<span style="color:#3b82f6;">🔴 Recording...</span>';
-            } catch (e) {
-                sFeedback.innerHTML = '<span style="color:#dc2626;">❌ Microphone access required.</span>';
-            }
-        });
-    }
-    
-    if (sStop) {
-        sStop.addEventListener('click', () => {
-            if (sMediaRecorder && sIsRecording) {
-                sMediaRecorder.stop();
-                sIsRecording = false;
-                sRecord.style.display = 'inline-flex';
-                sStop.style.display = 'none';
-            }
-        });
-    }
-    
-    if (sComplete) {
-        sComplete.addEventListener('click', () => {
-            if (!sComplete.disabled && speakingRecorded) markActivityComplete('speaking', 'chk3');
-        });
-    }
-    
-    // ========== READING ACTIVITY - PHRASE-LEVEL VALIDATION ==========
-    const passage = "Based on the available evidence, it would appear that the new polymer exhibits a higher resistance to corrosion under saline conditions. However, it should be noted that the sample size was relatively small, and the results may not be fully generalisable. There seems to be a tendency for performance to decrease at extreme temperatures, which could potentially affect its application in certain climates. On balance, the findings are promising, but further trials would be advisable before commercial deployment.";
-    
-    const hedgingPhrases = [
-        "it would appear",
-        "however",
-        "it should be noted",
-        "may not",
-        "relatively",
-        "there seems to be",
-        "a tendency",
-        "could potentially",
-        "certain",
-        "on balance",
-        "would be advisable"
-    ];
-    
-    let userUnderlined = new Set();
-    let underlineDone = false;
-    let wordOccurrences = [];
-    let hedgePhrasesRanges = [];
-    
-    function normalizeText(text) {
-        return text.toLowerCase().replace(/[.,!?;]$/g, '').trim();
-    }
-    
-    function buildPassage() {
-        const container = document.getElementById('interactivePassage');
-        if (!container) return;
-        
-        const words = passage.split(' ');
-        container.innerHTML = '';
-        wordOccurrences = [];
-        hedgePhrasesRanges = [];
-        
-        const passageWords = passage.toLowerCase().split(/\s+/);
-        const hedgingPhrasesLower = hedgingPhrases.map(p => p.toLowerCase());
-        
-        hedgingPhrasesLower.forEach(phrase => {
-            const phraseWords = phrase.split(' ');
-            
-            for (let i = 0; i <= passageWords.length - phraseWords.length; i++) {
-                let match = true;
-                for (let j = 0; j < phraseWords.length; j++) {
-                    const passageWordClean = passageWords[i + j].replace(/[.,!?;]$/g, '');
-                    if (passageWordClean !== phraseWords[j]) {
-                        match = false;
-                        break;
-                    }
-                }
-                if (match) {
-                    hedgePhrasesRanges.push({
-                        start: i,
-                        end: i + phraseWords.length - 1,
-                        phrase: hedgingPhrases[hedgingPhrasesLower.indexOf(phrase)]
-                    });
-                }
-            }
-        });
-        
-        for (let i = 0; i < words.length; i++) {
-            const word = words[i];
-            const span = document.createElement('span');
-            span.textContent = word + ' ';
-            span.className = 'clickable-word';
-            span.dataset.index = i;
-            span.addEventListener('click', () => {
-                const idx = parseInt(span.dataset.index);
-                
-                let matchedRange = hedgePhrasesRanges.find(range => 
-                    idx >= range.start && idx <= range.end
-                );
-                
-                if (matchedRange) {
-                    const allSelected = checkPhraseFullySelected(matchedRange);
-                    if (allSelected) {
-                        for (let j = matchedRange.start; j <= matchedRange.end; j++) {
-                            userUnderlined.delete(j);
-                        }
-                    } else {
-                        for (let j = matchedRange.start; j <= matchedRange.end; j++) {
-                            userUnderlined.add(j);
-                        }
-                    }
-                } else {
-                    if (userUnderlined.has(idx)) {
-                        userUnderlined.delete(idx);
-                    } else {
-                        userUnderlined.add(idx);
-                    }
-                }
-                
-                underlineDone = false;
-                document.getElementById('underlineFeedback').innerHTML = '';
-                updateVisuals();
-                updateReadComplete();
-            });
-            container.appendChild(span);
-            wordOccurrences.push({
-                word: normalizeText(words[i]),
-                element: span,
-                index: i
-            });
-        }
-        updateVisuals();
-    }
-    
-    function checkPhraseFullySelected(range) {
-        for (let i = range.start; i <= range.end; i++) {
-            if (!userUnderlined.has(i)) return false;
-        }
-        return true;
-    }
-    
-    function updateVisuals() {
-        wordOccurrences.forEach(occ => {
-            const span = occ.element;
-            const idx = occ.index;
-            span.classList.remove('temp-underlined', 'underline-correct', 'underline-incorrect');
-            if (userUnderlined.has(idx)) {
-                if (underlineDone) {
-                    let isCorrect = false;
-                    for (let range of hedgePhrasesRanges) {
-                        if (idx >= range.start && idx <= range.end) {
-                            isCorrect = checkPhraseFullySelected(range);
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // ==================== CSRF TOKEN ====================
+            function getCookie(n) {
+                let v = null;
+                if (document.cookie && document.cookie !== '') {
+                    const c = document.cookie.split(';');
+                    for (let i = 0; i < c.length; i++) {
+                        const t = c[i].trim();
+                        if (t.substring(0, n.length + 1) === (n + '=')) {
+                            v = decodeURIComponent(t.substring(n.length + 1));
                             break;
                         }
                     }
-                    span.classList.add(isCorrect ? 'underline-correct' : 'underline-incorrect');
-                } else {
-                    span.classList.add('temp-underlined');
                 }
+                return v;
             }
-        });
-    }
-    
-    function checkUnderlines() {
-        if (userUnderlined.size === 0) {
-            document.getElementById('underlineFeedback').innerHTML = '<div class="fix-feedback warning">⚠️ Please select hedging expressions to underline first.</div>';
-            return;
-        }
-        
-        let correctlySelectedPhrases = [];
-        let missingPhrases = [];
-        let partiallySelectedPhrases = [];
-        
-        hedgePhrasesRanges.forEach(range => {
-            const isFullySelected = checkPhraseFullySelected(range);
-            
-            if (isFullySelected) {
-                correctlySelectedPhrases.push(range.phrase);
-            } else {
-                let anySelected = false;
-                for (let i = range.start; i <= range.end; i++) {
-                    if (userUnderlined.has(i)) {
-                        anySelected = true;
-                        break;
-                    }
-                }
-                
-                if (anySelected) {
-                    partiallySelectedPhrases.push(range.phrase);
-                } else {
-                    missingPhrases.push(range.phrase);
-                }
-            }
-        });
-        
-        const totalPhrases = hedgePhrasesRanges.length;
-        const allCorrect = correctlySelectedPhrases.length === totalPhrases;
-        
-        underlineDone = true;
-        
-        let feedbackHtml = '';
-        
-        if (allCorrect) {
-            feedbackHtml = `<div class="fix-feedback correct">✅ Perfect! You identified all ${totalPhrases} hedging phrases correctly!</div>`;
-        } else {
-            feedbackHtml = `<div class="fix-feedback incorrect">❌ ${correctlySelectedPhrases.length}/${totalPhrases} hedging phrases correct.<br><br>`;
-            
-            if (missingPhrases.length > 0) {
-                feedbackHtml += `<strong>⚠️ Missing phrases (click to select):</strong><br>`;
-                missingPhrases.forEach(phrase => {
-                    feedbackHtml += `• "${phrase}"<br>`;
+
+            const csrftoken = getCookie('csrftoken');
+
+            // ==================== INITIALIZATION ====================
+            if (typeof initializeDay === 'function') {
+                initializeDay(12, 'intermediate', {
+                    quizAnswers: { q1: 'tends', q2: 'environmental' },
+                    vocabularyWords: ['corrosion', 'saline', 'generalisable', 'rigour', 'polymer'],
+                    powerWord: 'tentative'
                 });
-                feedbackHtml += `<br>`;
             }
-            
-            if (partiallySelectedPhrases.length > 0) {
-                feedbackHtml += `<strong>⚠️ Partially selected phrases (click again to select the entire phrase):</strong><br>`;
-                partiallySelectedPhrases.forEach(phrase => {
-                    feedbackHtml += `• "${phrase}"<br>`;
-                });
-                feedbackHtml += `<br>`;
+
+            // ==================== STATE VARIABLES ====================
+            let listeningQuizCorrect = false;
+            let listeningQuizAnswers = { q1: null, q2: null };
+            let masterAudioFinished = false;
+            let sentencesValidated = false;
+            let listeningRecorded = false;
+            let speakingRecorded = false;
+            let grammarCompleted = false;
+            let sentencesAttemptCount = 0;
+            let maxAttempts = 3;
+            let showCorrectAnswerTriggered = false;
+
+            // ==================== HELPER FUNCTIONS ====================
+            function updateDayProgress() {
+                const c = document.querySelectorAll('.checklist input.day-check');
+                let completed = 0;
+                c.forEach(cb => { if (cb.checked) completed++; });
+                const counter = document.getElementById('progressCounter');
+                if (counter) counter.innerText = `${completed}/5 completed`;
+                const btn = document.getElementById('dayCompleteBtn');
+                if (btn) {
+                    btn.disabled = (completed !== 5);
+                    btn.style.opacity = (completed === 5) ? '1' : '0.5';
+                }
             }
-            feedbackHtml += `</div>`;
-        }
-        
-        document.getElementById('underlineFeedback').innerHTML = feedbackHtml;
-        updateVisuals();
-        updateReadComplete();
-    }
-    
-    function resetUnderlines() {
-        userUnderlined.clear();
-        underlineDone = false;
-        document.getElementById('underlineFeedback').innerHTML = '';
-        updateVisuals();
-        updateReadComplete();
-    }
-    
-    function updateReadComplete() {
-        const btn = document.getElementById('completeReadingBtn');
-        if (!btn) return;
-        
-        let correctPhrasesCount = 0;
-        hedgePhrasesRanges.forEach(range => {
-            if (checkPhraseFullySelected(range)) {
-                correctPhrasesCount++;
+
+            function showValidationMessage(id, msg) {
+                const e = document.getElementById(id);
+                if (e) {
+                    e.innerHTML = msg;
+                    e.style.display = 'block';
+                    setTimeout(() => { e.style.display = 'none'; }, 3000);
+                } else alert(msg);
             }
-        });
-        
-        const allCorrect = correctPhrasesCount === hedgePhrasesRanges.length;
-        const uOk = underlineDone && allCorrect;
-        btn.disabled = !(uOk && readingTask2Done && readingTask3Done);
-    }
-    
-    // Task 2 Validation
-    const t2Btn = document.getElementById('checkTask2Btn');
-    const t2Reset = document.getElementById('resetTask2Btn');
-    const t2Fb = document.getElementById('task2Feedback');
-    
-    const MOST_CORRECT = "there seems to be a tendency for performance to decrease at extreme temperatures, which could potentially affect its application in certain climates.";
-    const LEAST_CORRECT = "on balance, the findings are promising, but further trials would be advisable before commercial deployment.";
-    
-    function normalizeAnswer(text) {
-        return text.toLowerCase().replace(/[.,!?]/g, '').replace(/\s+/g, ' ').trim();
-    }
-    
-    function validateTask2() {
-        const mostAnswer = document.getElementById('task2Most').value.trim();
-        const leastAnswer = document.getElementById('task2Least').value.trim();
-        
-        if (mostAnswer === '' && leastAnswer === '') {
-            t2Fb.innerHTML = '⚠️ Please answer both questions. Write the complete sentence for MOST uncertainty and LEAST uncertainty.';
-            t2Fb.className = 'fix-feedback warning';
-            readingTask2Done = false;
-            updateReadComplete();
-            return;
-        }
-        if (mostAnswer === '') {
-            t2Fb.innerHTML = '⚠️ Please write the sentence for MOST uncertainty.';
-            t2Fb.className = 'fix-feedback warning';
-            readingTask2Done = false;
-            updateReadComplete();
-            return;
-        }
-        if (leastAnswer === '') {
-            t2Fb.innerHTML = '⚠️ Please write the sentence for LEAST uncertainty.';
-            t2Fb.className = 'fix-feedback warning';
-            readingTask2Done = false;
-            updateReadComplete();
-            return;
-        }
-        
-        const mostNorm = normalizeAnswer(mostAnswer);
-        const leastNorm = normalizeAnswer(leastAnswer);
-        const correctMostNorm = normalizeAnswer(MOST_CORRECT);
-        const correctLeastNorm = normalizeAnswer(LEAST_CORRECT);
-        
-        const mostCorrect = mostNorm === correctMostNorm;
-        const leastCorrect = leastNorm === correctLeastNorm;
-        
-        if (mostCorrect && leastCorrect) {
-            t2Fb.innerHTML = '✅ Perfect! Both answers are correct.';
-            t2Fb.className = 'fix-feedback correct';
-            readingTask2Done = true;
-        } else if (!mostCorrect && !leastCorrect) {
-            t2Fb.innerHTML = '❌ Both answers are incorrect.\n\n💡 MOST uncertainty → Look at sentence 3: "There seems to be a tendency for performance to decrease at extreme temperatures, which could potentially affect its application in certain climates."\n\n💡 LEAST uncertainty → Look at sentence 4: "On balance, the findings are promising, but further trials would be advisable before commercial deployment."';
-            t2Fb.className = 'fix-feedback incorrect';
-            readingTask2Done = false;
-        } else if (!mostCorrect) {
-            t2Fb.innerHTML = '❌ MOST uncertainty sentence is incorrect.\n\n💡 Hint: Look at sentence 3. It contains "seems to be a tendency" and "could potentially affect".\n\n✅ Your LEAST uncertainty sentence is correct.';
-            t2Fb.className = 'fix-feedback incorrect';
-            readingTask2Done = false;
-        } else {
-            t2Fb.innerHTML = '❌ LEAST uncertainty sentence is incorrect.\n\n💡 Hint: Look at sentence 4. It starts with "On balance" and says the findings are "promising".\n\n✅ Your MOST uncertainty sentence is correct.';
-            t2Fb.className = 'fix-feedback incorrect';
-            readingTask2Done = false;
-        }
-        updateReadComplete();
-    }
-    
-    if (t2Btn) t2Btn.addEventListener('click', validateTask2);
-    if (t2Reset) {
-        t2Reset.addEventListener('click', () => {
-            document.getElementById('task2Most').value = '';
-            document.getElementById('task2Least').value = '';
-            t2Fb.innerHTML = '';
-            t2Fb.className = 'fix-feedback';
-            readingTask2Done = false;
-            updateReadComplete();
-        });
-    }
-    
-    // Task 3 Validation
-    const t3Btn = document.getElementById('checkTask3Btn');
-    const t3Reset = document.getElementById('resetTask3Btn');
-    const t3Fb = document.getElementById('task3Feedback');
-    
-    const TASK3_CORRECT = "the new polymer exhibits a higher resistance to corrosion under saline conditions";
-    
-    function validateTask3() {
-        const rewrite = document.getElementById('task3Rewrite').value.trim();
-        
-        if (rewrite === '') {
-            t3Fb.innerHTML = '⚠️ Please write the overconfident version without hedging language.';
-            t3Fb.className = 'fix-feedback warning';
-            readingTask3Done = false;
-            updateReadComplete();
-            return;
-        }
-        
-        const rewriteNorm = normalizeAnswer(rewrite);
-        const correctNorm = normalizeAnswer(TASK3_CORRECT);
-        
-        const hasHedging = rewriteNorm.includes('would appear') || rewriteNorm.includes('appears') || 
-                           rewriteNorm.includes('seems') || rewriteNorm.includes('may') || 
-                           rewriteNorm.includes('could') || rewriteNorm.includes('might') ||
-                           rewriteNorm.includes('suggests') || rewriteNorm.includes('indicates') ||
-                           rewriteNorm.includes('tends') || rewriteNorm.includes('potentially') ||
-                           rewriteNorm.includes('on balance') || rewriteNorm.includes('however') ||
-                           rewriteNorm.includes('relatively') || rewriteNorm.includes('certain') ||
-                           rewriteNorm.includes('it would') || rewriteNorm.includes('should be noted') ||
-                           rewriteNorm.includes('there seems') || rewriteNorm.includes('based on the available evidence');
-        
-        const isCorrect = rewriteNorm === correctNorm || (rewriteNorm.includes('exhibits') && !hasHedging);
-        
-        if (isCorrect) {
-            t3Fb.innerHTML = '✅ Correct! Perfect overconfident statement: "The new polymer exhibits higher resistance to corrosion under saline conditions."';
-            t3Fb.className = 'fix-feedback correct';
-            readingTask3Done = true;
-        } else if (hasHedging) {
-            t3Fb.innerHTML = '❌ Incorrect — you still used hedging language.\n\n💡 Remove phrases like: "it would appear that", "based on the available evidence", "seems to", "may", "could", "potentially".\n\nExpected: "The new polymer exhibits higher resistance to corrosion under saline conditions."';
-            t3Fb.className = 'fix-feedback incorrect';
-            readingTask3Done = false;
-        } else {
-            t3Fb.innerHTML = '❌ Incorrect sentence.\n\n💡 Expected: "The new polymer exhibits higher resistance to corrosion under saline conditions."\n\nRemove the hedging phrases and state the claim directly.';
-            t3Fb.className = 'fix-feedback incorrect';
-            readingTask3Done = false;
-        }
-        updateReadComplete();
-    }
-    
-    if (t3Btn) t3Btn.addEventListener('click', validateTask3);
-    if (t3Reset) {
-        t3Reset.addEventListener('click', () => {
-            document.getElementById('task3Rewrite').value = '';
-            t3Fb.innerHTML = '';
-            t3Fb.className = 'fix-feedback';
-            readingTask3Done = false;
-            updateReadComplete();
-        });
-    }
-    
-    document.getElementById('checkUnderlinesBtn')?.addEventListener('click', checkUnderlines);
-    document.getElementById('resetUnderlinesBtn')?.addEventListener('click', resetUnderlines);
-    document.getElementById('completeReadingBtn')?.addEventListener('click', function() { if (!this.disabled) markActivityComplete('reading', 'chk1'); });
-    buildPassage();
-    
-    // ==================== VOCABULARY ====================
-    const vChecks = document.querySelectorAll('.check-cell');
-    const vComplete = document.getElementById('completeVocabularyBtn');
-    
-    function checkVocab() { 
-        let all = true; 
-        vChecks.forEach(c => { if (c.innerHTML !== '✅') all = false; }); 
-        if (vComplete) vComplete.disabled = !all; 
-    }
-    
-    document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const word = this.getAttribute('data-word');
-            const cid = this.getAttribute('data-checkid');
-            const cell = document.getElementById(cid);
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const u = new SpeechSynthesisUtterance(word);
-                u.lang = 'en-US';
-                u.rate = 0.9;
-                u.onend = () => { 
-                    if (cell && cell.innerHTML !== '✅') { 
-                        cell.innerHTML = '✅'; 
-                        cell.style.color = 'green'; 
-                        checkVocab(); 
-                    } 
+
+            if (typeof markActivityComplete === 'function') {
+                const orig = window.markActivityComplete;
+                window.markActivityComplete = function (aid, cid) {
+                    orig(aid, cid);
+                    const checkbox = document.getElementById(cid);
+                    if (checkbox) checkbox.checked = true;
+                    setTimeout(updateDayProgress, 100);
                 };
-                window.speechSynthesis.speak(u);
             }
-        });
-    });
-    
-    if (vComplete) { 
-        vComplete.addEventListener('click', function() { 
-            if (!vComplete.disabled) markActivityComplete('vocabulary', 'chk5'); 
-        }); 
-    }
-    
-    // ==================== GRAMMAR ACTIVITY ====================
-    const gBtn = document.getElementById('checkGrammarBtn');
-    const gReset = document.getElementById('resetGrammarBtn');
-    const gComplete = document.getElementById('completeGrammarBtn');
-    
-    function validateHedging(sentence) {
-        const ls = sentence.trim().toLowerCase();
-        if (ls.length === 0) return { ok: false, msg: '⚠️ Please write a hedged version.' };
-        const hedgingTools = ['may', 'might', 'could', 'would', 'appears', 'seems', 'tends', 'suggests', 'indicates', 'possibly', 'potentially', 'to some extent', 'a degree of', 'arguably', 'presumably'];
-        let hasHedge = false;
-        for (let h of hedgingTools) if (ls.includes(h)) { hasHedge = true; break; }
-        if (!hasHedge) return { ok: false, msg: '💡 Add hedging language. Try using "appears to be", "may", "could", or "suggests".' };
-        if (ls.length < 15) return { ok: false, msg: '💡 Write a complete sentence.' };
-        return { ok: true, msg: '✅ Correct! Good hedging!' };
-    }
-    
-    if (gBtn) {
-        gBtn.addEventListener('click', () => {
-            const r1 = validateHedging(document.getElementById('grammar1').value);
-            const r2 = validateHedging(document.getElementById('grammar2').value);
-            const r3 = validateHedging(document.getElementById('grammar3').value);
-            const fb1 = document.getElementById('grammar1Feedback'), fb2 = document.getElementById('grammar2Feedback'), fb3 = document.getElementById('grammar3Feedback'), gFb = document.getElementById('grammarFeedback');
-            if (fb1) { fb1.innerHTML = r1.msg; fb1.className = r1.ok ? 'fix-feedback correct' : 'fix-feedback hint'; fb1.style.display = 'block'; }
-            if (fb2) { fb2.innerHTML = r2.msg; fb2.className = r2.ok ? 'fix-feedback correct' : 'fix-feedback hint'; fb2.style.display = 'block'; }
-            if (fb3) { fb3.innerHTML = r3.msg; fb3.className = r3.ok ? 'fix-feedback correct' : 'fix-feedback hint'; fb3.style.display = 'block'; }
-            if (r1.ok && r2.ok && r3.ok) { grammarCompleted = true; if (gFb) { gFb.innerHTML = '✅ Excellent! All sentences properly hedged!'; gFb.className = 'quiz-feedback correct'; gFb.style.display = 'block'; } if (gComplete) gComplete.disabled = false; }
-            else { grammarCompleted = false; if (gFb) { gFb.innerHTML = '📚 Add hedging language to your sentences.'; gFb.className = 'quiz-feedback incorrect'; gFb.style.display = 'block'; } if (gComplete) gComplete.disabled = true; }
-        });
-    }
-    
-    if (gReset) {
-        gReset.addEventListener('click', () => {
-            for (let i = 1; i <= 3; i++) { document.getElementById(`grammar${i}`).value = ''; const fb = document.getElementById(`grammar${i}Feedback`); if (fb) { fb.innerHTML = ''; fb.className = 'fix-feedback'; fb.style.display = 'none'; } }
-            const gf = document.getElementById('grammarFeedback'); if (gf) { gf.innerHTML = ''; gf.className = 'quiz-feedback'; gf.style.display = 'none'; } grammarCompleted = false; if (gComplete) gComplete.disabled = true;
-        });
-    }
-    
-    if (gComplete) { gComplete.addEventListener('click', () => { if (grammarCompleted) markActivityComplete('grammar', 'chk4'); }); }
-    
-    // ==================== DAY COMPLETION ====================
-    const dayBtn = document.getElementById('dayCompleteBtn');
-    if (dayBtn) {
-        const newBtn = dayBtn.cloneNode(true);
-        dayBtn.parentNode.replaceChild(newBtn, dayBtn);
-        newBtn.addEventListener('click', function() {
-            const cbs = document.querySelectorAll('.checklist input.day-check');
-            let all = true;
-            cbs.forEach(cb => { if (!cb.checked) all = false; });
-            if (!all) {
-                alert('⚠️ Complete all activities first!');
-                return;
+
+            // ==================== LISTENING ACTIVITY WITH WRITING FIRST ====================
+            const listeningAudioElem = document.getElementById('listeningAudio');
+            const listeningTextSection = document.getElementById('listeningTextSection');
+            const postAudioListeningContent = document.getElementById('postAudioListeningContent');
+            const sentencesAIFeedbackDiv = document.getElementById('sentencesAIFeedback');
+            const listeningCompleteBtn = document.getElementById('completeListeningBtn');
+            const listeningQuizFeedbackDiv = document.getElementById('listeningQuizFeedback');
+            const checkListeningWorkBtn = document.getElementById('checkListeningWorkBtn');
+            const validateSentencesBtn = document.getElementById('validateSentencesBtn');
+            const listenRecordBtn = document.getElementById('listeningRecordBtn');
+            const listenStopBtn = document.getElementById('listeningStopBtn');
+            const listenPlaybackCard = document.getElementById('listeningPlaybackCard');
+            const listenPlaybackAudio = document.getElementById('listeningPlayback');
+            const comparisonSection = document.getElementById('comparisonSection');
+            const yesComparisonBtn = document.getElementById('yesComparisonBtn');
+            const noComparisonBtn = document.getElementById('noComparisonBtn');
+            const comparisonFeedbackDiv = document.getElementById('comparisonFeedback');
+            const sentencesAttemptCounterSpan = document.querySelector('#sentencesAttemptCounter span');
+
+            function updateSentencesAttemptDisplay() {
+                const remaining = maxAttempts - sentencesAttemptCount;
+                if (sentencesAttemptCounterSpan) sentencesAttemptCounterSpan.innerText = remaining;
+                if (sentencesAttemptCount >= maxAttempts && validateSentencesBtn) {
+                    validateSentencesBtn.disabled = true;
+                    validateSentencesBtn.textContent = '🔒 No attempts left';
+                }
             }
-            this.innerHTML = '✨ Completing day...';
-            this.disabled = true;
-            if (typeof confetti !== 'undefined') {
-                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+
+            function showCorrectAnswer() {
+                if (showCorrectAnswerTriggered) return;
+                showCorrectAnswerTriggered = true;
+
+                const correctSentencesHtml = `
+            <div class="correct-answer-box">
+                <h4>📚 3 Correct Hedged Sentences (for Reference):</h4>
+                <p><strong>1.</strong> "The new manufacturing process <strong>could potentially</strong> increase productivity <strong>by up to 50%</strong> <strong>under ideal conditions</strong>."</p>
+                <p><strong>2.</strong> "The software update <strong>appears to</strong> address many security issues, <strong>though further testing is recommended</strong>."</p>
+                <p><strong>3.</strong> "Our team's solution <strong>seems to be among</strong> the more efficient approaches <strong>currently available</strong>."</p>
+                <hr style="margin: 0.75rem 0;">
+                <p><strong>🎯 Hedging Tools Used:</strong><br>
+                • "could potentially" (modal + adverb)<br>
+                • "up to 50%" (range hedge)<br>
+                • "under ideal conditions" (conditional hedge)<br>
+                • "appears to" (verb hedge)<br>
+                • "though further testing is recommended" (qualifying clause)<br>
+                • "seems to be among" (verb hedge + qualification)<br>
+                • "currently available" (time-based qualification)</p>
+                <p style="margin-top: 0.5rem; color: #6d28d9;"><strong>💡 Tip:</strong> Good hedging shows you're thoughtful and precise!</p>
+            </div>
+        `;
+                sentencesAIFeedbackDiv.innerHTML += correctSentencesHtml;
             }
-            setTimeout(() => {
-                window.location.href = '/learning/level/intermediate/?celebrate=true&completed=12';
-            }, 500);
+
+            function evaluateSentences() {
+                const sentence1 = document.getElementById('hedgeSentence1').value.trim();
+                const sentence2 = document.getElementById('hedgeSentence2').value.trim();
+                const sentence3 = document.getElementById('hedgeSentence3').value.trim();
+                const validationMsg = document.getElementById('sentencesValidationMsg');
+
+                if (!sentence1 || !sentence2 || !sentence3) {
+                    validationMsg.innerHTML = '<span style="color: #dc2626;">❌ Please write all 3 sentences first.</span>';
+                    return false;
+                }
+
+                if (sentence1.length < 20 || sentence2.length < 20 || sentence3.length < 20) {
+                    validationMsg.innerHTML = '<span style="color: #dc2626;">⚠️ Each sentence should be at least 20 characters. Write complete sentences.</span>';
+                    return false;
+                }
+
+                validationMsg.innerHTML = '<span style="color: #f59e0b;">🤖 AI is evaluating your hedging language...</span>';
+                sentencesAIFeedbackDiv.innerHTML = '<div class="ai-feedback processing">🤖 AI is evaluating your sentences...</div>';
+                sentencesAIFeedbackDiv.style.display = 'block';
+
+                return { sentence1, sentence2, sentence3 };
+            }
+
+            if (validateSentencesBtn) {
+                validateSentencesBtn.addEventListener('click', async function () {
+                    if (sentencesAttemptCount >= maxAttempts) {
+                        sentencesAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">🔒 You have used all 3 attempts. Please review the example below.</div>';
+                        sentencesAIFeedbackDiv.style.display = 'block';
+                        showCorrectAnswer();
+                        return;
+                    }
+
+                    const evalResult = evaluateSentences();
+                    if (!evalResult) return;
+
+                    sentencesAttemptCount++;
+                    updateSentencesAttemptDisplay();
+
+                    const allSentences = `${evalResult.sentence1}\n\n${evalResult.sentence2}\n\n${evalResult.sentence3}`;
+
+                    try {
+                        const response = await fetch('/learning/ai/evaluate/', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrftoken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                text: allSentences,
+                                task_type: 'hedging_writing',
+                                day_number: 12,
+                                level: 'intermediate',
+                                system_prompt: `You are evaluating hedging language in 3 sentences about engineering/manufacturing.
+
+Hedging tools to look for:
+- Modal verbs: may, might, could, would
+- Verbs: appears, seems, tends, suggests
+- Adverbs: possibly, potentially, arguably
+- Qualifying phrases: up to, under conditions, in many cases, to some extent
+
+Evaluate ALL 3 sentences. Return JSON with:
+{
+"correct": true/false (true only if ALL 3 have proper hedging),
+"feedback": "short feedback on all 3 sentences",
+"suggestion": "improvement tip",
+"teaching_tip": "one sentence about hedging"
+}`
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            sentencesValidated = result.correct;
+
+                            let feedbackHtml = '';
+                            if (result.correct) {
+                                feedbackHtml = `
+                            <div class="ai-feedback correct">
+                                <strong>✅ ${result.feedback || 'Great job! All 3 sentences are properly hedged!'}</strong><br>
+                                <strong>💡 ${result.suggestion || 'Keep practicing to master hedging!'}</strong><br>
+                                <em>📖 ${result.teaching_tip || 'Hedging shows intellectual honesty.'}</em>
+                            </div>
+                        `;
+                                document.getElementById('sentencesValidationMsg').innerHTML = '<span style="color: #22c55e;">✅ All sentences validated! You can now record.</span>';
+                            } else {
+                                feedbackHtml = `
+                            <div class="ai-feedback incorrect">
+                                <strong>📚 ${result.feedback || 'Some sentences need more hedging.'}</strong><br>
+                                <strong>💡 ${result.suggestion || 'Try adding "could potentially", "appears to", or "seems to be"'}</strong><br>
+                                <em>📖 ${result.teaching_tip || 'Hedging makes your claims more accurate.'}</em>
+                            </div>
+                        `;
+                                document.getElementById('sentencesValidationMsg').innerHTML = '<span style="color: #dc2626;">❌ Please improve your sentences based on feedback above.</span>';
+
+                                if (sentencesAttemptCount === maxAttempts) {
+                                    showCorrectAnswer();
+                                }
+                            }
+
+                            sentencesAIFeedbackDiv.innerHTML = feedbackHtml;
+
+                            if (sentencesValidated && listenRecordBtn) {
+                                listenRecordBtn.disabled = false;
+                                listenRecordBtn.textContent = '🎙️ Start Recording';
+                            } else if (listenRecordBtn) {
+                                listenRecordBtn.disabled = true;
+                                listenRecordBtn.textContent = '🎙️ Validate sentences first';
+                            }
+                        } else {
+                            throw new Error('AI response not successful');
+                        }
+                    } catch (error) {
+                        console.error('AI Error:', error);
+                        // Fallback validation
+                        const hasHedging1 = evalResult.sentence1.toLowerCase().includes('could') || evalResult.sentence1.toLowerCase().includes('potentially') || evalResult.sentence1.toLowerCase().includes('up to');
+                        const hasHedging2 = evalResult.sentence2.toLowerCase().includes('appears') || evalResult.sentence2.toLowerCase().includes('seems') || evalResult.sentence2.toLowerCase().includes('may') || evalResult.sentence2.toLowerCase().includes('though');
+                        const hasHedging3 = evalResult.sentence3.toLowerCase().includes('seems') || evalResult.sentence3.toLowerCase().includes('among') || evalResult.sentence3.toLowerCase().includes('currently');
+
+                        sentencesValidated = hasHedging1 && hasHedging2 && hasHedging3;
+
+                        let feedbackHtml = '';
+                        if (sentencesValidated) {
+                            feedbackHtml = `<div class="ai-feedback correct"><strong>✅ Great! All 3 sentences have hedging language!</strong><br><strong>💡 Now record your sentences.</strong></div>`;
+                            document.getElementById('sentencesValidationMsg').innerHTML = '<span style="color: #22c55e;">✅ Sentences validated! You can now record.</span>';
+                        } else {
+                            feedbackHtml = `<div class="ai-feedback incorrect"><strong>📚 Add more hedging language to your sentences.</strong><br><strong>💡 Try: "could potentially", "appears to", "seems to be", "up to"</strong></div>`;
+                            document.getElementById('sentencesValidationMsg').innerHTML = '<span style="color: #dc2626;">❌ Please add more hedging language.</span>';
+                            if (sentencesAttemptCount === maxAttempts) showCorrectAnswer();
+                        }
+                        sentencesAIFeedbackDiv.innerHTML = feedbackHtml;
+
+                        if (sentencesValidated && listenRecordBtn) {
+                            listenRecordBtn.disabled = false;
+                            listenRecordBtn.textContent = '🎙️ Start Recording';
+                        } else if (listenRecordBtn) {
+                            listenRecordBtn.disabled = true;
+                            listenRecordBtn.textContent = '🎙️ Validate sentences first';
+                        }
+                    }
+                });
+            }
+
+            // Listening recording
+            let listeningMediaRecorder, listeningChunks = [], listeningIsRecording = false;
+
+            if (listenRecordBtn) {
+                listenRecordBtn.addEventListener('click', async function () {
+                    if (!sentencesValidated) {
+                        alert('Please validate your sentences first!');
+                        return;
+                    }
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        listeningMediaRecorder = new MediaRecorder(stream);
+                        listeningChunks = [];
+                        listeningMediaRecorder.ondataavailable = e => listeningChunks.push(e.data);
+                        listeningMediaRecorder.onstop = () => {
+                            const blob = new Blob(listeningChunks, { type: 'audio/webm' });
+                            if (listenPlaybackAudio) listenPlaybackAudio.src = URL.createObjectURL(blob);
+                            if (listenPlaybackCard) listenPlaybackCard.style.display = 'block';
+                            if (comparisonSection) comparisonSection.style.display = 'block';
+                            listeningRecorded = true;
+                            stream.getTracks().forEach(t => t.stop());
+                        };
+                        listeningMediaRecorder.start();
+                        listeningIsRecording = true;
+                        listenRecordBtn.style.display = 'none';
+                        if (listenStopBtn) listenStopBtn.style.display = 'inline-flex';
+                    } catch (e) { console.error('Microphone error'); }
+                });
+            }
+
+            if (listenStopBtn) {
+                listenStopBtn.addEventListener('click', function () {
+                    if (listeningMediaRecorder && listeningIsRecording) {
+                        listeningMediaRecorder.stop();
+                        listeningIsRecording = false;
+                        listenRecordBtn.style.display = 'inline-flex';
+                        listenStopBtn.style.display = 'none';
+                    }
+                });
+            }
+
+            if (yesComparisonBtn) {
+                yesComparisonBtn.addEventListener('click', function () {
+                    if (listeningCompleteBtn) {
+                        listeningCompleteBtn.disabled = false;
+                        if (comparisonFeedbackDiv) comparisonFeedbackDiv.innerHTML = '<span style="color: #22c55e;">✅ Great! Recording confirmed.</span>';
+                    }
+                });
+            }
+
+            if (noComparisonBtn) {
+                noComparisonBtn.addEventListener('click', function () {
+                    comparisonFeedbackDiv.innerHTML = '<span style="color: #dc2626;">⚠️ Please record again with correct hedged sentences.</span>';
+                    listeningRecorded = false;
+                    listenPlaybackCard.style.display = 'none';
+                    comparisonSection.style.display = 'none';
+                    listenRecordBtn.style.display = 'inline-flex';
+                    listenStopBtn.style.display = 'none';
+                });
+            }
+
+            // Audio reveal
+            if (listeningAudioElem) {
+                listeningAudioElem.addEventListener('ended', function () {
+                    if (!masterAudioFinished) {
+                        masterAudioFinished = true;
+                        if (listeningTextSection) listeningTextSection.style.display = 'block';
+                        if (postAudioListeningContent) postAudioListeningContent.style.display = 'block';
+                    }
+                });
+            }
+
+            // Quiz validation
+            document.querySelectorAll('input[name="listening_quiz"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q1 = e.target.value; }));
+            document.querySelectorAll('input[name="practice_quiz"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q2 = e.target.value; }));
+
+            if (checkListeningWorkBtn) {
+                checkListeningWorkBtn.addEventListener('click', () => {
+                    if (!listeningQuizAnswers.q1 || !listeningQuizAnswers.q2) {
+                        listeningQuizFeedbackDiv.innerHTML = '⚠️ Please answer both questions.';
+                        listeningQuizFeedbackDiv.className = 'quiz-feedback warning';
+                        listeningQuizFeedbackDiv.style.display = 'block';
+                        return;
+                    }
+                    let q1Correct = (listeningQuizAnswers.q1 === 'tends');
+                    let q2Correct = (listeningQuizAnswers.q2 === 'environmental');
+
+                    const q1fb = document.getElementById('q1Feedback');
+                    const q2fb = document.getElementById('q2Feedback');
+
+                    if (q1fb) {
+                        q1fb.innerHTML = q1Correct ? '✅ Correct! Variation tends to occur.' : '💡 Hint: The speaker said "there seems to be some inconsistency"';
+                        q1fb.className = q1Correct ? 'ind-quiz-feedback correct' : 'ind-quiz-feedback incorrect';
+                    }
+                    if (q2fb) {
+                        q2fb.innerHTML = q2Correct ? '✅ Correct! Environmental factors (possible).' : '💡 Hint: The speaker said "could potentially be attributed to variations in the ambient environment"';
+                        q2fb.className = q2Correct ? 'ind-quiz-feedback correct' : 'ind-quiz-feedback incorrect';
+                    }
+
+                    listeningQuizCorrect = q1Correct && q2Correct;
+                    listeningQuizFeedbackDiv.innerHTML = listeningQuizCorrect ? '✅ Correct! Great job!' : '📚 Some answers need review.';
+                    listeningQuizFeedbackDiv.className = listeningQuizCorrect ? 'quiz-feedback correct' : 'quiz-feedback incorrect';
+                    listeningQuizFeedbackDiv.style.display = 'block';
+                });
+            }
+
+            function updateListeningCompleteButton() {
+                if (listeningCompleteBtn) {
+                    const canComplete = masterAudioFinished && sentencesValidated && listeningRecorded && listeningQuizCorrect;
+                    listeningCompleteBtn.disabled = !canComplete;
+                }
+            }
+
+            if (listeningCompleteBtn) {
+                listeningCompleteBtn.onclick = () => {
+                    if (!masterAudioFinished) { showValidationMessage('sentencesValidationMsg', '⚠️ Please listen to the complete audio first.'); return; }
+                    if (!sentencesValidated) { showValidationMessage('sentencesValidationMsg', '⚠️ Please validate your sentences first.'); return; }
+                    if (!listeningRecorded) { showValidationMessage('sentencesValidationMsg', '⚠️ Please record your sentences.'); return; }
+                    if (!listeningQuizCorrect) { showValidationMessage('sentencesValidationMsg', '⚠️ Please answer both quiz questions correctly.'); return; }
+                    markActivityComplete('listening', 'chkListening');
+                };
+                listeningCompleteBtn.disabled = true;
+            }
+
+            // ==================== SPEAKING ACTIVITY ====================
+            const sRecord = document.getElementById('speakingRecordBtn');
+            const sStop = document.getElementById('speakingStopBtn');
+            const sPlayCard = document.getElementById('speakingPlaybackCard');
+            const sPlayAudio = document.getElementById('speakingPlayback');
+            const sComplete = document.getElementById('completeSpeakingBtn');
+            const sFeedback = document.getElementById('speakingFeedback');
+            let sMediaRecorder, sChunks = [], sIsRecording = false, sStartTime = 0;
+
+            if (sRecord) {
+                sRecord.addEventListener('click', async () => {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        sMediaRecorder = new MediaRecorder(stream);
+                        sChunks = [];
+                        sStartTime = Date.now();
+                        sMediaRecorder.ondataavailable = e => sChunks.push(e.data);
+                        sMediaRecorder.onstop = () => {
+                            const dur = (Date.now() - sStartTime) / 1000;
+                            const blob = new Blob(sChunks, { type: 'audio/webm' });
+                            if (dur < 6) {
+                                sFeedback.innerHTML = `⚠️ Speak for at least 6 seconds.`;
+                                sFeedback.style.color = '#dc2626';
+                                speakingRecorded = false;
+                                if (sComplete) sComplete.disabled = true;
+                                return;
+                            }
+                            if (sPlayAudio) sPlayAudio.src = URL.createObjectURL(blob);
+                            if (sPlayCard) sPlayCard.style.display = 'block';
+                            speakingRecorded = true;
+                            sFeedback.innerHTML = `✅ Recording saved! (${Math.round(dur)}s)`;
+                            sFeedback.style.color = '#22c55e';
+                            stream.getTracks().forEach(t => t.stop());
+                            if (sComplete) sComplete.disabled = false;
+                        };
+                        sMediaRecorder.start();
+                        sIsRecording = true;
+                        sRecord.style.display = 'none';
+                        if (sStop) sStop.style.display = 'inline-flex';
+                        sFeedback.innerHTML = '<span style="color:#3b82f6;">🔴 Recording...</span>';
+                    } catch (e) {
+                        sFeedback.innerHTML = '<span style="color:#dc2626;">❌ Microphone access required.</span>';
+                    }
+                });
+            }
+
+            if (sStop) {
+                sStop.addEventListener('click', () => {
+                    if (sMediaRecorder && sIsRecording) {
+                        sMediaRecorder.stop();
+                        sIsRecording = false;
+                        sRecord.style.display = 'inline-flex';
+                        sStop.style.display = 'none';
+                    }
+                });
+            }
+
+            if (sComplete) {
+                sComplete.addEventListener('click', () => {
+                    if (!sComplete.disabled && speakingRecorded) markActivityComplete('speaking', 'chkSpeaking');
+                });
+            }
+
+            // ========== READING ACTIVITY ==========
+            const passage = "Based on the available evidence, it would appear that the new polymer exhibits a higher resistance to corrosion under saline conditions. However, it should be noted that the sample size was relatively small, and the results may not be fully generalisable. There seems to be a tendency for performance to decrease at extreme temperatures, which could potentially affect its application in certain climates. On balance, the findings are promising, but further trials would be advisable before commercial deployment.";
+
+            const hedgingPhrases = [
+                "it would appear",
+                "however",
+                "it should be noted",
+                "may not",
+                "relatively",
+                "there seems to be",
+                "a tendency",
+                "could potentially",
+                "certain",
+                "on balance",
+                "would be advisable"
+            ];
+
+            let userUnderlined = new Set();
+            let underlineDone = false;
+            let wordOccurrences = [];
+            let hedgePhrasesRanges = [];
+            let readingTask1Done = false;
+            let readingTask2Done = false;
+            let readingTask3Done = false;
+
+            function normalizeText(text) {
+                return text.toLowerCase().replace(/[.,!?;]$/g, '').trim();
+            }
+
+            function buildPassage() {
+                const container = document.getElementById('interactivePassage');
+                if (!container) return;
+
+                const words = passage.split(' ');
+                container.innerHTML = '';
+                wordOccurrences = [];
+                hedgePhrasesRanges = [];
+
+                const passageWords = passage.toLowerCase().split(/\s+/);
+                const hedgingPhrasesLower = hedgingPhrases.map(p => p.toLowerCase());
+
+                hedgingPhrasesLower.forEach(phrase => {
+                    const phraseWords = phrase.split(' ');
+                    for (let i = 0; i <= passageWords.length - phraseWords.length; i++) {
+                        let match = true;
+                        for (let j = 0; j < phraseWords.length; j++) {
+                            const passageWordClean = passageWords[i + j].replace(/[.,!?;]$/g, '');
+                            if (passageWordClean !== phraseWords[j]) {
+                                match = false;
+                                break;
+                            }
+                        }
+                        if (match) {
+                            hedgePhrasesRanges.push({
+                                start: i,
+                                end: i + phraseWords.length - 1,
+                                phrase: hedgingPhrases[hedgingPhrasesLower.indexOf(phrase)]
+                            });
+                        }
+                    }
+                });
+
+                for (let i = 0; i < words.length; i++) {
+                    const word = words[i];
+                    const span = document.createElement('span');
+                    span.textContent = word + ' ';
+                    span.className = 'clickable-word';
+                    span.dataset.index = i;
+                    span.addEventListener('click', () => {
+                        const idx = parseInt(span.dataset.index);
+                        let matchedRange = hedgePhrasesRanges.find(range => idx >= range.start && idx <= range.end);
+                        if (matchedRange) {
+                            const allSelected = checkPhraseFullySelected(matchedRange);
+                            if (allSelected) {
+                                for (let j = matchedRange.start; j <= matchedRange.end; j++) userUnderlined.delete(j);
+                            } else {
+                                for (let j = matchedRange.start; j <= matchedRange.end; j++) userUnderlined.add(j);
+                            }
+                        } else {
+                            if (userUnderlined.has(idx)) userUnderlined.delete(idx);
+                            else userUnderlined.add(idx);
+                        }
+                        underlineDone = false;
+                        document.getElementById('underlineFeedback').innerHTML = '';
+                        updateVisuals();
+                        updateReadComplete();
+                    });
+                    container.appendChild(span);
+                    wordOccurrences.push({ word: normalizeText(words[i]), element: span, index: i });
+                }
+                updateVisuals();
+            }
+
+            function checkPhraseFullySelected(range) {
+                for (let i = range.start; i <= range.end; i++) {
+                    if (!userUnderlined.has(i)) return false;
+                }
+                return true;
+            }
+
+            function updateVisuals() {
+                wordOccurrences.forEach(occ => {
+                    const span = occ.element;
+                    const idx = occ.index;
+                    span.classList.remove('temp-underlined', 'underline-correct', 'underline-incorrect');
+                    if (userUnderlined.has(idx)) {
+                        if (underlineDone) {
+                            let isCorrect = false;
+                            for (let range of hedgePhrasesRanges) {
+                                if (idx >= range.start && idx <= range.end) {
+                                    isCorrect = checkPhraseFullySelected(range);
+                                    break;
+                                }
+                            }
+                            span.classList.add(isCorrect ? 'underline-correct' : 'underline-incorrect');
+                        } else {
+                            span.classList.add('temp-underlined');
+                        }
+                    }
+                });
+            }
+
+            function checkUnderlines() {
+                if (userUnderlined.size === 0) {
+                    document.getElementById('underlineFeedback').innerHTML = '<div class="fix-feedback warning">⚠️ Please select hedging expressions to underline first.</div>';
+                    return;
+                }
+
+                let correctlySelectedPhrases = [];
+                hedgePhrasesRanges.forEach(range => {
+                    if (checkPhraseFullySelected(range)) correctlySelectedPhrases.push(range.phrase);
+                });
+
+                const totalPhrases = hedgePhrasesRanges.length;
+                const allCorrect = correctlySelectedPhrases.length === totalPhrases;
+                underlineDone = true;
+
+                if (allCorrect) {
+                    document.getElementById('underlineFeedback').innerHTML = `<div class="fix-feedback correct">✅ Perfect! You identified all ${totalPhrases} hedging phrases correctly!</div>`;
+                    readingTask1Done = true;
+                } else {
+                    document.getElementById('underlineFeedback').innerHTML = `<div class="fix-feedback incorrect">❌ ${correctlySelectedPhrases.length}/${totalPhrases} hedging phrases correct. Keep trying!</div>`;
+                    readingTask1Done = false;
+                }
+                updateVisuals();
+                updateReadComplete();
+            }
+
+            function resetUnderlines() {
+                userUnderlined.clear();
+                underlineDone = false;
+                readingTask1Done = false;
+                document.getElementById('underlineFeedback').innerHTML = '';
+                updateVisuals();
+                updateReadComplete();
+            }
+
+            function updateReadComplete() {
+                const btn = document.getElementById('completeReadingBtn');
+                if (!btn) return;
+                const allTasksDone = readingTask1Done && readingTask2Done && readingTask3Done;
+                btn.disabled = !allTasksDone;
+            }
+
+            const t2Btn = document.getElementById('checkTask2Btn');
+            const t2Fb = document.getElementById('task2Feedback');
+            const MOST_CORRECT = "there seems to be a tendency for performance to decrease at extreme temperatures, which could potentially affect its application in certain climates.";
+            const LEAST_CORRECT = "on balance, the findings are promising, but further trials would be advisable before commercial deployment.";
+
+            function normalizeAnswer(text) {
+                return text.toLowerCase().replace(/[.,!?]/g, '').replace(/\s+/g, ' ').trim();
+            }
+
+            function validateTask2() {
+                const mostAnswer = document.getElementById('task2Most').value.trim();
+                const leastAnswer = document.getElementById('task2Least').value.trim();
+                if (!mostAnswer || !leastAnswer) {
+                    t2Fb.innerHTML = '⚠️ Please answer both questions.';
+                    t2Fb.className = 'fix-feedback warning';
+                    readingTask2Done = false;
+                    updateReadComplete();
+                    return;
+                }
+                const mostNorm = normalizeAnswer(mostAnswer);
+                const leastNorm = normalizeAnswer(leastAnswer);
+                const mostCorrect = mostNorm === normalizeAnswer(MOST_CORRECT);
+                const leastCorrect = leastNorm === normalizeAnswer(LEAST_CORRECT);
+
+                if (mostCorrect && leastCorrect) {
+                    t2Fb.innerHTML = '✅ Perfect! Both answers are correct.';
+                    t2Fb.className = 'fix-feedback correct';
+                    readingTask2Done = true;
+                } else if (!mostCorrect && !leastCorrect) {
+                    t2Fb.innerHTML = '❌ Both answers are incorrect.\n\n💡 MOST uncertainty → Look at sentence 3.\n\n💡 LEAST uncertainty → Look at sentence 4.';
+                    t2Fb.className = 'fix-feedback incorrect';
+                    readingTask2Done = false;
+                } else if (!mostCorrect) {
+                    t2Fb.innerHTML = '❌ MOST uncertainty sentence is incorrect.\n\n💡 Hint: Look at sentence 3. ✅ Your LEAST uncertainty sentence is correct.';
+                    t2Fb.className = 'fix-feedback incorrect';
+                    readingTask2Done = false;
+                } else {
+                    t2Fb.innerHTML = '❌ LEAST uncertainty sentence is incorrect.\n\n💡 Hint: Look at sentence 4. ✅ Your MOST uncertainty sentence is correct.';
+                    t2Fb.className = 'fix-feedback incorrect';
+                    readingTask2Done = false;
+                }
+                updateReadComplete();
+            }
+
+            const t3Btn = document.getElementById('checkTask3Btn');
+            const t3Fb = document.getElementById('task3Feedback');
+            const TASK3_CORRECT = "the new polymer exhibits a higher resistance to corrosion under saline conditions";
+
+            function validateTask3() {
+                const rewrite = document.getElementById('task3Rewrite').value.trim();
+                if (!rewrite) {
+                    t3Fb.innerHTML = '⚠️ Please write the overconfident version.';
+                    t3Fb.className = 'fix-feedback warning';
+                    readingTask3Done = false;
+                    updateReadComplete();
+                    return;
+                }
+                const rewriteNorm = normalizeAnswer(rewrite);
+                const hasHedging = rewriteNorm.includes('would appear') || rewriteNorm.includes('appears') || rewriteNorm.includes('seems') || rewriteNorm.includes('may') || rewriteNorm.includes('could') || rewriteNorm.includes('potentially') || rewriteNorm.includes('based on');
+                const isCorrect = !hasHedging && rewriteNorm.includes('exhibits');
+
+                if (isCorrect) {
+                    t3Fb.innerHTML = '✅ Correct! Perfect overconfident statement without hedging.';
+                    t3Fb.className = 'fix-feedback correct';
+                    readingTask3Done = true;
+                } else if (hasHedging) {
+                    t3Fb.innerHTML = '❌ Still has hedging language. Remove phrases like "it would appear that", "based on available evidence".';
+                    t3Fb.className = 'fix-feedback incorrect';
+                    readingTask3Done = false;
+                } else {
+                    t3Fb.innerHTML = '❌ Incorrect. Expected: "The new polymer exhibits higher resistance to corrosion under saline conditions."';
+                    t3Fb.className = 'fix-feedback incorrect';
+                    readingTask3Done = false;
+                }
+                updateReadComplete();
+            }
+
+            if (t2Btn) t2Btn.addEventListener('click', validateTask2);
+            if (t3Btn) t3Btn.addEventListener('click', validateTask3);
+            document.getElementById('checkUnderlinesBtn')?.addEventListener('click', checkUnderlines);
+            document.getElementById('resetUnderlinesBtn')?.addEventListener('click', resetUnderlines);
+            document.getElementById('completeReadingBtn')?.addEventListener('click', function () { if (!this.disabled) markActivityComplete('reading', 'chkReading'); });
+            buildPassage();
+
+            // ==================== VOCABULARY ====================
+            const vChecks = document.querySelectorAll('.check-cell');
+            const vComplete = document.getElementById('completeVocabularyBtn');
+
+            function checkVocab() {
+                let all = true;
+                vChecks.forEach(c => { if (c.innerHTML !== '✅') all = false; });
+                if (vComplete) vComplete.disabled = !all;
+            }
+
+            document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const word = this.getAttribute('data-word');
+                    const cid = this.getAttribute('data-checkid');
+                    const cell = document.getElementById(cid);
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const u = new SpeechSynthesisUtterance(word);
+                        u.lang = 'en-US';
+                        u.rate = 0.9;
+                        u.onend = () => {
+                            if (cell && cell.innerHTML !== '✅') {
+                                cell.innerHTML = '✅';
+                                cell.style.color = 'green';
+                                checkVocab();
+                            }
+                        };
+                        window.speechSynthesis.speak(u);
+                    }
+                });
+            });
+
+            if (vComplete) {
+                vComplete.addEventListener('click', function () {
+                    if (!vComplete.disabled) markActivityComplete('vocabulary', 'chkVocabulary');
+                });
+            }
+
+            // ==================== GRAMMAR ACTIVITY ====================
+            const gBtn = document.getElementById('checkGrammarBtn');
+            const gReset = document.getElementById('resetGrammarBtn');
+            const gComplete = document.getElementById('completeGrammarBtn');
+
+            function validateHedging(sentence, expectedKeywords = []) {
+                const ls = sentence.trim().toLowerCase();
+                if (ls.length === 0) return { ok: false, msg: '⚠️ Please write a hedged version.' };
+                const hedgingTools = ['may', 'might', 'could', 'would', 'appears', 'seems', 'tends', 'suggests', 'indicates', 'possibly', 'potentially', 'to some extent', 'a degree of', 'arguably', 'presumably', 'often', 'typically', 'generally'];
+                let hasHedge = false;
+                for (let h of hedgingTools) if (ls.includes(h)) { hasHedge = true; break; }
+                if (!hasHedge) return { ok: false, msg: '💡 Add hedging language. Try using "appears to be", "may", "could", or "suggests".' };
+                if (ls.length < 15) return { ok: false, msg: '💡 Write a complete sentence.' };
+                return { ok: true, msg: '✅ Correct! Good hedging!' };
+            }
+
+            if (gBtn) {
+                gBtn.addEventListener('click', () => {
+                    const r1 = validateHedging(document.getElementById('grammar1').value);
+                    const r2 = validateHedging(document.getElementById('grammar2').value);
+                    const r3 = validateHedging(document.getElementById('grammar3').value);
+                    const fb1 = document.getElementById('grammar1Feedback'), fb2 = document.getElementById('grammar2Feedback'), fb3 = document.getElementById('grammar3Feedback'), gFb = document.getElementById('grammarFeedback');
+                    if (fb1) { fb1.innerHTML = r1.msg; fb1.className = r1.ok ? 'fix-feedback correct' : 'fix-feedback hint'; }
+                    if (fb2) { fb2.innerHTML = r2.msg; fb2.className = r2.ok ? 'fix-feedback correct' : 'fix-feedback hint'; }
+                    if (fb3) { fb3.innerHTML = r3.msg; fb3.className = r3.ok ? 'fix-feedback correct' : 'fix-feedback hint'; }
+                    if (r1.ok && r2.ok && r3.ok) {
+                        grammarCompleted = true;
+                        if (gFb) { gFb.innerHTML = '✅ Excellent! All sentences properly hedged!'; gFb.className = 'quiz-feedback correct'; }
+                        if (gComplete) gComplete.disabled = false;
+                    } else {
+                        grammarCompleted = false;
+                        if (gFb) { gFb.innerHTML = '📚 Add hedging language to your sentences.'; gFb.className = 'quiz-feedback incorrect'; }
+                        if (gComplete) gComplete.disabled = true;
+                    }
+                });
+            }
+
+            if (gReset) {
+                gReset.addEventListener('click', () => {
+                    for (let i = 1; i <= 3; i++) {
+                        const input = document.getElementById(`grammar${i}`);
+                        if (input) input.value = '';
+                        const fb = document.getElementById(`grammar${i}Feedback`);
+                        if (fb) { fb.innerHTML = ''; fb.className = 'fix-feedback'; }
+                    }
+                    const gf = document.getElementById('grammarFeedback');
+                    if (gf) { gf.innerHTML = ''; gf.className = 'quiz-feedback'; }
+                    grammarCompleted = false;
+                    if (gComplete) gComplete.disabled = true;
+                });
+            }
+
+            if (gComplete) { gComplete.addEventListener('click', () => { if (grammarCompleted) markActivityComplete('grammar', 'chkGrammar'); }); }
+
+            // ==================== DAY COMPLETION ====================
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            if (dayBtn) {
+                const newBtn = dayBtn.cloneNode(true);
+                dayBtn.parentNode.replaceChild(newBtn, dayBtn);
+                newBtn.addEventListener('click', function () {
+                    const cbs = document.querySelectorAll('.checklist input.day-check');
+                    let all = true;
+                    cbs.forEach(cb => { if (!cb.checked) all = false; });
+                    if (!all) {
+                        alert('⚠️ Complete all activities first!');
+                        return;
+                    }
+                    this.innerHTML = '✨ Completing day...';
+                    this.disabled = true;
+                    if (typeof canvasConfetti !== 'undefined') {
+                        canvasConfetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                    }
+                    setTimeout(() => {
+                        window.location.href = '/learning/level/intermediate/?celebrate=true&completed=12';
+                    }, 500);
+                });
+            }
+
+            setTimeout(updateDayProgress, 500);
         });
-    }
-    
-    setTimeout(updateDayProgress, 500);
-});
-</script>
+    </script>
 </body>
+
 </html>

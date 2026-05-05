@@ -39,7 +39,7 @@
                     </div>
 
                     <audio id="listeningAudio" controls>
-                        <source src="{% static 'learning/audio/day15.mp3' %}" type="audio/mpeg">
+                        <source src="{% static 'learning/audio/Intermediate/day16.mp3' %}" type="audio/mpeg">
                     </audio>
 
                     <div id="listeningTextSection" style="display: none;">
@@ -284,8 +284,9 @@
                         <p><strong>🔲 Task 3: Circle the word that means 'to vibrate with a deep, full quality'</strong>
                         </p>
                         <p style="margin-bottom: 0.5rem;">Click <strong>" Circle Mode"</strong> → Click on the word
-                            <strong>"resonant"</strong> in the passage above → Click <strong>"✓ Check Circle
-                                Answer"</strong>.</p>
+                            <strong></strong> in the passage above → Click <strong>"✓ Check Circle
+                                Answer"</strong>.
+                        </p>
 
                         <div style="display: flex; gap: 1rem; margin: 1rem 0;">
                             <button id="circleModeBtn" class="btn-outline"
@@ -424,7 +425,8 @@
 
                 <div class="grammar-rule">
                     <p><strong>📖 Example:</strong> 'The <strong>ENGINEER</strong> has <strong>SUBMITTED</strong> the
-                        <strong>REPORT</strong>.'</p>
+                        <strong>REPORT</strong>.'
+                    </p>
                 </div>
 
                 <table class="grammar-table">
@@ -1025,7 +1027,39 @@
 
             // ==================== PROGRESS TRACKING ====================
             if (typeof updateChecklistProgress === 'function') { updateChecklistProgress(); }
+
+
+            // ==================== DAY COMPLETION ====================
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            if (dayBtn) {
+                const newBtn = dayBtn.cloneNode(true);
+                dayBtn.parentNode.replaceChild(newBtn, dayBtn);
+                newBtn.addEventListener('click', function () {
+                    const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'];
+                    let allCompleted = true;
+                    for (let id of checkboxes) {
+                        if (!document.getElementById(id)?.checked) {
+                            allCompleted = false;
+                            break;
+                        }
+                    }
+                    if (!allCompleted) {
+                        alert('⚠️ Please complete all 5 activities before completing the day!');
+                        return;
+                    }
+                    this.innerHTML = '✨ Completing day...';
+                    this.disabled = true;
+                    if (typeof canvasConfetti !== 'undefined') {
+                        canvasConfetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                    }
+                    setTimeout(() => {
+                        window.location.href = '/learning/level/intermediate/?celebrate=true&completed=15';
+                    }, 500);
+                });
+            }
         });
+
+
     </script>
 </body>
 

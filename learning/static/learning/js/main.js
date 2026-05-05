@@ -68,7 +68,7 @@ function markActivityComplete(activityId, checklistId) {
     }
     updateChecklistProgress();
     saveProgress(); // persist to localStorage
-    
+
     fetch(`/learning/level/${currentLevel}/day/${currentDay}/complete/${activityId}/`, {
         method: 'POST',
         headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' },
@@ -78,41 +78,43 @@ function markActivityComplete(activityId, checklistId) {
 
 function completeDay() {
     const btn = document.getElementById('dayCompleteBtn');
-    if (btn.disabled) return;
+    if (!btn || btn.disabled) return;
+
     btn.innerHTML = '✨ Completing day...';
     btn.disabled = true;
-    
-    const allCompleted = activityCompleted.listening && 
-                        window.speakingCompleted === true &&
-                        window.readingCompleted === true &&
-                        activityCompleted.vocabulary && 
-                        activityCompleted.grammar;
-    
-    if (!allCompleted) {
-        btn.innerHTML = '🏆 Complete Day';
-        btn.disabled = false;
-        alert('Please complete all activities first!');
-        return;
-    }
-    
+
+    // Proceed directly to saving and celebration
     fetch(`/learning/level/${currentLevel}/day/${currentDay}/complete/`, {
         method: 'POST',
         headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' },
         body: JSON.stringify({ completed: true })
     }).then(() => {
+        if (typeof confetti === 'function') {
+            confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+        } else if (typeof window.confetti === 'function') {
+            window.confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+        }
+
         btn.innerHTML = '✓ Day Completed! 🎉';
-        clearDayProgress(); // clear localStorage on success
-        if (typeof confetti !== 'undefined') confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+        clearDayProgress();
+
         setTimeout(() => {
             window.location.href = `/learning/level/${currentLevel}/?celebrate=true&completed=${currentDay}`;
-        }, 500);
+        }, 1500);
     }).catch(() => {
+        // Even on network error, we treat it as completed locally for the user's flow
+        if (typeof confetti === 'function') {
+            confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+        } else if (typeof window.confetti === 'function') {
+            window.confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+        }
+
         btn.innerHTML = '✓ Day Completed! 🎉';
-        clearDayProgress(); // clear localStorage even on network error
-        if (typeof confetti !== 'undefined') confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+        clearDayProgress();
+
         setTimeout(() => {
             window.location.href = `/learning/level/${currentLevel}/?celebrate=true&completed=${currentDay}`;
-        }, 500);
+        }, 1500);
     });
 }
 
@@ -133,7 +135,7 @@ function initListeningActivity() {
     const checkBtn = document.getElementById('checkListeningWorkBtn');
     const completeListeningBtn = document.getElementById('completeListeningBtn');
     const quizFeedback = document.getElementById('listeningQuizFeedback');
-    
+
     let mediaRecorder = null;
     let audioChunks = [];
     let isRecording = false;
@@ -141,16 +143,16 @@ function initListeningActivity() {
     let recordingConfirmed = false;
     let q1Correct = false;
     let q2Correct = false;
-    
+
     if (audio) {
-        audio.addEventListener('ended', function() {
+        audio.addEventListener('ended', function () {
             if (listeningTextSection) listeningTextSection.style.display = 'block';
             if (postAudioContent) postAudioContent.style.display = 'block';
         });
     }
-    
+
     if (recordBtn) {
-        recordBtn.addEventListener('click', async function() {
+        recordBtn.addEventListener('click', async function () {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(stream);
@@ -173,9 +175,9 @@ function initListeningActivity() {
             }
         });
     }
-    
+
     if (stopBtn) {
-        stopBtn.addEventListener('click', function() {
+        stopBtn.addEventListener('click', function () {
             if (mediaRecorder && isRecording) {
                 mediaRecorder.stop();
                 isRecording = false;
@@ -184,17 +186,17 @@ function initListeningActivity() {
             }
         });
     }
-    
+
     if (yesBtn) {
-        yesBtn.addEventListener('click', function() {
+        yesBtn.addEventListener('click', function () {
             recordingConfirmed = true;
             if (comparisonFeedback) comparisonFeedback.innerHTML = '<span style="color: green;">✓ Great! Your recording shows improvement.</span>';
             checkListeningCompletion();
         });
     }
-    
+
     if (noBtn) {
-        noBtn.addEventListener('click', function() {
+        noBtn.addEventListener('click', function () {
             recordingConfirmed = false;
             if (comparisonFeedback) comparisonFeedback.innerHTML = '<span style="color: orange;">🔄 Please record again.</span>';
             if (playbackCard) playbackCard.style.display = 'none';
@@ -206,13 +208,13 @@ function initListeningActivity() {
             checkListeningCompletion();
         });
     }
-    
+
     function checkQuiz() {
         const q1Selected = document.querySelector('input[name="q1"]:checked');
         const q2Selected = document.querySelector('input[name="q2"]:checked');
         const q1FeedbackEl = document.getElementById('q1Feedback');
         const q2FeedbackEl = document.getElementById('q2Feedback');
-        
+
         if (q1FeedbackEl) {
             q1FeedbackEl.className = 'ind-quiz-feedback';
             if (!q1Selected) {
@@ -231,7 +233,7 @@ function initListeningActivity() {
                 }
             }
         }
-        
+
         if (q2FeedbackEl) {
             q2FeedbackEl.className = 'ind-quiz-feedback';
             if (!q2Selected) {
@@ -252,9 +254,9 @@ function initListeningActivity() {
         }
         return q1Correct && q2Correct;
     }
-    
+
     if (checkBtn) {
-        checkBtn.addEventListener('click', function() {
+        checkBtn.addEventListener('click', function () {
             if (checkQuiz()) {
                 quizCompleted = true;
                 if (quizFeedback) {
@@ -272,7 +274,7 @@ function initListeningActivity() {
             }
         });
     }
-    
+
     function checkListeningCompletion() {
         if (completeListeningBtn) {
             if (quizCompleted && recordingConfirmed) {
@@ -282,9 +284,9 @@ function initListeningActivity() {
             }
         }
     }
-    
+
     if (completeListeningBtn) {
-        completeListeningBtn.addEventListener('click', function() {
+        completeListeningBtn.addEventListener('click', function () {
             if (!completeListeningBtn.disabled) {
                 const checklistId = completeListeningBtn.getAttribute('data-checklist');
                 completeListeningBtn.disabled = true;
@@ -305,14 +307,14 @@ function initVocabularyActivity() {
     const vocabCompleteBtn = document.getElementById('completeVocabularyBtn');
     const vocabAudioBtns = document.querySelectorAll('.vocab-audio-btn');
     const vocabCheckStatus = {};
-    
+
     pageConfig.vocabularyWords.forEach(word => {
         vocabCheckStatus[`check-${word.toLowerCase()}`] = false;
     });
-    
+
     function checkVocabAllCompleted() {
         const allChecked = Object.values(vocabCheckStatus).every(v => v === true);
-        
+
         if (vocabCompleteBtn) {
             if (allChecked) {
                 vocabCompleteBtn.disabled = false;
@@ -321,7 +323,7 @@ function initVocabularyActivity() {
             }
         }
     }
-    
+
     function updateVocabCheckMark(checkId) {
         if (!vocabCheckStatus[checkId]) {
             vocabCheckStatus[checkId] = true;
@@ -333,9 +335,9 @@ function initVocabularyActivity() {
             checkVocabAllCompleted();
         }
     }
-    
+
     vocabAudioBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             const word = this.getAttribute('data-word');
             const checkId = this.getAttribute('data-checkid');
             if ('speechSynthesis' in window) {
@@ -343,8 +345,8 @@ function initVocabularyActivity() {
                 const utterance = new SpeechSynthesisUtterance(word);
                 utterance.lang = 'en-US';
                 utterance.rate = 0.9;
-                utterance.onend = () => { 
-                    if (checkId) updateVocabCheckMark(checkId); 
+                utterance.onend = () => {
+                    if (checkId) updateVocabCheckMark(checkId);
                 };
                 window.speechSynthesis.speak(utterance);
             } else {
@@ -352,9 +354,9 @@ function initVocabularyActivity() {
             }
         });
     });
-    
+
     if (vocabCompleteBtn) {
-        vocabCompleteBtn.addEventListener('click', function() {
+        vocabCompleteBtn.addEventListener('click', function () {
             if (!vocabCompleteBtn.disabled) {
                 const checklistId = vocabCompleteBtn.getAttribute('data-checklist');
                 vocabCompleteBtn.disabled = true;
@@ -372,27 +374,27 @@ function initVocabularyActivity() {
 
 function initGrammarActivity() {
     let grammarOk = false;
-    
+
     const checkGrammarBtn = document.getElementById('checkGrammarBtn');
     if (checkGrammarBtn) {
         checkGrammarBtn.addEventListener('click', () => {
             // Get all grammar inputs (supports 3 or 4 questions)
             const grammarInputs = document.querySelectorAll('.grammar-input');
             let allValid = true;
-            
+
             grammarInputs.forEach((input, index) => {
                 const value = input.value.trim();
                 const qNum = index + 1;
                 const qConfig = pageConfig.grammarAnswers[`q${qNum}`];
                 const fb = document.getElementById(`grammar${qNum}Feedback`);
-                
+
                 let isValid = false;
                 if (qConfig && qConfig.keyword) {
                     isValid = value.toLowerCase().includes(qConfig.keyword);
                 } else {
                     isValid = value.length > 10;
                 }
-                
+
                 if (fb) {
                     if (isValid) {
                         fb.innerHTML = qConfig?.message || '✅ Correct!';
@@ -404,10 +406,10 @@ function initGrammarActivity() {
                     }
                 }
             });
-            
+
             const grammarFeedback = document.getElementById('grammarFeedback');
             const completeGrammarBtn = document.getElementById('completeGrammarBtn');
-            
+
             if (allValid) {
                 grammarOk = true;
                 if (grammarFeedback) {
@@ -424,7 +426,7 @@ function initGrammarActivity() {
             }
         });
     }
-    
+
     const resetGrammarBtn = document.getElementById('resetGrammarBtn');
     if (resetGrammarBtn) {
         resetGrammarBtn.addEventListener('click', () => {
@@ -443,7 +445,7 @@ function initGrammarActivity() {
             }
         });
     }
-    
+
     const completeGrammarBtn = document.getElementById('completeGrammarBtn');
     if (completeGrammarBtn) {
         completeGrammarBtn.addEventListener('click', () => {
@@ -465,41 +467,41 @@ function initializeDay(day, level, config) {
     currentDay = day;
     currentLevel = level;
     pageConfig = config;
-    
+
     // Reset activity completed status for new day
     activityCompleted = {
         listening: false,
         vocabulary: false,
         grammar: false
     };
-    
+
     // Reset window flags
     window.speakingCompleted = false;
     window.readingCompleted = false;
-    
+
     // Auto-detect and initialize ONLY if elements exist
     if (document.getElementById('listeningAudio')) {
         initListeningActivity();
     }
-    
+
     if (document.getElementById('vocabulary-card')) {
         initVocabularyActivity();
     }
-    
+
     if (document.getElementById('grammar-card')) {
         initGrammarActivity();
     }
-    
+
     // Setup day complete button
     const dayCompleteBtn = document.getElementById('dayCompleteBtn');
     if (dayCompleteBtn) dayCompleteBtn.addEventListener('click', completeDay);
-    
+
     updateChecklistProgress();
-    
+
     // Initialize localStorage for this day and restore any saved progress
     initProgressStorage(day, level);
     loadProgress();
-    
+
     // Auto-save on every input/textarea change
     document.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(el => {
         el.addEventListener('input', saveProgress);
@@ -690,7 +692,7 @@ function initSpeakingRecorder(config) {
     }
 
     if (recordBtn) {
-        recordBtn.addEventListener('click', async function() {
+        recordBtn.addEventListener('click', async function () {
             try {
                 speakingValidated = false;
                 speakingRecorded = false;
@@ -727,13 +729,13 @@ function initSpeakingRecorder(config) {
     }
 
     if (stopBtn) {
-        stopBtn.addEventListener('click', function() {
+        stopBtn.addEventListener('click', function () {
             if (mediaRecorder && isRecording) stopRecording();
         });
     }
 
     if (completeBtn) {
-        completeBtn.addEventListener('click', function() {
+        completeBtn.addEventListener('click', function () {
             if (!completeBtn.disabled && speakingRecorded && speakingValidated) {
                 window.speakingCompleted = true;
                 if (onComplete) onComplete();
@@ -774,9 +776,9 @@ let _STORAGE_KEY = '';
  */
 function initProgressStorage(day, level) {
     const metaUserId = document.querySelector('meta[name="user-id"]')?.content;
-    const userId = (metaUserId && metaUserId !== 'None' && metaUserId !== '') 
-                   ? metaUserId 
-                   : 'guest';
+    const userId = (metaUserId && metaUserId !== 'None' && metaUserId !== '')
+        ? metaUserId
+        : 'guest';
     _STORAGE_KEY = `progress_${userId}_${level}_day_${day}`;
 }
 
@@ -785,13 +787,13 @@ function initProgressStorage(day, level) {
  */
 function saveProgress() {
     if (!_STORAGE_KEY) return;
-    
+
     // Collect all text inputs and textareas that have IDs
     const inputs = {};
     document.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(el => {
         if (el.id && el.value) inputs[el.id] = el.value;
     });
-    
+
     const data = {
         completed: { ...activityCompleted },
         speakingCompleted: window.speakingCompleted === true,
@@ -799,7 +801,7 @@ function saveProgress() {
         inputs: inputs,
         savedAt: Date.now()
     };
-    
+
     try {
         localStorage.setItem(_STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
@@ -813,33 +815,33 @@ function saveProgress() {
  */
 function loadProgress() {
     if (!_STORAGE_KEY) return;
-    
+
     const saved = localStorage.getItem(_STORAGE_KEY);
     if (!saved) return;
-    
+
     try {
         const data = JSON.parse(saved);
-        
+
         // --- Restore completed activities ---
         if (data.completed) {
             // Map activityId -> the checklist checkbox IDs used across days
             const checklistMap = {
-                listening:  ['chk1', 'chkListening'],
+                listening: ['chk1', 'chkListening'],
                 vocabulary: ['chk4', 'chkVocabulary'],
-                grammar:    ['chk5', 'chkGrammar']
+                grammar: ['chk5', 'chkGrammar']
             };
-            
+
             Object.keys(data.completed).forEach(act => {
                 if (!data.completed[act]) return;
-                
+
                 activityCompleted[act] = true;
-                
+
                 // Tick the checklist checkbox (try multiple possible IDs)
                 (checklistMap[act] || []).forEach(chkId => {
                     const chk = document.getElementById(chkId);
                     if (chk) chk.checked = true;
                 });
-                
+
                 // Mark the complete button as done
                 const btnId = `complete${act.charAt(0).toUpperCase() + act.slice(1)}Btn`;
                 const btn = document.getElementById(btnId);
@@ -850,7 +852,7 @@ function loadProgress() {
                 }
             });
         }
-        
+
         // --- Restore speaking/reading flags (set by day-specific code) ---
         if (data.speakingCompleted) {
             window.speakingCompleted = true;
@@ -860,14 +862,14 @@ function loadProgress() {
             });
             // Mark speaking complete button if present
             const speakBtn = document.getElementById('completeSpeakingBtn') ||
-                             document.getElementById('completeRecordingBtn');
+                document.getElementById('completeRecordingBtn');
             if (speakBtn) {
                 speakBtn.classList.add('completed');
                 speakBtn.textContent = '✓ Completed';
                 speakBtn.disabled = true;
             }
         }
-        
+
         if (data.readingCompleted) {
             window.readingCompleted = true;
             ['chk3', 'chkReading'].forEach(id => {
@@ -881,7 +883,7 @@ function loadProgress() {
                 readBtn.disabled = true;
             }
         }
-        
+
         // --- Restore text inputs ---
         if (data.inputs) {
             Object.keys(data.inputs).forEach(id => {
@@ -889,10 +891,10 @@ function loadProgress() {
                 if (el && data.inputs[id]) el.value = data.inputs[id];
             });
         }
-        
+
         // Update progress counter after restoring state
         updateChecklistProgress();
-        
+
     } catch (e) {
         console.warn('Failed to restore progress from localStorage:', e);
         localStorage.removeItem(_STORAGE_KEY);

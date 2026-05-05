@@ -1,0 +1,1422 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 22: Writing Complex Reports — Structure and Flow | English for Engineers - Advanced</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'learning/css/advance.css' %}">
+    <style>
+        .report-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .purpose-badge { background: #d1fae5; color: #065f46; }
+        .finding-badge { background: #e0e7ff; color: #3730a3; }
+        .recommendation-badge { background: #fef3c7; color: #92400e; }
+        .report-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #8b5cf6;
+        }
+        .transition-example {
+            background: #e0f2fe;
+            border-radius: 12px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            font-style: italic;
+        }
+        .writing-feedback {
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin: 0.5rem 0;
+        }
+        .writing-feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #22c55e;
+        }
+        .writing-feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #dc2626;
+        }
+        .speaking-feedback {
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin: 0.5rem 0;
+        }
+        .speaking-feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #22c55e;
+        }
+        .speaking-feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #dc2626;
+        }
+        .question-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+        .question-item {
+            background: #f1f5f9;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lesson-container">
+        <div class="lesson-hero">
+            <div class="hero-content">
+                <div class="day-badge">
+                    <span class="advanced-badge">Advanced Level</span> Day 22 • Week 4 • Advanced
+                </div>
+                <h1 class="hero-title">📊 WRITING COMPLEX REPORTS — STRUCTURE AND FLOW</h1>
+                <div class="power-line">💡 "A report is not a dump of information — it is a guided journey for the reader."</div>
+            </div>
+        </div>
+
+        <!-- TIP OF THE DAY BANNER -->
+        <div class="tip-of-day-banner">
+            <div class="tip-icon">💡</div>
+            <div class="tip-content">
+                <h3>TIP OF THE DAY</h3>
+                <p>Before writing any report, create an <strong>'executive reading path'</strong>: the first sentence of each paragraph should be strong enough that a busy decision-maker reading only those sentences gets the full picture. If they do, your report has good structure.</p>
+            </div>
+        </div>
+
+        <div class="activities-grid">
+
+            <!-- 1. LISTENING ACTIVITY -->
+            <div class="activity-card" id="listening-card">
+                <div class="card-header listening">
+                    <h2>🎧 1. Listening Activity · Report Structure</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Focus</span></div>
+                        </div>
+                        <div class="task-content">Report Structure — how professional reports guide the reader through information.</div>
+                    </div>
+
+                    <audio id="listeningAudio" controls style="width: 100%; margin: 0.5rem 0;">
+                         <source src="{% static 'learning/audio/Advanced/day22.mp3' %}" type="audio/mpeg">
+                    </audio>
+
+                    <div id="listeningTextSection" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Listening Text</span></div>
+                            </div>
+                            <div class="task-content" style="font-style: italic; background: #fef9e3; line-height: 1.8;">
+                                "This report analyses the cause of the August cooling system failure and recommends three corrective measures. The primary cause was identified as inadequate thermal management during peak load periods. Secondary contributing factors included deferred maintenance and insufficient monitoring frequency. Based on these findings, we recommend: (1) installation of an automated thermal monitoring system, (2) a revised maintenance schedule, and (3) operator training on early-warning indicators."
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="postAudioListeningContent" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Task: Map the Report Structure</span></div>
+                            </div>
+                            <div class="task-content">
+                                Identify: Purpose Statement, Primary Finding, Secondary Findings, Recommendations.
+                            </div>
+                        </div>
+
+                        <!-- Purpose Statement -->
+                        <div class="report-section">
+                            <label style="font-weight: 700;">📌 PURPOSE STATEMENT</label>
+                            <input type="text" id="purpose" class="grammar-input" placeholder="What is the report's purpose?" style="width: 100%; margin-top: 0.5rem;">
+                            <div id="purposeFeedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <!-- Primary Finding -->
+                        <div class="report-section">
+                            <label style="font-weight: 700;">📌 PRIMARY FINDING</label>
+                            <input type="text" id="primaryFinding" class="grammar-input" placeholder="What was the main cause?" style="width: 100%; margin-top: 0.5rem;">
+                            <div id="primaryFindingFeedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <!-- Secondary Findings -->
+                        <div class="report-section">
+                            <label style="font-weight: 700;">📌 SECONDARY FINDINGS</label>
+                            <input type="text" id="secondaryFindings" class="grammar-input" placeholder="What were the contributing factors?" style="width: 100%; margin-top: 0.5rem;">
+                            <div id="secondaryFindingsFeedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <!-- Recommendations -->
+                        <div class="report-section">
+                            <label style="font-weight: 700;">📌 RECOMMENDATIONS</label>
+                            <input type="text" id="recommendations" class="grammar-input" placeholder="What actions are recommended?" style="width: 100%; margin-top: 0.5rem;">
+                            <div id="recommendationsFeedback" class="listening-feedback-item" style="display: none; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <button class="btn-outline" id="checkListeningTaskBtn" style="background: #8b5cf6; color: white;">✓ Check My Structure Mapping</button>
+                        <div id="listeningAttemptCounter" class="attempt-counter" style="display: none;">📊 Attempts remaining: <span>3</span></div>
+                        <div id="listeningOverallFeedback" style="margin-top: 1rem;"></div>
+
+                        <!-- Quiz Section -->
+                        <div class="quiz-section" style="margin-top: 1rem;">
+                            <p><strong>🧠 Quick Listening Check</strong></p><br>
+                            <div>
+                                <p><strong>1. Does the report state its purpose immediately?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q1" value="yes"> Yes</label>
+                                <label class="quiz-option"><input type="radio" name="q1" value="no"> No</label>
+                            </div>
+                            <div>
+                                <p><strong>2. How many recommendations are made?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q2" value="two"> Two</label>
+                                <label class="quiz-option"><input type="radio" name="q2" value="three"> Three</label>
+                            </div>
+                            <div id="listeningQuizFeedback" class="quiz-feedback" style="display: none;"></div>
+                            <button class="btn-outline" id="checkListeningWorkBtn" style="margin-top: 0.5rem;">✓ Check Answers</button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeListeningBtn" data-checklist="chk1" disabled>✓ Mark Listening as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SPEAKING ACTIVITY - Report Verbal Briefing -->
+            <div class="activity-card" id="speaking-card">
+                <div class="card-header speaking">
+                    <h2>🗣️ 2. Speaking Activity · Report Verbal Briefing</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Task</span></div>
+                        </div>
+                        <div class="task-content">
+                            Deliver a <strong>60-second verbal summary</strong> of a report using the structured framework.
+                        </div>
+                    </div>
+
+                    <div class="speaking-sentences-list">
+                        <div class="speaking-sentence-item">
+                            <div>Structure -</div>
+                            <div class="sentence-text-content">
+                                <span class="purpose-badge report-badge">Purpose</span> → 
+                                <span class="finding-badge report-badge">Primary Finding</span> → 
+                                <span class="finding-badge report-badge">Secondary Factors</span> → 
+                                <span class="recommendation-badge report-badge">3 Recommendations</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Template -->
+                    <div class="word-pair-group">
+                        <label style="font-weight: 700;">📋 Template:</label>
+                        <p style="font-size: 0.85rem; background: #f8fafc; padding: 0.5rem; border-radius: 8px;">
+                            "This report examines [topic] and recommends [outcome/action].<br>
+                            The primary finding is [key fact with number or evidence].<br>
+                            Contributing factors include [2–3 secondary points].<br>
+                            Our three recommendations are: [1], [2], and [3]."
+                        </p>
+                    </div>
+
+                    <!-- Topic Selection -->
+                    <div class="word-pair-group">
+                        <label style="font-weight: 700;">📌 Select your report topic:</label>
+                        <select id="reportTopic" class="grammar-input" style="width: 100%; margin-top: 0.5rem;">
+                            <option value="">-- Select a topic --</option>
+                            <option value="quality">Quality control failure in manufacturing</option>
+                            <option value="safety">Workplace safety incident analysis</option>
+                            <option value="efficiency">Production efficiency decline report</option>
+                        </select>
+                    </div>
+
+                    <!-- Speech to Text Section -->
+                    <div class="word-pair-group">
+                        <label style="font-weight: 700;">🎤 Speak your report summary (60 seconds):</label>
+                        <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+                            <button id="startSpeechBtn" class="speaking-record-btn" style="background: #22c55e;">🎤 Start Speaking (60 seconds)</button>
+                            <button id="stopSpeechBtn" class="speaking-stop-btn" style="display: none;">⏹️ Stop Speaking</button>
+                        </div>
+                        <div id="speechTimerDisplay" class="timer-display" style="display: none; margin: 0.5rem 0;">⏱️ Speaking: <span id="speechTimer">00:00</span></div>
+                        <textarea id="speechTranscript" class="writing-textarea" rows="6" placeholder="Your speech will appear here after you stop speaking..." readonly style="background: #f8fafc;"></textarea>
+                        <div id="speechFeedback" class="speaking-feedback" style="display: none;"></div>
+                    </div>
+
+                    <div id="speakingAnswerFeedback" class="writing-feedback" style="display: none;"></div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button class="btn-outline" id="checkSpeakingAnswersBtn" style="background: #8b5cf6; color: white;">✓ Evaluate My Speech</button>
+                        <button class="btn-outline" id="resetSpeakingAnswersBtn">⟳ Reset</button>
+                    </div>
+
+                    <div class="speaking-complete-wrapper" style="margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeSpeakingBtn" data-checklist="chk2" disabled>✓ Mark Speaking as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. READING ACTIVITY -->
+            <div class="activity-card" id="reading-card">
+                <div class="card-header reading">
+                    <h2>📖 3. Reading Activity · Report as Reader's Journey</h2>
+                </div>
+                <div class="card-body">
+                    <div class="reading-passage" style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                        <p><strong>Reading Passage:</strong></p>
+                        <p style="line-height: 1.8;">A well-structured report is an act of respect for the reader's time. Every section should earn its place by answering a question the reader is likely to have at that moment in their reading journey. The executive summary answers 'What do I need to know right now?' The introduction answers 'Why are we examining this?' The findings section answers 'What did we discover?' The recommendations answer 'What should we do?' The conclusion answers 'What is the most important takeaway?' Advanced report writers also master transitions: the sentence that ends one section and introduces the next should be a bridge — summarising what has just been established and signalling what comes next.</p>
+                    </div>
+
+                    <!-- Q1: Map the five questions -->
+                    <div class="grammar-input-group" style="margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; background: white;">
+                        <label style="font-weight: 700;">1. Map the five questions the author says each report section should answer.</label>
+                        <div class="question-grid">
+                            <div class="question-item"><strong>Executive Summary:</strong> <input type="text" id="q1Exec" class="grammar-input" placeholder="What question does it answer?" style="width: 100%; margin-top: 0.25rem;"></div>
+                            <div class="question-item"><strong>Introduction:</strong> <input type="text" id="q1Intro" class="grammar-input" placeholder="What question does it answer?" style="width: 100%; margin-top: 0.25rem;"></div>
+                            <div class="question-item"><strong>Findings:</strong> <input type="text" id="q1Findings" class="grammar-input" placeholder="What question does it answer?" style="width: 100%; margin-top: 0.25rem;"></div>
+                            <div class="question-item"><strong>Recommendations:</strong> <input type="text" id="q1Recommend" class="grammar-input" placeholder="What question does it answer?" style="width: 100%; margin-top: 0.25rem;"></div>
+                            <div class="question-item"><strong>Conclusion:</strong> <input type="text" id="q1Conclusion" class="grammar-input" placeholder="What question does it answer?" style="width: 100%; margin-top: 0.25rem;"></div>
+                        </div>
+                        <div id="readingQ1Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Q2: What is the transitional sentence called? -->
+                    <div class="grammar-input-group" style="margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; background: white;">
+                        <label style="font-weight: 700;">2. What does the author call the transitional sentence between sections?</label>
+                        <input type="text" id="readingQ2" class="grammar-input" placeholder="Write your answer here...">
+                        <div id="readingQ2Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Q3: Write a transition sentence -->
+                    <div class="grammar-input-group" style="margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; background: white;">
+                        <label style="font-weight: 700;">3. Write a transition sentence that bridges a 'Findings' section to a 'Recommendations' section in a report about workplace noise levels.</label>
+                        <textarea id="readingQ3" class="writing-textarea" rows="3" placeholder="Write your transition sentence here..."></textarea>
+                        <div id="readingQ3Feedback" class="fix-feedback" style="margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+                        <button class="btn-outline" id="checkReadingBtn">✓ Check Answers</button>
+                        <button class="btn-outline" id="resetReadingBtn">⟳ Reset</button>
+                    </div>
+
+                    <div id="readingOverallFeedback" class="quiz-feedback" style="display: none;"></div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeReadingBtn" data-checklist="chk3" disabled>✓ Mark Reading as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. WRITING ACTIVITY - Report Section -->
+            <div class="activity-card" id="writing-card">
+                <div class="card-header vocabulary">
+                    <h2>✍️ 4. Writing Activity · Structured Report Section</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>📝</span><span>Task</span></div>
+                        </div>
+                        <div class="task-content">
+                            Write a <strong>100-word structured section</strong> of a technical report: <strong>Introduction → Problem Statement → Primary Findings → Recommendations</strong>. Use formal, impersonal language. Include one transition sentence between sections.
+                        </div>
+                    </div>
+
+                    <div class="writing-tip" style="background: #e0f2fe; border-radius: 12px; padding: 0.75rem; margin: 1rem 0;">
+                        <strong>💡 Writing Tip</strong>
+                        <p>The 'inverted pyramid' principle applies to report writing: lead with the most important information, then support it. Busy readers make decisions after reading the first paragraph.</p>
+                    </div>
+
+                    <textarea id="reportWriting" class="writing-textarea" rows="12" placeholder="Write your 100-word structured report section here..."></textarea>
+                    
+                    <div id="writingWordCount" style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem; text-align: right;"></div>
+                    <div id="writingAttemptCounter" class="attempt-counter" style="display: none;">📊 Attempts remaining: <span>3</span></div>
+                    <div id="writingFeedback" class="writing-feedback" style="display: none;"></div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button class="btn-outline" id="checkWritingBtn" style="background: #8b5cf6; color: white;">✓ Check My Report Section</button>
+                        <button class="btn-outline" id="resetWritingBtn">⟳ Reset</button>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeWritingBtn" data-checklist="chk4" disabled>✓ Mark Writing as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. VOCABULARY TABLE -->
+            <div class="activity-card" id="vocabulary-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 5. Vocabulary of the Day</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr><th>🔊</th><th>✅</th><th>Word</th><th>Pronunciation</th><th>Meaning</th><th>Synonym</th><th>Antonym</th></tr></thead>
+                            <tbody>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Systematic" data-checkid="check-systematic">🔊</button></span><td class="check-cell" id="check-systematic">⬜</span><td class="word-cell"><strong>Systematic</strong></span><td><code>/ˌsɪs.təˈmæt.ɪk/</code></span><td>Done according to a fixed plan or method</span><td>Methodical</span><td>Random</span></tr>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Coherence" data-checkid="check-coherence">🔊</button></span><td class="check-cell" id="check-coherence">⬜</span><td class="word-cell"><strong>Coherence</strong></span><td><code>/kəʊˈhɪər.əns/</code></span><td>The quality of forming a unified whole</span><td>Unity</span><td>Fragmentation</span></tr>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Enumerate" data-checkid="check-enumerate">🔊</button></span><td class="check-cell" id="check-enumerate">⬜</span><td class="word-cell"><strong>Enumerate</strong></span><td><code>/ɪˈnjuː.mə.reɪt/</code></span><td>To mention items one by one</span><td>List</span><td>Group vaguely</span></tr>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Corroborate" data-checkid="check-corroborate">🔊</button></span><td class="check-cell" id="check-corroborate">⬜</span><td class="word-cell"><strong>Corroborate</strong></span><td><code>/kəˈrɒb.ə.reɪt/</code></span><td>To confirm with evidence</span><td>Support</span><td>Contradict</span></tr>
+                                <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Disseminate" data-checkid="check-disseminate">🔊</button></span><td class="check-cell" id="check-disseminate">⬜</span><td class="word-cell"><strong>Disseminate</strong></span><td><code>/dɪˈsem.ɪ.neɪt/</code></span><td>To spread information widely</span><td>Distribute</span><td>Withhold</span></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="idiom-section">
+                        <div><span>💡</span><span>IDIOM: "CONNECT THE DOTS"</span></div>
+                        <p><strong>Meaning:</strong> Bring separate pieces of information together into a clear picture</p>
+                        <p><strong>Example:</strong> "The report's strength was its ability to connect the dots between the three separate failure events."</p>
+                    </div>
+
+                    <div class="power-word-section">
+                        <div><span>🔥</span><span>POWER WORD: SYSTEMATIC (sis-tuh-MAT-ik)</span></div>
+                        <p><strong>Meaning:</strong> Done or acting according to a fixed plan or method</p>
+                        <p><strong>Usage:</strong> "A systematic report structure helps readers find key information efficiently."</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeVocabularyBtn" data-checklist="chk5" disabled>✓ Mark Vocabulary as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. GRAMMAR HACK - One Main Idea Per Paragraph -->
+            <div class="grammar-section" id="grammar-card">
+                <h3>🧠 6. Grammar Hack: One Main Idea Per Paragraph</h3>
+                
+                <div class="grammar-info-only" style="background: #f0fdf4; padding: 1rem; border-radius: 12px; margin: 1rem 0;">
+                    <p><strong>📖 The Rule:</strong> Every paragraph must have ONE main idea.</p><br>
+                    <p>❌ <strong>Incorrect (Paragraph Overloading):</strong> "The cooling system failed due to thermal overload. Maintenance records show three missed inspections. The operator error contributed to the failure. The budget impact is estimated at $50,000."</p><br>
+                    <p>✅ <strong>Correct (Split into 4 paragraphs):</strong><br>
+                    Paragraph 1: Cause of failure — thermal overload.<br>
+                    Paragraph 2: Contributing factor — missed maintenance inspections.<br>
+                    Paragraph 3: Contributing factor — operator error.<br>
+                    Paragraph 4: Consequence — budget impact of $50,000.</p><br>
+                    <p><strong>Test:</strong> If you can write two different headings for the same paragraph, split it. Each heading = one paragraph.</p>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                    <button class="complete-activity-btn" id="completeGrammarBtn" data-checklist="chk6">✓ Mark Grammar as Complete</button>
+                </div>
+            </div>
+
+            <!-- CHECKLIST -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 22 COMPLETION CHECKLIST</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chk1" disabled><label> I identified the report structure in the listening script.</label></li>
+                        <li><input type="checkbox" id="chk2" disabled><label> I delivered a 60-second verbal report summary.</label></li>
+                        <li><input type="checkbox" id="chk3" disabled><label> I mapped the five reader questions to report sections.</label></li>
+                        <li><input type="checkbox" id="chk4" disabled><label> I wrote the 200-word structured report section.</label></li>
+                        <li><input type="checkbox" id="chk5" disabled><label> I listened to all vocabulary words.</label></li>
+                        <li><input type="checkbox" id="chk6" disabled><label> I learned the one-paragraph-one-idea rule.</label></li>
+                    </ul>
+                    <div style="text-align:right;"><span class="badge" id="progressCounter">0/6 completed</span></div>
+                    <div style="display:flex; justify-content:center; margin-top:1rem;">
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>🏆 Complete Day 22</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+
+            function updateProgressCounter() {
+                const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6'];
+                let completed = 0;
+                checkboxes.forEach(id => {
+                    const cb = document.getElementById(id);
+                    if (cb && cb.checked) completed++;
+                });
+                document.getElementById('progressCounter').innerText = `${completed}/6 completed`;
+                const dayBtn = document.getElementById('dayCompleteBtn');
+                if (dayBtn) {
+                    dayBtn.disabled = (completed !== 6);
+                    dayBtn.style.background = (completed === 6) ? '#16a34a' : '#94a3b8';
+                    dayBtn.style.cursor = (completed === 6) ? 'pointer' : 'not-allowed';
+                    dayBtn.style.opacity = (completed === 6) ? '1' : '0.6';
+                }
+            }
+
+            window.markActivityComplete = function (activityId, checklistId) {
+                const checkbox = document.getElementById(checklistId);
+                if (checkbox) checkbox.checked = true;
+                const completeBtn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+                if (completeBtn) {
+                    completeBtn.disabled = true;
+                    completeBtn.textContent = '✓ Completed';
+                }
+                updateProgressCounter();
+            };
+
+// ==================== LISTENING ACTIVITY WITH AI (Report Structure) ====================
+const listeningAudio = document.getElementById('listeningAudio');
+const listeningTextSection = document.getElementById('listeningTextSection');
+const postAudioContent = document.getElementById('postAudioListeningContent');
+let masterAudioFinished = false;
+let listeningTaskCompleted = false;
+let listeningQuizCompleted = false;
+let listeningAttemptCount = 0;
+let maxListeningAttempts = 3;
+
+// Expected keywords for local fallback validation (flexible)
+const expectedKeywords = {
+    purpose: ['analyses', 'cause', 'cooling system failure', 'recommends', 'three corrective measures'],
+    primaryFinding: ['inadequate thermal management', 'peak load periods', 'primary cause'],
+    secondaryFindings: ['deferred maintenance', 'insufficient monitoring frequency', 'contributing factors'],
+    recommendations: ['automated thermal monitoring system', 'revised maintenance schedule', 'operator training', 'early-warning indicators']
+};
+
+if (listeningAudio && listeningTextSection && postAudioContent) {
+    listeningAudio.addEventListener('ended', function () {
+        if (!masterAudioFinished) {
+            masterAudioFinished = true;
+            listeningTextSection.style.display = 'block';
+            postAudioContent.style.display = 'block';
+        }
+    });
+}
+
+function showListeningCorrectAnswer() {
+    document.getElementById('listeningOverallFeedback').innerHTML = `
+        <div class="correct-answer-box">
+            <h4>📚 Correct Answers:</h4>
+            <p><strong>Purpose Statement:</strong> This report analyses the cause of the August cooling system failure and recommends three corrective measures.</p>
+            <p><strong>Primary Finding:</strong> Inadequate thermal management during peak load periods.</p>
+            <p><strong>Secondary Findings:</strong> Deferred maintenance and insufficient monitoring frequency.</p>
+            <p><strong>Recommendations:</strong> (1) Automated thermal monitoring system, (2) Revised maintenance schedule, (3) Operator training.</p>
+        </div>`;
+}
+
+// ========== LOCAL VALIDATION FUNCTION (FLEXIBLE FALLBACK) ==========
+function validateListeningLocal(answer, expectedKeywordsArray, fieldName) {
+    const trimmed = answer.trim();
+    const lower = trimmed.toLowerCase();
+    
+    if (!trimmed) {
+        return { valid: false, message: `⚠️ Please write the ${fieldName}.` };
+    }
+    
+    // Check for capital letter at start
+    const firstChar = trimmed.charAt(0);
+    if (firstChar !== firstChar.toUpperCase()) {
+        return { valid: false, message: `❌ ${fieldName} must start with a capital letter.` };
+    }
+    
+    // Check for period at the end
+    if (!trimmed.endsWith('.')) {
+        return { valid: false, message: `❌ ${fieldName} must end with a period (.).` };
+    }
+    
+    if (trimmed.length < 10) {
+        return { valid: false, message: `❌ ${fieldName} too short.` };
+    }
+    
+    // Check for keywords (flexible matching)
+    let matchedKeywords = 0;
+    for (let keyword of expectedKeywordsArray) {
+        if (lower.includes(keyword.toLowerCase())) {
+            matchedKeywords++;
+        }
+    }
+    
+    const wordCount = trimmed.split(/\s+/).length;
+    
+    // Accept if contains at least 2 key keywords
+    if (matchedKeywords >= 2 && wordCount >= 5) {
+        return { valid: true, message: `✅ Correct ${fieldName}!` };
+    } else if (matchedKeywords >= 1) {
+        return { valid: false, message: `❌ ${fieldName} needs more detail.` };
+    } else {
+        return { valid: false, message: `❌ Incorrect ${fieldName}.` };
+    }
+}
+
+// ========== AI VALIDATION (Primary) ==========
+async function evaluateListening() {
+    const purpose = document.getElementById('purpose').value;
+    const primaryFinding = document.getElementById('primaryFinding').value;
+    const secondaryFindings = document.getElementById('secondaryFindings').value;
+    const recommendations = document.getElementById('recommendations').value;
+
+    if (!purpose || !primaryFinding || !secondaryFindings || !recommendations) {
+        document.getElementById('listeningOverallFeedback').innerHTML = '<div class="listening-feedback-item incorrect">⚠️ Fill all 4 fields</div>';
+        return;
+    }
+
+    if (listeningAttemptCount >= maxListeningAttempts) {
+        showListeningCorrectAnswer();
+        listeningTaskCompleted = true;
+        document.getElementById('completeListeningBtn').disabled = false;
+        return;
+    }
+
+    listeningAttemptCount++;
+    document.getElementById('listeningAttemptCounter').style.display = 'block';
+    document.getElementById('listeningAttemptCounter').querySelector('span').innerText = maxListeningAttempts - listeningAttemptCount;
+
+    const checkBtn = document.getElementById('checkListeningTaskBtn');
+    checkBtn.disabled = true;
+    checkBtn.textContent = '⏳ AI Evaluating...';
+    document.getElementById('listeningOverallFeedback').innerHTML = '<div class="ai-feedback processing">🤖 Checking your answers...</div>';
+    document.getElementById('listeningOverallFeedback').style.display = 'block';
+
+    let resultPurpose, resultPrimary, resultSecondary, resultRecommend;
+    let aiSuccess = false;
+
+    try {
+        const listeningData = `Purpose Statement: ${purpose}
+Primary Finding: ${primaryFinding}
+Secondary Findings: ${secondaryFindings}
+Recommendations: ${recommendations}`;
+
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({
+                text: listeningData,
+                task_type: 'report_structure',
+                day_number: 22,
+                level: 'advanced',
+                system_prompt: `You are evaluating a student's comprehension of a report structure from a listening script.
+
+LISTENING SCRIPT:
+"This report analyses the cause of the August cooling system failure and recommends three corrective measures. The primary cause was identified as inadequate thermal management during peak load periods. Secondary contributing factors included deferred maintenance and insufficient monitoring frequency. Based on these findings, we recommend: (1) installation of an automated thermal monitoring system, (2) a revised maintenance schedule, and (3) operator training on early-warning indicators."
+
+STUDENT'S ANSWERS:
+Purpose Statement: "${purpose}"
+Primary Finding: "${primaryFinding}"
+Secondary Findings: "${secondaryFindings}"
+Recommendations: "${recommendations}"
+
+EVALUATE each answer (Be GENEROUS - accept different wording that captures the same meaning):
+
+Purpose Statement: Should indicate the report analyses the cooling system failure AND recommends corrective measures.
+- ACCEPT: "analyses the cause and recommends measures", "reports on failure and suggests fixes"
+
+Primary Finding: Should mention inadequate thermal management during peak loads
+- ACCEPT: "thermal management issue at peak times", "cooling problem during high demand"
+
+Secondary Findings: Should mention deferred maintenance AND insufficient monitoring
+- ACCEPT: "maintenance delays and poor monitoring", "missed maintenance and lack of checks"
+
+Recommendations: Should mention 3 items: monitoring system, maintenance schedule, operator training
+- ACCEPT: any that includes these three elements, can be in list or sentence form
+
+Return JSON with short feedback:
+{
+"purpose_correct": true/false,
+"primary_correct": true/false,
+"secondary_correct": true/false,
+"recommendations_correct": true/false,
+"feedback_purpose": "short (max 12 words)",
+"feedback_primary": "short (max 12 words)",
+"feedback_secondary": "short (max 12 words)",
+"feedback_recommendations": "short (max 12 words)",
+"overall": "short summary"
+}`
+            })
+        });
+        
+        const data = await response.json();
+        aiSuccess = true;
+        
+        resultPurpose = { valid: data.purpose_correct, message: data.feedback_purpose || (data.purpose_correct ? '✅ Correct' : '❌ Needs work') };
+        resultPrimary = { valid: data.primary_correct, message: data.feedback_primary || (data.primary_correct ? '✅ Correct' : '❌ Needs work') };
+        resultSecondary = { valid: data.secondary_correct, message: data.feedback_secondary || (data.secondary_correct ? '✅ Correct' : '❌ Needs work') };
+        resultRecommend = { valid: data.recommendations_correct, message: data.feedback_recommendations || (data.recommendations_correct ? '✅ Correct' : '❌ Needs work') };
+        
+    } catch (error) {
+        console.error('AI Error:', error);
+        aiSuccess = false;
+        
+        // Fallback to local validation
+        resultPurpose = validateListeningLocal(purpose, expectedKeywords.purpose, 'purpose');
+        resultPrimary = validateListeningLocal(primaryFinding, expectedKeywords.primaryFinding, 'primary finding');
+        resultSecondary = validateListeningLocal(secondaryFindings, expectedKeywords.secondaryFindings, 'secondary findings');
+        resultRecommend = validateListeningLocal(recommendations, expectedKeywords.recommendations, 'recommendations');
+    }
+    
+    // Update UI
+    const fbPurpose = document.getElementById('purposeFeedback');
+    const fbPrimary = document.getElementById('primaryFindingFeedback');
+    const fbSecondary = document.getElementById('secondaryFindingsFeedback');
+    const fbRecommend = document.getElementById('recommendationsFeedback');
+    const overallFb = document.getElementById('listeningOverallFeedback');
+    
+    if (fbPurpose) { fbPurpose.innerHTML = resultPurpose.message; fbPurpose.className = resultPurpose.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbPurpose.style.display = 'block'; }
+    if (fbPrimary) { fbPrimary.innerHTML = resultPrimary.message; fbPrimary.className = resultPrimary.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbPrimary.style.display = 'block'; }
+    if (fbSecondary) { fbSecondary.innerHTML = resultSecondary.message; fbSecondary.className = resultSecondary.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbSecondary.style.display = 'block'; }
+    if (fbRecommend) { fbRecommend.innerHTML = resultRecommend.message; fbRecommend.className = resultRecommend.valid ? 'listening-feedback-item correct' : 'listening-feedback-item incorrect'; fbRecommend.style.display = 'block'; }
+    
+    const allCorrect = resultPurpose.valid && resultPrimary.valid && resultSecondary.valid && resultRecommend.valid;
+    
+    if (allCorrect) {
+        listeningTaskCompleted = true;
+        overallFb.innerHTML = '<div class="listening-feedback-item correct">🎉 All answers correct!</div>';
+        document.getElementById('completeListeningBtn').disabled = false;
+    } else if (listeningAttemptCount >= maxListeningAttempts) {
+        showListeningCorrectAnswer();
+        listeningTaskCompleted = true;
+        document.getElementById('completeListeningBtn').disabled = false;
+    } else {
+        overallFb.innerHTML = `<div class="listening-feedback-item incorrect">📚 ${maxListeningAttempts - listeningAttemptCount} attempts left</div>`;
+    }
+    
+    checkBtn.disabled = false;
+    checkBtn.textContent = '✓ Check My Structure Mapping';
+}
+
+document.getElementById('checkListeningTaskBtn')?.addEventListener('click', evaluateListening);
+
+// Quick listening quiz
+document.getElementById('checkListeningWorkBtn')?.addEventListener('click', function () {
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    const feedback = document.getElementById('listeningQuizFeedback');
+    
+    if (!q1 || !q2) {
+        feedback.innerHTML = '⚠️ Answer both questions';
+        feedback.className = 'quiz-feedback warning';
+        feedback.style.display = 'block';
+        return;
+    }
+    
+    const q1Valid = q1.value === 'yes';
+    const q2Valid = q2.value === 'three';
+    
+    if (q1Valid && q2Valid) {
+        feedback.innerHTML = '✅ Correct!';
+        feedback.className = 'quiz-feedback correct';
+        listeningQuizCompleted = true;
+    } else {
+        feedback.innerHTML = q1Valid ? '❌ Q2: Three recommendations' : '❌ Q1: Purpose stated immediately';
+        feedback.className = 'quiz-feedback incorrect';
+        listeningQuizCompleted = false;
+    }
+    feedback.style.display = 'block';
+    
+    if (listeningTaskCompleted && listeningQuizCompleted && masterAudioFinished) {
+        document.getElementById('completeListeningBtn').disabled = false;
+    }
+});
+
+document.getElementById('completeListeningBtn')?.addEventListener('click', function () {
+    if (masterAudioFinished && listeningTaskCompleted && listeningQuizCompleted) {
+        markActivityComplete('listening', 'chk1');
+    }
+});
+
+            // ==================== SPEAKING ACTIVITY ====================
+            let speakingValid = false;
+            let speakingAttemptCount = 0;
+            let maxSpeakingAttempts = 3;
+            let recognition = null;
+            let speechSeconds = 0;
+            let speechTimerInterval = null;
+            let currentTranscript = '';
+
+            const startSpeechBtn = document.getElementById('startSpeechBtn');
+            const stopSpeechBtn = document.getElementById('stopSpeechBtn');
+            const speechTranscript = document.getElementById('speechTranscript');
+            const speechTimerDisplay = document.getElementById('speechTimerDisplay');
+            const speechTimerSpan = document.getElementById('speechTimer');
+            const reportTopic = document.getElementById('reportTopic');
+
+            if (startSpeechBtn) {
+                startSpeechBtn.addEventListener('click', function () {
+                    if (!reportTopic.value) {
+                        document.getElementById('speechFeedback').innerHTML = '<div class="speaking-feedback incorrect">❌ Please select a topic first.</div>';
+                        document.getElementById('speechFeedback').style.display = 'block';
+                        return;
+                    }
+                    
+                    if (!('webkitSpeechRecognition' in window)) {
+                        document.getElementById('speechFeedback').innerHTML = '<div class="speaking-feedback incorrect">❌ Use Chrome browser.</div>';
+                        return;
+                    }
+
+                    recognition = new webkitSpeechRecognition();
+                    recognition.continuous = true;
+                    recognition.interimResults = true;
+                    recognition.lang = 'en-US';
+
+                    currentTranscript = '';
+                    speechTranscript.value = '';
+                    speechSeconds = 0;
+                    speechTimerSpan.textContent = '00:00';
+                    speechTimerDisplay.style.display = 'flex';
+                    startSpeechBtn.style.display = 'none';
+                    stopSpeechBtn.style.display = 'inline-flex';
+                    document.getElementById('speechFeedback').style.display = 'none';
+
+                    if (speechTimerInterval) clearInterval(speechTimerInterval);
+                    speechTimerInterval = setInterval(() => {
+                        speechSeconds++;
+                        const mins = Math.floor(speechSeconds / 60);
+                        const secs = speechSeconds % 60;
+                        speechTimerSpan.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                        if (speechSeconds >= 60) recognition.stop();
+                    }, 1000);
+
+                    recognition.onresult = (event) => {
+                        for (let i = event.resultIndex; i < event.results.length; i++) {
+                            if (event.results[i].isFinal) {
+                                currentTranscript += event.results[i][0].transcript + ' ';
+                                speechTranscript.value = currentTranscript;
+                            }
+                        }
+                    };
+
+                    recognition.onend = () => {
+                        clearInterval(speechTimerInterval);
+                        startSpeechBtn.style.display = 'inline-flex';
+                        stopSpeechBtn.style.display = 'none';
+                        if (speechSeconds < 40) {
+                            document.getElementById('speechFeedback').innerHTML = '<div class="speaking-feedback incorrect">❌ Speak for at least 40 seconds.</div>';
+                        } else {
+                            document.getElementById('speechFeedback').innerHTML = '<div class="speaking-feedback correct">✅ Speech recorded! Click "Evaluate My Speech".</div>';
+                        }
+                        document.getElementById('speechFeedback').style.display = 'block';
+                        recognition = null;
+                    };
+                    recognition.start();
+                });
+            }
+
+            if (stopSpeechBtn) {
+                stopSpeechBtn.addEventListener('click', function () {
+                    if (recognition) recognition.stop();
+                });
+            }
+
+            async function evaluateSpeech() {
+                const transcript = speechTranscript.value.trim();
+                const topic = reportTopic.value;
+
+                if (!transcript) {
+                    document.getElementById('speakingAnswerFeedback').innerHTML = '<div class="writing-feedback incorrect">⚠️ Please record your speech first.</div>';
+                    document.getElementById('speakingAnswerFeedback').style.display = 'block';
+                    return;
+                }
+
+                if (speakingAttemptCount >= maxSpeakingAttempts) {
+                    document.getElementById('speakingAnswerFeedback').innerHTML = `
+                        <div class="correct-answer-box">
+                            <h4>📚 Sample Report Summary:</h4>
+                            <p>This report examines the August cooling system failure and recommends three corrective actions. The primary finding is inadequate thermal management during peak loads. Contributing factors include deferred maintenance and insufficient monitoring. Our three recommendations are: install automated monitoring, revise maintenance schedules, and train operators on warning indicators.</p>
+                        </div>`;
+                    document.getElementById('speakingAnswerFeedback').style.display = 'block';
+                    speakingValid = true;
+                    document.getElementById('completeSpeakingBtn').disabled = false;
+                    return;
+                }
+
+                speakingAttemptCount++;
+                const checkBtn = document.getElementById('checkSpeakingAnswersBtn');
+                checkBtn.disabled = true;
+                checkBtn.textContent = '⏳ Evaluating...';
+
+                try {
+                    const response = await fetch('/learning/ai/evaluate/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                        body: JSON.stringify({
+                            text: transcript,
+                            task_type: 'report_summary',
+                            day_number: 22,
+                            level: 'advanced',
+                            system_prompt: `Evaluate this report summary. Check for: purpose statement, primary finding, secondary factors, three recommendations. Return JSON: {"correct": true/false, "feedback": "short feedback"}`
+                        })
+                    });
+                    const data = await response.json();
+
+                    if (data.correct) {
+                        speakingValid = true;
+                        document.getElementById('speakingAnswerFeedback').innerHTML = `<div class="writing-feedback correct">✅ ${data.feedback || 'Good report summary!'}</div>`;
+                        document.getElementById('completeSpeakingBtn').disabled = false;
+                    } else {
+                        document.getElementById('speakingAnswerFeedback').innerHTML = `<div class="writing-feedback incorrect">❌ ${data.feedback || 'Missing structure. Include purpose, finding, factors, recommendations.'}</div>`;
+                        speakingValid = false;
+                    }
+                } catch (error) {
+                    const lower = transcript.toLowerCase();
+                    const hasPurpose = lower.includes('examines') || lower.includes('analyses');
+                    const hasFinding = lower.includes('finding') || lower.includes('cause');
+                    const hasRecommend = lower.includes('recommend') || lower.includes('recommendations');
+                    
+                    if (hasPurpose && hasFinding && hasRecommend) {
+                        speakingValid = true;
+                        document.getElementById('speakingAnswerFeedback').innerHTML = '<div class="writing-feedback correct">✅ Good report summary!</div>';
+                        document.getElementById('completeSpeakingBtn').disabled = false;
+                    } else {
+                        document.getElementById('speakingAnswerFeedback').innerHTML = '<div class="writing-feedback incorrect">❌ Include purpose, finding, and recommendations.</div>';
+                        speakingValid = false;
+                    }
+                }
+                checkBtn.disabled = false;
+                checkBtn.textContent = '✓ Evaluate My Speech';
+                document.getElementById('speakingAnswerFeedback').style.display = 'block';
+            }
+
+            function resetSpeaking() {
+                reportTopic.value = '';
+                speechTranscript.value = '';
+                document.getElementById('speechFeedback').innerHTML = '';
+                document.getElementById('speakingAnswerFeedback').innerHTML = '';
+                speakingValid = false;
+                speakingAttemptCount = 0;
+                document.getElementById('completeSpeakingBtn').disabled = true;
+                if (recognition) recognition = null;
+            }
+
+            document.getElementById('checkSpeakingAnswersBtn')?.addEventListener('click', evaluateSpeech);
+            document.getElementById('resetSpeakingAnswersBtn')?.addEventListener('click', resetSpeaking);
+            document.getElementById('completeSpeakingBtn')?.addEventListener('click', function () {
+                if (speakingValid) markActivityComplete('speaking', 'chk2');
+            });
+
+           // ==================== READING ACTIVITY WITH STRICT VALIDATION ====================
+let readingResults = { q1: false, q2: false, q3: false };
+
+const expectedQuestions = {
+    exec: "What do I need to know right now?",
+    intro: "Why are we examining this?",
+    findings: "What did we discover?",
+    recommend: "What should we do?",
+    conclusion: "What is the most important takeaway?"
+};
+
+// ========== TASK 1: Map the five questions ==========
+function validateReadingQ1() {
+    const exec = document.getElementById('q1Exec').value.trim().toLowerCase();
+    const intro = document.getElementById('q1Intro').value.trim().toLowerCase();
+    const findings = document.getElementById('q1Findings').value.trim().toLowerCase();
+    const recommend = document.getElementById('q1Recommend').value.trim().toLowerCase();
+    const conclusion = document.getElementById('q1Conclusion').value.trim().toLowerCase();
+    
+    let results = {
+        exec: exec.includes('need to know') || exec.includes('right now'),
+        intro: intro.includes('why') || intro.includes('examining'),
+        findings: findings.includes('discover') || findings.includes('found') || findings.includes('discovered'),
+        recommend: recommend.includes('should we do') || recommend.includes('do') || recommend.includes('action'),
+        conclusion: conclusion.includes('important takeaway') || conclusion.includes('most important') || conclusion.includes('key takeaway')
+    };
+    
+    let allValid = results.exec && results.intro && results.findings && results.recommend && results.conclusion;
+    let message = '';
+    if (allValid) {
+        message = '✅ All questions mapped correctly!';
+    } else {
+        let missing = [];
+        if (!results.exec) missing.push('Executive Summary: "What do I need to know right now?"');
+        if (!results.intro) missing.push('Introduction: "Why are we examining this?"');
+        if (!results.findings) missing.push('Findings: "What did we discover?"');
+        if (!results.recommend) missing.push('Recommendations: "What should we do?"');
+        if (!results.conclusion) missing.push('Conclusion: "What is the most important takeaway?"');
+        message = `❌ Missing: ${missing.join('; ')}`;
+    }
+    return { valid: allValid, message: message };
+}
+
+// ========== TASK 2: Transition sentence name ==========
+function validateReadingQ2(answer) {
+    const trimmed = answer.trim().toLowerCase();
+    if (!trimmed) {
+        return { valid: false, message: '⚠️ Please write your answer.' };
+    }
+    if (trimmed.includes('bridge') || trimmed.includes('transition') || trimmed.includes('transitional sentence')) {
+        return { valid: true, message: '✅ Correct! The author calls it a "bridge" or "transition sentence".' };
+    }
+    return { valid: false, message: '❌ The author calls it a "bridge" — a sentence that summarises what has been established and signals what comes next.' };
+}
+
+// ========== TASK 3: Write a transition sentence (STRICT VALIDATION) ==========
+function validateReadingQ3(answer) {
+    const trimmed = answer.trim();
+    const lower = trimmed.toLowerCase();
+    
+    // Rule 1: Check if empty
+    if (!trimmed) {
+        return { valid: false, message: '⚠️ Please write a transition sentence.' };
+    }
+    
+    // Rule 2: Minimum length (at least 20 characters)
+    if (trimmed.length < 25) {
+        return { valid: false, message: '❌ Sentence too short. Write a complete transition sentence (minimum 25 characters).' };
+    }
+    
+    // Rule 3: Must NOT contain meta-writing phrases (REJECT these immediately)
+    const metaPhrases = [
+        'now i will', 'this section will', 'i am going to', 'next i will', 
+        'in this section', 'this part will', 'i will now', 'let me now',
+        'the following section', 'as you can see', 'i will write',
+        'now i am going to', 'this is where i will'
+    ];
+    for (let phrase of metaPhrases) {
+        if (lower.includes(phrase)) {
+            return { valid: false, message: `❌ Remove meta-writing phrases like "${phrase}". Just write the transition directly.` };
+        }
+    }
+    
+    // Rule 4: Must NOT use first-person pronouns
+    const firstPerson = [' i ', ' we ', ' my ', ' our ', " i'll", " i'm", " we'll", " we're", " i am", " we are"];
+    for (let pronoun of firstPerson) {
+        if (lower.includes(pronoun)) {
+            return { valid: false, message: '❌ Avoid first-person pronouns ("I", "we", "my", "our"). Keep it professional and impersonal.' };
+        }
+    }
+    
+    // Rule 5: Must reference findings or results
+    const findingKeywords = ['findings', 'results', 'analysis', 'data', 'evidence', 'study indicates', 'research shows', 'investigation', 'examination'];
+    let hasFindingReference = false;
+    for (let keyword of findingKeywords) {
+        if (lower.includes(keyword)) {
+            hasFindingReference = true;
+            break;
+        }
+    }
+    if (!hasFindingReference) {
+        return { valid: false, message: '❌ Must reference the "findings" or "results" from the previous section.' };
+    }
+    
+    // Rule 6: Must show cause/effect or problem connection
+    const causalWords = ['indicate', 'highlight', 'reveal', 'affect', 'lead to', 'result in', 'show', 'demonstrate', 'suggest', 'prove', 'confirm', 'establish'];
+    let hasCausalWord = false;
+    for (let word of causalWords) {
+        if (lower.includes(word)) {
+            hasCausalWord = true;
+            break;
+        }
+    }
+    if (!hasCausalWord) {
+        return { valid: false, message: '❌ Use a causal word to connect findings to recommendations (e.g., "indicate", "highlight", "reveal", "lead to").' };
+    }
+    
+    // Rule 7: Must signal recommendations
+    const transitionWords = ['therefore', 'thus', 'based on this', 'accordingly', 'consequently', 'as a result', 'hence', 'so', 'for this reason', 'following these findings', 'in light of these findings'];
+    let hasTransitionWord = false;
+    for (let word of transitionWords) {
+        if (lower.includes(word)) {
+            hasTransitionWord = true;
+            break;
+        }
+    }
+    if (!hasTransitionWord) {
+        return { valid: false, message: '❌ Use a transition word to signal recommendations (e.g., "therefore", "based on this", "accordingly", "consequently").' };
+    }
+    
+    // Rule 8: Must mention recommendations
+    const recommendationWords = ['recommend', 'recommendations', 'suggest', 'propose', 'action', 'measures', 'steps', 'should be', 'must be', 'need to'];
+    let hasRecommendWord = false;
+    for (let word of recommendationWords) {
+        if (lower.includes(word)) {
+            hasRecommendWord = true;
+            break;
+        }
+    }
+    if (!hasRecommendWord) {
+        return { valid: false, message: '❌ Must signal that you are moving to recommendations (e.g., "recommend", "propose", "action", "measures").' };
+    }
+    
+    // Rule 9: Must be professional tone (reject casual/informal)
+    const informalWords = ['basically', 'you see', 'well', 'anyway', 'so yeah', 'okay', 'alright'];
+    for (let word of informalWords) {
+        if (lower.includes(word)) {
+            return { valid: false, message: `❌ Remove informal word: "${word}". Maintain professional tone.` };
+        }
+    }
+    
+    // Rule 10: Must start with capital letter and end with period
+    if (trimmed[0] !== trimmed[0].toUpperCase()) {
+        return { valid: false, message: '❌ Start the sentence with a capital letter.' };
+    }
+    if (!trimmed.endsWith('.')) {
+        return { valid: false, message: '❌ End the sentence with a period (.).' };
+    }
+    
+    // If all rules pass
+    return { valid: true, message: '✅ Excellent transition sentence! It connects findings to recommendations professionally.' };
+}
+// ========== Main validation function ==========
+function evaluateReading() {
+    const result1 = validateReadingQ1();
+    const q2 = document.getElementById('readingQ2').value;
+    const q3 = document.getElementById('readingQ3').value;
+    const result2 = validateReadingQ2(q2);
+    const result3 = validateReadingQ3(q3);
+
+    document.getElementById('readingQ1Feedback').innerHTML = result1.message;
+    document.getElementById('readingQ1Feedback').className = result1.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+    document.getElementById('readingQ1Feedback').style.display = 'block';
+    
+    document.getElementById('readingQ2Feedback').innerHTML = result2.message;
+    document.getElementById('readingQ2Feedback').className = result2.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+    document.getElementById('readingQ2Feedback').style.display = 'block';
+    
+    document.getElementById('readingQ3Feedback').innerHTML = result3.message;
+    document.getElementById('readingQ3Feedback').className = result3.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+    document.getElementById('readingQ3Feedback').style.display = 'block';
+
+    readingResults.q1 = result1.valid;
+    readingResults.q2 = result2.valid;
+    readingResults.q3 = result3.valid;
+
+    if (readingResults.q1 && readingResults.q2 && readingResults.q3) {
+        document.getElementById('readingOverallFeedback').innerHTML = '<div class="quiz-feedback correct">✅ Excellent! All reading answers are correct!</div>';
+        document.getElementById('readingOverallFeedback').className = 'quiz-feedback correct';
+        document.getElementById('readingOverallFeedback').style.display = 'block';
+        document.getElementById('completeReadingBtn').disabled = false;
+    } else {
+        let errorSummary = '';
+        if (!readingResults.q1) errorSummary += '❌ Q1: Map the five questions. ';
+        if (!readingResults.q2) errorSummary += '❌ Q2: The author calls it a "bridge". ';
+        if (!readingResults.q3) errorSummary += '❌ Q3: Write a proper transition sentence (no meta-writing, reference findings, use causal words). ';
+        document.getElementById('readingOverallFeedback').innerHTML = `<div class="quiz-feedback warning">⚠️ ${errorSummary}</div>`;
+        document.getElementById('readingOverallFeedback').className = 'quiz-feedback warning';
+        document.getElementById('readingOverallFeedback').style.display = 'block';
+        document.getElementById('completeReadingBtn').disabled = true;
+    }
+}
+
+function resetReading() {
+    document.getElementById('q1Exec').value = '';
+    document.getElementById('q1Intro').value = '';
+    document.getElementById('q1Findings').value = '';
+    document.getElementById('q1Recommend').value = '';
+    document.getElementById('q1Conclusion').value = '';
+    document.getElementById('readingQ2').value = '';
+    document.getElementById('readingQ3').value = '';
+    document.getElementById('readingQ1Feedback').innerHTML = '';
+    document.getElementById('readingQ2Feedback').innerHTML = '';
+    document.getElementById('readingQ3Feedback').innerHTML = '';
+    document.getElementById('readingOverallFeedback').innerHTML = '';
+    document.getElementById('readingOverallFeedback').style.display = 'none';
+    readingResults = { q1: false, q2: false, q3: false };
+    document.getElementById('completeReadingBtn').disabled = true;
+}
+
+document.getElementById('checkReadingBtn')?.addEventListener('click', evaluateReading);
+document.getElementById('resetReadingBtn')?.addEventListener('click', resetReading);
+
+document.getElementById('completeReadingBtn')?.addEventListener('click', function () {
+    if (readingResults.q1 && readingResults.q2 && readingResults.q3) {
+        markActivityComplete('reading', 'chk3');
+    } else {
+        document.getElementById('readingOverallFeedback').innerHTML = '<div class="quiz-feedback warning">⚠️ Please answer all reading questions correctly first.</div>';
+        document.getElementById('readingOverallFeedback').style.display = 'block';
+    }
+});
+// ==================== WRITING ACTIVITY WITH AI (100 words) ====================
+let writingValid = false;
+let writingAttemptCount = 0;
+let maxWritingAttempts = 3;
+const writingTextarea = document.getElementById('reportWriting');
+const wordCountDisplay = document.getElementById('writingWordCount');
+
+function updateWordCount() {
+    const text = writingTextarea.value;
+    const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+    const count = words.length;
+    wordCountDisplay.innerHTML = `📝 Words: ${count} / 100 minimum`;
+    wordCountDisplay.style.color = count >= 100 ? '#22c55e' : '#dc2626';
+    return count;
+}
+writingTextarea.addEventListener('input', updateWordCount);
+
+function showWritingCorrectAnswer() {
+    document.getElementById('writingFeedback').innerHTML = `
+        <div class="correct-answer-box">
+            <h4>📚 Sample Report Section (100+ words):</h4>
+            <p><strong>Introduction:</strong> This report investigates the 15% decline in production efficiency at the Chennai facility over the past three months.</p>
+            <p><strong>Problem Statement:</strong> Delayed shipments and increased overtime costs have resulted from this efficiency drop.</p>
+            <p><strong>Primary Findings:</strong> Inadequate preventive maintenance on assembly line robots is the primary cause. Calibration frequency decreased by 40% during this period.</p>
+            <p><strong>Recommendations:</strong> Therefore, we recommend restoring weekly calibration schedules, implementing real-time monitoring software, and training staff on predictive diagnostics.</p>
+        </div>`;
+    writingValid = true;
+    document.getElementById('completeWritingBtn').disabled = false;
+}
+
+async function evaluateWriting() {
+    const text = writingTextarea.value;
+    const wordCount = updateWordCount();
+
+    if (wordCount < 100) {
+        document.getElementById('writingFeedback').innerHTML = `<div class="writing-feedback incorrect">❌ Need ${100 - wordCount} more words. Minimum 100 words.</div>`;
+        document.getElementById('writingFeedback').style.display = 'block';
+        return;
+    }
+
+    if (writingAttemptCount >= maxWritingAttempts) {
+        showWritingCorrectAnswer();
+        writingValid = true;
+        document.getElementById('completeWritingBtn').disabled = false;
+        return;
+    }
+
+    writingAttemptCount++;
+    document.getElementById('writingAttemptCounter').style.display = 'block';
+    document.getElementById('writingAttemptCounter').querySelector('span').innerText = maxWritingAttempts - writingAttemptCount;
+
+    const checkBtn = document.getElementById('checkWritingBtn');
+    checkBtn.disabled = true;
+    checkBtn.textContent = '⏳ AI Evaluating...';
+
+    try {
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({
+                text: text,
+                task_type: 'report_section',
+                day_number: 22,
+                level: 'advanced',
+                system_prompt: `You are evaluating a student's technical report section.
+
+REQUIRED STRUCTURE (all 4 sections must be present):
+1. INTRODUCTION - states what the report examines
+2. PROBLEM STATEMENT - describes the issue clearly
+3. PRIMARY FINDINGS - identifies the root cause with data/evidence
+4. RECOMMENDATIONS - proposes specific actionable solutions
+
+EVALUATION RULES (Strict):
+- Must include all 4 sections clearly labeled or identifiable by content
+- Must use formal, impersonal language (no "I", "we", "my", "our")
+- Must contain at least ONE transition sentence between sections
+- Minimum 100 words
+- No conversational fillers ("basically", "you know", "well")
+- Each section must be substantive (not just one word)
+
+Return JSON with:
+{
+"correct": true/false,
+"hasIntroduction": true/false,
+"hasProblem": true/false,
+"hasFindings": true/false,
+"hasRecommendations": true/false,
+"hasTransition": true/false,
+"noFirstPerson": true/false,
+"feedback": "short feedback (max 30 words)",
+"missing": "brief explanation of what's missing"
+}`
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.correct) {
+            writingValid = true;
+            let feedbackMsg = data.feedback || '✅ Excellent report section!';
+            document.getElementById('writingFeedback').innerHTML = `<div class="writing-feedback correct">${feedbackMsg}</div>`;
+            document.getElementById('completeWritingBtn').disabled = false;
+        } else {
+            let errorMsg = '';
+            if (!data.hasIntroduction) errorMsg += '❌ Missing INTRODUCTION. ';
+            if (!data.hasProblem) errorMsg += '❌ Missing PROBLEM STATEMENT. ';
+            if (!data.hasFindings) errorMsg += '❌ Missing FINDINGS. ';
+            if (!data.hasRecommendations) errorMsg += '❌ Missing RECOMMENDATIONS. ';
+            if (!data.hasTransition) errorMsg += '❌ Add a transition sentence. ';
+            if (!data.noFirstPerson) errorMsg += '❌ Remove "I/we/my/our". ';
+            if (errorMsg === '') errorMsg = data.missing || '❌ Structure needs improvement.';
+            
+            document.getElementById('writingFeedback').innerHTML = `<div class="writing-feedback incorrect">${errorMsg}<br>💡 ${data.feedback || 'Add all 4 sections with a transition.'}</div>`;
+            writingValid = false;
+        }
+    } catch (error) {
+        console.error('AI Error:', error);
+        // Fallback validation
+        const lower = text.toLowerCase();
+        const wordCountActual = wordCount;
+        
+        // Check for required sections
+        const hasIntro = lower.includes('introduction') || lower.includes('report examines') || lower.includes('this report') || (lower.includes('investigates') && lower.length > 50);
+        const hasProblem = lower.includes('problem') || lower.includes('issue') || lower.includes('failure') || lower.includes('decline') || lower.includes('drop');
+        const hasFindings = lower.includes('finding') || lower.includes('cause') || lower.includes('primary') || lower.includes('data shows') || lower.includes('analysis reveals');
+        const hasRecommend = lower.includes('recommend') || lower.includes('should') || lower.includes('propose') || lower.includes('action') || lower.includes('measures');
+        
+        // Check for first-person pronouns
+        const hasFirstPerson = /\b(i|we|my|our|me|us)\b/i.test(text);
+        
+        // Check for transition words
+        const hasTransition = lower.includes('therefore') || lower.includes('based on this') || lower.includes('consequently') || lower.includes('thus') || lower.includes('accordingly');
+        
+        let missing = [];
+        if (!hasIntro) missing.push('INTRODUCTION');
+        if (!hasProblem) missing.push('PROBLEM STATEMENT');
+        if (!hasFindings) missing.push('FINDINGS');
+        if (!hasRecommend) missing.push('RECOMMENDATIONS');
+        if (!hasTransition) missing.push('transition sentence');
+        if (hasFirstPerson) missing.push('remove first-person pronouns');
+        
+        if (missing.length === 0 && wordCountActual >= 100) {
+            writingValid = true;
+            document.getElementById('writingFeedback').innerHTML = '<div class="writing-feedback correct">✅ Good report section! All required elements present. (Validated locally)</div>';
+            document.getElementById('completeWritingBtn').disabled = false;
+        } else {
+            document.getElementById('writingFeedback').innerHTML = `<div class="writing-feedback incorrect">❌ Missing: ${missing.join(', ')}. Minimum 100 words required.</div>`;
+            writingValid = false;
+        }
+    }
+    
+    checkBtn.disabled = false;
+    checkBtn.textContent = '✓ Check My Report Section';
+    document.getElementById('writingFeedback').style.display = 'block';
+}
+
+function resetWriting() {
+    writingTextarea.value = '';
+    document.getElementById('writingFeedback').innerHTML = '';
+    document.getElementById('writingFeedback').style.display = 'none';
+    document.getElementById('completeWritingBtn').disabled = true;
+    document.getElementById('writingAttemptCounter').style.display = 'none';
+    writingValid = false;
+    writingAttemptCount = 0;
+    updateWordCount();
+}
+
+document.getElementById('checkWritingBtn')?.addEventListener('click', evaluateWriting);
+document.getElementById('resetWritingBtn')?.addEventListener('click', resetWriting);
+document.getElementById('completeWritingBtn')?.addEventListener('click', function () {
+    if (writingValid) {
+        markActivityComplete('writing', 'chk4');
+    } else {
+        document.getElementById('writingFeedback').innerHTML = '<div class="writing-feedback warning">⚠️ Please validate your report first. Click "Check My Report Section".</div>';
+        document.getElementById('writingFeedback').style.display = 'block';
+    }
+});
+
+            // ==================== VOCABULARY ====================
+            const vocabAudioBtns = document.querySelectorAll('.vocab-audio-btn');
+            const completeVocabularyBtn = document.getElementById('completeVocabularyBtn');
+            const vocabHeard = {
+                'check-systematic': false, 'check-coherence': false, 'check-enumerate': false,
+                'check-corroborate': false, 'check-disseminate': false
+            };
+
+            function checkAllVocabularyListened() {
+                const allHeard = Object.values(vocabHeard).every(v => v === true);
+                if (completeVocabularyBtn) completeVocabularyBtn.disabled = !allHeard;
+                return allHeard;
+            }
+
+            function updateVocabCheckMark(checkId) {
+                if (!vocabHeard[checkId]) {
+                    vocabHeard[checkId] = true;
+                    const cell = document.getElementById(checkId);
+                    if (cell && cell.innerHTML !== '✅') cell.innerHTML = '✅';
+                    checkAllVocabularyListened();
+                }
+            }
+
+            function speakWordWithCheckmark(word, checkId) {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    utterance.onend = () => { if (checkId) updateVocabCheckMark(checkId); };
+                    window.speechSynthesis.speak(utterance);
+                } else if (checkId) updateVocabCheckMark(checkId);
+            }
+
+            vocabAudioBtns.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const word = this.getAttribute('data-word');
+                    const checkId = this.getAttribute('data-checkid');
+                    if (word && checkId && !vocabHeard[checkId]) {
+                        speakWordWithCheckmark(word, checkId);
+                    } else if (word && checkId && vocabHeard[checkId]) {
+                        const utterance = new SpeechSynthesisUtterance(word);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.85;
+                        window.speechSynthesis.speak(utterance);
+                    }
+                });
+            });
+
+            if (completeVocabularyBtn) {
+                completeVocabularyBtn.addEventListener('click', function () {
+                    if (checkAllVocabularyListened()) markActivityComplete('vocabulary', 'chk5');
+                    else alert('Listen to all 5 vocabulary words first.');
+                });
+            }
+
+            // ==================== GRAMMAR (Information Only) ====================
+            document.getElementById('completeGrammarBtn')?.addEventListener('click', function () {
+                markActivityComplete('grammar', 'chk6');
+            });
+
+            // ==================== DAY COMPLETION ====================
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            if (dayBtn) {
+                const newBtn = dayBtn.cloneNode(true);
+                dayBtn.parentNode.replaceChild(newBtn, dayBtn);
+                newBtn.addEventListener('click', function () {
+                    const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6'];
+                    let allCompleted = true;
+                    for (let id of checkboxes) {
+                        if (!document.getElementById(id)?.checked) allCompleted = false;
+                    }
+                    if (!allCompleted) {
+                        alert('⚠️ Complete all 6 activities first!');
+                        return;
+                    }
+                    this.innerHTML = '✨ Completing Day 22...';
+                    this.disabled = true;
+                    if (typeof confetti !== 'undefined') {
+                        confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                        setTimeout(() => confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.3 } }), 200);
+                        setTimeout(() => confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.7 } }), 400);
+                    }
+                    setTimeout(() => {
+                        window.location.href = '/learning/level/advanced/?celebrate=true&completed=22';
+                    }, 1500);
+                });
+            }
+
+            setTimeout(updateProgressCounter, 500);
+        });
+    </script>
+</body>
+
+</html>

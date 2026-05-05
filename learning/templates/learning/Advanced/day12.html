@@ -1,0 +1,703 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 12: Spoken Grammar · Fluency Patterns | English for Engineers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <style>
+        /* Internal CSS to match Day 11 standards */
+        .writing-textarea {
+            width: 100%;
+            padding: 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 250px;
+            background: #ffffff;
+            color: #1e293b;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
+        }
+
+        .writing-textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .writing-tip-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-left: 4px solid #0ea5e9;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .writing-tip-box p {
+            font-size: 0.95rem;
+            color: #0369a1;
+            line-height: 1.5;
+        }
+
+        .listening-task-area {
+            background: #f8fafc;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .listening-task-area p {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #334155;
+        }
+
+        .playback-card {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lesson-container">
+        <!-- HERO SECTION -->
+        <div class="lesson-hero">
+            <div class="hero-content">
+                <div class="day-badge">Day 12 • Week 2 • Advanced</div>
+                <h1 class="hero-title">SPOKEN GRAMMAR: FLUENCY PATTERNS</h1>
+                <div class="power-line">💬 "Fluency is not speed. It is the absence of unintended pauses."</div>
+            </div>
+        </div>
+
+        <!-- TIP OF THE DAY - MATCHING DAY 11 STYLE -->
+        <div class="activity-card" style="margin-bottom: 2rem; border-left: 5px solid #7518e8;">
+            <div class="card-body">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <span style="font-size: 1.5rem;">💡</span>
+                    <strong style="color: #7518e8; letter-spacing: 0.05em;">TIP OF THE DAY</strong>
+                </div>
+                <p style="color: #475569; line-height: 1.6;">
+                    Replace filler words with the <strong>'Thinking Pause'</strong>. Instead of saying 'um' or
+                    'basically',
+                    take a deliberate one-second pause to select the right word. Silence used intentionally sounds
+                    authoritative. Silence filled with 'um' sounds unconfident. Train the difference by recording
+                    yourself daily.
+                </p>
+            </div>
+        </div>
+
+        <!-- MAIN ACTIVITIES GRID -->
+        <div class="activities-grid">
+
+            <!-- 1. LISTENING ACTIVITY -->
+            <div class="activity-card" id="listening-card">
+                <div class="card-header listening">
+                    <h2>🎧 1. Listening Activity · Spoken Fluency</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Focus</span></div>
+                        </div>
+                        <div class="task-content">
+                            Spoken Fluency — how fluent speakers manage thought transitions without fillers.
+                        </div>
+                    </div>
+
+                    <audio id="listeningAudioLocal" controls>
+                        <source src="{% static 'learning/audio/Beginner/day12.mp3' %}" type="audio/mpeg">
+                    </audio>
+
+                    <div id="listeningTextSection" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Listening Text</span></div>
+                            </div>
+                            <div class="task-content" style="font-style: italic; background: #fef9e3;">
+                                "The analysis — and this is the critical part — reveals three distinct failure modes.
+                                The first involves material fatigue. The second relates to assembly error. The
+                                third, which is the most preventable, stems from inadequate maintenance cycles."
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="postAudioListeningContent" style="display: none;">
+                        <div class="listening-task-group" style="margin-top: 1.5rem;">
+                            <div class="listening-task-area">
+                                <p>🎯 <strong>Task:</strong> Notice how the speaker pauses at dashes and commas. Count
+                                    the number of filler words used. How does the speaker signal the most important
+                                    point?</p>
+                                <textarea id="taskInput" class="grammar-input" rows="3"
+                                    placeholder="Identify the signaling phrase and explain its impact..."></textarea>
+                                <button class="btn-outline" id="checkTaskBtn" style="margin-top: 0.8rem;">✓ Check My
+                                    Answer</button>
+                                <div id="taskFeedback" class="fix-feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="quiz-section"
+                            style="margin-top: 2rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+                            <p><strong>🧠 Register Analysis (MCQ)</strong></p>
+
+                            <div class="quiz-question">
+                                <p><strong>1. How does the speaker flag the most critical point?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q1" value="By speaking faster"> By
+                                    speaking faster</label>
+                                <label class="quiz-option"><input type="radio" name="q1"
+                                        value="By saying 'this is the critical part'"> By saying 'this is the critical
+                                    part'</label>
+                            </div>
+
+                            <div class="quiz-question">
+                                <p><strong>2. How many filler words (um, uh, like) are used in the script?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q2" value="Several">
+                                    Several</label>
+                                <label class="quiz-option"><input type="radio" name="q2" value="None"> None</label>
+                            </div>
+
+                            <button class="btn-outline" id="checkListeningWorkBtnLocal" style="margin-top: 0.5rem;">✓ Check My Choices</button>
+                            <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                            <button class="complete-activity-btn" id="completeListeningBtn" disabled
+                                data-checklist="chk1">✓ Mark Listening as Complete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SPEAKING ACTIVITY -->
+            <div class="activity-card" id="speaking-card">
+                <div class="card-header speaking">
+                    <h2>🗣️ 2. Speaking Activity · The Filler-Free Explanation</h2>
+                </div>
+                <div class="card-body">
+                    <div class="speaking-unified-box">
+                        <div class="speaking-task-header">
+                            <div class="task-title">
+                                <span>🎯</span>
+                                <span>Task</span>
+                            </div>
+                            <p class="task-description">
+                                Deliver these sentences aloud, replacing every hesitation with a deliberate
+                                one-second pause — this trains your brain to manage silence authoritatively.
+                            </p>
+                        </div>
+
+                        <div class="speaking-sentences-list">
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">1</div>
+                                <div class="sentence-text-content">
+                                    "The three primary functions of a circuit breaker are — [pause] — current
+                                    interruption, overload protection, and fault isolation."
+                                </div>
+                            </div>
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">2</div>
+                                <div class="sentence-text-content">
+                                    "The most effective solution — [pause] — and I want to be precise here — [pause] —
+                                    is to recalibrate the sensor every 200 hours."
+                                </div>
+                            </div>
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">3</div>
+                                <div class="sentence-text-content">
+                                    Practise saying these without any 'um', 'basically', 'actually', 'na', or 'you
+                                    know'.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="speaking-recording-section">
+                            <div class="recording-header">
+                                <span>🎙️</span>
+                                <h4>Record Your Read-Aloud</h4>
+                            </div>
+                            <div class="recording-controls-group">
+                                <button id="speakingRecordBtn" class="speaking-record-btn">Start Recording</button>
+                                <button id="speakingStopBtn" class="speaking-stop-btn" style="display: none;">Stop
+                                    Recording</button>
+                            </div>
+                            <div id="speakingRecordingStatus" class="recording-status-indicator" style="display: none;">
+                                <div class="recording-dot-live"></div>
+                                <span class="recording-timer-display" id="speakingTimer">00:00</span>
+                                <span class="recording-hint">Recording in progress...</span>
+                            </div>
+                            <div id="speakingPlaybackCard" class="speaking-playback-area" style="display: none;">
+                                <audio id="speakingPlayback" controls></audio>
+                                <div class="playback-success-msg"><span>✅</span> Recording saved! Listen back to check
+                                    your tone and pace.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeSpeakingBtn" disabled data-checklist="chk2">✓
+                            Mark Speaking as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. READING ACTIVITY -->
+            <div class="activity-card" id="reading-card">
+                <div class="card-header reading">
+                    <h2>📖 3. Reading Passage · Building Automaticity</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box" style="margin-bottom: 1.5rem;">
+                        <div class="task-content">
+                            <p>Spoken fluency is built through a combination of vocabulary depth, grammatical
+                                automaticity, and delivery practice. Of these three, automaticity is the most
+                                misunderstood. Automaticity means that correct grammar is no longer something you think
+                                about — it is something your brain processes in the background while your conscious mind
+                                focuses on meaning and impact.</p>
+                            <p>You build automaticity not through study alone, but through high-volume repetition of
+                                correct patterns. Reading aloud, shadowing native speakers, and delivering prepared
+                                speeches all contribute.</p>
+                        </div>
+                    </div>
+
+                    <div class="listening-task-group">
+                        <h3 style="margin-bottom: 1rem; color: #1e293b;">🔍 Analysis Tasks</h3>
+
+                        <div class="listening-task-area">
+                            <p>(a) What is 'automaticity' in language learning? Define it in your own words.</p>
+                            <textarea id="readingT31" class="grammar-input" rows="2"
+                                placeholder="Explain automaticity..."></textarea>
+                            <button class="btn-outline" id="checkReadingT31Btn">✓ Check Answer</button>
+                            <div id="readingT31Feedback" class="fix-feedback"></div>
+                        </div>
+
+                        <div class="listening-task-area">
+                            <p>(b) List three activities the author says build automaticity.</p>
+                            <textarea id="readingT32" class="grammar-input" rows="2"
+                                placeholder="List the activities..."></textarea>
+                            <button class="btn-outline" id="checkReadingT32Btn">✓ Check Answer</button>
+                            <div id="readingT32Feedback" class="fix-feedback"></div>
+                        </div>
+
+                        <div class="listening-task-area">
+                            <p>(c) According to the author, how do advanced speakers differ from beginners?</p>
+                            <textarea id="readingT33" class="grammar-input" rows="2"
+                                placeholder="Explain the difference..."></textarea>
+                            <button class="btn-outline" id="checkReadingT33Btn">✓ Check Answer</button>
+                            <div id="readingT33Feedback" class="fix-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeReadingBtn" disabled data-checklist="chk3">✓
+                            Mark Reading as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. VOCABULARY ACTIVITY -->
+            <div class="activity-card" id="vocabulary-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 4. Vocabulary of the Day</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>🔊</th>
+                                    <th>✅</th>
+                                    <th>Word</th>
+                                    <th>Pronunciation</th>
+                                    <th>Meaning</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Automaticity"
+                                            data-checkid="check-automaticity">🔊</button></td>
+                                    <td id="check-automaticity">⬜</td>
+                                    <td><strong>Automaticity</strong></td>
+                                    <td><code>/ˌɔː.tə.məˈtɪs.ɪ.ti/</code></td>
+                                    <td>Ability to perform without conscious thought</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Articulate"
+                                            data-checkid="check-articulate">🔊</button></td>
+                                    <td id="check-articulate">⬜</td>
+                                    <td><strong>Articulate</strong></td>
+                                    <td><code>/ɑːrˈtɪk.jʊ.lɪt/</code></td>
+                                    <td>Fluent and clear in speech</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Cadence"
+                                            data-checkid="check-cadence">🔊</button></td>
+                                    <td id="check-cadence">⬜</td>
+                                    <td><strong>Cadence</strong></td>
+                                    <td><code>/ˈkeɪ.dəns/</code></td>
+                                    <td>The rhythm and flow of speech</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Enunciate"
+                                            data-checkid="check-enunciate">🔊</button></td>
+                                    <td id="check-enunciate">⬜</td>
+                                    <td><strong>Enunciate</strong></td>
+                                    <td><code>/ɪˈnʌn.si.eɪt/</code></td>
+                                    <td>To pronounce words clearly</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Modulate"
+                                            data-checkid="check-modulate">🔊</button></td>
+                                    <td id="check-modulate">⬜</td>
+                                    <td><strong>Modulate</strong></td>
+                                    <td><code>/ˈmɒd.jʊ.leɪt/</code></td>
+                                    <td>To control or adjust tone and pitch</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="power-word-section">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
+                            <span>🔥</span><span>POWER WORD: ARTICULATE</span>
+                        </div>
+                        <p><strong>Meaning:</strong> Fluent and clear in speech</p>
+                        <p><strong>Usage:</strong> "The most articulate engineers are often selected first for
+                            leadership roles."</p>
+                    </div>
+
+                    <div class="power-word-section" style="border-left-color: #22c55e;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #166534;">
+                            <span>💬</span><span>IDIOM: "Find your voice"</span>
+                        </div>
+                        <p><strong>Meaning:</strong> Discover your authentic communication style</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeVocabularyBtn" disabled
+                            data-checklist="chk4">✓ Mark Vocabulary as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. GRAMMAR HACK -->
+            <div class="grammar-section" id="grammar-card">
+                <h3 style="margin: 0 0 1rem 0;">🧠 Grammar Hack: Avoid Using 'Itself' Unnecessarily</h3>
+                <div class="grammar-rule">
+                    <p>Adding 'itself' to sentences for emphasis is rarely needed and sounds unnatural in formal
+                        contexts.</p>
+                </div>
+                <div class="grammar-rule">
+                    <p>❌ <span class="wrong">The system itself is working fine.</span></p>
+                    <p>✅ <span class="correct">The system is working fine.</span></p>
+                </div>
+                <div class="grammar-rule">
+                    <p>❌ <span class="wrong">The machine itself costs very less.</span></p>
+                    <p>✅ <span class="correct">The machine is cost-effective.</span></p>
+                </div>
+                <div class="grammar-rule">
+                    <p><strong>When IS 'itself' appropriate?</strong> Only for true emphasis of contrast:
+                        <em>'The machine itself is fine, but the installation is faulty.'</em> — here 'itself' clarifies
+                        the distinction.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 6. WRITING ACTIVITY -->
+            <div class="activity-card" id="writing-card">
+                <div class="card-header writing">
+                    <h2>✍️ 5. Writing Activity · The Monologue Script</h2>
+                </div>
+                <div class="card-body">
+                    <div class="writing-tip-box">
+                        <p><strong>💡 Writing Tip:</strong> Writing a speech script forces you to think about spoken
+                            rhythm. After writing, read it aloud five times, each time speaking more slowly than feels
+                            natural. Your brain will absorb the pattern and reproduce it spontaneously.</p>
+                    </div>
+
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>The Task</span></div>
+                        </div>
+                        <div class="task-content">
+                            Write a monologue script (120 words) for a technical process. Include three deliberate
+                            pauses (—) and zero filler words.
+                        </div>
+                    </div>
+
+                    <div class="writing-prompt">
+                        <label style="margin-bottom: 0.5rem; display: block; font-weight: 600;">📝 Your Monologue
+                            Script:</label>
+                        <textarea id="progressEmailBody" class="writing-textarea"
+                            placeholder="Describe the process... use — for pauses."></textarea>
+                        <div style="font-size: 0.8rem; color: #64748b; text-align: right; margin-top: 0.5rem;">Word
+                            count: <span id="wordCount">0</span> / ~120</div>
+                    </div>
+
+                    <button class="btn-outline" id="checkWritingBtn" style="margin-top: 1rem;">✓ Check My
+                        Script</button>
+                    <div id="progressEmailBodyFeedback" class="fix-feedback"></div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                        <button class="complete-activity-btn" id="completeWritingBtn" disabled data-checklist="chk5">✓
+                            Mark Writing as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHECKLIST -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 12 COMPLETION CHECKLIST</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chk1" disabled><label> Counted filler words in the listening
+                                script</label></li>
+                        <li><input type="checkbox" id="chk2" disabled><label> Delivered the filler-free speaking
+                                exercise</label></li>
+                        <li><input type="checkbox" id="chk3" disabled><label> Defined 'automaticity' from the reading
+                                passage</label></li>
+                        <li><input type="checkbox" id="chk4" disabled><label> Used 'Articulate' in speaking and
+                                writing</label></li>
+                        <li><input type="checkbox" id="chk5" disabled><label> Wrote the 120-word monologue
+                                script</label></li>
+                    </ul>
+                    <div style="text-align:right;"><span class="badge" id="progressCounter">0/5 completed</span></div>
+                    <div style="display:flex; justify-content:center; margin-top:1rem;">
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 12</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JS SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Day
+            if (typeof initializeDay === 'function') {
+                initializeDay(12, 'advanced', {
+                    vocabularyWords: ['Automaticity', 'Articulate', 'Cadence', 'Enunciate', 'Modulate']
+                });
+            }
+
+            // --- 1. LISTENING ACTIVITY ---
+            let taskDone = false;
+            let quizDone = false;
+
+            // Audio Reveal Logic (Isolated from main.js)
+            const audio = document.getElementById('listeningAudioLocal');
+            if (audio) {
+                audio.addEventListener('ended', function() {
+                    document.getElementById('listeningTextSection').style.display = 'block';
+                    document.getElementById('postAudioListeningContent').style.display = 'block';
+                });
+            }
+
+            function updateListeningCompletion() {
+                if (taskDone && quizDone) {
+                    document.getElementById('completeListeningBtn').disabled = false;
+                } else {
+                    document.getElementById('completeListeningBtn').disabled = true;
+                }
+            }
+
+            document.getElementById('checkTaskBtn')?.addEventListener('click', async () => {
+                const text = document.getElementById('taskInput').value.trim();
+                taskDone = await evaluateTaskRaw(text, 'taskFeedback', 'listening_analysis', 5);
+                updateListeningCompletion();
+            });
+
+            document.getElementById('checkListeningWorkBtnLocal')?.addEventListener('click', function () {
+                const q1 = document.querySelector('input[name="q1"]:checked');
+                const q2 = document.querySelector('input[name="q2"]:checked');
+                const feedback = document.getElementById('listeningQuizFeedback');
+
+                if (!q1 || !q2) {
+                    feedback.innerHTML = '⚠️ Please answer both quiz questions.';
+                    feedback.className = 'quiz-feedback incorrect';
+                    feedback.style.display = 'block';
+                    return;
+                }
+
+                const isQ1Correct = q1.value === "By saying 'this is the critical part'";
+                const isQ2Correct = q2.value === 'None';
+
+                if (isQ1Correct && isQ2Correct) {
+                    feedback.innerHTML = '✅ Correct! The signaling phrase was identified and no fillers were used.';
+                    feedback.className = 'quiz-feedback correct';
+                    quizDone = true;
+                } else {
+                    feedback.innerHTML = '❌ Some answers need review. Check the signaling phrase and filler count.';
+                    feedback.className = 'quiz-feedback incorrect';
+                    quizDone = false;
+                }
+                feedback.style.display = 'block';
+                updateListeningCompletion();
+            });
+
+            // --- AI EVALUATION HELPER ---
+            async function evaluateTaskRaw(text, feedbackId, type, minWords = 5) {
+                const feedback = document.getElementById(feedbackId);
+                const words = text.split(/\s+/).filter(w => w.length > 0).length;
+
+                if (words < minWords) {
+                    feedback.innerHTML = `⚠️ Too brief. Please provide more detail.`;
+                    feedback.className = 'fix-feedback incorrect';
+                    feedback.style.display = 'block';
+                    return false;
+                }
+
+                feedback.innerHTML = '⏳ <strong>Evaluating...</strong>';
+                feedback.className = 'fix-feedback';
+                feedback.style.display = 'block';
+
+                const customPrompts = {
+                    listening_analysis: "Identify how the speaker signals importance in the script. The correct answer should mention the signaling phrase 'and this is the critical part' and mention that the filler word count is zero (none).",
+                    reading_a: "Define 'automaticity' based on the text. The correct answer should explain that it means correct grammar is processed in the background/unconsciously while focusing on meaning.",
+                    reading_b: "List three activities that build automaticity according to the passage. Correct answers must include: reading aloud, shadowing native speakers, and delivering prepared speeches.",
+                    reading_c: "Explain how advanced speakers differ from beginners according to the author. The correct answer should mention that advanced speakers process grammar in the background/automatically, while beginners must think about it.",
+                    professional_monologue: "Write a 120-word technical monologue script. It MUST include at least three deliberate pauses (—) and contain zero filler words (um, uh, like)."
+                };
+
+                const system_prompt = `Evaluate the following response as an English communication trainer.
+                
+                Original Task: "${customPrompts[type]}"
+
+                Provide a strict, professional evaluation in this format:
+                ✅ Evaluation:
+                2-4 sentences assessing how well the response meets the task requirements. Comment on content selection, structure, clarity, relevance, and adherence to the instructions.
+
+                💡 Improvement:
+                Give one specific, practical suggestion that would make the response stronger. Focus only on the single most important improvement.
+
+                Do not mention scores, grades, ratings, or word count. Keep the feedback concise, direct, and teacher-like.
+
+                Return ONLY a JSON object:
+                {
+                    "correct": true/false,
+                    "evaluation": "The evaluation text...",
+                    "improvement": "The improvement suggestion..."
+                }`;
+
+                try {
+                    const response = await fetch('/learning/ai/evaluate/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                        body: JSON.stringify({ text, task_type: type, day_number: 12, level: 'advanced', system_prompt })
+                    });
+                    const res = await response.json();
+                    if (res.success) {
+                        const isCorrect = res.correct !== false;
+                        const statusEmoji = isCorrect ? '✅' : '❌';
+
+                        feedback.innerHTML = `
+                            <div style="margin-bottom: 0.8rem;">
+                                <strong>${statusEmoji} Evaluation:</strong><br>
+                                <span style="font-size: 0.95rem; line-height: 1.5;">${res.evaluation}</span>
+                            </div>
+                            <div style="border-top: 1px solid #e2e8f0; padding-top: 0.8rem;">
+                                <strong>💡 Improvement:</strong><br>
+                                <span style="font-size: 0.95rem; line-height: 1.5;">${res.improvement}</span>
+                            </div>
+                        `;
+                        feedback.className = `fix-feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+                        return isCorrect;
+                    }
+                    return false;
+                } catch (e) {
+                    feedback.innerHTML = '⚠️ Error connecting to AI.';
+                    feedback.className = 'fix-feedback incorrect';
+                    return false;
+                }
+            }
+
+            async function evaluateTask(id, type, taskName, minWords = 5) {
+                const inputEl = document.getElementById(id + 'Input') || document.getElementById(id);
+                return await evaluateTaskRaw(inputEl.value.trim(), id + 'Feedback', type, minWords);
+            }
+
+            // --- 3. READING ---
+            let readingT1Done = false, readingT2Done = false, readingT3Done = false;
+            document.getElementById('checkReadingT31Btn')?.addEventListener('click', async () => {
+                readingT1Done = await evaluateTask('readingT31', 'reading_a', 'Define automaticity', 10);
+                updateReadingCompletion();
+            });
+            document.getElementById('checkReadingT32Btn')?.addEventListener('click', async () => {
+                readingT2Done = await evaluateTask('readingT32', 'reading_b', 'Activities for automaticity', 5);
+                updateReadingCompletion();
+            });
+            document.getElementById('checkReadingT33Btn')?.addEventListener('click', async () => {
+                readingT3Done = await evaluateTask('readingT33', 'reading_c', 'Advanced vs Beginners fluency', 15);
+                updateReadingCompletion();
+            });
+            function updateReadingCompletion() {
+                if (readingT1Done && readingT2Done && readingT3Done) {
+                    document.getElementById('completeReadingBtn').disabled = false;
+                }
+            }
+
+            // --- 5. WRITING ---
+            document.getElementById('checkWritingBtn')?.addEventListener('click', async () => {
+                const isCorrect = await evaluateTask('progressEmailBody', 'professional_monologue', '120-word monologue script', 80);
+                if (isCorrect) {
+                    document.getElementById('completeWritingBtn').disabled = false;
+                }
+            });
+            document.getElementById('progressEmailBody')?.addEventListener('input', function () {
+                document.getElementById('wordCount').innerText = this.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+            });
+
+            // --- SPEAKING ---
+            let speakMediaRecorder, speakChunks = [];
+            document.getElementById('speakingRecordBtn')?.addEventListener('click', async () => {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                speakMediaRecorder = new MediaRecorder(stream);
+                speakChunks = [];
+                speakMediaRecorder.ondataavailable = e => speakChunks.push(e.data);
+                speakMediaRecorder.onstop = () => {
+                    const blob = new Blob(speakChunks, { type: 'audio/webm' });
+                    document.getElementById('speakingPlayback').src = URL.createObjectURL(blob);
+                    document.getElementById('speakingPlaybackCard').style.display = 'block';
+                    document.getElementById('completeSpeakingBtn').disabled = false;
+                    stream.getTracks().forEach(t => t.stop());
+                };
+                speakMediaRecorder.start();
+                document.getElementById('speakingRecordBtn').style.display = 'none';
+                document.getElementById('speakingStopBtn').style.display = 'inline-flex';
+                document.getElementById('speakingRecordingStatus').style.display = 'flex';
+            });
+            document.getElementById('speakingStopBtn')?.addEventListener('click', () => {
+                speakMediaRecorder.stop();
+                document.getElementById('speakingRecordBtn').style.display = 'inline-flex';
+                document.getElementById('speakingStopBtn').style.display = 'none';
+                document.getElementById('speakingRecordingStatus').style.display = 'none';
+            });
+
+            // --- HANDLERS ---
+            document.getElementById('completeListeningBtn')?.addEventListener('click', () => markActivityComplete('listening', 'chk1'));
+            document.getElementById('completeSpeakingBtn')?.addEventListener('click', () => markActivityComplete('speaking', 'chk2'));
+            document.getElementById('completeReadingBtn')?.addEventListener('click', () => markActivityComplete('reading', 'chk3'));
+            document.getElementById('completeVocabularyBtn')?.addEventListener('click', () => markActivityComplete('vocabulary', 'chk4'));
+            document.getElementById('completeWritingBtn')?.addEventListener('click', () => markActivityComplete('writing', 'chk5'));
+            document.getElementById('dayCompleteBtn')?.addEventListener('click', completeDay);
+        });
+    </script>
+</body>
+
+</html>

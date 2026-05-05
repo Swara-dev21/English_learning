@@ -1,0 +1,665 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 19: Vocabulary in Context | English for Engineers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <style>
+        .writing-textarea {
+            width: 100%;
+            padding: 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 250px;
+            background: #ffffff;
+            color: #1e293b;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
+        }
+
+        .writing-textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .writing-tip-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-left: 4px solid #0ea5e9;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .writing-tip-box p {
+            font-size: 0.95rem;
+            color: #0369a1;
+            line-height: 1.5;
+        }
+
+        .listening-task-area {
+            background: #f8fafc;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .listening-task-area p {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #334155;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lesson-container">
+        <!-- HERO SECTION -->
+        <div class="lesson-hero">
+            <div class="hero-content">
+                <div class="day-badge">Day 19 • Engineering Vocabulary • Advanced</div>
+                <h1 class="hero-title">VOCABULARY IN CONTEXT</h1>
+                <div class="power-line">💬 "A word without context is a tool without purpose."</div>
+            </div>
+        </div>
+
+        <!-- TIP OF THE DAY -->
+        <div class="activity-card" style="margin-bottom: 2rem; border-left: 5px solid #7518e8;">
+            <div class="card-body">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <span style="font-size: 1.5rem;">💡</span>
+                    <strong style="color: #7518e8; letter-spacing: 0.05em;">TIP OF THE DAY</strong>
+                </div>
+                <p style="color: #475569; line-height: 1.6;">
+                    The fastest way to acquire advanced vocabulary is to learn words in clusters, not in isolation. When you learn 'mitigate', also learn 'mitigation', 'mitigating factors', and 'mitigation strategy'. One root word, learned fully in its family, is worth five isolated words on a vocabulary list.
+                </p>
+            </div>
+        </div>
+
+        <div class="activities-grid">
+            <!-- 1. LISTENING ACTIVITY -->
+            <div class="activity-card" id="listening-card">
+                <div class="card-header listening">
+                    <h2>🎧 1. Listening Activity · Engineering Applications</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Focus</span></div>
+                        </div>
+                        <div class="task-content">
+                            Vocabulary in Technical Context — noticing how the same word changes meaning in different fields.
+                        </div>
+                    </div>
+
+                    <!-- 🔊 AUDIO PLAYER SECTION -->
+                    <div class="audio-player-container" style="margin: 1.5rem 0;">
+                        <audio id="listeningAudio19" controls style="width: 100%;">
+                            <source src="{% static 'learning/audio/Beginner/day19.mp3' %}" type="audio/mpeg">
+                        </audio>
+                    </div>
+
+                    <!-- 📝 LISTENING TEXT (Hidden until audio ends) -->
+                    <div id="listeningTextSection" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Domain Meanings</span></div>
+                            </div>
+                            <div class="task-content" style="font-style: italic; background: #fef9e3;">
+                                "In mechanical engineering, tolerance refers to the permissible deviation from a standard dimension. In electrical engineering, tolerance describes the range within which a component operates reliably. In project management, tolerance indicates the acceptable variance from planned cost or timeline. The word is the same. The domain changes the meaning."
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 🎯 TASKS (Hidden until audio ends) -->
+                    <div id="postAudioListeningContent" style="display: none;">
+                        <div class="listening-task-group" style="margin-top: 1.5rem;">
+                            <!-- Task 1 -->
+                            <div class="listening-task-area">
+                                <p>🎯 <strong>Task 1:</strong> Identify how 'tolerance' functions differently in the three technical domains mentioned.</p>
+                                <textarea id="task1Input" class="grammar-input" rows="3"
+                                    placeholder="Mechanical: ... Electrical: ... Project Management: ..."></textarea>
+                                <button class="btn-outline" id="checkTask1Btn" style="margin-top: 0.8rem;">✓ Check Task 1</button>
+                                <div id="task1Feedback" class="fix-feedback"></div>
+                            </div>
+
+                            <!-- Task 2 -->
+                            <div class="listening-task-area">
+                                <p>🎯 <strong>Task 2:</strong> Find one other engineering word that changes meaning across different disciplines (e.g. 'strain', 'stress', 'load').</p>
+                                <textarea id="task2Input" class="grammar-input" rows="2"
+                                    placeholder="Enter the word and its different meanings..."></textarea>
+                                <button class="btn-outline" id="checkTask2Btn" style="margin-top: 0.8rem;">✓ Check Task 2</button>
+                                <div id="task2Feedback" class="fix-feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="quiz-section"
+                            style="margin-top: 2rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+                            <p><strong>🧠 Vocabulary Diagnostic</strong></p>
+
+                            <div class="quiz-question">
+                                <p><strong>1. In project management, what does 'tolerance' refer to?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q1" value="A"> Permissible dimension</label>
+                                <label class="quiz-option"><input type="radio" name="q1" value="B"> Acceptable variance from plan</label>
+                            </div>
+
+                            <div class="quiz-question">
+                                <p><strong>2. What changes the meaning of a technical word according to the script?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q2" value="A"> Spelling</label>
+                                <label class="quiz-option"><input type="radio" name="q2" value="B"> The domain or field</label>
+                            </div>
+
+                            <button class="btn-outline" id="checkListeningWorkBtn" style="margin-top: 0.5rem;">✓ Check My Choices</button>
+                            <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                            <button class="complete-activity-btn" id="completeListeningBtn" disabled
+                                data-checklist="chk1">✓ Mark Listening as Complete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SPEAKING ACTIVITY -->
+            <div class="activity-card" id="speaking-card">
+                <div class="card-header speaking">
+                    <h2>🗣️ 2. Speaking Activity · The Domain Vocabulary Bridge</h2>
+                </div>
+                <div class="card-body">
+                    <div class="speaking-unified-box">
+                        <div class="speaking-task-header">
+                            <div class="task-title">
+                                <span>🎯</span>
+                                <span>Task</span>
+                            </div>
+                            <p class="task-description">
+                                Practise using these engineering-application vocabulary words in context. Focus on tone, clarity,
+                                and pacing.
+                            </p>
+                        </div>
+
+                        <div class="speaking-sentences-list">
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">1</div>
+                                <div class="sentence-text-content">
+                                    "To mitigate the risk of thermal overload, we installed additional heat dissipation fins."
+                                </div>
+                            </div>
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">2</div>
+                                <div class="sentence-text-content">
+                                    "System redundancy ensures that a single point of failure does not cause complete shutdown."
+                                </div>
+                            </div>
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">3</div>
+                                <div class="sentence-text-content">
+                                    "Before each test cycle, all measurement instruments were calibrated against the reference standard."
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="speaking-recording-section">
+                            <div class="recording-header">
+                                <span>🎙️</span>
+                                <h4>Record Your Domain Vocabulary Explanation</h4>
+                            </div>
+                            <div class="recording-controls-group">
+                                <button id="speakingRecordBtn" class="speaking-record-btn">Start Recording</button>
+                                <button id="speakingStopBtn" class="speaking-stop-btn" style="display: none;">Stop
+                                    Recording</button>
+                            </div>
+                            <div id="speakingRecordingStatus" class="recording-status-indicator" style="display: none;">
+                                <div class="recording-dot-live"></div>
+                                <span class="recording-timer-display" id="speakingTimer">00:00</span>
+                            </div>
+                            <div id="speakingPlaybackCard" class="speaking-playback-area" style="display: none;">
+                                <audio id="speakingPlayback" controls></audio>
+                                <div class="playback-success-msg"><span>✅</span> Recording saved! Listen for confidence
+                                    and clarity.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeSpeakingBtn" disabled data-checklist="chk2">✓
+                            Mark Speaking as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. READING ACTIVITY -->
+            <div class="activity-card" id="reading-card">
+                <div class="card-header reading">
+                    <h2>📖 3. Reading · Vocabulary as a Precision Instrument</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box" style="margin-bottom: 1.5rem;">
+                        <div class="task-content">
+                            <p>Technical vocabulary is not a barrier to understanding — it is a precision instrument. When an engineer says 'the system exhibits non-linear response characteristics under transient loading', they are not showing off. They are conveying in twelve words a concept that might take three paragraphs of plain English to explain — and with less precision. Advanced learners do not resist technical vocabulary; they invest in it deliberately. They read specifications, technical manuals, and journal papers with a vocabulary notebook — noting not just the word but its sentence-level context, its collocations (words it commonly appears with), and its grammatical behaviour.</p>
+                        </div>
+                    </div>
+
+                    <div class="listening-task-group">
+                        <div class="listening-task-area">
+                            <p>(a) What does the author mean by calling technical vocabulary a 'precision instrument'?</p>
+                            <textarea id="readingT31" class="grammar-input" rows="2"
+                                placeholder="Explain the concept..."></textarea>
+                            <button class="btn-outline" id="checkReadingT31Btn">✓ Check Answer</button>
+                            <div id="readingT31Feedback" class="fix-feedback"></div>
+                        </div>
+
+                        <div class="listening-task-area">
+                            <p>(b) What does the author recommend noting in a vocabulary notebook beyond the word itself?</p>
+                            <textarea id="readingT32" class="grammar-input" rows="2"
+                                placeholder="Identify the recommendations..."></textarea>
+                            <button class="btn-outline" id="checkReadingT32Btn">✓ Check Answer</button>
+                            <div id="readingT32Feedback" class="fix-feedback"></div>
+                        </div>
+
+                        <div class="listening-task-area">
+                            <p>(c) Define one technical term from your course with two collocations and a sentence.</p>
+                            <textarea id="readingT33" class="grammar-input" rows="2"
+                                placeholder="Term: ... Definition: ... Collocations: ... Sentence: ..."></textarea>
+                            <button class="btn-outline" id="checkReadingT33Btn">✓ Check Answer</button>
+                            <div id="readingT33Feedback" class="fix-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeReadingBtn" disabled data-checklist="chk3">✓
+                            Mark Reading as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. VOCABULARY ACTIVITY -->
+            <div class="activity-card" id="vocabulary-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 4. Vocabulary of the Day</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>🔊</th>
+                                    <th>✅</th>
+                                    <th>Word</th>
+                                    <th>Pronunciation</th>
+                                    <th>Meaning</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Pragmatic"
+                                            data-checkid="check-pragmatic">🔊</button></td>
+                                    <td id="check-pragmatic">⬜</td>
+                                    <td><strong>Pragmatic</strong></td>
+                                    <td><code>/præɡˈmæt.ɪk/</code></td>
+                                    <td>Practical and realistic</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Mitigate"
+                                            data-checkid="check-mitigate">🔊</button></td>
+                                    <td id="check-mitigate">⬜</td>
+                                    <td><strong>Mitigate</strong></td>
+                                    <td><code>/ˈmɪt.ɪ.ɡeɪt/</code></td>
+                                    <td>To lessen the severity of</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Redundancy"
+                                            data-checkid="check-redundancy">🔊</button></td>
+                                    <td id="check-redundancy">⬜</td>
+                                    <td><strong>Redundancy</strong></td>
+                                    <td><code>/rɪˈdʌn.dən.si/</code></td>
+                                    <td>Backup systems for reliability</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Tolerance"
+                                            data-checkid="check-tolerance">🔊</button></td>
+                                    <td id="check-tolerance">⬜</td>
+                                    <td><strong>Tolerance</strong></td>
+                                    <td><code>/ˈtɒl.ər.əns/</code></td>
+                                    <td>Permissible deviation from standard</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Transient"
+                                            data-checkid="check-transient">🔊</button></td>
+                                    <td id="check-transient">⬜</td>
+                                    <td><strong>Transient</strong></td>
+                                    <td><code>/ˈtræn.zi.ənt/</code></td>
+                                    <td>Lasting only for a short time</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="power-word-section">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
+                            <span>🔥</span><span>POWER WORD: PRAGMATIC</span>
+                        </div>
+                        <p><strong>Meaning:</strong> Dealing with things sensibly and realistically</p>
+                        <p><strong>Usage:</strong> "A pragmatic engineer finds the workable solution, not the ideal one."</p>
+                    </div>
+
+                    <div class="power-word-section" style="border-left-color: #22c55e;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #166534;">
+                            <span>💬</span><span>IDIOM: "In the field"</span>
+                        </div>
+                        <p><strong>Meaning:</strong> In a real, practical environment (as opposed to theory)</p>
+                        <p><strong>Example:</strong> "The prototype performed well in the lab, but real challenges only emerged in the field."</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeVocabularyBtn" disabled
+                            data-checklist="chk4">✓ Mark Vocabulary as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. GRAMMAR HACK -->
+            <div class="grammar-section" id="grammar-card">
+                <h3 style="margin: 0 0 1rem 0;">🧠 Grammar Hack: Avoid 'According to My Knowledge'</h3>
+                <div class="grammar-rule">
+                    <p>Directly state facts or use invitational phrases like 'To my knowledge' or 'Based on my understanding' to sound more professional.</p>
+                </div>
+                <div class="grammar-rule">
+                    <p>❌ According to my knowledge, the boiling point is 100°C. → ✅ <strong>To my knowledge, the boiling point of water at sea level is 100°C.</strong></p>
+                    <p>❌ According to my understanding, the formula is... → ✅ <strong>Based on my understanding, the formula is...</strong></p>
+                    <p>✅ Best phrase when uncertain: <strong>'If I recall correctly...'</strong> or <strong>'I believe... though I would like to confirm this.'</strong></p>
+                </div>
+            </div>
+
+            <!-- 6. WRITING ACTIVITY -->
+            <div class="activity-card" id="writing-card">
+                <div class="card-header writing">
+                    <h2>✍️ 5. Writing Activity · Contextual Mastery</h2>
+                </div>
+                <div class="card-body">
+                    <div class="writing-tip-box">
+                        <p><strong>💡 Writing Tip:</strong> The best way to test whether you have truly learned a word is to use it in a sentence where removing it would force you to use five other words to express the same idea. That is 'ownership'.</p>
+                    </div>
+
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>The Task</span></div>
+                        </div>
+                        <div class="task-content">
+                            Write five sentences, each using a vocabulary word from this course in a real engineering context (circuit design, construction, manufacturing, automation, etc.).
+                        </div>
+                    </div>
+
+                    <div class="writing-prompt">
+                        <textarea id="progressEmailBody" class="writing-textarea"
+                            placeholder="1. To mitigate the risk..."></textarea>
+                        <div style="font-size: 0.8rem; color: #64748b; text-align: right; margin-top: 0.5rem;">Word
+                            count: <span id="wordCount">0</span> / ~100</div>
+                    </div>
+
+                    <button class="btn-outline" id="checkWritingBtn" style="margin-top: 1rem;">✓ Check My
+                        Sentences</button>
+                    <div id="progressEmailBodyFeedback" class="fix-feedback"></div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                        <button class="complete-activity-btn" id="completeWritingBtn" disabled data-checklist="chk5">✓
+                            Mark Writing as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHECKLIST -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 19 COMPLETION CHECKLIST</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chk1" disabled><label> Identified how 'tolerance' varies across three engineering domains</label></li>
+                        <li><input type="checkbox" id="chk2" disabled><label> Delivered the domain vocabulary bridge speaking activity</label></li>
+                        <li><input type="checkbox" id="chk3" disabled><label> Explained what 'technical vocabulary as precision instrument' means</label></li>
+                        <li><input type="checkbox" id="chk4" disabled><label> Used 'Pragmatic' in speaking and writing</label></li>
+                        <li><input type="checkbox" id="chk5" disabled><label> Wrote five engineering-context sentences using course vocabulary</label></li>
+                    </ul>
+                    <div style="text-align:right;"><span class="badge" id="progressCounter">0/5 completed</span></div>
+                    <div style="display:flex; justify-content:center; margin-top:1rem;">
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 19</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JS SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Day
+            if (typeof initializeDay === 'function') {
+                initializeDay(19, 'advanced', {
+                    vocabularyWords: ['Pragmatic', 'Mitigate', 'Redundancy', 'Tolerance', 'Transient']
+                });
+            }
+
+            // --- 1. LISTENING ---
+            let task1Done = false, task2Done = false, quizDone = false;
+            
+            const audio = document.getElementById('listeningAudio19');
+            if (audio) {
+                audio.addEventListener('ended', function() {
+                    document.getElementById('listeningTextSection').style.display = 'block';
+                    document.getElementById('postAudioListeningContent').style.display = 'block';
+                });
+            }
+
+            function updateListeningCompletion() {
+                if (task1Done && task2Done && quizDone) {
+                    const btn = document.getElementById('completeListeningBtn');
+                    btn.disabled = false;
+                    btn.classList.add('ready');
+                }
+            }
+
+            document.getElementById('checkTask1Btn')?.addEventListener('click', async () => {
+                task1Done = await evaluateTask('task1', 'listening_a', 'Tolerance Analysis', 10);
+                updateListeningCompletion();
+            });
+
+            document.getElementById('checkTask2Btn')?.addEventListener('click', async () => {
+                task2Done = await evaluateTask('task2', 'listening_b', 'New Engineering Word', 5);
+                updateListeningCompletion();
+            });
+
+            document.getElementById('checkListeningWorkBtn')?.addEventListener('click', function () {
+                const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+                const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+                const fb = document.getElementById('listeningQuizFeedback');
+
+                if (!q1 || !q2) {
+                    fb.innerHTML = '⚠️ Please answer both quiz questions.';
+                    fb.className = 'quiz-feedback incorrect';
+                    fb.style.display = 'block';
+                    return;
+                }
+
+                const isCorrect = q1 === 'B' && q2 === 'B';
+
+                if (isCorrect) {
+                    fb.innerHTML = '✅ Correct! Vocabulary meaning is determined by the domain of application.';
+                    fb.className = 'quiz-feedback correct';
+                    quizDone = true;
+                } else {
+                    fb.innerHTML = '❌ Incorrect. Remember that the domain changes the meaning of the word.';
+                    fb.className = 'quiz-feedback incorrect';
+                    quizDone = false;
+                }
+
+                fb.style.display = 'block';
+                updateListeningCompletion();
+            });
+
+            document.getElementById('completeListeningBtn')?.addEventListener('click', function() {
+                markActivityComplete('listening', 'chk1');
+            });
+
+            // --- AI EVALUATION HELPER ---
+            async function evaluateTaskRaw(text, feedbackId, type, minWords = 5) {
+                const feedback = document.getElementById(feedbackId);
+                const words = text.split(/\s+/).filter(w => w.length > 0).length;
+
+                if (words < minWords) {
+                    feedback.innerHTML = `⚠️ Too brief. Please provide more detail for a thorough assessment.`;
+                    feedback.className = 'fix-feedback incorrect';
+                    feedback.style.display = 'block';
+                    return false;
+                }
+
+                feedback.innerHTML = '⏳ <strong>Evaluating...</strong>';
+                feedback.className = 'fix-feedback';
+                feedback.style.display = 'block';
+
+                const customPrompts = {
+                    listening_a: "Analyze 'tolerance' across three domains based on the script. Correct: Mechanical = permissible dimension deviation; Electrical = range for reliable operation; Project Mgmt = acceptable variance from plan.",
+                    listening_b: "Identify another engineering word (like stress, load, strain, bridge) that changes meaning across disciplines and explain the meanings clearly.",
+                    reading_a: "Explain what the author means by calling technical vocabulary a 'precision instrument'. Correct answer: It allows for extreme conciseness and exactness that plain English cannot match.",
+                    reading_b: "Identify the three elements the author recommends noting in a vocabulary notebook. Correct answer: (1) sentence-level context, (2) collocations, and (3) grammatical behavior.",
+                    reading_c: "Evaluate a technical term definition including two collocations and a complete sentence in context.",
+                    writing_sentences: "Evaluate five engineering sentences using course vocabulary (Pragmatic, Mitigate, Redundancy, Tolerance, Transient). Check for technical accuracy and professional phrasing."
+                };
+
+                const system_prompt = `Evaluate the following response as an English communication trainer.
+                
+                Original Task: "${customPrompts[type]}"
+
+                Provide a strict, professional evaluation in this format:
+                ✅ Evaluation:
+                2-4 sentences assessing how well the response meets the task requirements. Comment on content selection, structure, clarity, relevance, and adherence to the instructions.
+
+                💡 Improvement:
+                Give one specific, practical suggestion that would make the response stronger. Focus only on the single most important improvement.
+
+                Do not mention scores, grades, ratings, or word count. Keep the feedback concise, direct, and teacher-like.
+
+                Return ONLY a JSON object:
+                {
+                    "correct": true/false,
+                    "evaluation": "The evaluation text...",
+                    "improvement": "The improvement suggestion..."
+                }`;
+
+                try {
+                    const response = await fetch('/learning/ai/evaluate/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                        body: JSON.stringify({ text, task_type: type, day_number: 19, level: 'advanced', system_prompt })
+                    });
+                    const res = await response.json();
+                    if (res.success) {
+                        const isCorrect = res.correct !== false;
+                        const statusEmoji = isCorrect ? '✅' : '❌';
+
+                        feedback.innerHTML = `
+                            <div style="margin-bottom: 0.8rem;">
+                                <strong>${statusEmoji} Evaluation:</strong><br>
+                                <span style="font-size: 0.95rem; line-height: 1.5;">${res.evaluation}</span>
+                            </div>
+                            <div style="border-top: 1px solid #e2e8f0; padding-top: 0.8rem;">
+                                <strong>💡 Improvement:</strong><br>
+                                <span style="font-size: 0.95rem; line-height: 1.5;">${res.improvement}</span>
+                            </div>
+                        `;
+                        feedback.className = `fix-feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+                        return isCorrect;
+                    }
+                    return false;
+                } catch (e) {
+                    feedback.innerHTML = '⚠️ Error connecting to AI.';
+                    feedback.className = 'fix-feedback incorrect';
+                    return false;
+                }
+            }
+
+            async function evaluateTask(id, type, taskName, minWords = 5) {
+                const inputEl = document.getElementById(id + 'Input') || document.getElementById(id);
+                return await evaluateTaskRaw(inputEl.value.trim(), id + 'Feedback', type, minWords);
+            }
+
+            // --- READING ---
+            let r1 = false, r2 = false, r3 = false;
+            function updateReading() { if (r1 && r2 && r3) document.getElementById('completeReadingBtn').disabled = false; }
+
+            document.getElementById('checkReadingT31Btn')?.addEventListener('click', async () => {
+                r1 = await evaluateTask('readingT31', 'reading_a', 'Precision Instrument', 5);
+                updateReading();
+            });
+            document.getElementById('checkReadingT32Btn')?.addEventListener('click', async () => {
+                r2 = await evaluateTask('readingT32', 'reading_b', 'Notebook Elements', 5);
+                updateReading();
+            });
+            document.getElementById('checkReadingT33Btn')?.addEventListener('click', async () => {
+                r3 = await evaluateTask('readingT33', 'reading_c', 'Term Definition', 10);
+                updateReading();
+            });
+
+            // --- WRITING ---
+            document.getElementById('checkWritingBtn')?.addEventListener('click', async () => {
+                const done = await evaluateTaskRaw(document.getElementById('progressEmailBody').value.trim(), 'progressEmailBodyFeedback', 'writing_sentences', 30);
+                if (done) document.getElementById('completeWritingBtn').disabled = false;
+            });
+
+            document.getElementById('progressEmailBody')?.addEventListener('input', function () {
+                const words = this.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+                document.getElementById('wordCount').innerText = words;
+            });
+
+            // --- SPEAKING ---
+            let mediaRecorder, chunks = [];
+            document.getElementById('speakingRecordBtn')?.addEventListener('click', async () => {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                chunks = [];
+                mediaRecorder.ondataavailable = e => chunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: 'audio/webm' });
+                    document.getElementById('speakingPlayback').src = URL.createObjectURL(blob);
+                    document.getElementById('speakingPlaybackCard').style.display = 'block';
+                    document.getElementById('completeSpeakingBtn').disabled = false;
+                    stream.getTracks().forEach(t => t.stop());
+                };
+                mediaRecorder.start();
+                document.getElementById('speakingRecordBtn').style.display = 'none';
+                document.getElementById('speakingStopBtn').style.display = 'inline-flex';
+                document.getElementById('speakingRecordingStatus').style.display = 'flex';
+            });
+            document.getElementById('speakingStopBtn')?.addEventListener('click', () => {
+                mediaRecorder.stop();
+                document.getElementById('speakingRecordBtn').style.display = 'inline-flex';
+                document.getElementById('speakingStopBtn').style.display = 'none';
+                document.getElementById('speakingRecordingStatus').style.display = 'none';
+            });
+
+            // --- HANDLERS ---
+            document.getElementById('completeListeningBtn')?.addEventListener('click', () => markActivityComplete('listening', 'chk1'));
+            document.getElementById('completeSpeakingBtn')?.addEventListener('click', () => markActivityComplete('speaking', 'chk2'));
+            document.getElementById('completeReadingBtn')?.addEventListener('click', () => markActivityComplete('reading', 'chk3'));
+            document.getElementById('completeVocabularyBtn')?.addEventListener('click', () => markActivityComplete('vocabulary', 'chk4'));
+            document.getElementById('completeWritingBtn')?.addEventListener('click', () => markActivityComplete('writing', 'chk5'));
+            document.getElementById('dayCompleteBtn')?.addEventListener('click', completeDay);
+        });
+    </script>
+</body>
+
+</html>

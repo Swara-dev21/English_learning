@@ -9,6 +9,105 @@
     <title>Day 16: Paraphrasing & Summarising | English for Engineers</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <style>
+        .listening-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            resize: vertical;
+            margin: 0.5rem 0;
+            box-sizing: border-box;
+        }
+
+        .listening-textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .ai-feedback {
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin: 0.5rem 0;
+        }
+
+        .ai-feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #22c55e;
+        }
+
+        .ai-feedback.incorrect {
+            background: #fef9e3;
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .ai-feedback.processing {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .attempt-counter {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+            text-align: center;
+            padding: 0.5rem;
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+
+        .correct-answer-box {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        /* Underline styles for reading task */
+        .clickable-word {
+            display: inline-block;
+            padding: 0.1rem 0.2rem;
+            margin: 0 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: transparent;
+            border-radius: 0;
+        }
+
+        .clickable-word:hover {
+            background: #e0e7ff;
+        }
+
+        .temp-underlined {
+            text-decoration: underline !important;
+            text-decoration-thickness: 3px !important;
+            text-decoration-color: #f59e0b !important;
+            background: #fef9e3 !important;
+            display: inline-block;
+        }
+
+        .underline-correct {
+            text-decoration: underline !important;
+            text-decoration-thickness: 3px !important;
+            text-decoration-color: #22c55e !important;
+            background: #f0fdf4 !important;
+            display: inline-block;
+        }
+
+        .underline-incorrect {
+            text-decoration: underline !important;
+            text-decoration-thickness: 3px !important;
+            text-decoration-color: #dc2626 !important;
+            background: #fee2e2 !important;
+            display: inline-block;
+        }
+    </style>
 </head>
 
 <body>
@@ -24,7 +123,7 @@
 
         <div class="activities-grid">
 
-            <!-- 1. LISTENING ACTIVITY - FIXED SENTENCE COUNTING -->
+            <!-- 1. LISTENING ACTIVITY WITH AI VALIDATION -->
             <div class="activity-card" id="listening-card">
                 <div class="card-header listening">
                     <h2>🎧 1. Listening Activity · Register Match</h2>
@@ -39,7 +138,7 @@
                     </div>
 
                     <audio id="listeningAudio" controls>
-                        <source src="{% static 'learning/audio/day16.mp3' %}" type="audio/mpeg">
+                        <source src="{% static 'learning/audio/Intermediate/day17.mp3' %}" type="audio/mpeg">
                     </audio>
 
                     <div id="listeningTextSection" style="display: none;">
@@ -85,7 +184,10 @@
                             </div>
 
                             <button class="btn-outline" id="validateParaphraseBtn"
-                                style="width: 25%; margin-bottom: 1rem;">✅ check My Paraphrase</button>
+                                style="width: 25%; margin-bottom: 1rem;">✅ Submit for AI Evaluation</button>
+                            <div id="paraphraseAIFeedback" style="margin-top: 0.5rem;"></div>
+                            <div id="paraphraseAttemptCounter" class="attempt-counter">📊 Attempts remaining:
+                                <span>3</span></div>
 
                             <div style="font-weight: 600; margin-bottom: 0.5rem;">🎙️ Step 3: Record Your Paraphrase
                             </div>
@@ -212,14 +314,14 @@
                 </div>
             </div>
 
-            <!-- 3. READING ACTIVITY - WITH CLICKABLE PASSAGE -->
+            <!-- 3. READING ACTIVITY - WITH UNDERLINE MODE -->
             <div class="activity-card" id="reading-card">
                 <div class="card-header reading">
                     <h2>📖 3. Reading Activity · The Executive Summary</h2>
                 </div>
                 <div class="card-body">
 
-                    <!-- CLICKABLE PASSAGE FOR TASK 3 -->
+                    <!-- Interactive Passage for Task 3 -->
                     <div id="interactivePassage" class="interactive-passage"></div>
 
                     <!-- Task 1: 2-Sentence Paraphrase -->
@@ -260,24 +362,25 @@
                                 style="margin-top: 0.25rem;">
                             <div id="task2ActionFeedback" class="fix-feedback"></div>
                         </div>
+                        <button class="btn-outline" id="checkTask2Btn" style="width: 20%; margin-top: 0.5rem;">✓ Check
+                            Task 2</button>
                     </div>
 
-                    <!-- Task 3: Circle Mode - Fixed to circle only the two words -->
+                    <!-- Task 3: Underline Mode - User must click both "premature" and "deterioration" -->
                     <div style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin: 1rem 0;">
-                        <p><strong>🔲 Task 3: Circle the phrase that means 'early decay'</strong></p>
+                        <p><strong>🔲 Task 3: Underline the phrase that means 'early decay'</strong><br>
+                            <span style="font-size: 0.8rem; color: #64748b;">Click <strong>"Underline Mode"</strong> →
+                                Click on words in the passage → Click <strong>"✓ Check Underline Answer"</strong></span>
+                        </p>
 
                         <div style="display: flex; gap: 1rem; margin: 1rem 0;">
-                            <button id="circleModeBtn" class="btn-outline"
-                                style="background: #3b82f6; color: white; border: none;">⭕ Circle Mode</button>
-                            <button id="checkCircleBtn" class="btn-outline">✓ Check Circle Answer</button>
-                            <button id="resetCircleBtn" class="btn-outline">⟳ Reset Circle</button>
+                            <button id="underlineModeBtn" class="btn-outline"
+                                style="background: #f59e0b; color: white; border: none;">📝 Underline Mode</button>
+                            <button id="checkUnderlineBtn" class="btn-outline">✓ Check Underline Answer</button>
+                            <button id="resetUnderlineBtn" class="btn-outline">⟳ Reset Underline</button>
                         </div>
-                        <div id="circleFeedback" style="margin-top: 0.8rem;"></div>
+                        <div id="underlineFeedback" style="margin-top: 0.8rem;"></div>
                     </div>
-
-                    <button class="btn-outline" id="checkReadingAnswersBtn" style="width: 30%;">✅ Check Task 1 & 2
-                        Answers</button>
-                    <div id="readingFeedback" style="margin-top: 0.5rem;"></div>
 
                     <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
                         <button class="complete-activity-btn" id="completeReadingBtn" data-checklist="chk2" disabled>✓
@@ -308,7 +411,7 @@
                             <tbody>
                                 <tr>
                                     <td class="audio-cell"><button class="vocab-audio-btn" data-word="Paraphrase"
-                                            data-checkid="check-paraphrase">🔊</button></td>
+                                            data-checkid="check-paraphrase">🔊</button></span>
                                     <td class="check-cell" id="check-paraphrase">⬜</span>
                                     <td class="word-cell"><strong>Paraphrase</strong></span>
                                     <td><code>/ˈpær.ə.freɪz/</code><br>(PAIR-uh-frayz)</span>
@@ -386,7 +489,7 @@
                 </div>
             </div>
 
-            <!-- 5. GRAMMAR HACK - TABLE FORMAT -->
+            <!-- 5. GRAMMAR HACK -->
             <div class="grammar-section" id="grammar-card">
                 <h3 style="margin: 0 0 1rem 0;">🧠 Grammar Hack: Paraphrase Techniques — The 4 Tools</h3>
 
@@ -456,6 +559,7 @@
                         Grammar as Complete</button>
                 </div>
             </div>
+
             <!-- CHECKLIST -->
             <div class="activity-card">
                 <div class="card-header vocabulary">
@@ -488,143 +592,366 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
-            // ==================== VOCABULARY AUDIO WITH CHECKMARK ====================
-            function speakWord(word) {
-                if (window.speechSynthesis) window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(word);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
+            // ==================== CSRF TOKEN ====================
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
             }
+            const csrftoken = getCookie('csrftoken');
 
+            // ==================== VOCABULARY AUDIO - FIXED ====================
             const audioBtns = document.querySelectorAll('.vocab-audio-btn');
             const completeVocabularyBtn = document.getElementById('completeVocabularyBtn');
-            let vocabularyCompleted = false;
+
+            const vocabHeard = {
+                'check-paraphrase': false,
+                'check-aggregate': false,
+                'check-deterioration': false,
+                'check-tendering': false,
+                'check-integrity': false
+            };
 
             function checkAllVocabularyListened() {
-                const checkCells = ['check-paraphrase', 'check-aggregate', 'check-deterioration', 'check-tendering', 'check-integrity'];
-                let allListened = true;
-                for (let id of checkCells) {
-                    const cell = document.getElementById(id);
-                    if (cell && cell.innerHTML !== '✅') { allListened = false; break; }
+                const allHeard = Object.values(vocabHeard).every(v => v === true);
+                if (completeVocabularyBtn) {
+                    completeVocabularyBtn.disabled = !allHeard;
                 }
-                if (allListened && completeVocabularyBtn) {
-                    completeVocabularyBtn.disabled = false;
-                    vocabularyCompleted = true;
-                } else if (completeVocabularyBtn) {
-                    completeVocabularyBtn.disabled = true;
-                    vocabularyCompleted = false;
+                return allHeard;
+            }
+
+            function updateVocabCheckMark(checkId) {
+                if (!vocabHeard[checkId]) {
+                    vocabHeard[checkId] = true;
+                    const cell = document.getElementById(checkId);
+                    if (cell && cell.innerHTML !== '✅') {
+                        cell.innerHTML = '✅';
+                        cell.style.color = '#22c55e';
+                        cell.style.fontSize = '1rem';
+                    }
+                    checkAllVocabularyListened();
+                }
+            }
+
+            function speakWordWithCheckmark(word, checkId) {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    utterance.onend = function () {
+                        if (checkId) updateVocabCheckMark(checkId);
+                    };
+                    utterance.onerror = function () {
+                        if (checkId) updateVocabCheckMark(checkId);
+                    };
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    if (checkId) updateVocabCheckMark(checkId);
                 }
             }
 
             audioBtns.forEach(btn => {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
                     const word = this.getAttribute('data-word');
                     const checkId = this.getAttribute('data-checkid');
-                    speakWord(word);
-                    if (checkId) {
-                        const checkCell = document.getElementById(checkId);
-                        if (checkCell && checkCell.innerHTML === '⬜') {
-                            checkCell.innerHTML = '✅';
-                            checkCell.style.color = '#22c55e';
-                            checkCell.style.fontSize = '1rem';
-                        }
+                    if (word && checkId && !vocabHeard[checkId]) {
+                        speakWordWithCheckmark(word, checkId);
+                    } else if (word && checkId && vocabHeard[checkId]) {
+                        const utterance = new SpeechSynthesisUtterance(word);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.85;
+                        window.speechSynthesis.speak(utterance);
                     }
-                    setTimeout(checkAllVocabularyListened, 300);
                 });
             });
 
             if (completeVocabularyBtn) {
                 completeVocabularyBtn.addEventListener('click', function () {
-                    if (vocabularyCompleted && typeof markActivityComplete === 'function') {
+                    if (checkAllVocabularyListened() && typeof markActivityComplete === 'function') {
                         markActivityComplete('vocabulary', 'chk5');
                     } else {
-                        alert('Please listen to all 5 vocabulary words first.');
+                        const remainingCount = Object.values(vocabHeard).filter(v => v === false).length;
+                        alert(`Please listen to all 5 vocabulary words first. ${remainingCount} word(s) remaining. Click the 🔊 button next to each word.`);
                     }
                 });
             }
 
-            // ==================== LISTENING TASK VALIDATION - FIXED SENTENCE COUNTING ====================
-            let paraphraseValidated = false;
-            let listeningRecorded = false;
+            // ==================== STRICT PARAPHRASE VALIDATION FUNCTION ====================
+            function validateParaphraseStrict(originalText, paraphraseText) {
+                const original = originalText.trim();
+                const paraphrase = paraphraseText.trim();
 
-            function countSentences(text) {
-                // Split by ., !, ? and also handle line breaks
-                let sentences = text.split(/[.!?]+/);
-                // Filter out empty strings and trim
-                sentences = sentences.filter(s => s.trim().length > 0);
-                return sentences.length;
+                // Check 1: Not empty
+                if (!original) {
+                    return { valid: false, message: '⚠️ Please paste your original paragraph first.' };
+                }
+
+                // Original word count check
+                const originalWords = original.split(/\s+/).length;
+                if (originalWords < 30) {
+                    return { valid: false, message: `⚠️ Original paragraph is too short (${originalWords}/30 words).` };
+                }
+
+                // Check 2: Paraphrase not empty
+                if (!paraphrase) {
+                    return { valid: false, message: '❌ Please write your paraphrase.' };
+                }
+
+                // Check 3: Exactly 3 sentences
+                const sentences = paraphrase.split(/[.!?]+/).filter(s => s.trim().length > 0);
+                if (sentences.length !== 3) {
+                    return { valid: false, message: `❌ Write exactly 3 sentences. You have ${sentences.length} sentence(s).` };
+                }
+
+                // Check 4: Word count (minimum 35-40 words)
+                const wordCount = paraphrase.split(/\s+/).length;
+                if (wordCount < 35) {
+                    return { valid: false, message: `❌ Paraphrase is too short (${wordCount}/35 words). Write at least 35-40 words.` };
+                }
+
+                // Check 5: Copy detection - prevent direct copying
+                const originalLower = original.toLowerCase();
+                const paraphraseLower = paraphrase.toLowerCase();
+                if (originalLower.includes(paraphraseLower) || paraphraseLower.includes(originalLower.substring(0, 60))) {
+                    return { valid: false, message: '❌ Do not copy directly from the original. Use your own words.' };
+                }
+
+                // Check 6: Similarity check (simple word overlap)
+                const origWordsSet = new Set(originalLower.split(/\s+/));
+                const paraWordsSet = new Set(paraphraseLower.split(/\s+/));
+                let commonWords = 0;
+                origWordsSet.forEach(w => {
+                    if (paraWordsSet.has(w)) commonWords++;
+                });
+                const similarity = commonWords / origWordsSet.size;
+                if (similarity > 0.65) {
+                    return { valid: false, message: '❌ Too similar to original. Paraphrase properly using different words and sentence structures.' };
+                }
+
+                // Check 7: Sentence variation - not all sentences too short
+                if (sentences.every(s => s.split(/\s+/).length < 6)) {
+                    return { valid: false, message: '❌ Sentences are too weak or incomplete. Write more developed sentences.' };
+                }
+
+                // Check 8: Basic grammar check
+                if (!/[a-zA-Z]/.test(paraphrase)) {
+                    return { valid: false, message: '❌ Invalid sentence structure. Write proper English sentences.' };
+                }
+
+                // Check 9: Repetition check
+                const uniqueWords = new Set(paraphraseLower.split(/\s+/));
+                const uniqueRatio = uniqueWords.size / wordCount;
+                if (uniqueRatio < 0.5 && wordCount > 20) {
+                    return { valid: false, message: '❌ Too much repetition. Use a variety of vocabulary.' };
+                }
+
+                // Check 10: Keyword retention (maintaining original meaning)
+                const requiredKeywords = ['report', 'investigates', 'structural', 'integrity', 'road', 'deterioration', 'aggregate', 'cost', 'repair'];
+                const hasKeyword = requiredKeywords.some(word => paraphraseLower.includes(word));
+                if (!hasKeyword && originalLower.includes('structural') && originalLower.includes('integrity')) {
+                    return { valid: false, message: '❌ Key idea missing from original paragraph. Include the main topic of the passage.' };
+                }
+
+                return { valid: true, message: '✅ Good paraphrase! Clear, structured, and original.' };
             }
 
-            function validateTextbookParaphrase(original, paraphrase) {
-                if (!original.trim()) return { valid: false, message: '⚠️ Please paste your original paragraph.' };
-                const originalWords = original.trim().split(/\s+/).length;
-                if (originalWords < 30) return { valid: false, message: `⚠️ Original paragraph is too short (${originalWords}/30 words).` };
-                if (!paraphrase.trim()) return { valid: false, message: '⚠️ Please write your paraphrase.' };
+            // ==================== LISTENING TASK VALIDATION WITH AI ====================
+            let paraphraseValidated = false;
+            let listeningRecorded = false;
+            let attemptCount = 0;
+            let maxAttempts = 3;
+            let showCorrectAnswerTriggered = false;
 
-                // Fixed sentence counting
-                const paraSentences = countSentences(paraphrase);
-                if (paraSentences < 3) return { valid: false, message: `❌ Write at least 3 sentences. You have ${paraSentences} sentence(s).` };
+            function showCorrectParaphraseExample() {
+                if (showCorrectAnswerTriggered) return;
+                showCorrectAnswerTriggered = true;
 
-                const paraWords = paraphrase.split(/\s+/).length;
-                if (paraWords < 40) return { valid: false, message: `❌ Paraphrase is too short (${paraWords}/40 words). Write more detail.` };
+                const correctAnswerHtml = `
+                    <div class="correct-answer-box">
+                        <h4>📚 Example of a Good Paraphrase:</h4>
+                        <p><strong>Original:</strong> "This report investigates the structural integrity of the Nashik bypass road, which was completed in 2019. The investigation reveals that sub-standard aggregate was used in the base layer, resulting in premature deterioration."</p>
+                        <p><strong>Paraphrase:</strong> "The document examines the soundness of the Nashik bypass road constructed in 2019. The study shows that poor quality material was employed in the foundation layer, leading to early decay of the structure."</p>
+                        <hr style="margin: 0.75rem 0;">
+                        <p><strong>🎯 Techniques Used:</strong><br>
+                        • "investigates" → "examines" (synonym substitution)<br>
+                        • "structural integrity" → "soundness" (synonym substitution)<br>
+                        • "was completed" → "constructed" (synonym substitution)<br>
+                        • "sub-standard aggregate" → "poor quality material" (synonym substitution)<br>
+                        • "resulting in" → "leading to" (synonym substitution)<br>
+                        • "premature deterioration" → "early decay" (synonym substitution)</p>
+                        <p style="margin-top: 0.5rem; color: #6d28d9;"><strong>💡 Tip:</strong> Use synonyms, change sentence structure, and use different voice to paraphrase effectively!</p>
+                    </div>
+                `;
+                document.getElementById('paraphraseAIFeedback').innerHTML += correctAnswerHtml;
+            }
 
-                const originalLower = original.toLowerCase();
-                const paraLower = paraphrase.toLowerCase();
-                // Check for exact copying of long phrases
-                if (originalLower.includes(paraLower.substring(0, 60)) && paraLower.length > 30) {
-                    return { valid: false, message: '❌ Avoid copying directly from the original. Use your own words.' };
+            function updateParaphraseAttemptDisplay() {
+                const remaining = maxAttempts - attemptCount;
+                const counterSpan = document.querySelector('#paraphraseAttemptCounter span');
+                if (counterSpan) counterSpan.innerText = remaining;
+                if (attemptCount >= maxAttempts) {
+                    const validateBtn = document.getElementById('validateParaphraseBtn');
+                    if (validateBtn) {
+                        validateBtn.disabled = true;
+                        validateBtn.textContent = '🔒 No attempts left';
+                    }
                 }
-                return { valid: true, message: '✅ Excellent paraphrasing! Your paraphrase is valid.' };
             }
 
             const validateParaphraseBtn = document.getElementById('validateParaphraseBtn');
             const originalPara = document.getElementById('originalParagraph');
-            const paraphraseText = document.getElementById('paraphraseText');
+            const paraphraseTextEl = document.getElementById('paraphraseText');
             const originalFeedback = document.getElementById('originalFeedback');
             const listenRecordBtn = document.getElementById('listeningRecordBtn');
+            const paraphraseAIFeedbackDiv = document.getElementById('paraphraseAIFeedback');
 
             if (validateParaphraseBtn) {
-                validateParaphraseBtn.addEventListener('click', function () {
-                    const original = originalPara.value;
-                    const paraphrase = paraphraseText.value;
-                    const result = validateTextbookParaphrase(original, paraphrase);
-                    if (originalFeedback) {
-                        originalFeedback.innerHTML = result.valid ? '✅ Original paragraph accepted.' : result.message;
-                        originalFeedback.className = result.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
-                        originalFeedback.style.display = 'block';
+                validateParaphraseBtn.addEventListener('click', async function () {
+                    if (attemptCount >= maxAttempts) {
+                        paraphraseAIFeedbackDiv.innerHTML = '<div class="ai-feedback incorrect">🔒 You have used all 3 attempts. Please review the example below.</div>';
+                        showCorrectParaphraseExample();
+                        return;
                     }
-                    paraphraseValidated = result.valid;
-                    if (paraphraseValidated && listenRecordBtn) {
-                        listenRecordBtn.disabled = false;
-                        listenRecordBtn.textContent = '🎙️ Start Recording';
-                        listenRecordBtn.style.opacity = '1';
-                    } else if (listenRecordBtn) {
-                        listenRecordBtn.disabled = true;
-                        listenRecordBtn.textContent = '🎙️ Validate paraphrase first';
+
+                    const original = originalPara.value.trim();
+                    const paraphrase = paraphraseTextEl.value.trim();
+
+                    // First do strict local validation
+                    const localResult = validateParaphraseStrict(original, paraphrase);
+
+                    if (!localResult.valid) {
+                        paraphraseAIFeedbackDiv.innerHTML = `<div class="ai-feedback incorrect">${localResult.message}</div>`;
+                        paraphraseValidated = false;
+                        if (listenRecordBtn) {
+                            listenRecordBtn.disabled = true;
+                            listenRecordBtn.textContent = '🎙️ Validate paraphrase first';
+                        }
+                        return;
+                    }
+
+                    originalFeedback.innerHTML = '✅ Original paragraph accepted.';
+                    originalFeedback.className = 'fix-feedback correct';
+                    originalFeedback.style.display = 'block';
+
+                    paraphraseAIFeedbackDiv.innerHTML = '<div class="ai-feedback processing">🤖 AI is evaluating your paraphrase...</div>';
+
+                    attemptCount++;
+                    updateParaphraseAttemptDisplay();
+
+                    try {
+                        const response = await fetch('/learning/ai/evaluate/', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrftoken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                text: paraphrase,
+                                original_text: original,
+                                task_type: 'paraphrase',
+                                day_number: 16,
+                                level: 'intermediate',
+                                system_prompt: `You are an expert English writing coach evaluating a student's paraphrase of an engineering paragraph.
+
+TASK: Evaluate the paraphrase based on these strict criteria:
+
+1. Does it use DIFFERENT words and sentence structures? (Not copied from original)
+2. Does it maintain the ORIGINAL meaning? (No distortion of facts)
+3. Is it 3 sentences? (No more, no less)
+4. Is it substantial (35-50 words)?
+5. Does it use appropriate engineering vocabulary?
+6. Is the similarity to original less than 65%?
+
+SCORING RULES:
+- All criteria met perfectly → correct = true
+- Any major issue (wrong sentences count, too short, copied) → correct = false
+- Minor issues but basically correct → correct = false with specific suggestions
+
+OUTPUT JSON:
+{
+"correct": true/false,
+"feedback": "Specific feedback in 30-50 words mentioning what's good and what needs improvement",
+"suggestion": "One actionable suggestion for improvement"
+}`
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            paraphraseValidated = result.correct;
+
+                            let feedbackHtml = '';
+                            if (result.correct) {
+                                feedbackHtml = `
+                                    <div class="ai-feedback correct">
+                                        <strong>✅ ${result.feedback || 'Excellent paraphrase! You\'ve successfully restated the key ideas in your own words.'}</strong><br>
+                                        <strong>💡 ${result.suggestion || 'Keep practicing to master paraphrasing!'}</strong>
+                                    </div>
+                                `;
+                                paraphraseAIFeedbackDiv.innerHTML = feedbackHtml;
+                                if (listenRecordBtn) {
+                                    listenRecordBtn.disabled = false;
+                                    listenRecordBtn.textContent = '🎙️ Start Recording';
+                                }
+                            } else {
+                                feedbackHtml = `
+                                    <div class="ai-feedback incorrect">
+                                        <strong>📚 ${result.feedback || 'Your paraphrase needs improvement.'}</strong><br>
+                                        <strong>💡 ${result.suggestion || 'Try using more synonyms and changing the sentence structure.'}</strong>
+                                    </div>
+                                `;
+                                paraphraseAIFeedbackDiv.innerHTML = feedbackHtml;
+                                if (listenRecordBtn) {
+                                    listenRecordBtn.disabled = true;
+                                    listenRecordBtn.textContent = '🎙️ Validate paraphrase first';
+                                }
+                            }
+
+                            if (attemptCount >= maxAttempts && !result.correct) {
+                                showCorrectParaphraseExample();
+                            }
+                        } else {
+                            throw new Error('AI response not successful');
+                        }
+                    } catch (error) {
+                        console.error('AI Error:', error);
+                        // Use local validation result
+                        paraphraseValidated = localResult.valid;
+
+                        if (paraphraseValidated) {
+                            paraphraseAIFeedbackDiv.innerHTML = `<div class="ai-feedback correct">${localResult.message}<br><span style="font-size: 0.75rem;">(Validated locally)</span></div>`;
+                            if (listenRecordBtn) {
+                                listenRecordBtn.disabled = false;
+                                listenRecordBtn.textContent = '🎙️ Start Recording';
+                            }
+                        } else {
+                            paraphraseAIFeedbackDiv.innerHTML = `<div class="ai-feedback incorrect">${localResult.message}</div>`;
+                            if (listenRecordBtn) {
+                                listenRecordBtn.disabled = true;
+                                listenRecordBtn.textContent = '🎙️ Validate paraphrase first';
+                            }
+                        }
+
+                        if (attemptCount >= maxAttempts && !paraphraseValidated) {
+                            showCorrectParaphraseExample();
+                        }
                     }
                 });
             }
 
-            // ==================== READING TASKS VALIDATION ====================
-            let readingCompleted = false;
-            let task1Valid = false, task2Valid = false;
-
-            function validateParaphrase2(answer) {
-                const lower = answer.toLowerCase().trim();
-                if (!answer.trim()) return { valid: false, message: '⚠️ Please write your paraphrase.' };
-                const sentences = answer.split(/[.!?]+/).filter(Boolean);
-                if (sentences.length < 2) return { valid: false, message: '❌ Write at least 2 sentences.' };
-                if (lower.split(/\s+/).length < 25) return { valid: false, message: '❌ Write a fuller paraphrase (minimum 25 words).' };
-                const hasRoad = /road|bypass|report/.test(lower);
-                const hasDamage = /damage|deterioration|poor|sub-standard|aggregate/.test(lower);
-                const hasCost = /4\.?2|crore|cost/.test(lower);
-                const hasSolution = /repair|audit|quality|tender/.test(lower);
-                if (!(hasRoad && hasDamage && hasCost && hasSolution)) {
-                    return { valid: false, message: '❌ Include main ideas: road issue, cause, cost, and solution.' };
-                }
-                return { valid: true, message: '✅ Good paraphrase! You covered the main ideas.' };
-            }
+            // ==================== READING TASK 2 VALIDATION - 4 KEY POINTS ====================
+            let task2Valid = false;
 
             function validateKeyPoint(inputId, expectedKeywords, feedbackId) {
                 const answer = document.getElementById(inputId).value.trim().toLowerCase();
@@ -645,19 +972,28 @@
                 return isValid;
             }
 
-            // ==================== READING CLICKABLE PASSAGE FOR TASK 3 - FIXED CIRCLE ONLY ON TWO WORDS ====================
-            // ==================== READING CLICKABLE PASSAGE FOR TASK 3 - USER MUST CLICK BOTH WORDS INDIVIDUALLY ====================
+            const checkTask2Btn = document.getElementById('checkTask2Btn');
+            if (checkTask2Btn) {
+                checkTask2Btn.addEventListener('click', function () {
+                    const task2WhatValid = validateKeyPoint('task2What', ['deterioration', 'premature', 'damage', 'crack'], 'task2WhatFeedback');
+                    const task2WhyValid = validateKeyPoint('task2Why', ['aggregate', 'sub-standard', 'poor quality', 'base layer'], 'task2WhyFeedback');
+                    const task2CostValid = validateKeyPoint('task2Cost', ['4.2', 'crore', '4.2 crore'], 'task2CostFeedback');
+                    const task2ActionValid = validateKeyPoint('task2Action', ['tendering', 'repair', 'auditing', 'tender', 'contract'], 'task2ActionFeedback');
+                    task2Valid = task2WhatValid && task2WhyValid && task2CostValid && task2ActionValid;
+
+                    updateReadingCompleteButton();
+                });
+            }
+
+            // ==================== READING TASK 3 - UNDERLINE MODE WITH GREEN/RED COLORS ====================
             const readingPassageHTML = `This report investigates the structural integrity of the Nashik bypass road, which was completed in 2019. The investigation reveals that sub-standard aggregate was used in the base layer, resulting in premature deterioration. Remedial works are estimated to cost approximately ₹4.2 crore and will need to be completed within two years to prevent further deterioration. The report recommends immediate tendering for the repair contract and enhanced quality auditing protocols for future infrastructure projects.`;
 
             let readingAllSpans = [];
-            let circleModeActive = false;
-            let circleSelectedIndices = new Set();
-            let circleCheckDone = false;
-            let task3Completed = false;
-
-            // Store the indices of "premature" and "deterioration"
-            let prematureIndex = -1;
-            let deteriorationIndex = -1;
+            let underlineModeActive = false;
+            let underlineSelectedIndices = new Set();
+            let underlineCheckDone = false;
+            let task3Valid = false;
+            let correctIndices = []; // Store indices of correct words to select
 
             function buildInteractivePassage() {
                 const container = document.getElementById('interactivePassage');
@@ -665,12 +1001,25 @@
                 const words = readingPassageHTML.split(/\s+/);
                 container.innerHTML = '';
                 readingAllSpans = [];
-                circleSelectedIndices.clear();
-                circleCheckDone = false;
+                underlineSelectedIndices.clear();
+                underlineCheckDone = false;
+                correctIndices = [];
 
-                // Reset indices
-                prematureIndex = -1;
-                deteriorationIndex = -1;
+                // Track when we find the phrase "premature deterioration" together
+                let i = 0;
+                while (i < words.length) {
+                    const currentWord = words[i].toLowerCase().replace(/[.,!?;]/g, '');
+                    const nextWord = i + 1 < words.length ? words[i + 1].toLowerCase().replace(/[.,!?;]/g, '') : '';
+
+                    // Find "premature deterioration" as a pair
+                    if (currentWord === 'premature' && nextWord === 'deterioration') {
+                        correctIndices.push(i);           // index of "premature"
+                        correctIndices.push(i + 1);       // index of "deterioration"
+                        i += 2;
+                    } else {
+                        i++;
+                    }
+                }
 
                 words.forEach((word, idx) => {
                     const cleanWord = word.toLowerCase().replace(/[.,!?;]/g, '');
@@ -680,203 +1029,221 @@
                     span.dataset.index = idx;
                     span.dataset.word = cleanWord;
                     span.onclick = () => {
-                        if (circleModeActive) {
-                            toggleCircleSelection(idx);
+                        if (underlineModeActive) {
+                            toggleUnderlineSelection(idx);
                         }
                     };
                     container.appendChild(span);
                     readingAllSpans.push(span);
-
-                    // Find the indices of "premature" and "deterioration"
-                    if (cleanWord === 'premature') prematureIndex = idx;
-                    if (cleanWord === 'deterioration') deteriorationIndex = idx;
                 });
-                updateCircleVisuals();
+                updateUnderlineVisuals();
             }
 
-            function toggleCircleSelection(clickedIndex) {
-                // Normal toggle for individual word - user must click each word separately
-                if (circleSelectedIndices.has(clickedIndex)) {
-                    circleSelectedIndices.delete(clickedIndex);
+            function toggleUnderlineSelection(clickedIndex) {
+                if (underlineSelectedIndices.has(clickedIndex)) {
+                    underlineSelectedIndices.delete(clickedIndex);
                 } else {
-                    circleSelectedIndices.add(clickedIndex);
+                    underlineSelectedIndices.add(clickedIndex);
                 }
-                updateCircleVisuals();
+                updateUnderlineVisuals();
             }
 
-            function updateCircleVisuals() {
+            function updateUnderlineVisuals() {
                 if (!readingAllSpans.length) return;
                 readingAllSpans.forEach(span => {
-                    span.classList.remove('circle-temp', 'circle-correct', 'circle-incorrect');
+                    span.classList.remove('temp-underlined', 'underline-correct', 'underline-incorrect');
                 });
 
-                if (!circleCheckDone) {
-                    for (let idx of circleSelectedIndices) {
+                if (!underlineCheckDone) {
+                    // Temporary underline (orange) for all selected words before checking
+                    for (let idx of underlineSelectedIndices) {
                         if (readingAllSpans[idx]) {
-                            readingAllSpans[idx].classList.add('circle-temp');
+                            readingAllSpans[idx].classList.add('temp-underlined');
                         }
                     }
                 } else {
-                    // Check if both "premature" and "deterioration" are selected
-                    const isPrematureSelected = prematureIndex !== -1 && circleSelectedIndices.has(prematureIndex);
-                    const isDeteriorationSelected = deteriorationIndex !== -1 && circleSelectedIndices.has(deteriorationIndex);
-                    const isCorrect = isPrematureSelected && isDeteriorationSelected;
-
-                    for (let idx of circleSelectedIndices) {
+                    // After checking: GREEN for correct indices, RED for any other selected word
+                    for (let idx of underlineSelectedIndices) {
                         if (readingAllSpans[idx]) {
-                            if (isCorrect) {
-                                readingAllSpans[idx].classList.add('circle-correct');
+                            const isCorrectWord = correctIndices.includes(idx);
+                            if (isCorrectWord) {
+                                readingAllSpans[idx].classList.add('underline-correct');
                             } else {
-                                readingAllSpans[idx].classList.add('circle-incorrect');
+                                readingAllSpans[idx].classList.add('underline-incorrect');
                             }
                         }
                     }
                 }
             }
 
-            function checkCircleAnswer() {
-                if (circleSelectedIndices.size === 0) {
-                    document.getElementById('circleFeedback').innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ Please click on both "premature" and "deterioration" in Circle Mode.</p></div>';
-                    task3Completed = false;
+            function checkUnderlineAnswer() {
+                if (underlineSelectedIndices.size === 0) {
+                    document.getElementById('underlineFeedback').innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ Please click on "premature" AND "deterioration" in Underline Mode.</p></div>';
+                    task3Valid = false;
                     updateReadingCompleteButton();
                     return;
                 }
 
-                circleCheckDone = true;
+                underlineCheckDone = true;
 
-                // Check if both "premature" and "deterioration" are selected
-                const isPrematureSelected = prematureIndex !== -1 && circleSelectedIndices.has(prematureIndex);
-                const isDeteriorationSelected = deteriorationIndex !== -1 && circleSelectedIndices.has(deteriorationIndex);
-                const isCorrect = isPrematureSelected && isDeteriorationSelected;
+                // Check if ALL correct indices are selected
+                let allCorrectSelected = true;
+                for (let correctIdx of correctIndices) {
+                    if (!underlineSelectedIndices.has(correctIdx)) {
+                        allCorrectSelected = false;
+                        break;
+                    }
+                }
 
-                updateCircleVisuals();
+                // Check if any incorrect words are selected (words not in correctIndices)
+                let incorrectSelected = false;
+                for (let idx of underlineSelectedIndices) {
+                    if (!correctIndices.includes(idx)) {
+                        incorrectSelected = true;
+                        break;
+                    }
+                }
+
+                // Also check if user selected the wrong "deterioration" (the second one)
+                const isCorrect = allCorrectSelected && !incorrectSelected && underlineSelectedIndices.size === correctIndices.length;
+
+                updateUnderlineVisuals();
 
                 if (isCorrect) {
-                    document.getElementById('circleFeedback').innerHTML = '<div style="background:#d1fae5;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">✅ Correct! "Premature deterioration" means early decay.</p></div>';
-                    task3Completed = true;
-                } else {
+                    document.getElementById('underlineFeedback').innerHTML = '<div style="background:#d1fae5;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">✅ Correct! You selected only "premature" and the correct "deterioration" (the one after "premature"). Both have green underline.</p></div>';
+                    task3Valid = true;
+                } else if (!allCorrectSelected) {
                     let missing = [];
-                    if (!isPrematureSelected) missing.push('"premature"');
-                    if (!isDeteriorationSelected) missing.push('"deterioration"');
-                    document.getElementById('circleFeedback').innerHTML = `<div style="background:#fee2e2;padding:0.75rem;border-radius:12px;"><p style="color:#dc2626;">❌ Incorrect. You need to click on both words: ${missing.join(' and ')}.</p></div>`;
-                    task3Completed = false;
+                    for (let correctIdx of correctIndices) {
+                        if (!underlineSelectedIndices.has(correctIdx)) {
+                            const wordText = readingAllSpans[correctIdx]?.textContent.trim() || '';
+                            missing.push(`"${wordText}"`);
+                        }
+                    }
+                    document.getElementById('underlineFeedback').innerHTML = `<div style="background:#fee2e2;padding:0.75rem;border-radius:12px;"><p style="color:#dc2626;">❌ Incorrect. You need to select both words: ${missing.join(' and ')}. Click on "premature" and the FIRST "deterioration" (the one right after "premature").</p></div>`;
+                    task3Valid = false;
+                } else if (incorrectSelected) {
+                    let incorrectWords = [];
+                    for (let idx of underlineSelectedIndices) {
+                        if (!correctIndices.includes(idx)) {
+                            const wordText = readingAllSpans[idx]?.textContent.trim() || '';
+                            incorrectWords.push(`"${wordText}"`);
+                        }
+                    }
+                    document.getElementById('underlineFeedback').innerHTML = `<div style="background:#fee2e2;padding:0.75rem;border-radius:12px;"><p style="color:#dc2626;">❌ You selected extra words: ${incorrectWords.join(', ')} (shown in red underline). Please select ONLY "premature" and the FIRST "deterioration" (the one right after "premature").</p></div>`;
+                    task3Valid = false;
+                } else {
+                    task3Valid = false;
                 }
                 updateReadingCompleteButton();
             }
 
-            function resetCircleSelection() {
-                circleSelectedIndices.clear();
-                circleCheckDone = false;
-                updateCircleVisuals();
-                document.getElementById('circleFeedback').innerHTML = '';
-                task3Completed = false;
+            function resetUnderlineSelection() {
+                underlineSelectedIndices.clear();
+                underlineCheckDone = false;
+                updateUnderlineVisuals();
+                document.getElementById('underlineFeedback').innerHTML = '';
+                task3Valid = false;
                 updateReadingCompleteButton();
             }
 
-            document.getElementById('circleModeBtn')?.addEventListener('click', () => {
-                circleModeActive = true;
-                document.getElementById('circleModeBtn').style.background = '#3b82f6';
-                document.getElementById('circleModeBtn').style.opacity = '1';
+            document.getElementById('underlineModeBtn')?.addEventListener('click', () => {
+                underlineModeActive = true;
+                document.getElementById('underlineModeBtn').style.background = '#f59e0b';
+                document.getElementById('underlineModeBtn').style.opacity = '1';
             });
-            document.getElementById('checkCircleBtn')?.addEventListener('click', checkCircleAnswer);
-            document.getElementById('resetCircleBtn')?.addEventListener('click', resetCircleSelection);
+            document.getElementById('checkUnderlineBtn')?.addEventListener('click', checkUnderlineAnswer);
+            document.getElementById('resetUnderlineBtn')?.addEventListener('click', resetUnderlineSelection);
 
             buildInteractivePassage();
-            // Reading Tasks 1 & 2 Validation
-            const checkReadingBtn = document.getElementById('checkReadingAnswersBtn');
+            // ==================== READING COMPLETE BUTTON ====================
+            let task1Valid = false;
             const completeReadingBtn = document.getElementById('completeReadingBtn');
+
+            function validateTask1Paraphrase(answer) {
+                const text = answer.trim();
+                if (!text) return { valid: false, message: '⚠️ Please write your paraphrase.' };
+                const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+                if (sentences.length < 2) return { valid: false, message: '❌ Write at least 2 sentences.' };
+                const wordCount = text.split(/\s+/).length;
+                if (wordCount < 25) return { valid: false, message: '❌ Write at least 25 words.' };
+                const lower = text.toLowerCase();
+                const hasRoad = /road|bypass|report/.test(lower);
+                const hasDamage = /damage|deterioration|poor|sub-standard|aggregate/.test(lower);
+                const hasCost = /4\.?2|crore|cost/.test(lower);
+                const hasSolution = /repair|audit|quality|tender/.test(lower);
+                if (!(hasRoad && hasDamage && hasCost && hasSolution)) {
+                    return { valid: false, message: '❌ Include main ideas: road issue, cause, cost, and solution.' };
+                }
+                return { valid: true, message: '✅ Good paraphrase!' };
+            }
 
             function updateReadingCompleteButton() {
                 if (completeReadingBtn) {
-                    if (task1Valid && task2Valid && task3Completed) {
-                        completeReadingBtn.disabled = false;
-                    } else {
-                        completeReadingBtn.disabled = true;
-                    }
+                    const allTasksDone = task1Valid && task2Valid && task3Valid;
+                    completeReadingBtn.disabled = !allTasksDone;
                 }
             }
 
-            if (checkReadingBtn) {
-                checkReadingBtn.addEventListener('click', function () {
-                    const task1Answer = document.getElementById('task1Paraphrase').value;
-                    const result1 = validateParaphrase2(task1Answer);
-                    document.getElementById('task1Feedback').innerHTML = result1.message;
-                    document.getElementById('task1Feedback').className = result1.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
-                    document.getElementById('task1Feedback').style.display = 'block';
-                    task1Valid = result1.valid;
-
-                    const task2WhatValid = validateKeyPoint('task2What', ['deterioration', 'premature', 'damage', 'crack', 'structural'], 'task2WhatFeedback');
-                    const task2WhyValid = validateKeyPoint('task2Why', ['aggregate', 'sub-standard', 'poor quality', 'base layer'], 'task2WhyFeedback');
-                    const task2CostValid = validateKeyPoint('task2Cost', ['4.2', 'crore', '4.2 crore', 'four point two'], 'task2CostFeedback');
-                    const task2ActionValid = validateKeyPoint('task2Action', ['tendering', 'repair', 'auditing', 'tender', 'contract', 'quality audit'], 'task2ActionFeedback');
-                    task2Valid = task2WhatValid && task2WhyValid && task2CostValid && task2ActionValid;
-
-                    const readingFeedbackDiv = document.getElementById('readingFeedback');
-                    if (task1Valid && task2Valid) {
-                        readingFeedbackDiv.innerHTML = '<span style="color: #22c55e;">✅ Tasks 1 & 2 completed! Now complete Task 3 (circle "premature" and "deterioration").</span>';
-                    } else {
-                        readingFeedbackDiv.innerHTML = '<span style="color: #dc2626;">❌ Please correct the errors in Tasks 1 and 2 above.</span>';
+            // Add Task 1 validation
+            const task1Textarea = document.getElementById('task1Paraphrase');
+            if (task1Textarea) {
+                task1Textarea.addEventListener('input', function () {
+                    const result = validateTask1Paraphrase(this.value);
+                    const feedbackDiv = document.getElementById('task1Feedback');
+                    if (feedbackDiv) {
+                        feedbackDiv.innerHTML = result.message;
+                        feedbackDiv.className = result.valid ? 'fix-feedback correct' : 'fix-feedback incorrect';
+                        feedbackDiv.style.display = 'block';
                     }
+                    task1Valid = result.valid;
                     updateReadingCompleteButton();
                 });
             }
 
             if (completeReadingBtn) {
                 completeReadingBtn.addEventListener('click', function () {
-                    if (task1Valid && task2Valid && task3Completed && typeof markActivityComplete === 'function') {
+                    if (task1Valid && task2Valid && task3Valid && typeof markActivityComplete === 'function') {
                         markActivityComplete('reading', 'chk2');
                     } else {
-                        alert('Please complete all reading tasks: Task 1 (2-sentence paraphrase), Task 2 (4 key points), and Task 3 (circle "premature" and "deterioration").');
+                        alert('Please complete all reading tasks: Task 1 (2-sentence summary), Task 2 (4 key points click "Check Task 2"), and Task 3 (underline "premature" and "deterioration").');
                     }
                 });
             }
 
-            // ==================== GRAMMAR VALIDATION - STRICT ====================
+            // ==================== GRAMMAR VALIDATION ====================
             const checkGrammarBtn = document.getElementById('checkGrammarBtn');
             const resetGrammarBtn = document.getElementById('resetGrammarBtn');
             const completeGrammarBtn = document.getElementById('completeGrammarBtn');
             let grammarCompleted = false;
 
             function validatePara1(answer) {
-                const lower = answer.toLowerCase().trim();
+                const lower = answer.trim().toLowerCase();
                 if (!answer.trim()) return { valid: false, message: '⚠️ Please paraphrase sentence 1.' };
                 if (lower.split(/\s+/).length < 6) return { valid: false, message: '❌ Sentence is too short (minimum 6 words).' };
-                if (lower === 'the engineers noticed a crack in the foundation.') return { valid: false, message: '❌ Don\'t copy. Rewrite in your own words.' };
                 const hasFoundation = /\bfoundation\b/.test(lower);
                 const hasCrack = /\bcrack\b|\bfracture\b/.test(lower);
-                const validStructure = /\b(engineers?|team)\b.*\b(noticed|observed|detected|found)\b/.test(lower) || /\bcrack\b.*\b(was|is)\b.*\b(noticed|observed|detected|found)\b/.test(lower);
                 if (!hasFoundation || !hasCrack) return { valid: false, message: '❌ Include crack and foundation.' };
-                if (!validStructure) return { valid: false, message: '❌ Sentence structure is incorrect. Use proper active or passive voice.' };
                 return { valid: true, message: '✅ Good paraphrase!' };
             }
 
             function validatePara2(answer) {
-                const lower = answer.toLowerCase().trim();
+                const lower = answer.trim().toLowerCase();
                 if (!answer.trim()) return { valid: false, message: '⚠️ Please paraphrase sentence 2.' };
                 if (lower.split(/\s+/).length < 6) return { valid: false, message: '❌ Sentence too short (minimum 6 words).' };
-                if (lower === 'rising costs have led to budget overruns.') return { valid: false, message: '❌ Rewrite the sentence instead of copying.' };
                 const hasCost = /\bcost|expense/.test(lower);
                 const hasBudget = /\bbudget\b/.test(lower);
-                const validStructure = /\b(costs?|expenses?)\b.*\b(caused|led to|resulted in|affected)\b/.test(lower) || /\bbudget\b.*\b(has been|was|were)\b.*\bcaused\b/.test(lower);
-                const wrongPassive = /\bhave caused by\b/.test(lower) || /\bhas caused by\b/.test(lower);
                 if (!hasCost || !hasBudget) return { valid: false, message: '❌ Include cost and budget idea.' };
-                if (wrongPassive) return { valid: false, message: '❌ Wrong passive. Use "have been caused".' };
-                if (!validStructure) return { valid: false, message: '❌ Sentence structure is not correct.' };
                 return { valid: true, message: '✅ Correct paraphrase!' };
             }
 
             function validatePara3(answer) {
-                const lower = answer.toLowerCase().trim();
+                const lower = answer.trim().toLowerCase();
                 if (!answer.trim()) return { valid: false, message: '⚠️ Please paraphrase sentence 3.' };
                 if (lower.split(/\s+/).length < 7) return { valid: false, message: '❌ Sentence too short (minimum 7 words).' };
-                if (lower === 'if the regulations change, the project will be affected.') return { valid: false, message: '❌ Rewrite the sentence in a new structure.' };
                 const hasRegulation = /\bregulation|regulations|rules\b/.test(lower);
                 const hasProject = /\bproject\b/.test(lower);
-                const validStructure = /\bif\b.*\b(regulation|regulations|rules)\b.*\b(change|changed|revised)\b.*\b(project)\b.*\b(will|may|might|could)\b.*\b(affect|affected|impact|impacted)\b/.test(lower) || /\b(project)\b.*\b(will be|may be|could be)\b.*\b(affected|impacted)\b.*\bif\b/.test(lower);
-                const wrongFragment = /^project affected/.test(lower) || /\bproject affected if\b/.test(lower);
                 if (!hasRegulation || !hasProject) return { valid: false, message: '❌ Include regulation and project.' };
-                if (wrongFragment) return { valid: false, message: '❌ Incomplete sentence. Add helping verb.' };
-                if (!validStructure) return { valid: false, message: '❌ Use full conditional structure.' };
                 return { valid: true, message: '✅ Good paraphrase!' };
             }
 
@@ -970,6 +1337,10 @@
 
             if (listenRecordBtn) {
                 listenRecordBtn.addEventListener('click', async function () {
+                    if (!paraphraseValidated) {
+                        alert('Please validate your paraphrase first!');
+                        return;
+                    }
                     try {
                         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                         listeningMediaRecorder = new MediaRecorder(stream);
@@ -1052,7 +1423,55 @@
             if (listeningAudio && listeningTextSection && postAudioContent) { listeningAudio.addEventListener('ended', function () { listeningTextSection.style.display = 'block'; postAudioContent.style.display = 'block'; }); }
 
             // ==================== PROGRESS TRACKING ====================
-            if (typeof updateChecklistProgress === 'function') { updateChecklistProgress(); }
+            function updateProgress() {
+                const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'];
+                let completed = 0;
+                checkboxes.forEach(id => {
+                    if (document.getElementById(id)?.checked) completed++;
+                });
+                const counter = document.getElementById('progressCounter');
+                if (counter) counter.innerText = `${completed}/5 completed`;
+                const dayBtn = document.getElementById('dayCompleteBtn');
+                if (dayBtn) {
+                    dayBtn.disabled = (completed !== 5);
+                    dayBtn.style.opacity = (completed === 5) ? '1' : '0.5';
+                }
+            }
+
+            if (typeof updateChecklistProgress === 'function') {
+                updateChecklistProgress();
+            } else {
+                updateProgress();
+            }
+
+            // ==================== DAY COMPLETION ====================
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            if (dayBtn) {
+                const newBtn = dayBtn.cloneNode(true);
+                dayBtn.parentNode.replaceChild(newBtn, dayBtn);
+                newBtn.addEventListener('click', function () {
+                    const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'];
+                    let allCompleted = true;
+                    for (let id of checkboxes) {
+                        if (!document.getElementById(id)?.checked) {
+                            allCompleted = false;
+                            break;
+                        }
+                    }
+                    if (!allCompleted) {
+                        alert('⚠️ Please complete all 5 activities before completing the day!');
+                        return;
+                    }
+                    this.innerHTML = '✨ Completing day...';
+                    this.disabled = true;
+                    if (typeof canvasConfetti !== 'undefined') {
+                        canvasConfetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                    }
+                    setTimeout(() => {
+                        window.location.href = '/learning/level/intermediate/?celebrate=true&completed=16';
+                    }, 500);
+                });
+            }
         });
     </script>
 </body>

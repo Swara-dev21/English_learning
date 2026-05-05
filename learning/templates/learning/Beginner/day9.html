@@ -248,6 +248,28 @@
             gap: 0.5rem;
             margin-top: 1rem;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+        }
+
+        .complete-activity-btn:not(:disabled) {
+            animation: pulseComplete 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseComplete {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+            }
         }
 
         .complete-activity-btn.completed {
@@ -255,6 +277,7 @@
             cursor: default;
             opacity: 1 !important;
             pointer-events: none;
+            animation: none !important;
         }
 
         .complete-activity-btn:disabled {
@@ -552,6 +575,47 @@
             border-color: #8b5cf6;
         }
 
+        /* 3 separate input fields styling */
+        .sentence-input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            background: white;
+            transition: all 0.2s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .sentence-input:focus {
+            outline: none;
+            border-color: #8b5cf6 !important;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .sentence-feedback {
+            margin-top: 0.25rem;
+            margin-bottom: 0.75rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        .sentence-feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .sentence-feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .sentence-feedback.warning {
+            background: #fef9e3;
+            color: #92400e;
+        }
+
         .vocab-table-container {
             overflow-x: auto;
             margin: 0.5rem 0;
@@ -682,6 +746,22 @@
             display: block;
         }
 
+        .habit-input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .habit-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
         .game-section {
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
             border-radius: 20px;
@@ -808,6 +888,28 @@
             color: #334155;
         }
 
+        .inline-message {
+            margin-top: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .inline-message.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .inline-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .inline-message.warning {
+            background: #fef9e3;
+            color: #92400e;
+        }
+
         @media (max-width: 768px) {
             .lesson-container {
                 padding: 1rem;
@@ -839,7 +941,7 @@
         </div>
         <div class="activities-grid">
 
-            <!-- 1. LISTENING ACTIVITY -->
+            <!-- 1. LISTENING ACTIVITY with Master Audio Lock -->
             <div class="activity-card" id="listening-card">
                 <div class="card-header listening">
                     <h2>🎧 1. Listening Activity : Confident Interruption & Clarity</h2>
@@ -850,52 +952,76 @@
                         <div class="task-header">
                             <div class="title"><span>🎯</span><span>The Task</span></div>
                         </div>
-                        <div class="task-content">Listen to the "Master Audio" and focus on the pauses (...). </div>
+                        <div class="task-content">Listen to the "Master Audio" and focus on the pauses (...).</div>
                     </div>
-                    <div class="audio-player"><audio id="listeningAudio" controls>
+                    <div class="audio-player">
+                        <audio id="masterAudio" controls>
                             <source src="{% static 'learning/audio/Beginner/day9.mp3' %}" type="audio/mpeg">
-                        </audio></div>
-                    <div class="task-box">
-                        <div class="task-header">
-                            <div class="title"><span>🎯</span><span>The Shadow Test</span></div>
-                        </div>
-                        <div class="task-content">Speak with the audio. Notice how the speaker emphasizes "try" and
-                            "participation."</div>
+                        </audio>
                     </div>
-                    <div class="combined-recording-section" id="combinedRecordingSection">
-                        <div style="font-weight:600; margin-bottom:0.5rem;">🎙️ Record & Compare</div>
-                        <div class="recording-controls"><button id="listeningRecordBtn" class="record-btn"> Start
-                                Recording</button><button id="listeningStopBtn" class="record-btn"
-                                style="background:#64748b; display:none;"> Stop Recording</button></div>
-                        <div id="listeningPlaybackCard" style="display:none; margin-top:0.75rem;"><audio
-                                id="listeningPlayback" controls style="width:100%;"></audio></div>
-                        <div id="comparisonSection" style="display:none; margin-top:1rem;">
-                            <div class="comparison-message">Do you sound like a student who is ready to lead the class?
+
+                    <!-- Listening Text Section - Hidden until audio finishes -->
+                    <div id="listeningTextSection" style="display: none;">
+                        <div class="task-box" style="margin-top: 1rem;">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Listening Text</span></div>
                             </div>
-                            <div style="display:flex; gap:0.75rem; margin-top:0.5rem;"><button id="yesComparisonBtn"
-                                    class="yes-btn">✓ Yes, I sound confident</button><button id="noComparisonBtn"
-                                    class="no-btn">✗ No, try again</button></div>
-                            <div id="comparisonFeedback" style="margin-top:0.5rem;"></div>
+                            <div class="task-content" style="font-style: italic; background: #fef9e3;">
+                                “I raise my hand… and ask a question… Even if I am unsure… I try… Because trying… is
+                                better than silence… 👉 Participation builds confidence.”
+                            </div>
                         </div>
                     </div>
-                    <div class="quiz-section">
-                        <p><strong>🧠 Quick Listening Check</strong></p><br>
-                        <div>
-                            <p><strong>What is better than silence?</strong></p><label class="quiz-option"><input
-                                    type="radio" name="listening_quiz" value="sleeping"> Sleeping</label><label
-                                class="quiz-option"><input type="radio" name="listening_quiz" value="trying">
-                                Trying</label>
+
+                    <!-- LOCKED CONTENT - Hidden until master audio finishes -->
+                    <div id="listeningExtraContent" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>🎯</span><span>The Shadow Test</span></div>
+                            </div>
+                            <div class="task-content">Speak with the audio. Notice how the speaker emphasizes "try" and
+                                "participation."</div>
                         </div>
-                        <div>
-                            <p><strong>What does participation build?</strong></p><label class="quiz-option"><input
-                                    type="radio" name="practice_quiz" value="stress"> Stress</label><label
-                                class="quiz-option"><input type="radio" name="practice_quiz" value="confidence">
-                                Confidence</label>
+                        <div class="combined-recording-section" id="combinedRecordingSection">
+                            <div style="font-weight:600; margin-bottom:0.5rem;">🎙️ Record & Compare</div>
+                            <div class="recording-controls"><button id="listeningRecordBtn" class="record-btn"> Start
+                                    Recording</button><button id="listeningStopBtn" class="record-btn"
+                                    style="background:#64748b; display:none;"> Stop Recording</button></div>
+                            <div id="listeningPlaybackCard" style="display:none; margin-top:0.75rem;"><audio
+                                    id="listeningPlayback" controls style="width:100%;"></audio></div>
+                            <div id="comparisonSection" style="display:none; margin-top:1rem;">
+                                <div class="comparison-message">Do you sound like a student who is ready to lead the
+                                    class?</div>
+                                <div style="display:flex; gap:0.75rem; margin-top:0.5rem;"><button id="yesComparisonBtn"
+                                        class="yes-btn">✓ Yes, I sound confident</button><button id="noComparisonBtn"
+                                        class="no-btn">✗ No, try again</button></div>
+                                <div id="comparisonFeedback" style="margin-top:0.5rem;"></div>
+                            </div>
                         </div>
-                        <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                        <div class="quiz-section">
+                            <p><strong>🧠 Quick Listening Check</strong></p><br>
+                            <div id="quizQuestion1">
+                                <p><strong>Question 1: What is better than silence?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="listening_quiz" value="sleeping">
+                                    Sleeping</label>
+                                <label class="quiz-option"><input type="radio" name="listening_quiz" value="trying">
+                                    Trying</label>
+                                <div id="quiz1Feedback" class="quiz-feedback-item" style="display: none;"></div>
+                            </div>
+                            <div id="quizQuestion2" style="margin-top: 1rem;">
+                                <p><strong>Question 2: What does participation build?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="practice_quiz" value="stress">
+                                    Stress</label>
+                                <label class="quiz-option"><input type="radio" name="practice_quiz" value="confidence">
+                                    Confidence</label>
+                                <div id="quiz2Feedback" class="quiz-feedback-item" style="display: none;"></div>
+                            </div>
+                            <div id="listeningQuizFeedback" class="quiz-feedback" style="display: none;"></div>
+                        </div>
+                        <button class="btn-outline" id="checkListeningWorkBtn" style="margin-top:1rem;">✓ Check My
+                            Answer</button>
                     </div>
-                    <button class="btn-outline" id="checkListeningWorkBtn" style="margin-top:1rem;">✓ Check My
-                        Answer</button>
+
                     <div style="display:flex; justify-content:flex-end;"><button class="complete-activity-btn"
                             id="completeListeningBtn" disabled>✓ Mark Listening as Complete</button></div>
                 </div>
@@ -929,7 +1055,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #e9d5ff; background: white;">
                             <div style="display: flex; gap: 0.75rem; align-items: flex-start; flex-wrap: wrap;">
                                 <div
@@ -1015,19 +1140,16 @@
                             </div>
                         </div>
                     </div>
-
                     <div
                         style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 16px; padding: 1rem 1.25rem; margin: 1.5rem 0 1rem 0; border-left: 4px solid #22c55e;">
                         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
                             <span style="font-size: 1.2rem;">💡</span>
                             <span style="font-weight: 700; color: #166534; font-size: 0.9rem;">WHY THIS WORKS</span>
                         </div>
-                        <p style="color: #14532d; font-size: 0.9rem; line-height: 1.5; margin: 0;">
-                            This is a Communicative Task. It forces you to combine the "Polite Inquiry" from Day 8 with
-                            real-world pressure.
-                        </p>
+                        <p style="color: #14532d; font-size: 0.9rem; line-height: 1.5; margin: 0;">This is a
+                            Communicative Task. It forces you to combine the "Polite Inquiry" from Day 8 with real-world
+                            pressure.</p>
                     </div>
-
                     <div style="display:flex; justify-content:flex-end; margin-top:1rem;"><button
                             class="complete-activity-btn" id="completeSpeakingBtn" disabled>✓ Mark Speaking as
                             Complete</button></div>
@@ -1040,7 +1162,7 @@
                     <h2>📖 3. Reading Passage (The Active Learner)</h2>
                 </div>
                 <div class="card-body">
-                    <div class="reading-passage"><strong>📖Read slowly. Notice how the Simple Past describes the
+                    <div class="reading-passage"><strong>📖 Read slowly. Notice how the Simple Past describes the
                             student's progress.</strong></div>
                     <div id="interactivePassage" class="interactive-passage"></div>
                     <div class="analysis-instruction"><strong>🔍 Analysis Task:</strong><br>• <span
@@ -1064,753 +1186,1068 @@
                 </div>
             </div>
 
-            <!-- 4. WRITING ACTIVITY -->
+            <!-- 4. WRITING ACTIVITY - 3 Separate Input Fields -->
             <div class="activity-card" id="writing-card">
                 <div class="card-header writing">
                     <h2>✍️ 4. Writing Activity · The Social Upgrade</h2>
                 </div>
                 <div class="card-body">
-
                     <div style="margin-bottom: 1.5rem;">
                         <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: #1e293b;">✨ Part A: The "Social
                             Upgrade"</h3>
-                        <div style="margin-bottom: 1rem;">
-                            <div class="fill-blank-item">
-                                <p><strong>1.</strong> Instead of "I don't know" <br>write: "I am <input type="text"
-                                        id="fillBlank1" class="fill-input"
-                                        style="display: inline-block; width: 200px; margin: 0 0.25rem;"
-                                        placeholder="smart phrase"> about this point."</p>
-                                <div id="fillBlank1Feedback" class="fix-feedback"
-                                    style="display: none; margin-top: 0.5rem;"></div>
-                            </div>
-                            <div class="fill-blank-item">
-                                <p><strong>2.</strong> Instead of "Give me the paper" <br>write: "I request the <input
-                                        type="text" id="fillBlank2" class="fill-input"
-                                        style="display: inline-block; width: 180px; margin: 0 0.25rem;"
-                                        placeholder="smart word"> of my documents."</p>
-                                <div id="fillBlank2Feedback" class="fix-feedback"
-                                    style="display: none; margin-top: 0.5rem;"></div>
-                            </div>
-                        </div>
 
-                        <div style="margin-bottom: 1rem;">
-                            <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem;"><strong>Main
-                                    Task:</strong> Write 3 things you learned in your technical class yesterday.</p>
-                            <textarea id="reflectionText" class="habit-input" rows="4"
-                                placeholder="1. I...&#10;2. I...&#10;3. I..."></textarea>
-                            <div id="reflectionFeedback" class="fix-feedback"
+                        <div class="fill-blank-item">
+                            <p><strong>1.</strong> Instead of "I don't know" → write: "I am <input type="text"
+                                    id="fillBlank1" class="fill-input"
+                                    style="display: inline-block; width: 150px; padding: 0.4rem 0.6rem; border-radius: 8px; border: 2px solid #e2e8f0; margin: 0 0.25rem;"
+                                    placeholder="smart phrase"> about this point."</p>
+                            <div id="fillBlank1Feedback" class="fix-feedback"
                                 style="display: none; margin-top: 0.5rem;"></div>
                         </div>
-
-                        <button class="btn-outline" id="checkPartABtn" style="margin-top: 0.5rem;">✓ Check Part
-                            A</button>
-                        <div id="partAStatus" style="margin-top: 0.5rem; font-size: 0.85rem; font-weight: 500;"></div>
-                        <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                            <button class="complete-activity-btn" id="completeWritingBtn" disabled>✓ Mark Writing as
-                                Complete</button>
+                        <div class="fill-blank-item">
+                            <p><strong>2.</strong> Instead of "Give me the paper" → write: "I request the <input
+                                    type="text" id="fillBlank2" class="fill-input"
+                                    style="display: inline-block; width: 140px; padding: 0.4rem 0.6rem; border-radius: 8px; border: 2px solid #e2e8f0; margin: 0 0.25rem;"
+                                    placeholder="smart word"> of my documents."</p>
+                            <div id="fillBlank2Feedback" class="fix-feedback"
+                                style="display: none; margin-top: 0.5rem;"></div>
                         </div>
-
                     </div>
-                </div>
 
-                <!-- 5. VOCABULARY TABLE (NO COMPLETE BUTTON) -->
-                <div class="activity-card">
-                    <div class="card-header vocabulary">
-                        <h2>📘 5. Vocabulary of the Day (The "Classroom" List)</h2>
-                    </div>
-                    <div class="card-body">
-                        <em>Use these words to sound more professional during discussions.</em>
-                        <div class="vocab-table-container">
-                            <table class="vocab-table">
-                                <thead>
-                                    <tr>
-                                        <th>🔊</th>
-                                        <th>Simple Word</th>
-                                        <th>Smart Word</th>
-                                        <th>Pronunciation</th>
-                                        <th>Meaning</th>
-                                        <th>Synonym</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="audio-cell"><button class="vocab-audio-btn"
-                                                onclick="playAudio('Query')">🔊</button></td>
-                                        <td>Ask</td>
-                                        <td class="word-cell"><strong>Query</strong></td>
-                                        <td><code>/ˈkwɪə.ri/</code></td>
-                                        <td>To ask a specific question</td>
-                                        <td>Inquire</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="audio-cell"><button class="vocab-audio-btn"
-                                                onclick="playAudio('Commend')">🔊</button></td>
-                                        <td>Praise</td>
-                                        <td class="word-cell"><strong>Commend</strong></td>
-                                        <td><code>/kəˈmend/</code></td>
-                                        <td>To praise formally</td>
-                                        <td>Applaud</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="audio-cell"><button class="vocab-audio-btn"
-                                                onclick="playAudio('Engage')">🔊</button></td>
-                                        <td>Start</td>
-                                        <td class="word-cell"><strong>Engage</strong></td>
-                                        <td><code>/ɪnˈɡeɪdʒ/</code></td>
-                                        <td>To participate/take part</td>
-                                        <td>Involve</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="audio-cell"><button class="vocab-audio-btn"
-                                                onclick="playAudio('Vanish')">🔊</button></td>
-                                        <td>Disappear</td>
-                                        <td class="word-cell"><strong>Vanish</strong></td>
-                                        <td><code>/ˈvæn.ɪʃ/</code></td>
-                                        <td>To stop existing</td>
-                                        <td>Fade</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="audio-cell"><button class="vocab-audio-btn"
-                                                onclick="playAudio('Consequence')">🔊</button></td>
-                                        <td>Result</td>
-                                        <td class="word-cell"><strong>Consequence</strong></td>
-                                        <td><code>/ˈkɒn.sɪ.kwəns/</code></td>
-                                        <td>A result of an action</td>
-                                        <td>Outcome</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem;"><strong>Main Task:</strong>
+                            Write 3 things you learned yesterday using Simple Past tense (I + verb-ed):</p>
+
+                        <!-- Sample Example Box -->
                         <div
-                            style="background:linear-gradient(135deg,#fefce8,#fef9e3); border-left:4px solid #eab308; padding:1rem; border-radius:12px; margin:1rem 0;">
-                            <div style="display:flex; align-items:center; gap:0.5rem; font-weight:700; color:#854d0e;">
-                                <span>🔥</span><span>POWER WORD OF THE DAY: "PROACTIVE"</span></div><br>
-                            <p style="margin-bottom:0.5rem"><strong>Pronunciation:</strong> Pro-AK-tiv</p>
-                            <p style="margin-bottom:0.5rem"><strong>Meaning:</strong> Creating or controlling a
-                                situation rather than just responding to it.</p>
-                            <p><strong>Usage:</strong> "A proactive student asks questions before the exam starts."</p>
+                            style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: #0369a1;">📌 Example:</span>
+                            <p style="font-size: 0.85rem; color: #075985; margin: 0.25rem 0 0 0;">"I
+                                <strong>learned</strong> how to code a loop yesterday."</p>
                         </div>
-                        <div
-                            style="background:linear-gradient(135deg,#e0f2fe,#bae6fd); border-left:4px solid #38bdf8; padding:1rem; border-radius:12px; margin:1rem 0;">
-                            <div style="display:flex; align-items:center; gap:0.5rem; font-weight:700; color:#075985;">
-                                <span>💬</span><span>Idiom of the Day: "Break the ice"</span></div><br>
-                            <p style="margin-bottom:0.5rem"><strong>Marathi Meaning:</strong> संवादाला सुरुवात करणे
-                                (शांतता भंग करून बोलू लागणे).</p>
-                            <p style="margin-bottom:0.5rem">⚙️ The Logic: When a classroom is silent, the first person
-                                to ask a question is the one who "breaks the ice."</p>
-                            <p style="margin-bottom:0.5rem"><strong>Example:</strong> "I asked a simple question just to
-                                break the ice in the meeting."</p>
+
+                        <input type="text" id="sentence1" class="habit-input" placeholder="1. I ...">
+                        <div id="sentence1Feedback" class="fix-feedback" style="display: none; margin-top: 0.5rem;">
                         </div>
-                        <!-- NO COMPLETE BUTTON FOR VOCABULARY -->
+
+                        <input type="text" id="sentence2" class="habit-input" placeholder="2. I ...">
+                        <div id="sentence2Feedback" class="fix-feedback" style="display: none; margin-top: 0.5rem;">
+                        </div>
+
+                        <input type="text" id="sentence3" class="habit-input" placeholder="3. I ...">
+                        <div id="sentence3Feedback" class="fix-feedback" style="display: none; margin-top: 0.5rem;">
+                        </div>
+                    </div>
+
+                    <button class="btn-outline" id="checkPartABtn" style="margin-top: 0.5rem;">✓ Check Part A
+                        Answers</button>
+                    <div id="partAStatus" style="margin-top: 0.5rem; font-size: 0.85rem; font-weight: 500;"></div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeWritingBtn" disabled>✓ Mark Writing as
+                            Complete</button>
                     </div>
                 </div>
+            </div>
 
-
-                <div class="activity-card" id="grammar-card">
-                    <div class="card-header vocabulary"> <!-- Use any header style, e.g., vocabulary -->
-                        <h3>🧠 6. Grammar Hack: The "Past State" (Was vs. Were)</h3>
+            <!-- 5. VOCABULARY TABLE WITH AUTO-CHECK ON AUDIO CLICK -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 5. Vocabulary of the Day (The "Interaction" List)</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>🔊</th>
+                                    <th>✅</th>
+                                    <th>Simple Word</th>
+                                    <th>Smart Word</th>
+                                    <th>Pronunciation</th>
+                                    <th>Meaning</th>
+                                    <th>Synonym</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Inquire"
+                                            data-checkid="check-inquire">🔊</button></td>
+                                    <td class="check-cell" id="check-inquire">⬜</td>
+                                    <td>Ask</td>
+                                    <td class="word-cell"><strong>Inquire</strong></td>
+                                    <td><code>/ɪnˈkwaɪər/</code></td>
+                                    <td>To seek information</td>
+                                    <td>Query</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Reiterate"
+                                            data-checkid="check-reiterate">🔊</button></td>
+                                    <td class="check-cell" id="check-reiterate">⬜</td>
+                                    <td>Tell/Repeat</td>
+                                    <td class="word-cell"><strong>Reiterate</strong></td>
+                                    <td><code>/riˈɪt.ə.reɪt/</code></td>
+                                    <td>To say again</td>
+                                    <td>Restate</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Require"
+                                            data-checkid="check-require">🔊</button></td>
+                                    <td class="check-cell" id="check-require">⬜</td>
+                                    <td>Need/Want</td>
+                                    <td class="word-cell"><strong>Require</strong></td>
+                                    <td><code>/rɪˈkwaɪər/</code></td>
+                                    <td>To need something</td>
+                                    <td>Necessity</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Assistance"
+                                            data-checkid="check-assistance">🔊</button></td>
+                                    <td class="check-cell" id="check-assistance">⬜</td>
+                                    <td>Help</td>
+                                    <td class="word-cell"><strong>Assistance</strong></td>
+                                    <td><code>/əˈsɪs.təns/</code></td>
+                                    <td>The act of helping</td>
+                                    <td>Aid</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Verify"
+                                            data-checkid="check-verify">🔊</button></td>
+                                    <td class="check-cell" id="check-verify">⬜</td>
+                                    <td>Check</td>
+                                    <td class="word-cell"><strong>Verify</strong></td>
+                                    <td><code>/ˈver.ɪ.faɪ/</code></td>
+                                    <td>To prove the truth</td>
+                                    <td>Confirm</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="card-body">
-
-                        <p><strong>🔹 The Hack:</strong> Use these to describe how things were in the past
-                            (Status/Condition).</p>
-                        <div class="grammar-rule">
-                            <p><strong>Subject</strong> → <strong>Past Verb</strong></p>
-                            <p>I / He / She / It → <strong>Was</strong></p>
-                            <p>You / We / They → <strong>Were</strong></p>
-                            <p class="correct">"I was shy." / "They were helpful."</p>
-                        </div>
-                        <h3 style="margin:1rem 0 0.5rem 0;">✍️ Activity: Fill in the blanks with "Was" or "Were"</h3>
-
-                        <div class="fix-sentence-item">
-                            <p><strong>1.</strong> The experiment __________ successful.</p>
-                            <div class="radio-group">
-                                <label class="radio-option"><input type="radio" name="grammar1" value="was"> Was</label>
-                                <label class="radio-option"><input type="radio" name="grammar1" value="were">
-                                    Were</label>
-                            </div>
-                            <div id="grammar1Feedback" class="fix-feedback"></div>
-                        </div>
-
-                        <div class="fix-sentence-item">
-                            <p><strong>2.</strong> The students __________ excited about the lab.</p>
-                            <div class="radio-group">
-                                <label class="radio-option"><input type="radio" name="grammar2" value="was"> Was</label>
-                                <label class="radio-option"><input type="radio" name="grammar2" value="were">
-                                    Were</label>
-                            </div>
-                            <div id="grammar2Feedback" class="fix-feedback"></div>
-                        </div>
-
-                        <div class="fix-sentence-item">
-                            <p><strong>3.</strong> I __________ uncertain about the answer yesterday.</p>
-                            <div class="radio-group">
-                                <label class="radio-option"><input type="radio" name="grammar3" value="was"> Was</label>
-                                <label class="radio-option"><input type="radio" name="grammar3" value="were">
-                                    Were</label>
-                            </div>
-                            <div id="grammar3Feedback" class="fix-feedback"></div>
-                        </div>
-
-                        <button class="btn-outline" id="checkAllGrammarBtn" style="margin-top:1rem;">✓ Check All
-                            Answers</button>
-                        <div style="display:flex; justify-content:flex-end;"><button class="complete-activity-btn"
-                                id="completeGrammarBtn" disabled>✓ Mark Grammar as Complete</button></div>
+                    <div
+                        style="background:linear-gradient(135deg,#fefce8,#fef9e3); border-left:4px solid #eab308; padding:1rem; border-radius:12px; margin:1rem 0;">
+                        <div style="display:flex; align-items:center; gap:0.5rem; font-weight:700; color:#854d0e;">
+                            <span>🔥</span><span>POWER WORD OF THE DAY: "APPRECIATIVE"</span>
+                        </div><br>
+                        <p style="margin-bottom:0.5rem"><strong>Pronunciation:</strong> Uh-PREE-she-uh-tiv</p>
+                        <p style="margin-bottom:0.5rem"><strong>Meaning:</strong> Feeling or showing gratitude or
+                            pleasure.</p>
+                        <p><strong>Usage:</strong> "I am highly appreciative of the guidance you provided."</p>
                     </div>
-
-                    <!-- 7. SOLO GAME -->
-                    <div class="game-section" id="game-card">
-                        <h3>🎲 7. Solo Game: "The Participation Swap" 🧩</h3><br>
-                        <em>Swap the bold words for a Smart Word from today</em><br>
-                        <div style="background: white; border-radius: 16px; padding: 1rem; margin-bottom: 1.5rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-                                <span
-                                    style="background: #8b5cf6; width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
-                                <span style="font-weight: 700; color: #1e293b; font-size: 1rem;">🔤 Part A: Smart
-                                    Swap</span>
-                            </div>
-                            <div class="game-word">
-                                <div class="game-question">1. "The teacher praised my work." → "The teacher __________
-                                    my work."</div><input type="text" id="game1" class="game-input"
-                                    placeholder="Type the smart word...">
-                                <div id="game1Feedback" class="fix-feedback" style="display: none;"></div>
-                            </div>
-                            <div class="game-word">
-                                <div class="game-question">2. "I want to participate in the seminar." → "I want to
-                                    __________ in the seminar."</div><input type="text" id="game2" class="game-input"
-                                    placeholder="Type the smart word...">
-                                <div id="game2Feedback" class="fix-feedback" style="display: none;"></div>
-                            </div>
-                            <div class="game-word">
-                                <div class="game-question">3. "My fear disappeared." → "My fear __________."</div><input
-                                    type="text" id="game3" class="game-input" placeholder="Type the smart word...">
-                                <div id="game3Feedback" class="fix-feedback" style="display: none;"></div>
-                            </div>
-                            <button class="btn-outline" id="checkPartAGameBtn" style="margin-top: 0.5rem;">✓ Check Part
-                                A</button>
-                            <div id="partAGameStatus"
-                                style="margin-top: 0.75rem; font-size: 0.85rem; font-weight: 500;"></div>
-                        </div>
-
-                        <div style="background: white; border-radius: 16px; padding: 1rem; margin-bottom: 1rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-                                <span
-                                    style="background: #f59e0b; width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
-                                <span style="font-weight: 700; color: #1e293b; font-size: 1rem;">🔍 Part B: The
-                                    "Was/Were" Logic</span><br>
-                            </div>
-                            <em>Find the mistake:</em>
-                            <div class="game-word">
-                                <div class="game-question">1. "The machines was running perfectly."</div><input
-                                    type="text" id="scramble1" class="game-input"
-                                    placeholder="Type the corrected sentence...">
-                                <div id="scramble1Feedback" class="fix-feedback" style="display: none;"></div>
-                            </div>
-                            <div class="game-word">
-                                <div class="game-question">2. "We was practicing the dialogue."</div><input type="text"
-                                    id="scramble2" class="game-input" placeholder="Type the corrected sentence...">
-                                <div id="scramble2Feedback" class="fix-feedback" style="display: none;"></div>
-                            </div>
-                            <button class="btn-outline" id="checkPartBGameBtn" style="margin-top: 0.5rem;">✓ Check Part
-                                B</button>
-                            <div id="partBGameStatus"
-                                style="margin-top: 0.75rem; font-size: 0.85rem; font-weight: 500;"></div>
-                        </div>
-                        <div style="display: flex; justify-content: flex-end; margin-top: 1rem;"><button
-                                class="complete-activity-btn" id="completeGameBtn" disabled>✓ Mark Game as
-                                Complete</button></div>
+                    <div
+                        style="background:linear-gradient(135deg,#e0f2fe,#bae6fd); border-left:4px solid #38bdf8; padding:1rem; border-radius:12px; margin:1rem 0;">
+                        <div style="display:flex; align-items:center; gap:0.5rem; font-weight:700; color:#075985;">
+                            <span>💬</span><span>Idiom of the Day: "A piece of cake"</span>
+                        </div><br>
+                        <p style="margin-bottom:0.5rem"><strong>Marathi Meaning:</strong> अतिशय सोपे काम (अगदी सोपे).
+                        </p>
+                        <p style="margin-bottom:0.5rem"><strong>Example:</strong> "I thought the interview would be
+                            hard, but it was a piece of cake."</p>
                     </div>
 
-                    <!-- CHECKLIST - ONLY 6 ITEMS (NO VOCABULARY) -->
-                    <div class="activity-card">
-                        <div class="card-header vocabulary">
-                            <h2>✅ DAY 9 COMPLETION CHECKLIST</h2>
-                        </div>
-                        <div class="card-body">
-                            <ul class="checklist">
-                                <li><input type="checkbox" id="chk1" disabled> <label>I performed the "Counter Clerk"
-                                        speaking challenge with a bold voice.</label></li>
-                                <li><input type="checkbox" id="chk2" disabled> <label>I identified 12 past tense verbs
-                                        in the reading passage.</label></li>
-                                <li><input type="checkbox" id="chk3" disabled> <label>I correctly used Was/Were in the
-                                        Grammar Hack.</label></li>
-                                <li><input type="checkbox" id="chk4" disabled> <label>I "broke the ice" by speaking
-                                        English out loud today.</label></li>
-                                <li><input type="checkbox" id="chk5" disabled> <label>I completed the "Social Upgrade"
-                                        writing task.</label></li>
-                                <li><input type="checkbox" id="chk6" disabled> <label>I completed the "Participation
-                                        Swap" solo game.</label></li>
-                            </ul>
-                            <div style="text-align: right; margin-bottom: 1rem;"><span class="badge"
-                                    id="progressCounter">0/6 completed</span></div>
-                            <div style="display: flex; justify-content: center;"><button class="day-complete-btn"
-                                    id="dayCompleteBtn" disabled>🎉 Complete Day 9 🎉</button></div>
-                        </div>
+                    <!-- Vocabulary Complete Button -->
+                    <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                        <button class="complete-activity-btn" id="completeVocabularyBtn" disabled>✓ Mark Vocabulary as
+                            Complete</button>
                     </div>
                 </div>
+            </div>
 
-                <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-                <script>
-                    // ==================== Activity Completion Tracking ====================
-                    let activityCompleted = { listening: false, speaking: false, reading: false, writing: false, grammar: false, game: false };
+            <!-- 6. GRAMMAR SECTION -->
+            <div class="activity-card" id="grammar-card">
+                <div class="card-header vocabulary">
+                    <h3>🧠 6. Grammar Hack: The "Past State" (Was vs. Were)</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>🔹 The Hack:</strong> Use these to describe how things were in the past
+                        (Status/Condition).</p>
+                    <div class="grammar-rule">
+                        <p><strong>Subject</strong> → <strong>Past Verb</strong></p>
+                        <p>I / He / She / It → <strong>Was</strong></p>
+                        <p>You / We / They → <strong>Were</strong></p>
+                        <p class="correct">"I was shy." / "They were helpful."</p>
+                    </div>
+                    <h3 style="margin:1rem 0 0.5rem 0;">✍️ Activity: Fill in the blanks with "Was" or "Were"</h3>
 
-                    function updateChecklistProgress() {
-                        let c = 0;
-                        for (let i = 1; i <= 6; i++) if (document.getElementById(`chk${i}`)?.checked) c++;
-                        document.getElementById('progressCounter').innerText = `${c}/6 completed`;
-                        const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-                        if (dayCompleteBtn) {
-                            dayCompleteBtn.disabled = c !== 6;
-                            dayCompleteBtn.style.opacity = c === 6 ? '1' : '0.5';
-                            dayCompleteBtn.style.cursor = c === 6 ? 'pointer' : 'not-allowed';
-                        }
+                    <div class="fix-sentence-item">
+                        <p><strong>1.</strong> The experiment __________ successful.</p>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="grammar1" value="was"> Was</label>
+                            <label class="radio-option"><input type="radio" name="grammar1" value="were"> Were</label>
+                        </div>
+                        <div id="grammar1Feedback" class="fix-feedback"></div>
+                    </div>
+
+                    <div class="fix-sentence-item">
+                        <p><strong>2.</strong> The students __________ excited about the lab.</p>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="grammar2" value="was"> Was</label>
+                            <label class="radio-option"><input type="radio" name="grammar2" value="were"> Were</label>
+                        </div>
+                        <div id="grammar2Feedback" class="fix-feedback"></div>
+                    </div>
+
+                    <div class="fix-sentence-item">
+                        <p><strong>3.</strong> I __________ uncertain about the answer yesterday.</p>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="grammar3" value="was"> Was</label>
+                            <label class="radio-option"><input type="radio" name="grammar3" value="were"> Were</label>
+                        </div>
+                        <div id="grammar3Feedback" class="fix-feedback"></div>
+                    </div>
+
+                    <button class="btn-outline" id="checkAllGrammarBtn" style="margin-top:1rem;">✓ Check All
+                        Answers</button>
+                    <div style="display:flex; justify-content:flex-end;"><button class="complete-activity-btn"
+                            id="completeGrammarBtn" disabled>✓ Mark Grammar as Complete</button></div>
+                </div>
+            </div>
+
+            <!-- 7. SOLO GAME -->
+            <div class="game-section" id="game-card">
+                <h3>🎲 7. Solo Game: "The Participation Swap" 🧩</h3><br>
+                <em>Swap the bold words for a Smart Word from today</em><br>
+                <div style="background: white; border-radius: 16px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                        <span style="font-weight: 700; color: #1e293b; font-size: 1rem;">🔤 Part A: Smart Swap</span>
+                    </div>
+                    <div class="game-word">
+                        <div class="game-question">1. "The teacher praised my work." → "The teacher __________ my work."
+                        </div>
+                        <input type="text" id="game1" class="game-input" placeholder="Type the smart word...">
+                        <div id="game1Feedback" class="fix-feedback" style="display: none;"></div>
+                    </div>
+                    <div class="game-word">
+                        <div class="game-question">2. "I want to participate in the seminar." → "I want to __________ in
+                            the seminar."</div>
+                        <input type="text" id="game2" class="game-input" placeholder="Type the smart word...">
+                        <div id="game2Feedback" class="fix-feedback" style="display: none;"></div>
+                    </div>
+                    <div class="game-word">
+                        <div class="game-question">3. "My fear disappeared." → "My fear __________."</div>
+                        <input type="text" id="game3" class="game-input" placeholder="Type the smart word...">
+                        <div id="game3Feedback" class="fix-feedback" style="display: none;"></div>
+                    </div>
+                    <button class="btn-outline" id="checkPartAGameBtn" style="margin-top: 0.5rem;">✓ Check Part
+                        A</button>
+                    <div id="partAGameStatus" style="margin-top: 0.75rem; font-size: 0.85rem; font-weight: 500;"></div>
+                </div>
+
+                <div style="background: white; border-radius: 16px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                        <span style="font-weight: 700; color: #1e293b; font-size: 1rem;">🔍 Part B: The "Was/Were"
+                            Logic</span><br>
+                    </div>
+                    <em>Find the mistake:</em>
+                    <div class="game-word">
+                        <div class="game-question">1. "The machines was running perfectly."</div>
+                        <input type="text" id="scramble1" class="game-input"
+                            placeholder="Type the corrected sentence...">
+                        <div id="scramble1Feedback" class="fix-feedback" style="display: none;"></div>
+                    </div>
+                    <div class="game-word">
+                        <div class="game-question">2. "We was practicing the dialogue."</div>
+                        <input type="text" id="scramble2" class="game-input"
+                            placeholder="Type the corrected sentence...">
+                        <div id="scramble2Feedback" class="fix-feedback" style="display: none;"></div>
+                    </div>
+                    <button class="btn-outline" id="checkPartBGameBtn" style="margin-top: 0.5rem;">✓ Check Part
+                        B</button>
+                    <div id="partBGameStatus" style="margin-top: 0.75rem; font-size: 0.85rem; font-weight: 500;"></div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;"><button
+                        class="complete-activity-btn" id="completeGameBtn" disabled>✓ Mark Game as Complete</button>
+                </div>
+            </div>
+
+            <!-- CHECKLIST -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 9 COMPLETION CHECKLIST</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chk1" disabled> <label>I listened to the master audio, recorded
+                                my voice, and answered the quiz (Listening).</label></li>
+                        <li><input type="checkbox" id="chk2" disabled> <label>I performed the "Counter Clerk" speaking
+                                challenge with a bold voice.</label></li>
+                        <li><input type="checkbox" id="chk3" disabled> <label>I identified 12 past tense verbs in the
+                                reading passage.</label></li>
+                        <li><input type="checkbox" id="chk4" disabled> <label>I completed the "Social Upgrade" writing
+                                task (3 things I learned yesterday).</label></li>
+                        <li><input type="checkbox" id="chk5" disabled> <label>I correctly used Was/Were in the Grammar
+                                Hack.</label></li>
+                        <li><input type="checkbox" id="chk6" disabled> <label>I completed the "Participation Swap" solo
+                                game.</label></li>
+                        <li><input type="checkbox" id="chk7" disabled> <label>I listened to all vocabulary words
+                                (Vocabulary Activity).</label></li>
+                    </ul>
+                    <div style="text-align: right; margin-bottom: 1rem;"><span class="badge" id="progressCounter">0/7
+                            completed</span></div>
+                    <div style="display: flex; justify-content: center;"><button class="day-complete-btn"
+                            id="dayCompleteBtn" disabled>Complete Day 9</button></div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        <script>
+            // ==================== MASTER AUDIO LOCK ====================
+            const masterAudioElement = document.getElementById('masterAudio');
+            const listeningExtraContent = document.getElementById('listeningExtraContent');
+            const audioWaitingMsg = document.getElementById('audioWaitingMsg');
+
+            if (masterAudioElement && listeningExtraContent) {
+                listeningExtraContent.style.display = 'none';
+
+                masterAudioElement.addEventListener('ended', function () {
+                    listeningExtraContent.style.display = 'block';
+                    document.getElementById('listeningTextSection').style.display = 'block';
+                    if (audioWaitingMsg) {
+                        audioWaitingMsg.style.background = '#d1fae5';
+                        audioWaitingMsg.style.color = '#065f46';
+                        audioWaitingMsg.innerHTML = '✅ Master Audio completed! You can now proceed with the exercises below.';
                     }
+                });
 
-                    function markActivityComplete(activityId, checklistId) {
-                        if (activityCompleted[activityId]) return;
-                        activityCompleted[activityId] = true;
-                        let cb = document.getElementById(checklistId);
-                        if (cb) cb.checked = true;
-                        let btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-                        if (btn) {
-                            btn.classList.add('completed');
-                            btn.textContent = '✓ Completed';
-                            btn.disabled = false;
-                            btn.style.pointerEvents = 'none';
-                        }
-                        updateChecklistProgress();
+                if (masterAudioElement.readyState >= 2 && masterAudioElement.ended) {
+                    listeningExtraContent.style.display = 'block';
+                    document.getElementById('listeningTextSection').style.display = 'block';
+                    if (audioWaitingMsg) {
+                        audioWaitingMsg.style.background = '#d1fae5';
+                        audioWaitingMsg.style.color = '#065f46';
+                        audioWaitingMsg.innerHTML = '✅ Master Audio completed! You can now proceed with the exercises below.';
                     }
+                }
+            }
 
-                    function completeDay() {
-                        const btn = document.getElementById('dayCompleteBtn');
-                        if (btn.disabled) {
-                            alert('Please complete all activities first!');
-                            return;
-                        }
-                        btn.innerHTML = '🎉 Saving...';
-                        btn.disabled = true;
-                        if (typeof confetti !== 'undefined') {
-                            confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-                        }
-                        setTimeout(() => {
-                            window.location.href = '/learning/level/beginner/?celebrate=true&completed=9';
-                        }, 2000);
-                    }
+            // ==================== Activity Completion Tracking ====================
+            let activityCompleted = { listening: false, speaking: false, reading: false, writing: false, grammar: false, game: false, vocabulary: false };
 
-                    // ==================== BUTTON STATE FUNCTIONS ====================
-                    function enableButton(btn) { if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } }
-                    function disableButton(btn) { if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.style.cursor = 'not-allowed'; } }
+            function updateChecklistProgress() {
+                let c = 0;
+                for (let i = 1; i <= 7; i++) if (document.getElementById(`chk${i}`)?.checked) c++;
+                document.getElementById('progressCounter').innerText = `${c}/7 completed`;
+                const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+                if (dayCompleteBtn) {
+                    dayCompleteBtn.disabled = c !== 7;
+                    dayCompleteBtn.style.opacity = c === 7 ? '1' : '0.5';
+                    dayCompleteBtn.style.cursor = c === 7 ? 'pointer' : 'not-allowed';
+                }
+            }
 
-                    // Listening
-                    let listeningRecordingDone = false, listeningVoiceConfirmed = false, listeningQuizCorrect = false;
-                    const listeningBtn = document.getElementById('completeListeningBtn');
-                    function updateListeningBtn() { (listeningRecordingDone && listeningVoiceConfirmed && listeningQuizCorrect) ? enableButton(listeningBtn) : disableButton(listeningBtn); }
+            // ========== LOCALSTORAGE PERSISTENCE ==========
+            const STORAGE_KEY = 'progress_beginner_day9';
 
-                    // Speaking
-                    let speakingRecorded = { 1: false, 2: false, 3: false, 4: false, 5: false };
-                    const speakingBtn = document.getElementById('completeSpeakingBtn');
-                    function updateSpeakingBtn() { (speakingRecorded[1] && speakingRecorded[2] && speakingRecorded[3] && speakingRecorded[4] && speakingRecorded[5]) ? enableButton(speakingBtn) : disableButton(speakingBtn); }
+            function saveProgress() {
+                const data = {
+                    activityCompleted: activityCompleted,
+                    inputs: {},
+                    radios: {}
+                };
+                document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                    if (el.id) data.inputs[el.id] = el.value;
+                });
+                document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
+                    if (el.name) data.radios[el.name] = el.value;
+                });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
 
-                    // Reading
-                    let readingCompleteEnabled = false;
-                    const readingBtn = document.getElementById('completeReadingBtn');
-                    function updateReadingBtn() { readingCompleteEnabled ? enableButton(readingBtn) : disableButton(readingBtn); }
-
-                    // Writing
-                    let partAComplete = false;
-                    const writingBtn = document.getElementById('completeWritingBtn');
-                    function updateWritingBtn() { partAComplete ? enableButton(writingBtn) : disableButton(writingBtn); }
-
-                    // Grammar
-                    let grammarAllCorrect = false;
-                    const grammarBtn = document.getElementById('completeGrammarBtn');
-                    function updateGrammarBtn() { grammarAllCorrect ? enableButton(grammarBtn) : disableButton(grammarBtn); }
-
-                    // Game
-                    let partAGameComplete = false, partBGameComplete = false;
-                    const gameBtn = document.getElementById('completeGameBtn');
-                    function updateGameBtn() { (partAGameComplete && partBGameComplete) ? enableButton(gameBtn) : disableButton(gameBtn); }
-
-                    // ==================== LISTENING ====================
-                    let listeningMediaRecorder, listeningAudioChunks, listeningStream, hasListeningRecording = false, listeningQuizAnswers = { q1: null, q2: null };
-                    document.querySelectorAll('input[name="listening_quiz"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q1 = e.target.value; document.getElementById('listeningQuizFeedback').style.display = 'none'; }));
-                    document.querySelectorAll('input[name="practice_quiz"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q2 = e.target.value; document.getElementById('listeningQuizFeedback').style.display = 'none'; }));
-                    document.getElementById('listeningRecordBtn')?.addEventListener('click', async () => { try { listeningStream = await navigator.mediaDevices.getUserMedia({ audio: true }); listeningMediaRecorder = new MediaRecorder(listeningStream); listeningAudioChunks = []; listeningMediaRecorder.ondataavailable = e => listeningAudioChunks.push(e.data); listeningMediaRecorder.onstop = () => { let blob = new Blob(listeningAudioChunks, { type: 'audio/webm' }); document.getElementById('listeningPlayback').src = URL.createObjectURL(blob); document.getElementById('listeningPlaybackCard').style.display = 'block'; if (listeningStream) listeningStream.getTracks().forEach(t => t.stop()); hasListeningRecording = true; listeningRecordingDone = true; updateListeningBtn(); document.getElementById('comparisonSection').style.display = 'block'; }; listeningMediaRecorder.start(); document.getElementById('listeningRecordBtn').style.display = 'none'; document.getElementById('listeningStopBtn').style.display = 'inline-flex'; } catch (e) { alert('Microphone error'); } });
-                    document.getElementById('listeningStopBtn')?.addEventListener('click', () => { if (listeningMediaRecorder?.state === 'recording') { listeningMediaRecorder.stop(); document.getElementById('listeningStopBtn').style.display = 'none'; document.getElementById('listeningRecordBtn').style.display = 'inline-flex'; } });
-                    document.getElementById('yesComparisonBtn')?.addEventListener('click', () => { listeningVoiceConfirmed = true; updateListeningBtn(); document.getElementById('comparisonFeedback').innerHTML = '✅ Great! You sound ready to lead!'; });
-                    document.getElementById('noComparisonBtn')?.addEventListener('click', () => { listeningVoiceConfirmed = false; updateListeningBtn(); document.getElementById('listeningPlaybackCard').style.display = 'none'; document.getElementById('comparisonSection').style.display = 'none'; hasListeningRecording = false; listeningRecordingDone = false; });
-                    document.getElementById('checkListeningWorkBtn')?.addEventListener('click', () => { let fb = document.getElementById('listeningQuizFeedback'); if (!hasListeningRecording) { fb.innerHTML = '⚠️ Record your voice first.'; fb.className = 'quiz-feedback incorrect'; fb.style.display = 'block'; return; } if (!listeningQuizAnswers.q1 || !listeningQuizAnswers.q2) { fb.innerHTML = '⚠️ Answer both questions.'; fb.className = 'quiz-feedback incorrect'; fb.style.display = 'block'; return; } if (listeningQuizAnswers.q1 !== 'trying' || listeningQuizAnswers.q2 !== 'confidence') { fb.innerHTML = '❌ Incorrect. Correct: Trying and Confidence'; fb.className = 'quiz-feedback incorrect'; fb.style.display = 'block'; listeningQuizCorrect = false; } else { fb.innerHTML = '✅ Correct! Participation builds confidence!'; fb.className = 'quiz-feedback correct'; fb.style.display = 'block'; listeningQuizCorrect = true; } updateListeningBtn(); });
-                    listeningBtn?.addEventListener('click', () => { if (listeningRecordingDone && listeningVoiceConfirmed && listeningQuizCorrect) markActivityComplete('listening', 'chk4'); else alert('Complete recording, voice confirmation, and quiz first.'); });
-
-                    // ==================== SPEAKING ====================
-                    for (let i = 1; i <= 5; i++) { (function (n) { let recBtn = document.getElementById(`pitchRecordBtn${n}`), stopBtn = document.getElementById(`pitchStopBtn${n}`), play = document.getElementById(`pitchPlayback${n}`), card = document.getElementById(`pitchPlaybackCard${n}`), media = null, stream = null; if (recBtn) recBtn.addEventListener('click', async () => { try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); media = new MediaRecorder(stream); let chunks = []; media.ondataavailable = e => chunks.push(e.data); media.onstop = () => { let blob = new Blob(chunks, { type: 'audio/webm' }); play.src = URL.createObjectURL(blob); card.style.display = 'block'; if (stream) stream.getTracks().forEach(t => t.stop()); speakingRecorded[n] = true; updateSpeakingBtn(); }; media.start(); recBtn.style.display = 'none'; stopBtn.style.display = 'inline-flex'; } catch (e) { alert('Mic error'); } }); if (stopBtn) stopBtn.addEventListener('click', () => { if (media?.state === 'recording') { media.stop(); stopBtn.style.display = 'none'; recBtn.style.display = 'inline-flex'; } }); })(i); }
-                    speakingBtn?.addEventListener('click', () => { if (speakingRecorded[1] && speakingRecorded[2] && speakingRecorded[3] && speakingRecorded[4] && speakingRecorded[5]) markActivityComplete('speaking', 'chk1'); else alert('Please record all 5 sentences.'); });
-
-                    // ==================== READING - Circle Past Tense Verbs ====================
-                    const readingPassageText = `Last semester, Rahul was very quiet. He listened to the lectures but never participated. One day, he decided to change. He raised his hand and queried a complex formula. The professor commended his effort. Rahul realized that his doubts vanished only when he spoke. He gained more knowledge because he engaged with the class.`;
-                    const pastTenseWords = ['was', 'listened', 'participated', 'decided', 'raised', 'queried', 'commended', 'realized', 'vanished', 'spoke', 'gained', 'engaged'];
-                    let readingTempSelected = new Set();
-                    let readingPermCorrect = new Set();
-                    let readingPermIncorrect = new Set();
-                    let readingCheckDone = false;
-                    window.readingCompleteEnabled = false;
-
-                    function buildReadingPassage() {
-                        let container = document.getElementById('interactivePassage');
-                        if (!container) return;
-                        let words = readingPassageText.split(/(\s+)/);
-                        container.innerHTML = words.map(w => {
-                            let clean = w.replace(/[^a-zA-Z]/g, '').toLowerCase();
-                            let isPast = pastTenseWords.includes(clean);
-                            return `<span class="clickable-word" data-type="${isPast ? 'past' : 'normal'}" data-value="${clean}" style="cursor:pointer;display:inline-block;padding:0.1rem 0.2rem;border-radius:4px;margin:0 1px;">${w}</span>`;
-                        }).join('');
-
-                        document.querySelectorAll('.clickable-word').forEach(el => {
-                            el.removeEventListener('click', readingHandleWordClick);
-                            el.addEventListener('click', readingHandleWordClick);
-                        });
-                        updateReadingVisuals();
-                    }
-
-                    function readingHandleWordClick(e) {
-                        let el = e.currentTarget;
-                        let val = el.dataset.value;
-                        let type = el.dataset.type;
-                        let key = val + '_' + type;
-
-                        if (readingTempSelected.has(key)) {
-                            readingTempSelected.delete(key);
-                        } else {
-                            readingTempSelected.add(key);
-                        }
-
-                        if (readingCheckDone) {
-                            readingCheckDone = false;
-                            readingPermCorrect.clear();
-                            readingPermIncorrect.clear();
-                            window.readingCompleteEnabled = false;
-                            document.getElementById('underlineFeedback').innerHTML = '';
-                            const readingBtn = document.getElementById('completeReadingBtn');
-                            if (readingBtn) { readingBtn.disabled = true; readingBtn.style.opacity = '0.6'; }
-                        }
-                        updateReadingVisuals();
-                    }
-
-                    function updateReadingVisuals() {
-                        document.querySelectorAll('.clickable-word').forEach(el => {
-                            let val = el.dataset.value;
-                            let type = el.dataset.type;
-                            let key = val + '_' + type;
-                            el.classList.remove('circle-selected', 'circle-incorrect', 'circle-temp');
-                            if (readingPermCorrect.has(key)) el.classList.add('circle-selected');
-                            else if (readingPermIncorrect.has(key)) el.classList.add('circle-incorrect');
-                            else if (readingTempSelected.has(key)) el.classList.add('circle-temp');
-                        });
-                    }
-
-                    function checkReadingSelections() {
-                        if (readingTempSelected.size === 0) {
-                            document.getElementById('underlineFeedback').innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ Please select (circle) the past tense verbs before checking.</p></div>';
-                            return;
-                        }
-                        readingPermCorrect.clear();
-                        readingPermIncorrect.clear();
-                        let correctCount = 0;
-                        let missingWords = [...pastTenseWords];
-                        readingTempSelected.forEach(key => {
-                            let [word, type] = key.split('_');
-                            if (type === 'past') {
-                                readingPermCorrect.add(key);
-                                correctCount++;
-                                let idx = missingWords.indexOf(word);
-                                if (idx !== -1) missingWords.splice(idx, 1);
-                            } else {
-                                readingPermIncorrect.add(key);
+            function loadProgress() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (!saved) return;
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.activityCompleted) {
+                        activityCompleted = data.activityCompleted;
+                        const checklistMap = {
+                            listening: 'chk1', speaking: 'chk2', reading: 'chk3',
+                            writing: 'chk4', grammar: 'chk5', game: 'chk6', vocabulary: 'chk7'
+                        };
+                        Object.keys(activityCompleted).forEach(id => {
+                            if (activityCompleted[id]) {
+                                const cb = document.getElementById(checklistMap[id]);
+                                if (cb) cb.checked = true;
+                                const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
+                                if (btn) {
+                                    btn.classList.add('completed');
+                                    btn.textContent = '✓ Completed';
+                                    btn.disabled = true;
+                                    btn.style.pointerEvents = 'none';
+                                }
                             }
                         });
-                        readingCheckDone = true;
-                        let fbHtml = `<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">✅ Correct: ${correctCount}/${pastTenseWords.length}</p>`;
-                        if (missingWords.length) fbHtml += `<p style="color:#dc2626;">❌ Missing: ${missingWords.join(', ')}</p>`;
-                        if (readingPermIncorrect.size) {
-                            let incorrectWords = [];
-                            readingPermIncorrect.forEach(key => { let [word] = key.split('_'); incorrectWords.push(word); });
-                            fbHtml += `<p style="color:#dc2626;">⚠️ Incorrect: ${incorrectWords.join(', ')}</p>`;
-                        }
-                        fbHtml += `</div>`;
-                        document.getElementById('underlineFeedback').innerHTML = fbHtml;
-                        updateReadingVisuals();
-                        window.readingCompleteEnabled = (correctCount === pastTenseWords.length && readingPermIncorrect.size === 0);
-                        const readingBtn = document.getElementById('completeReadingBtn');
-                        if (readingBtn) {
-                            if (window.readingCompleteEnabled) { readingBtn.disabled = false; readingBtn.style.opacity = '1'; }
-                            else { readingBtn.disabled = true; readingBtn.style.opacity = '0.6'; }
-                        }
                     }
-
-                    function resetReadingSelections() {
-                        readingTempSelected.clear();
-                        readingPermCorrect.clear();
-                        readingPermIncorrect.clear();
-                        readingCheckDone = false;
-                        window.readingCompleteEnabled = false;
-                        document.getElementById('underlineFeedback').innerHTML = '';
-                        updateReadingVisuals();
-                        const readingBtn = document.getElementById('completeReadingBtn');
-                        if (readingBtn) { readingBtn.disabled = true; readingBtn.style.opacity = '0.6'; }
-                    }
-
-                    function initReadingActivity() {
-                        buildReadingPassage();
-                        document.getElementById('checkUnderlinesBtn')?.addEventListener('click', checkReadingSelections);
-                        document.getElementById('resetUnderlinesBtn')?.addEventListener('click', resetReadingSelections);
-                        const readingBtn = document.getElementById('completeReadingBtn');
-                        if (readingBtn) {
-                            readingBtn.addEventListener('click', () => {
-                                if (window.readingCompleteEnabled) markActivityComplete('reading', 'chk2');
-                                else alert('Please click "Check Answers" first and ensure all 12 past tense verbs are selected correctly.');
-                            });
-                        }
-                    }
-                    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initReadingActivity);
-                    else initReadingActivity();
-
-                    // ==================== WRITING ACTIVITY ====================
-                    // partAComplete is declared globally - make sure it exists
-                    window.partAComplete = window.partAComplete || false;
-
-                    // Function to update the writing button state
-                    function updateWritingButtonState() {
-                        const writingBtn = document.getElementById('completeWritingBtn');
-                        if (writingBtn) {
-                            if (window.partAComplete === true) {
-                                writingBtn.disabled = false;
-                                writingBtn.style.opacity = '1';
-                                writingBtn.style.cursor = 'pointer';
-                            } else {
-                                writingBtn.disabled = true;
-                                writingBtn.style.opacity = '0.6';
-                                writingBtn.style.cursor = 'not-allowed';
-                            }
-                        }
-                    }
-
-                    // Validate fill-in-the-blank answers
-                    function validatePartA1() {
-                        let answer1 = document.getElementById('fillBlank1').value.trim().toLowerCase();
-                        let answer2 = document.getElementById('fillBlank2').value.trim().toLowerCase();
-                        let fb1 = document.getElementById('fillBlank1Feedback');
-                        let fb2 = document.getElementById('fillBlank2Feedback');
-                        let isValid1 = false, isValid2 = false;
-
-                        // Validate first blank - expected answer: "uncertain"
-                        if (answer1 === "") {
-                            fb1.innerHTML = '⚠️ Please fill in this blank.';
-                            fb1.className = 'fix-feedback warning';
-                            fb1.style.display = 'block';
-                        }
-                        else if (answer1 === 'uncertain') {
-                            fb1.innerHTML = '✅ Correct! "Uncertain" means not sure.';
-                            fb1.className = 'fix-feedback correct';
-                            fb1.style.display = 'block';
-                            isValid1 = true;
-                        }
-                        else {
-                            fb1.innerHTML = `❌ "${answer1}" is incorrect. Correct answer: "uncertain"`;
-                            fb1.className = 'fix-feedback incorrect';
-                            fb1.style.display = 'block';
-                        }
-
-                        // Validate second blank - expected answer: "issuance"
-                        if (answer2 === "") {
-                            fb2.innerHTML = '⚠️ Please fill in this blank.';
-                            fb2.className = 'fix-feedback warning';
-                            fb2.style.display = 'block';
-                        }
-                        else if (answer2 === 'issuance') {
-                            fb2.innerHTML = '✅ Correct! "Issuance" means the act of giving out.';
-                            fb2.className = 'fix-feedback correct';
-                            fb2.style.display = 'block';
-                            isValid2 = true;
-                        }
-                        else {
-                            fb2.innerHTML = `❌ "${answer2}" is incorrect. Correct answer: "issuance"`;
-                            fb2.className = 'fix-feedback incorrect';
-                            fb2.style.display = 'block';
-                        }
-
-                        return isValid1 && isValid2;
-                    }
-
-                    // Validate the 3-sentence reflection task
-                    function validatePartA2() {
-                        let reflection = document.getElementById('reflectionText').value.trim();
-                        let fb = document.getElementById('reflectionFeedback');
-
-                        if (reflection === "") {
-                            fb.innerHTML = '⚠️ Please write 3 things you learned in your technical class.';
-                            fb.className = 'fix-feedback warning';
-                            fb.style.display = 'block';
-                            return false;
-                        }
-
-                        // Split by periods, exclamation marks, or question marks
-                        let sentences = reflection.split(/[.!?]+/).filter(s => s.trim().length > 0);
-                        let sentenceCount = sentences.length;
-
-                        if (sentenceCount < 3) {
-                            fb.innerHTML = `⚠️ Please write at least 3 sentences (you wrote ${sentenceCount}).<br><br>💡 Example: "I learned how to calculate resistance. I practiced writing code. I studied circuit diagrams."`;
-                            fb.className = 'fix-feedback warning';
-                            fb.style.display = 'block';
-                            return false;
-                        }
-
-                        // Check if each sentence starts with a capital letter or has reasonable length
-                        let hasShortSentences = sentences.some(s => s.trim().split(' ').length < 3);
-                        if (hasShortSentences) {
-                            fb.innerHTML = '⚠️ Please write complete sentences (each sentence should have at least 3-4 words).<br><br>💡 Example: "I learned how to calculate resistance. I practiced writing code. I studied circuit diagrams."';
-                            fb.className = 'fix-feedback warning';
-                            fb.style.display = 'block';
-                            return false;
-                        }
-
-                        fb.innerHTML = '✅ Great! Your 3 sentences are well-written!';
-                        fb.className = 'fix-feedback correct';
-                        fb.style.display = 'block';
-                        return true;
-                    }
-
-                    // Check Part A button click handler
-                    document.getElementById('checkPartABtn')?.addEventListener('click', () => {
-                        let a1Valid = validatePartA1();
-                        let a2Valid = validatePartA2();
-
-                        // Set the global completion flag
-                        window.partAComplete = (a1Valid && a2Valid);
-
-                        // Update status message
-                        let statusDiv = document.getElementById('partAStatus');
-                        if (window.partAComplete) {
-                            statusDiv.innerHTML = '<div style="background: #d1fae5; padding: 0.75rem; border-radius: 10px; color: #065f46; font-weight: 600;">✅ Part A Complete! You can now mark Writing as Complete.</div>';
-                        } else {
-                            statusDiv.innerHTML = '<div style="background: #fef9e3; padding: 0.75rem; border-radius: 10px; color: #92400e; font-weight: 600;">⚠️ Please review the feedback above and correct your answers.</div>';
-                        }
-
-                        // Update the writing button state
-                        updateWritingButtonState();
-                    });
-
-                    // Clear validation status when user types in any field
-                    ['fillBlank1', 'fillBlank2', 'reflectionText'].forEach(id => {
-                        document.getElementById(id)?.addEventListener('input', () => {
-                            // Reset completion flag
-                            window.partAComplete = false;
-
-                            // Clear status message
-                            let statusDiv = document.getElementById('partAStatus');
-                            if (statusDiv) statusDiv.innerHTML = '';
-
-                            // Clear individual feedbacks
-                            let fb1 = document.getElementById('fillBlank1Feedback');
-                            let fb2 = document.getElementById('fillBlank2Feedback');
-                            let fbRef = document.getElementById('reflectionFeedback');
-                            if (fb1) fb1.style.display = 'none';
-                            if (fb2) fb2.style.display = 'none';
-                            if (fbRef) fbRef.style.display = 'none';
-
-                            // Update button state
-                            updateWritingButtonState();
+                    if (data.inputs) {
+                        Object.keys(data.inputs).forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.value = data.inputs[id];
                         });
-                    });
-
-                    // Complete Writing Button click handler
-                    document.getElementById('completeWritingBtn')?.addEventListener('click', () => {
-                        // Double-check that answers are correct before marking complete
-                        let a1Valid = validatePartA1();
-                        let a2Valid = validatePartA2();
-
-                        if (!a1Valid || !a2Valid) {
-                            alert('⚠️ Please complete Part A correctly. Click "Check Part A" to see feedback and correct your answers.');
-                            return;
-                        }
-
-                        // Mark activity as complete (this should call your existing markActivityComplete function)
-                        if (typeof markActivityComplete === 'function') {
-                            markActivityComplete('writing', 'chk5');
-                        } else {
-                            // Fallback if markActivityComplete is not defined yet
-                            console.log('Writing activity completed');
-                            let cb = document.getElementById('chk5');
-                            if (cb) cb.checked = true;
-                            let btn = document.getElementById('completeWritingBtn');
-                            if (btn) {
-                                btn.classList.add('completed');
-                                btn.textContent = '✓ Completed';
-                                btn.disabled = false;
-                                btn.style.pointerEvents = 'none';
+                    }
+                    if (data.radios) {
+                        Object.keys(data.radios).forEach(name => {
+                            const val = data.radios[name];
+                            const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+                            if (radio) {
+                                radio.checked = true;
+                                radio.dispatchEvent(new Event('change'));
                             }
-                            if (typeof updateChecklistProgress === 'function') updateChecklistProgress();
-                        }
-                    });
-
-                    // Initialize button state on page load
-                    updateWritingButtonState();
-
-                    // ==================== GRAMMAR - Was/Were ====================
-                    let grammarAnswers = { 1: 'was', 2: 'were', 3: 'was' };
-                    let grammarUserSelections = { 1: null, 2: null, 3: null };
-                    document.querySelectorAll('input[name="grammar1"]').forEach(r => r.addEventListener('change', e => { grammarUserSelections[1] = e.target.value; grammarAllCorrect = false; updateGrammarBtn(); }));
-                    document.querySelectorAll('input[name="grammar2"]').forEach(r => r.addEventListener('change', e => { grammarUserSelections[2] = e.target.value; grammarAllCorrect = false; updateGrammarBtn(); }));
-                    document.querySelectorAll('input[name="grammar3"]').forEach(r => r.addEventListener('change', e => { grammarUserSelections[3] = e.target.value; grammarAllCorrect = false; updateGrammarBtn(); }));
-                    document.getElementById('checkAllGrammarBtn')?.addEventListener('click', () => {
-                        let allCorrect = true;
-                        for (let i = 1; i <= 3; i++) {
-                            let fb = document.getElementById(`grammar${i}Feedback`);
-                            if (!grammarUserSelections[i]) { fb.innerHTML = '⚠️ Please select an answer.'; fb.className = 'fix-feedback warning'; fb.style.display = 'block'; allCorrect = false; }
-                            else if (grammarUserSelections[i] === grammarAnswers[i]) { fb.innerHTML = '✅ Correct!'; fb.className = 'fix-feedback correct'; fb.style.display = 'block'; }
-                            else { fb.innerHTML = `❌ Incorrect. Correct: "${grammarAnswers[i]}"`; fb.className = 'fix-feedback incorrect'; fb.style.display = 'block'; allCorrect = false; }
-                        }
-                        grammarAllCorrect = allCorrect;
-                        updateGrammarBtn();
-                    });
-                    grammarBtn?.addEventListener('click', () => { if (grammarAllCorrect) markActivityComplete('grammar', 'chk3'); else alert('Please correct all grammar answers first.'); });
-
-                    // ==================== GAME ====================
-                    const swapAns = { game1: 'commended', game2: 'engage', game3: 'vanished' };
-                    function checkAns(id, correct) {
-                        let inp = document.getElementById(id).value.trim().toLowerCase();
-                        let fb = document.getElementById(`${id}Feedback`);
-                        if (inp === "") { fb.innerHTML = '⚠️ Please enter your answer.'; fb.className = 'fix-feedback warning'; fb.style.display = 'block'; return false; }
-                        if (inp.includes(' ')) { fb.innerHTML = `⚠️ Write only the smart word. Correct: "${correct}"`; fb.className = 'fix-feedback warning'; fb.style.display = 'block'; return false; }
-                        if (inp === correct) { fb.innerHTML = '✅ Correct!'; fb.className = 'fix-feedback correct'; fb.style.display = 'block'; return true; }
-                        fb.innerHTML = `❌ Incorrect. Correct: "${correct}"`; fb.className = 'fix-feedback incorrect'; fb.style.display = 'block'; return false;
+                        });
                     }
-                    function checkSent(id, correctSentence) {
-                        let inp = document.getElementById(id).value.trim().toLowerCase().replace(/\s+/g, ' ');
-                        let fb = document.getElementById(`${id}Feedback`);
-                        if (inp === "") { fb.innerHTML = '⚠️ Please write the complete sentence.'; fb.className = 'fix-feedback warning'; fb.style.display = 'block'; return false; }
-                        if (inp === correctSentence) { fb.innerHTML = '✅ Correct!'; fb.className = 'fix-feedback correct'; fb.style.display = 'block'; return true; }
-                        fb.innerHTML = `❌ Incorrect. Correct: "${correctSentence}"`; fb.className = 'fix-feedback incorrect'; fb.style.display = 'block'; return false;
-                    }
-                    document.getElementById('checkPartAGameBtn')?.addEventListener('click', () => {
-                        let q1 = checkAns('game1', swapAns.game1), q2 = checkAns('game2', swapAns.game2), q3 = checkAns('game3', swapAns.game3);
-                        partAGameComplete = q1 && q2 && q3;
-                        document.getElementById('partAGameStatus').innerHTML = partAGameComplete ? '<div style="background:#d1fae5;padding:0.75rem;border-radius:10px;">✅ Part A Complete!</div>' : '<div style="background:#fef9e3;padding:0.75rem;border-radius:10px;">⚠️ Correct answers above.</div>';
-                        updateGameBtn();
-                    });
-                    document.getElementById('checkPartBGameBtn')?.addEventListener('click', () => {
-                        let q1 = checkSent('scramble1', 'the machines were running perfectly'), q2 = checkSent('scramble2', 'we were practicing the dialogue');
-                        partBGameComplete = q1 && q2;
-                        document.getElementById('partBGameStatus').innerHTML = partBGameComplete ? '<div style="background:#d1fae5;padding:0.75rem;border-radius:10px;">✅ Part B Complete!</div>' : '<div style="background:#fef9e3;padding:0.75rem;border-radius:10px;">⚠️ Correct answers above.</div>';
-                        updateGameBtn();
-                    });
-                    gameBtn?.addEventListener('click', () => { if (partAGameComplete && partBGameComplete) markActivityComplete('game', 'chk6'); else alert('Complete both parts correctly first.'); });
-
-                    function playAudio(w) { let u = new SpeechSynthesisUtterance(w); u.lang = 'en-US'; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); }
-
-                    updateListeningBtn(); updateSpeakingBtn(); updateReadingBtn(); updateWritingBtn(); updateGrammarBtn(); updateGameBtn();
                     updateChecklistProgress();
-                    document.getElementById('dayCompleteBtn')?.addEventListener('click', completeDay);
-                </script>
+                } catch (e) { console.warn("Load progress failed", e); }
+            }
+
+            function markActivityComplete(activityId, checklistId) {
+                if (activityCompleted[activityId]) return;
+                activityCompleted[activityId] = true;
+                let cb = document.getElementById(checklistId);
+                if (cb) cb.checked = true;
+                let btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+                if (btn) {
+                    btn.classList.add('completed');
+                    btn.textContent = '✓ Completed';
+                    btn.disabled = true;
+                    btn.style.pointerEvents = 'none';
+                    btn.style.animation = 'none';
+                }
+                updateChecklistProgress();
+                saveProgress();
+            }
+
+            function completeDay() {
+                const btn = document.getElementById('dayCompleteBtn');
+                if (btn.disabled) {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'inline-message warning';
+                    msgDiv.innerHTML = '⚠️ Please complete all activities first!';
+                    msgDiv.style.marginTop = '1rem';
+                    msgDiv.style.textAlign = 'center';
+                    btn.parentNode.insertBefore(msgDiv, btn.nextSibling);
+                    setTimeout(() => msgDiv.remove(), 3000);
+                    return;
+                }
+                btn.innerHTML = '🎉 Saving...';
+                btn.disabled = true;
+                localStorage.removeItem(STORAGE_KEY);
+                if (typeof confetti !== 'undefined') {
+                    confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                }
+                setTimeout(() => {
+                    window.location.href = '/learning/level/beginner/?celebrate=true&completed=9';
+                }, 2000);
+            }
+
+            document.addEventListener('input', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    saveProgress();
+                }
+            });
+            document.addEventListener('change', (e) => {
+                if (e.target.type === 'radio') {
+                    saveProgress();
+                }
+            });
+            loadProgress();
+
+            function enableButton(btn) { if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } }
+            function disableButton(btn) { if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.style.cursor = 'not-allowed'; } }
+
+            // Listening
+            let listeningRecordingDone = false, listeningVoiceConfirmed = false, listeningQuizCorrect = false;
+            const listeningBtn = document.getElementById('completeListeningBtn');
+            function updateListeningBtn() { (listeningRecordingDone && listeningVoiceConfirmed && listeningQuizCorrect) ? enableButton(listeningBtn) : disableButton(listeningBtn); }
+
+            // Speaking
+            let speakingRecorded = { 1: false, 2: false, 3: false, 4: false, 5: false };
+            const speakingBtn = document.getElementById('completeSpeakingBtn');
+            function updateSpeakingBtn() { (speakingRecorded[1] && speakingRecorded[2] && speakingRecorded[3] && speakingRecorded[4] && speakingRecorded[5]) ? enableButton(speakingBtn) : disableButton(speakingBtn); }
+
+            // Reading
+            let readingCompleteEnabled = false;
+            const readingBtn = document.getElementById('completeReadingBtn');
+            function updateReadingBtn() { readingCompleteEnabled ? enableButton(readingBtn) : disableButton(readingBtn); }
+
+            // Writing
+            let partAComplete = false;
+            const writingBtn = document.getElementById('completeWritingBtn');
+            function updateWritingBtn() { partAComplete ? enableButton(writingBtn) : disableButton(writingBtn); }
+
+            // Grammar
+            let grammarAllCorrect = false;
+            const grammarBtn = document.getElementById('completeGrammarBtn');
+            function updateGrammarBtn() { grammarAllCorrect ? enableButton(grammarBtn) : disableButton(grammarBtn); }
+
+            // Vocabulary
+            let vocabularyComplete = false;
+            const vocabBtn = document.getElementById('completeVocabularyBtn');
+            function updateVocabBtn() { vocabularyComplete ? enableButton(vocabBtn) : disableButton(vocabBtn); }
+
+            // Game
+            let partAGameComplete = false, partBGameComplete = false;
+            const gameBtn = document.getElementById('completeGameBtn');
+            function updateGameBtn() { (partAGameComplete && partBGameComplete) ? enableButton(gameBtn) : disableButton(gameBtn); }
+
+            // ==================== LISTENING with Individual MCQ Feedback ====================
+            let listeningMediaRecorder, listeningAudioChunks, listeningStream, hasListeningRecording = false;
+            let listeningQuizAnswers = { q1: null, q2: null };
+
+            function attachListeningEventListeners() {
+                document.querySelectorAll('input[name="listening_quiz"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q1 = e.target.value; document.getElementById('quiz1Feedback').style.display = 'none'; document.getElementById('listeningQuizFeedback').style.display = 'none'; }));
+                document.querySelectorAll('input[name="practice_quiz"]').forEach(r => r.addEventListener('change', e => { listeningQuizAnswers.q2 = e.target.value; document.getElementById('quiz2Feedback').style.display = 'none'; document.getElementById('listeningQuizFeedback').style.display = 'none'; }));
+
+                document.getElementById('listeningRecordBtn')?.addEventListener('click', async () => {
+                    try { listeningStream = await navigator.mediaDevices.getUserMedia({ audio: true }); listeningMediaRecorder = new MediaRecorder(listeningStream); listeningAudioChunks = []; listeningMediaRecorder.ondataavailable = e => listeningAudioChunks.push(e.data); listeningMediaRecorder.onstop = () => { let blob = new Blob(listeningAudioChunks, { type: 'audio/webm' }); document.getElementById('listeningPlayback').src = URL.createObjectURL(blob); document.getElementById('listeningPlaybackCard').style.display = 'block'; if (listeningStream) listeningStream.getTracks().forEach(t => t.stop()); hasListeningRecording = true; listeningRecordingDone = true; updateListeningBtn(); document.getElementById('comparisonSection').style.display = 'block'; }; listeningMediaRecorder.start(); document.getElementById('listeningRecordBtn').style.display = 'none'; document.getElementById('listeningStopBtn').style.display = 'inline-flex'; } catch (e) {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = 'inline-message error';
+                        msgDiv.innerHTML = '❌ Microphone access denied. Please allow microphone access to record.';
+                        msgDiv.style.marginTop = '0.5rem';
+                        document.getElementById('combinedRecordingSection').appendChild(msgDiv);
+                        setTimeout(() => msgDiv.remove(), 3000);
+                    }
+                });
+
+                document.getElementById('listeningStopBtn')?.addEventListener('click', () => { if (listeningMediaRecorder?.state === 'recording') { listeningMediaRecorder.stop(); document.getElementById('listeningStopBtn').style.display = 'none'; document.getElementById('listeningRecordBtn').style.display = 'inline-flex'; } });
+                document.getElementById('yesComparisonBtn')?.addEventListener('click', () => { listeningVoiceConfirmed = true; updateListeningBtn(); document.getElementById('comparisonFeedback').innerHTML = '✅ Great! You sound ready to lead!'; });
+                document.getElementById('noComparisonBtn')?.addEventListener('click', () => { listeningVoiceConfirmed = false; updateListeningBtn(); document.getElementById('listeningPlaybackCard').style.display = 'none'; document.getElementById('comparisonSection').style.display = 'none'; hasListeningRecording = false; listeningRecordingDone = false; });
+                document.getElementById('checkListeningWorkBtn')?.addEventListener('click', () => {
+                    if (!hasListeningRecording) {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = 'inline-message warning';
+                        msgDiv.innerHTML = '⚠️ Please record your voice first using the "Start Recording" button.';
+                        msgDiv.style.marginTop = '0.5rem';
+                        document.getElementById('quizQuestion1').appendChild(msgDiv);
+                        setTimeout(() => msgDiv.remove(), 3000);
+                        return;
+                    }
+
+                    let q1Correct = false, q2Correct = false, allCorrect = true;
+
+                    const quiz1Fb = document.getElementById('quiz1Feedback');
+                    if (!listeningQuizAnswers.q1) {
+                        quiz1Fb.innerHTML = '❌ Please select an answer for Question 1.';
+                        quiz1Fb.className = 'quiz-feedback-item incorrect';
+                        quiz1Fb.style.display = 'block';
+                        allCorrect = false;
+                    } else if (listeningQuizAnswers.q1 === 'trying') {
+                        quiz1Fb.innerHTML = '✅ Correct! Trying is better than silence.';
+                        quiz1Fb.className = 'quiz-feedback-item correct';
+                        quiz1Fb.style.display = 'block';
+                        q1Correct = true;
+                    } else {
+                        quiz1Fb.innerHTML = '❌ Incorrect. The correct answer is "Trying". Trying leads to learning.';
+                        quiz1Fb.className = 'quiz-feedback-item incorrect';
+                        quiz1Fb.style.display = 'block';
+                        allCorrect = false;
+                    }
+
+                    const quiz2Fb = document.getElementById('quiz2Feedback');
+                    if (!listeningQuizAnswers.q2) {
+                        quiz2Fb.innerHTML = '❌ Please select an answer for Question 2.';
+                        quiz2Fb.className = 'quiz-feedback-item incorrect';
+                        quiz2Fb.style.display = 'block';
+                        allCorrect = false;
+                    } else if (listeningQuizAnswers.q2 === 'confidence') {
+                        quiz2Fb.innerHTML = '✅ Correct! Participation builds confidence.';
+                        quiz2Fb.className = 'quiz-feedback-item correct';
+                        quiz2Fb.style.display = 'block';
+                        q2Correct = true;
+                    } else {
+                        quiz2Fb.innerHTML = '❌ Incorrect. The correct answer is "Confidence". Speaking up makes you more confident.';
+                        quiz2Fb.className = 'quiz-feedback-item incorrect';
+                        quiz2Fb.style.display = 'block';
+                        allCorrect = false;
+                    }
+
+                    listeningQuizCorrect = (q1Correct && q2Correct);
+                    updateListeningBtn();
+
+                    if (allCorrect) {
+                        const overallFb = document.getElementById('listeningQuizFeedback');
+                        overallFb.innerHTML = '🎉 Excellent! Both answers are correct!';
+                        overallFb.className = 'quiz-feedback correct';
+                        overallFb.style.display = 'block';
+                    }
+                });
+            }
+
+            if (listeningExtraContent.style.display !== 'none') {
+                attachListeningEventListeners();
+            } else {
+                masterAudioElement?.addEventListener('ended', function () {
+                    attachListeningEventListeners();
+                });
+            }
+
+            listeningBtn?.addEventListener('click', () => {
+                if (listeningRecordingDone && listeningVoiceConfirmed && listeningQuizCorrect) {
+                    markActivityComplete('listening', 'chk1');
+                } else {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'inline-message warning';
+                    msgDiv.innerHTML = '⚠️ Please complete recording, voice confirmation, and quiz first.';
+                    msgDiv.style.marginTop = '0.5rem';
+                    listeningBtn.parentNode.insertBefore(msgDiv, listeningBtn);
+                    setTimeout(() => msgDiv.remove(), 3000);
+                }
+            });
+
+            // ==================== SPEAKING ====================
+            for (let i = 1; i <= 5; i++) {
+                (function (n) {
+                    let recBtn = document.getElementById(`pitchRecordBtn${n}`), stopBtn = document.getElementById(`pitchStopBtn${n}`), play = document.getElementById(`pitchPlayback${n}`), card = document.getElementById(`pitchPlaybackCard${n}`), media = null, stream = null; if (recBtn) recBtn.addEventListener('click', async () => {
+                        try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); media = new MediaRecorder(stream); let chunks = []; media.ondataavailable = e => chunks.push(e.data); media.onstop = () => { let blob = new Blob(chunks, { type: 'audio/webm' }); play.src = URL.createObjectURL(blob); card.style.display = 'block'; if (stream) stream.getTracks().forEach(t => t.stop()); speakingRecorded[n] = true; updateSpeakingBtn(); }; media.start(); recBtn.style.display = 'none'; stopBtn.style.display = 'inline-flex'; } catch (e) {
+                            const msgDiv = document.createElement('div');
+                            msgDiv.className = 'inline-message error';
+                            msgDiv.innerHTML = '❌ Microphone access denied.';
+                            recBtn.parentNode.appendChild(msgDiv);
+                            setTimeout(() => msgDiv.remove(), 3000);
+                        }
+                    }); if (stopBtn) stopBtn.addEventListener('click', () => { if (media?.state === 'recording') { media.stop(); stopBtn.style.display = 'none'; recBtn.style.display = 'inline-flex'; } });
+                })(i);
+            }
+            speakingBtn?.addEventListener('click', () => {
+                if (speakingRecorded[1] && speakingRecorded[2] && speakingRecorded[3] && speakingRecorded[4] && speakingRecorded[5]) {
+                    markActivityComplete('speaking', 'chk2');
+                } else {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'inline-message warning';
+                    msgDiv.innerHTML = '⚠️ Please record all 5 sentences before marking complete.';
+                    msgDiv.style.marginTop = '0.5rem';
+                    speakingBtn.parentNode.insertBefore(msgDiv, speakingBtn);
+                    setTimeout(() => msgDiv.remove(), 3000);
+                }
+            });
+
+            // ==================== READING ====================
+            const readingPassageText = `Last semester, Rahul was very quiet. He listened to the lectures but never participated. One day, he decided to change. He raised his hand and queried a complex formula. The professor commended his effort. Rahul realized that his doubts vanished only when he spoke. He gained more knowledge because he engaged with the class.`;
+            const pastTenseWords = ['was', 'listened', 'participated', 'decided', 'raised', 'queried', 'commended', 'realized', 'vanished', 'spoke', 'gained', 'engaged'];
+            let readingTempSelected = new Set();
+            let readingPermCorrect = new Set();
+            let readingPermIncorrect = new Set();
+            let readingCheckDone = false;
+            window.readingCompleteEnabled = false;
+
+            function buildReadingPassage() {
+                let container = document.getElementById('interactivePassage');
+                if (!container) return;
+                let words = readingPassageText.split(/(\s+)/);
+                container.innerHTML = words.map(w => {
+                    let clean = w.replace(/[^a-zA-Z]/g, '').toLowerCase();
+                    let isPast = pastTenseWords.includes(clean);
+                    return `<span class="clickable-word" data-type="${isPast ? 'past' : 'normal'}" data-value="${clean}" style="cursor:pointer;display:inline-block;padding:0.1rem 0.2rem;border-radius:4px;margin:0 1px;">${w}</span>`;
+                }).join('');
+
+                document.querySelectorAll('.clickable-word').forEach(el => {
+                    el.removeEventListener('click', readingHandleWordClick);
+                    el.addEventListener('click', readingHandleWordClick);
+                });
+                updateReadingVisuals();
+            }
+
+            function readingHandleWordClick(e) {
+                let el = e.currentTarget;
+                let val = el.dataset.value;
+                let type = el.dataset.type;
+                let key = val + '_' + type;
+
+                if (readingTempSelected.has(key)) {
+                    readingTempSelected.delete(key);
+                } else {
+                    readingTempSelected.add(key);
+                }
+
+                if (readingCheckDone) {
+                    readingCheckDone = false;
+                    readingPermCorrect.clear();
+                    readingPermIncorrect.clear();
+                    window.readingCompleteEnabled = false;
+                    document.getElementById('underlineFeedback').innerHTML = '';
+                    const readingBtn = document.getElementById('completeReadingBtn');
+                    if (readingBtn) { readingBtn.disabled = true; readingBtn.style.opacity = '0.6'; }
+                }
+                updateReadingVisuals();
+            }
+
+            function updateReadingVisuals() {
+                document.querySelectorAll('.clickable-word').forEach(el => {
+                    let val = el.dataset.value;
+                    let type = el.dataset.type;
+                    let key = val + '_' + type;
+                    el.classList.remove('circle-selected', 'circle-incorrect', 'circle-temp');
+                    if (readingPermCorrect.has(key)) el.classList.add('circle-selected');
+                    else if (readingPermIncorrect.has(key)) el.classList.add('circle-incorrect');
+                    else if (readingTempSelected.has(key)) el.classList.add('circle-temp');
+                });
+            }
+
+            function checkReadingSelections() {
+                if (readingTempSelected.size === 0) {
+                    document.getElementById('underlineFeedback').innerHTML = '<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#92400e;">⚠️ Please select (circle) the past tense verbs before checking.</p></div>';
+                    return;
+                }
+                readingPermCorrect.clear();
+                readingPermIncorrect.clear();
+                let correctCount = 0;
+                let missingWords = [...pastTenseWords];
+                readingTempSelected.forEach(key => {
+                    let [word, type] = key.split('_');
+                    if (type === 'past') {
+                        readingPermCorrect.add(key);
+                        correctCount++;
+                        let idx = missingWords.indexOf(word);
+                        if (idx !== -1) missingWords.splice(idx, 1);
+                    } else {
+                        readingPermIncorrect.add(key);
+                    }
+                });
+                readingCheckDone = true;
+                let fbHtml = `<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;"><p style="color:#065f46;">✅ Correct: ${correctCount}/${pastTenseWords.length}</p>`;
+                if (missingWords.length) fbHtml += `<p style="color:#dc2626;">❌ Missing: ${missingWords.join(', ')}</p>`;
+                if (readingPermIncorrect.size) {
+                    let incorrectWords = [];
+                    readingPermIncorrect.forEach(key => { let [word] = key.split('_'); incorrectWords.push(word); });
+                    fbHtml += `<p style="color:#dc2626;">⚠️ Incorrect: ${incorrectWords.join(', ')}</p>`;
+                }
+                fbHtml += `</div>`;
+                document.getElementById('underlineFeedback').innerHTML = fbHtml;
+                updateReadingVisuals();
+                window.readingCompleteEnabled = (correctCount === pastTenseWords.length && readingPermIncorrect.size === 0);
+                const readingBtn = document.getElementById('completeReadingBtn');
+                if (readingBtn) {
+                    if (window.readingCompleteEnabled) { readingBtn.disabled = false; readingBtn.style.opacity = '1'; }
+                    else { readingBtn.disabled = true; readingBtn.style.opacity = '0.6'; }
+                }
+            }
+
+            function resetReadingSelections() {
+                readingTempSelected.clear();
+                readingPermCorrect.clear();
+                readingPermIncorrect.clear();
+                readingCheckDone = false;
+                window.readingCompleteEnabled = false;
+                document.getElementById('underlineFeedback').innerHTML = '';
+                updateReadingVisuals();
+                const readingBtn = document.getElementById('completeReadingBtn');
+                if (readingBtn) { readingBtn.disabled = true; readingBtn.style.opacity = '0.6'; }
+            }
+
+            function initReadingActivity() {
+                buildReadingPassage();
+                document.getElementById('checkUnderlinesBtn')?.addEventListener('click', checkReadingSelections);
+                document.getElementById('resetUnderlinesBtn')?.addEventListener('click', resetReadingSelections);
+                const readingBtn = document.getElementById('completeReadingBtn');
+                if (readingBtn) {
+                    readingBtn.addEventListener('click', () => {
+                        if (window.readingCompleteEnabled) markActivityComplete('reading', 'chk3');
+                        else {
+                            const msgDiv = document.createElement('div');
+                            msgDiv.className = 'inline-message warning';
+                            msgDiv.innerHTML = '⚠️ Please click "Check Answers" first and ensure all 12 past tense verbs are selected correctly.';
+                            msgDiv.style.marginTop = '0.5rem';
+                            document.getElementById('reading-card').querySelector('.card-body').appendChild(msgDiv);
+                            setTimeout(() => msgDiv.remove(), 4000);
+                        }
+                    });
+                }
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initReadingActivity);
+            else initReadingActivity();
+
+            // ==================== WRITING ACTIVITY - 3 Separate Input Fields ====================
+            function validateFillBlanks() {
+                let answer1 = document.getElementById('fillBlank1').value.trim().toLowerCase();
+                let answer2 = document.getElementById('fillBlank2').value.trim().toLowerCase();
+                let fb1 = document.getElementById('fillBlank1Feedback');
+                let fb2 = document.getElementById('fillBlank2Feedback');
+                let isValid1 = false, isValid2 = false;
+
+                if (answer1 === "") {
+                    fb1.innerHTML = '⚠️ Please fill in this blank.';
+                    fb1.className = 'fix-feedback warning';
+                    fb1.style.display = 'block';
+                } else if (answer1 === 'uncertain') {
+                    fb1.innerHTML = '✅ Correct! "Uncertain" means not sure.';
+                    fb1.className = 'fix-feedback correct';
+                    fb1.style.display = 'block';
+                    isValid1 = true;
+                } else {
+                    fb1.innerHTML = `❌ "${answer1}" is incorrect. Correct answer: "uncertain"`;
+                    fb1.className = 'fix-feedback incorrect';
+                    fb1.style.display = 'block';
+                }
+
+                if (answer2 === "") {
+                    fb2.innerHTML = '⚠️ Please fill in this blank.';
+                    fb2.className = 'fix-feedback warning';
+                    fb2.style.display = 'block';
+                } else if (answer2 === 'issuance') {
+                    fb2.innerHTML = '✅ Correct! "Issuance" means the act of giving out.';
+                    fb2.className = 'fix-feedback correct';
+                    fb2.style.display = 'block';
+                    isValid2 = true;
+                } else {
+                    fb2.innerHTML = `❌ "${answer2}" is incorrect. Correct answer: "issuance"`;
+                    fb2.className = 'fix-feedback incorrect';
+                    fb2.style.display = 'block';
+                }
+
+                return isValid1 && isValid2;
+            }
+
+            function validateSentences() {
+                let sentence1 = document.getElementById('sentence1').value.trim();
+                let sentence2 = document.getElementById('sentence2').value.trim();
+                let sentence3 = document.getElementById('sentence3').value.trim();
+
+                let fb1 = document.getElementById('sentence1Feedback');
+                let fb2 = document.getElementById('sentence2Feedback');
+                let fb3 = document.getElementById('sentence3Feedback');
+
+                fb1.style.display = 'none';
+                fb2.style.display = 'none';
+                fb3.style.display = 'none';
+
+                const simplePastRegex = /\b(learned|studied|practiced|understood|completed|finished|watched|read|wrote|calculated|tested|built|created|designed|developed|analyzed|solved|programmed|coded|debugged)\b/i;
+
+                let valid1 = false, valid2 = false, valid3 = false;
+
+                if (sentence1 === "") {
+                    fb1.innerHTML = '⚠️ Please write your first sentence.';
+                    fb1.className = 'sentence-feedback warning';
+                    fb1.style.display = 'block';
+                } else if (sentence1.split(' ').length < 3) {
+                    fb1.innerHTML = '⚠️ Please write a complete sentence (at least 3-4 words).';
+                    fb1.className = 'sentence-feedback warning';
+                    fb1.style.display = 'block';
+                } else if (simplePastRegex.test(sentence1)) {
+                    fb1.innerHTML = '✅ Good! Past tense detected.';
+                    fb1.className = 'sentence-feedback correct';
+                    fb1.style.display = 'block';
+                    valid1 = true;
+                } else {
+                    fb1.innerHTML = '⚠️ Use a past tense verb (learned, studied, practiced, etc.). Example: "I learned how to calculate voltage."';
+                    fb1.className = 'sentence-feedback warning';
+                    fb1.style.display = 'block';
+                }
+
+                if (sentence2 === "") {
+                    fb2.innerHTML = '⚠️ Please write your second sentence.';
+                    fb2.className = 'sentence-feedback warning';
+                    fb2.style.display = 'block';
+                } else if (sentence2.split(' ').length < 3) {
+                    fb2.innerHTML = '⚠️ Please write a complete sentence (at least 3-4 words).';
+                    fb2.className = 'sentence-feedback warning';
+                    fb2.style.display = 'block';
+                } else if (simplePastRegex.test(sentence2)) {
+                    fb2.innerHTML = '✅ Good! Past tense detected.';
+                    fb2.className = 'sentence-feedback correct';
+                    fb2.style.display = 'block';
+                    valid2 = true;
+                } else {
+                    fb2.innerHTML = '⚠️ Use a past tense verb (learned, studied, practiced, etc.).';
+                    fb2.className = 'sentence-feedback warning';
+                    fb2.style.display = 'block';
+                }
+
+                if (sentence3 === "") {
+                    fb3.innerHTML = '⚠️ Please write your third sentence.';
+                    fb3.className = 'sentence-feedback warning';
+                    fb3.style.display = 'block';
+                } else if (sentence3.split(' ').length < 3) {
+                    fb3.innerHTML = '⚠️ Please write a complete sentence (at least 3-4 words).';
+                    fb3.className = 'sentence-feedback warning';
+                    fb3.style.display = 'block';
+                } else if (simplePastRegex.test(sentence3)) {
+                    fb3.innerHTML = '✅ Good! Past tense detected.';
+                    fb3.className = 'sentence-feedback correct';
+                    fb3.style.display = 'block';
+                    valid3 = true;
+                } else {
+                    fb3.innerHTML = '⚠️ Use a past tense verb (learned, studied, practiced, etc.).';
+                    fb3.className = 'sentence-feedback warning';
+                    fb3.style.display = 'block';
+                }
+
+                return valid1 && valid2 && valid3;
+            }
+
+            document.getElementById('checkPartABtn')?.addEventListener('click', () => {
+                let blanksValid = validateFillBlanks();
+                let sentencesValid = validateSentences();
+
+                partAComplete = (blanksValid && sentencesValid);
+
+                let statusDiv = document.getElementById('partAStatus');
+                if (partAComplete) {
+                    statusDiv.innerHTML = '<div style="background: #d1fae5; padding: 0.75rem; border-radius: 10px; color: #065f46; font-weight: 600;">✅ Part A Complete! You can now mark Writing as Complete.</div>';
+                } else {
+                    statusDiv.innerHTML = '<div style="background: #fef9e3; padding: 0.75rem; border-radius: 10px; color: #92400e; font-weight: 600;">⚠️ Please review the feedback above and correct your answers.</div>';
+                }
+                updateWritingBtn();
+            });
+
+            ['fillBlank1', 'fillBlank2', 'sentence1', 'sentence2', 'sentence3'].forEach(id => {
+                document.getElementById(id)?.addEventListener('input', () => {
+                    document.getElementById('partAStatus').innerHTML = '';
+                    partAComplete = false;
+                    updateWritingBtn();
+                    const fb = document.getElementById(`${id}Feedback`);
+                    if (fb) fb.style.display = 'none';
+                });
+            });
+
+            document.getElementById('completeWritingBtn')?.addEventListener('click', () => {
+                let blanksValid = validateFillBlanks();
+                let sentencesValid = validateSentences();
+
+                if (!blanksValid || !sentencesValid) {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'inline-message warning';
+                    msgDiv.innerHTML = '⚠️ Please complete Part A correctly. Click "Check Part A" to see feedback.';
+                    msgDiv.style.marginTop = '0.5rem';
+                    document.getElementById('writing-card').querySelector('.card-body').appendChild(msgDiv);
+                    setTimeout(() => msgDiv.remove(), 3000);
+                    return;
+                }
+                markActivityComplete('writing', 'chk4');
+            });
+
+            // ==================== GRAMMAR ====================
+            let grammarAnswers = { 1: 'was', 2: 'were', 3: 'was' };
+            let grammarUserSelections = { 1: null, 2: null, 3: null };
+            document.querySelectorAll('input[name="grammar1"]').forEach(r => r.addEventListener('change', e => { grammarUserSelections[1] = e.target.value; grammarAllCorrect = false; updateGrammarBtn(); }));
+            document.querySelectorAll('input[name="grammar2"]').forEach(r => r.addEventListener('change', e => { grammarUserSelections[2] = e.target.value; grammarAllCorrect = false; updateGrammarBtn(); }));
+            document.querySelectorAll('input[name="grammar3"]').forEach(r => r.addEventListener('change', e => { grammarUserSelections[3] = e.target.value; grammarAllCorrect = false; updateGrammarBtn(); }));
+            document.getElementById('checkAllGrammarBtn')?.addEventListener('click', () => {
+                let allCorrect = true;
+                for (let i = 1; i <= 3; i++) {
+                    let fb = document.getElementById(`grammar${i}Feedback`);
+                    if (!grammarUserSelections[i]) { fb.innerHTML = '⚠️ Please select an answer.'; fb.className = 'fix-feedback warning'; fb.style.display = 'block'; allCorrect = false; }
+                    else if (grammarUserSelections[i] === grammarAnswers[i]) { fb.innerHTML = '✅ Correct!'; fb.className = 'fix-feedback correct'; fb.style.display = 'block'; }
+                    else { fb.innerHTML = `❌ Incorrect. Correct: "${grammarAnswers[i]}"`; fb.className = 'fix-feedback incorrect'; fb.style.display = 'block'; allCorrect = false; }
+                }
+                grammarAllCorrect = allCorrect;
+                updateGrammarBtn();
+            });
+            grammarBtn?.addEventListener('click', () => {
+                if (grammarAllCorrect) {
+                    markActivityComplete('grammar', 'chk5');
+                } else {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'inline-message warning';
+                    msgDiv.innerHTML = '⚠️ Please correct all grammar answers first. Click "Check All Answers" to see feedback.';
+                    msgDiv.style.marginTop = '0.5rem';
+                    grammarBtn.parentNode.insertBefore(msgDiv, grammarBtn);
+                    setTimeout(() => msgDiv.remove(), 3000);
+                }
+            });
+
+            // ==================== GAME ====================
+            const swapAns = { game1: 'commended', game2: 'engage', game3: 'vanished' };
+            function checkAns(id, correct) {
+                let inp = document.getElementById(id).value.trim().toLowerCase();
+                let fb = document.getElementById(`${id}Feedback`);
+                if (inp === "") { fb.innerHTML = '⚠️ Please enter your answer.'; fb.className = 'fix-feedback warning'; fb.style.display = 'block'; return false; }
+                if (inp.includes(' ')) { fb.innerHTML = `⚠️ Write only the smart word. Correct: "${correct}"`; fb.className = 'fix-feedback warning'; fb.style.display = 'block'; return false; }
+                if (inp === correct) { fb.innerHTML = '✅ Correct!'; fb.className = 'fix-feedback correct'; fb.style.display = 'block'; return true; }
+                fb.innerHTML = `❌ Incorrect. Correct: "${correct}"`; fb.className = 'fix-feedback incorrect'; fb.style.display = 'block'; return false;
+            }
+            function checkSent(id, correctSentence) {
+                let inp = document.getElementById(id).value.trim();
+                let fb = document.getElementById(`${id}Feedback`);
+                if (inp === "") { fb.innerHTML = '⚠️ Please write the complete sentence.'; fb.className = 'fix-feedback warning'; fb.style.display = 'block'; return false; }
+                if (inp === correctSentence) { fb.innerHTML = '✅ Correct!'; fb.className = 'fix-feedback correct'; fb.style.display = 'block'; return true; }
+                // Case-insensitive comparison for flexibility
+                if (inp.toLowerCase() === correctSentence.toLowerCase()) {
+                    fb.innerHTML = `✅ Correct! (But remember proper capitalization: "${correctSentence}")`;
+                    fb.className = 'fix-feedback correct';
+                    fb.style.display = 'block';
+                    return true;
+                }
+                fb.innerHTML = `❌ Incorrect. Correct: "${correctSentence}"`; fb.className = 'fix-feedback incorrect'; fb.style.display = 'block'; return false;
+            }
+            document.getElementById('checkPartAGameBtn')?.addEventListener('click', () => {
+                let q1 = checkAns('game1', swapAns.game1), q2 = checkAns('game2', swapAns.game2), q3 = checkAns('game3', swapAns.game3);
+                partAGameComplete = q1 && q2 && q3;
+                document.getElementById('partAGameStatus').innerHTML = partAGameComplete ? '<div style="background:#d1fae5;padding:0.75rem;border-radius:10px;">✅ Part A Complete!</div>' : '<div style="background:#fef9e3;padding:0.75rem;border-radius:10px;">⚠️ Please correct answers above.</div>';
+                updateGameBtn();
+            });
+            document.getElementById('checkPartBGameBtn')?.addEventListener('click', () => {
+                let q1 = checkSent('scramble1', 'The machines were running perfectly.');
+                let q2 = checkSent('scramble2', 'We were practicing the dialogue.');
+                partBGameComplete = q1 && q2;
+                document.getElementById('partBGameStatus').innerHTML = partBGameComplete ? '<div style="background:#d1fae5;padding:0.75rem;border-radius:10px;">✅ Part B Complete!</div>' : '<div style="background:#fef9e3;padding:0.75rem;border-radius:10px;">⚠️ Please correct answers above.</div>';
+                updateGameBtn();
+            });
+            gameBtn?.addEventListener('click', () => {
+                if (partAGameComplete && partBGameComplete) {
+                    markActivityComplete('game', 'chk6');
+                } else {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'inline-message warning';
+                    msgDiv.innerHTML = '⚠️ Please complete both parts correctly first. Click "Check Part A" and "Check Part B" to validate your answers.';
+                    msgDiv.style.marginTop = '0.5rem';
+                    gameBtn.parentNode.insertBefore(msgDiv, gameBtn);
+                    setTimeout(() => msgDiv.remove(), 3000);
+                }
+            });
+
+            // ==================== VOCABULARY ====================
+            const vocabCheckStatus = {};
+            const vocabButtons = document.querySelectorAll('.vocab-audio-btn');
+            const totalVocab = vocabButtons.length;
+
+            vocabButtons.forEach(btn => {
+                const checkId = btn.getAttribute('data-checkid');
+                vocabCheckStatus[checkId] = false;
+
+                btn.addEventListener('click', () => {
+                    const word = btn.getAttribute('data-word');
+                    const checkCell = document.getElementById(checkId);
+
+                    // TTS
+                    let u = new SpeechSynthesisUtterance(word);
+                    u.lang = 'en-US';
+                    window.speechSynthesis.cancel();
+                    u.onend = () => {
+                        if (checkCell) {
+                            checkCell.innerHTML = '✅';
+                            checkCell.style.color = '#22c55e';
+                            checkCell.style.fontWeight = 'bold';
+                        }
+                        vocabCheckStatus[checkId] = true;
+
+                        // Check if all are done
+                        const allDone = Object.values(vocabCheckStatus).every(status => status === true);
+                        if (allDone) {
+                            vocabularyComplete = true;
+                            updateVocabBtn();
+                        }
+                    };
+                    window.speechSynthesis.speak(u);
+                });
+            });
+
+            vocabBtn?.addEventListener('click', () => {
+                if (vocabularyComplete) {
+                    markActivityComplete('vocabulary', 'chk7');
+                } else {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'inline-message warning';
+                    msgDiv.innerHTML = '⚠️ Please listen to all vocabulary words first!';
+                    msgDiv.style.marginTop = '0.5rem';
+                    vocabBtn.parentNode.insertBefore(msgDiv, vocabBtn);
+                    setTimeout(() => msgDiv.remove(), 3000);
+                }
+            });
+
+            updateListeningBtn(); updateSpeakingBtn(); updateReadingBtn(); updateWritingBtn(); updateGrammarBtn(); updateGameBtn(); updateVocabBtn();
+            updateChecklistProgress();
+            document.getElementById('dayCompleteBtn')?.addEventListener('click', completeDay);
+        </script>
+    </div>
 </body>
 
 </html>
+```

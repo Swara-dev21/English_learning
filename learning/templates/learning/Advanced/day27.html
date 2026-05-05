@@ -1,0 +1,581 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 27: Precision Writing — Editing and Proofreading | English for Engineers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/Advance.css' %}">
+      <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <style>
+        .speaking-sentence-card { background: white; border: 1px solid #e9d5ff; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
+        .speaking-sentence-card .simple { font-size: 0.9rem; color: #5b21b6; margin-bottom: 0.6rem; font-weight: 500; }
+        .speaking-sentence-card .simple strong { color: #6d28d9; font-weight: 700; }
+        /* Override record button to purple */
+        .speaking-sentence-card .record-btn {
+            background: #8b5cf6 !important;
+            font-size: 0.8rem !important;
+            padding: 0.5rem 1.2rem !important;
+        }
+        .speaking-sentence-card .record-btn:hover {
+            background: #7c3aed !important;
+        }
+        /* Stop button - lighter purple */
+        .speaking-sentence-card .record-btn[style*="background:#64748b"],
+        .speaking-sentence-card .sentence1StopBtn,
+        .speaking-sentence-card .sentence2StopBtn {
+            background: #a78bfa !important;
+            color: white !important;
+        }
+        .wrong-text-red { color: #dc2626; font-weight: 500; } .correct-text-green { color: #16a34a; font-weight: 600; } .arrow-neutral { color: #94a3b8; margin: 0 0.4rem; font-weight: 400; }
+        .writing-textarea { width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 0.95rem; line-height: 1.6; resize: vertical; min-height: 100px; background: #ffffff; color: #1e293b; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); transition: all 0.3s ease; }
+        .writing-textarea:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 4px rgba(139,92,246,0.1); }
+        .speaking-edit-box { background: #faf9ff; border: 1px solid #e9d5ff; border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 0.75rem; }
+        .small-record-btn { background: #8b5cf6 !important; color: white; border: none; padding: 0.4rem 1rem; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .small-record-btn:hover { background: #7c3aed !important; }
+        .small-stop-btn { background: #a78bfa !important; color: white; border: none; padding: 0.4rem 1rem; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.4rem; }
+        @media (max-width: 768px) { .tip-of-day-banner { flex-direction: column; padding: 1rem 1.2rem; gap: 0.75rem; } }
+    </style>
+</head>
+<body>
+    <div class="lesson-container">
+        <div class="lesson-hero"><div class="hero-content"><div class="day-badge">Day 27 • Week 4 • Advanced</div><h1 class="hero-title">✂️ PRECISION WRITING — EDITING AND PROOFREADING</h1><div class="power-line">💬 "The first draft shows thinking. The edited draft shows professionalism."</div></div></div>
+        <div class="tip-of-day-banner"><div class="tip-icon">💡</div><div class="tip-content"><h3>TIP OF THE DAY</h3><p>Professional editors use the 'fresh eye' rule: never proofread immediately after writing. Allow at least 30 minutes before rereading your own work. Your brain remembers what it intended to write and will 'see' correct text even when errors exist. The fresh eye catches what the writing brain misses.</p></div></div>
+
+        <div class="activities-grid">
+
+<!-- LISTENING -->
+<div class="activity-card" id="listening-card">
+    <div class="card-header listening"><h2>🎧 1. Listening Activity : Editing in Action</h2></div>
+    <div class="card-body">
+        <div class="task-box">
+            <div class="task-header"><div class="title"><span>🎯</span><span>Focus</span></div></div>
+            <div class="task-content">Editing in Action — noticing how the edited version of a text is stronger than the original.</div>
+        </div>
+        <div class="audio-player">
+            <audio id="listeningAudio" controls>
+                <source src="{% static 'learning/audio/Advanced/day27.mp3' %}" type="audio/mpeg">
+            </audio>
+        </div>
+        <div id="postAudioListeningContent" style="display:none;">
+            <div class="task-box">
+                <div class="task-header"><div class="title"><span>📝</span><span>Listening Script</span></div></div>
+                <div class="task-content" style="font-style:italic;background:#fef9e3;">
+                    <strong>Original:</strong> "In my opinion, I think that the results which were obtained from the test that was conducted show that there is a clear need for the implementation of a more improved system."<br><br>
+                    <strong>Edited:</strong> "The test results indicate that a system improvement is necessary."
+                </div>
+            </div>
+            <div class="task-box" style="margin-top:1rem;">
+                <div class="task-header"><div class="title"><span>🎯</span><span>Task: Apply the Editing Technique</span></div></div>
+                <div class="task-content">
+                    <p style="margin-bottom:0.5rem;">Apply the same editing technique to this sentence:</p>
+                    <p style="margin:0 0 0.75rem 0;"><strong>Original:</strong> "In my opinion, I think that the data which was collected from the experiment shows that there is a need for improvement."</p>
+                    <input type="text" id="editedInput" class="grammar-input" placeholder="Write your edited version...">
+                    <div id="editedFeedback" class="fix-feedback" style="margin-top:0.4rem;"></div>
+                </div>
+            </div>
+            <div class="quiz-section" style="margin-top:1.5rem;">
+                <p><strong>🧠 Quick Listening Check</strong></p>
+                <div><br>
+                    <p><strong>1. How many words were cut in the editing process (26 to 9)?</strong></p>
+                    <label class="quiz-option"><input type="radio" name="q1" value="17"> About 17</label>
+                    <label class="quiz-option"><input type="radio" name="q1" value="5"> About 5</label>
+                </div>
+                <div>
+                    <p><strong>2. What common error was removed?</strong></p>
+                    <label class="quiz-option"><input type="radio" name="q2" value="passive"> Passive voice</label>
+                    <label class="quiz-option"><input type="radio" name="q2" value="redundant"> Redundant phrases and hedging</label>
+                </div>
+                <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+            </div>
+            <button class="btn-outline" id="checkListeningWorkBtn">✓ Check Answers</button>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:1rem;">
+            <button class="complete-activity-btn" id="completeListeningBtn" disabled>✓ Mark Listening as Complete</button>
+        </div>
+    </div>
+</div>
+           <!-- SPEAKING -->
+<div class="activity-card" id="speaking-card">
+    <div class="card-header speaking"><h2>🗣️ 2. Speaking Activity : The Editing Mindset Drill</h2></div>
+    <div class="card-body">
+        <div class="task-box">
+            <div class="task-header"><div class="title"><span>🎯</span><span>Task</span></div></div>
+            <div class="task-content">Read the unedited sentence aloud, then immediately deliver the edited version.</div>
+        </div>
+        
+        <!-- Sentence 1 -->
+        <div class="speaking-sentence-card">
+            <div class="simple">Unedited: <span style="color:#4a3b8f;font-weight:400;">"I would like to inform you that we have reached the conclusion that the system is working well."</span></div>
+            <div class="recording-controls" style="margin:0;">
+                <button class="record-btn sp1RecordBtn">🎙️ Record</button>
+                <button class="record-btn sp1StopBtn" style="background:#a78bfa;display:none;">⏹️ Stop</button>
+            </div>
+            <div class="sp1Feedback fix-feedback"></div>
+        </div>
+        
+        <!-- Sentence 2 -->
+        <div class="speaking-sentence-card">
+            <div class="simple">Unedited: <span style="color:#4a3b8f;font-weight:400;">"Due to the fact that the temperature was quite high, the component failed."</span></div>
+            <div class="recording-controls" style="margin:0;">
+                <button class="record-btn sp2RecordBtn">🎙️ Record</button>
+                <button class="record-btn sp2StopBtn" style="background:#a78bfa;display:none;">⏹️ Stop</button>
+            </div>
+            <div class="sp2Feedback fix-feedback"></div>
+        </div>
+        
+        <div class="speaking-complete-wrapper">
+            <button class="complete-activity-btn" id="completeSpeakingBtn" disabled>✓ Mark Speaking as Complete</button>
+        </div>
+    </div>
+</div>
+
+            <!-- READING -->
+            <div class="activity-card" id="reading-card"><div class="card-header reading"><h2>📖 3. Reading Activity : The Art of Professional Editing</h2></div><div class="card-body">
+                <div class="reading-passage"><strong>Passage :</strong><br>Professional editing is not about making writing shorter — it is about making every word earn its place. The three most common targets in a professional edit are: redundancy ('end result' → 'result'), nominalisation ('make a decision' → 'decide'), and hedging overload ('it might perhaps be possible that' → 'this may indicate'). Beyond these word-level corrections, advanced editors also check paragraph-level coherence. The most revealing question an editor can ask of any paragraph is: 'If I removed this paragraph, would the reader notice anything was missing?' If the answer is no, the paragraph should go.</div>
+                <div class="task-box" style="margin-top:1rem;"><div class="task-content"><p><strong>1️⃣ Name the three most common editing targets described in the passage.</strong></p><input type="text" id="targetsInput" class="grammar-input" placeholder="Write your answer..."><div id="targetsFeedback" class="fix-feedback"></div></div></div>
+                <div class="task-box" style="margin-top:1rem;"><div class="task-content"><p><strong>2️⃣ What test does the author suggest for whether a paragraph should be kept?</strong></p><input type="text" id="testInput" class="grammar-input" placeholder="Write your answer..."><div id="testFeedback" class="fix-feedback"></div></div></div>
+                <div class="task-box" style="margin-top:1rem;"><div class="task-content"><p><strong>3️⃣ Edit this sentence using all three techniques:</strong><br><em>"Due to the fact that there was an unexpected and completely unforeseen delay in the delivery of the component parts, the project team was required to make modifications to the existing timeline."</em></p><input type="text" id="editInput" class="grammar-input" placeholder="Write your edited version..."><div id="editFeedback" class="fix-feedback"></div></div></div>
+                <button class="btn-outline" id="checkReadingBtn" style="margin-top:1rem;">✓ Check Answers</button>
+                <div style="display:flex;justify-content:flex-end;margin-top:1rem;"><button class="complete-activity-btn" id="completeReadingBtn" disabled>✓ Mark Reading as Complete</button></div>
+            </div></div>
+
+            <!-- WRITING -->
+            <div class="activity-card writing-card" id="writing-card"><div class="card-header writing"><h2>✍️ 4. Writing Activity : Edit Your Previous Work</h2></div><div class="card-body">
+                <div class="writing-prompt-box"><h3>🎯 The Task</h3><p>Take any writing piece from Days 1–26. Paste the <strong>original text</strong> below, then write your <strong>edited version</strong> — cutting redundancy, using stronger verbs, and reducing word count by 20–25%.</p><div class="writing-tip"><strong>💡 Writing Tip:</strong> Find every use of 'to be' (is, are, was, were) and ask whether a stronger action verb could replace it.</div></div>
+                <p style="margin:1rem 1rem;"><strong> Original Text:</strong></p>
+                <textarea id="originalText" class="writing-textarea" placeholder="Paste your original writing from Days 1-26 here..." style="min-height:100px;"></textarea>
+                <p style="margin:1rem 1rem;"><strong> Your Edited Version:</strong></p>
+                <textarea id="editedText" class="writing-textarea" placeholder="Write your edited version here..."></textarea>
+                <div class="word-counter">Edited words: <span id="wordCount">0</span></div>
+                <button class="btn-outline" id="checkWritingBtn">✓ Check Answer</button><div id="writingFeedback" class="fix-feedback" style="margin-top:0.75rem;"></div>
+                <div style="display:flex;justify-content:flex-end;margin-top:1rem;"><button class="complete-activity-btn" id="completeWritingBtn" disabled>✓ Mark Writing as Complete</button></div>
+            </div></div>
+
+            <!-- VOCABULARY -->
+            <div class="activity-card" id="vocabulary-card"><div class="card-header vocabulary"><h2>📘 5. Vocabulary of the Day</h2></div><div class="card-body">
+                <div class="vocab-table-container"><table class="vocab-table"><thead><tr><th>🔊</th><th>✅</th><th>Word</th><th>Pronunciation</th><th>Meaning</th><th>Synonym</th><th>Antonym</th></tr></thead><tbody>
+                    <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Fastidious" data-checkid="check-fastidious">🔊</button></td><td class="check-cell" id="check-fastidious">⬜</td><td class="word-cell"><strong>Fastidious</strong></td><td class="word-cell"><code>/fæˈstɪd.i.əs/</code></td><td class="word-cell">Very attentive to accuracy</td><td class="word-cell">Meticulous</td><td class="word-cell">Careless</td></tr>
+                    <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Redundant" data-checkid="check-redundant">🔊</button></td><td class="check-cell" id="check-redundant">⬜</td><td class="word-cell"><strong>Redundant</strong></td><td class="word-cell"><code>/rɪˈdʌn.dənt/</code></td><td class="word-cell">Not needed; superfluous</td><td class="word-cell">Unnecessary</td><td class="word-cell">Essential</td></tr>
+                    <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Succinct" data-checkid="check-succinct">🔊</button></td><td class="check-cell" id="check-succinct">⬜</td><td class="word-cell"><strong>Succinct</strong></td><td class="word-cell"><code>/səkˈsɪŋkt/</code></td><td class="word-cell">Briefly and clearly expressed</td><td class="word-cell">Concise</td><td class="word-cell">Verbose</td></tr>
+                    <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Coherent" data-checkid="check-coherent">🔊</button></td><td class="check-cell" id="check-coherent">⬜</td><td class="word-cell"><strong>Coherent</strong></td><td class="word-cell"><code>/kəʊˈhɪər.ənt/</code></td><td class="word-cell">Logical and clearly connected</td><td class="word-cell">Consistent</td><td class="word-cell">Incoherent</td></tr>
+                    <tr><td class="audio-cell"><button class="vocab-audio-btn" data-word="Revise" data-checkid="check-revise">🔊</button></td><td class="check-cell" id="check-revise">⬜</td><td class="word-cell"><strong>Revise</strong></td><td class="word-cell"><code>/rɪˈvaɪz/</code></td><td class="word-cell">Re-examine and improve</td><td class="word-cell">Edit</td><td class="word-cell">Submit unchanged</td></tr>
+                </tbody></table></div>
+                <div class="power-word-section"><div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#854d0e;"><span>🔥</span><span>POWER WORD: FASTIDIOUS (fas-TID-ee-us)</span></div><br><p><strong>Meaning:</strong> Very attentive to accuracy and detail</p><p><strong>Usage:</strong> "A fastidious editor transforms a good report into a great one."</p></div>
+                <div class="idiom-section"><div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#166534;"><span>💡</span><span>IDIOM: "Tighten up"</span></div><br><p><strong>Meaning:</strong> Make something more efficient or precise</p><p><strong>Example:</strong> "Before submission, tighten up your report — every sentence should justify its presence."</p></div>
+                <div style="display:flex;justify-content:flex-end;margin-top:1rem;"><button class="complete-activity-btn" id="completeVocabularyBtn" disabled>✓ Mark Vocabulary as Complete</button></div>
+            </div></div>
+
+            <!-- GRAMMAR -->
+            <div class="grammar-section" id="grammar-card"><h3 style="margin:0 0 1rem 0">🧠 6. Grammar Hack : Always Read Your Writing Aloud</h3>
+                <div class="grammar-rule"><p>Your Ears Catch What Your Eyes Miss : Silent reading activates the same visual prediction that caused the error.<br> Reading aloud bypasses this and catches:</p><br><p>• <strong>Missing words:</strong> "The system failed at [missing: the] component level."</p><p>• <strong>Word repetition:</strong> "The the result was..."</p><p>• <strong>Wrong tense:</strong> "Yesterday, the team completes the test." → completed</p><p>• <strong>Unclear pronouns:</strong> "He told him that his report was wrong" — who told whom?</p><p style="margin-top:0.5rem;"><strong>Rule:</strong> Read every professional document aloud at least once before submitting.</p></div>
+            </div>
+
+            <!-- CHECKLIST -->
+            <div class="activity-card"><div class="card-header vocabulary"><h2>✅ DAY 27 COMPLETION CHECKLIST</h2></div><div class="card-body"><ul class="checklist"><li><input type="checkbox" id="chk1" disabled><label> Edited a sentence by removing redundancy and hedging</label></li><li><input type="checkbox" id="chk2" disabled><label> Delivered edited versions of two unedited sentences</label></li><li><input type="checkbox" id="chk3" disabled><label> Identified editing targets and edited a complex sentence</label></li><li><input type="checkbox" id="chk4" disabled><label> Edited previous writing with 20-25% word reduction</label></li><li><input type="checkbox" id="chk5" disabled><label> Used 'Fastidious' in speaking and writing</label></li></ul><div style="text-align:right;margin:1rem 0;"><span class="badge" id="progressCounter">0/5 completed</span></div><div style="display:flex;justify-content:center;"><button class="day-complete-btn" id="dayCompleteBtn" disabled>🏆 Complete Day 27</button></div></div></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        function markActivityComplete(activity, checklistId) { const chk = document.getElementById(checklistId); if (chk && !chk.checked) chk.checked = true; updateChecklistProgress(); let btn = null; if (activity === 'vocabulary') btn = document.getElementById('completeVocabularyBtn'); if (activity === 'speaking') btn = document.getElementById('completeSpeakingBtn'); if (activity === 'reading') btn = document.getElementById('completeReadingBtn'); if (activity === 'listening') btn = document.getElementById('completeListeningBtn'); if (activity === 'writing') btn = document.getElementById('completeWritingBtn'); if (btn) { btn.textContent = '✓ Completed'; btn.disabled = true; btn.classList.add('completed'); btn.style.backgroundColor = '#9ca3af'; btn.style.borderColor = '#9ca3af'; btn.style.color = 'white'; } }
+        function createHintSection(hintText) { return '<div class="fix-feedback hint-box"><strong>💡 Hint:</strong> ' + hintText + '</div>'; }
+        function updateChecklistProgress() { const cbs = document.querySelectorAll('.checklist input[type="checkbox"]'); document.getElementById('progressCounter').innerText = Array.from(cbs).filter(cb => cb.checked).length + '/5 completed'; document.getElementById('dayCompleteBtn').disabled = (Array.from(cbs).filter(cb => cb.checked).length !== 5); }
+        function completeDay() { if (typeof confetti !== 'undefined') confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, startVelocity: 25, colors: ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#a855f7'] }); setTimeout(function() { window.location.href = '/learning/level/advanced/?celebrate=true&completed=27'; }, 1500); }
+        function isGibberish(text) { const cleaned = text.toLowerCase().replace(/[^a-z\s]/g, '').trim(); if (!cleaned) return false; const words = cleaned.split(/\s+/).filter(w => w.length > 0); if (words.length <= 2) return true; const common = ['the','is','are','am','was','were','be','been','being','have','has','had','do','does','did','will','would','shall','should','may','might','must','can','could','i','you','he','she','it','we','they','me','him','her','us','them','my','your','his','its','our','their','mine','yours','hers','ours','theirs','a','an','and','or','but','if','in','on','at','to','for','of','with','from','by','about','as','into','through','during','before','after','above','below','between','under','again','further','then','once','here','there','when','where','why','how','all','both','each','few','more','most','other','some','such','no','not','only','same','so','than','too','very','just','also','now']; return words.filter(w => common.includes(w) || w.length > 3).length < Math.ceil(words.length * 0.4); }
+        function getCookie(name) { let v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)'); return v ? v[2] : null; }
+
+        // VOCABULARY
+        const vocabCompleteBtn = document.getElementById('completeVocabularyBtn');
+        const audioBtns = document.querySelectorAll('.vocab-audio-btn');
+        const vocabCheckStatus = { 'check-fastidious': false, 'check-redundant': false, 'check-succinct': false, 'check-coherent': false, 'check-revise': false };
+        function checkAllVocab() { if (vocabCompleteBtn) vocabCompleteBtn.disabled = !Object.values(vocabCheckStatus).every(s => s); }
+        audioBtns.forEach(btn => { btn.addEventListener('click', function() { const word = this.getAttribute('data-word'); const cid = this.getAttribute('data-checkid'); if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(word); u.lang = 'en-US'; u.rate = 0.85; u.onend = () => { if (cid) { vocabCheckStatus[cid] = true; document.getElementById(cid).innerHTML = '✅'; document.getElementById(cid).style.color = 'green'; checkAllVocab(); } }; window.speechSynthesis.speak(u); } else { if (cid) { vocabCheckStatus[cid] = true; document.getElementById(cid).innerHTML = '✅'; document.getElementById(cid).style.color = 'green'; checkAllVocab(); } } }); });
+        if (vocabCompleteBtn) vocabCompleteBtn.addEventListener('click', () => { if (!vocabCompleteBtn.disabled) markActivityComplete('vocabulary', 'chk5'); else alert('Click each 🔊 button first.'); });
+
+        // LISTENING
+const listeningAudio = document.getElementById('listeningAudio'), postAudio = document.getElementById('postAudioListeningContent'), listeningCompleteBtn = document.getElementById('completeListeningBtn');
+let editingCorrect = false, listeningQuizCorrect = false, quizAnswers = { q1: null, q2: null };
+if (listeningAudio) { listeningAudio.addEventListener('ended', () => { postAudio.style.display = 'block'; postAudio.scrollIntoView({ behavior: 'smooth', block: 'center' }); }); }
+document.querySelectorAll('input[name="q1"]').forEach(r => r.addEventListener('change', e => quizAnswers.q1 = e.target.value));
+document.querySelectorAll('input[name="q2"]').forEach(r => r.addEventListener('change', e => quizAnswers.q2 = e.target.value));
+
+document.getElementById('checkListeningWorkBtn')?.addEventListener('click', () => {
+    const fb = document.getElementById('listeningQuizFeedback'), efb = document.getElementById('editedFeedback');
+    const eval = document.getElementById('editedInput').value.trim();
+    
+    if (!eval) {
+        efb.innerHTML = '⚠️ Please write your edited version.';
+        efb.className = 'fix-feedback empty'; efb.style.display = 'block';
+    } else if (eval.split(/\s+/).length < 3) {
+        efb.innerHTML = '⚠️ Write a complete sentence.' + createHintSection('Remove weak phrases like "In my opinion", "I think", and "there is". Use a direct strong verb instead.');
+        efb.className = 'fix-feedback empty'; efb.style.display = 'block';
+    } else if (isGibberish(eval)) {
+        efb.innerHTML = '⚠️ Please write a meaningful sentence.' + createHintSection('Edit by removing weak phrases. Use the original sentence but make it shorter and stronger.');
+        efb.className = 'fix-feedback empty'; efb.style.display = 'block';
+    } else {
+        const lower = eval.toLowerCase();
+        const hasWeakPhrases = lower.includes('in my opinion') || lower.includes('i think') || lower.includes('there is') || lower.includes('there are');
+        const hasStrongVerb = lower.includes('shows') || lower.includes('indicates') || lower.includes('demonstrates') || lower.includes('reveals');
+        const hasData = lower.includes('data') || lower.includes('experiment');
+        const hasImprovement = lower.includes('improv') || lower.includes('need') || lower.includes('necess');
+        const wordCount = eval.split(/\s+/).length;
+        
+        // Perfect
+        if (!hasWeakPhrases && hasData && hasStrongVerb && hasImprovement && wordCount <= 10) {
+            efb.innerHTML = '✅ Good editing! You removed weak phrases and used strong direct language.';
+            efb.className = 'fix-feedback correct'; efb.style.display = 'block';
+            editingCorrect = true;
+        }
+        // Still has weak phrases
+        else if (hasWeakPhrases) {
+            efb.innerHTML = '❌ You still have weak phrases.' + createHintSection('Remove "In my opinion", "I think", and "there is" — they add no meaning. State the fact directly.');
+            efb.className = 'fix-feedback warning'; efb.style.display = 'block';
+            editingCorrect = false;
+        }
+        // Close but not exact — show correct answer
+        else if (hasData && (hasStrongVerb || hasImprovement)) {
+            efb.innerHTML = '⚠️ Almost! Correct version:<br><strong>"The experimental data shows that improvement is needed."</strong>';
+            efb.className = 'fix-feedback almost'; efb.style.display = 'block';
+            editingCorrect = false;
+        }
+        // Missing key elements — hint only, no example
+        else {
+            efb.innerHTML = '❌ Try removing weak phrases and using a strong direct verb.' + createHintSection('Weak phrases like "I think" and "there is" make sentences longer. Remove them completely and use a strong verb like "shows" or "indicates".');
+            efb.className = 'fix-feedback warning'; efb.style.display = 'block';
+            editingCorrect = false;
+        }
+    }
+    
+    if (!quizAnswers.q1 || !quizAnswers.q2) { fb.innerHTML = '⚠️ Please answer both questions.'; fb.className = 'quiz-feedback warning'; fb.style.display = 'block'; return; }
+    const q1c = quizAnswers.q1 === '17', q2c = quizAnswers.q2 === 'redundant';
+    listeningQuizCorrect = q1c && q2c;
+    if (listeningQuizCorrect) { fb.innerHTML = '✅ Both correct!'; fb.className = 'quiz-feedback correct'; }
+    else { fb.innerHTML = (q1c ? '✅ Q1: Correct' : '❌ Q1: About 17 words were cut') + '<br>' + (q2c ? '✅ Q2: Correct' : '❌ Q2: Redundant phrases and hedging'); fb.className = 'quiz-feedback incorrect'; }
+    fb.style.display = 'block';
+    
+    if (listeningCompleteBtn) listeningCompleteBtn.disabled = !(editingCorrect && listeningQuizCorrect);
+});
+
+if (listeningCompleteBtn) { listeningCompleteBtn.disabled = true; listeningCompleteBtn.addEventListener('click', () => { if (editingCorrect && listeningQuizCorrect) markActivityComplete('listening', 'chk1'); else alert('⚠️ Complete all listening tasks first.'); }); }
+
+        // SPEAKING - Two small purple buttons with STT
+        let sp1Done = false, sp2Done = false;
+        const editedAnswers = { 1: 'the system is functioning well', 2: 'the component failed due to overheating' };
+        function setupSpk(rbCl, sbCl, fbCl, num) {
+            const rb = document.querySelector('.' + rbCl), sb = document.querySelector('.' + sbCl), fbd = document.querySelector('.' + fbCl);
+            let rec = null, recording = false, ft = '';
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) { if (rb) rb.addEventListener('click', () => { fbd.innerHTML = '⚠️ Speech not supported. Type your edited version:<br><input type="text" class="grammar-input manualEdit" placeholder="Type edited version..."><button class="btn-outline checkManualEdit" style="margin-top:0.5rem;">Check</button>'; fbd.className = 'fix-feedback warning'; fbd.style.display = 'block'; setTimeout(() => { const mi = fbd.querySelector('.manualEdit'), cb = fbd.querySelector('.checkManualEdit'); if (cb && mi) cb.addEventListener('click', () => checkEdited(mi.value.trim(), num)); }, 100); }); return; }
+            if (rb) rb.addEventListener('click', () => { rec = new SR(); rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 1; rec.continuous = true; ft = ''; rec.onresult = e => { for (let i = e.resultIndex; i < e.results.length; i++) { if (e.results[i].isFinal) ft += e.results[i][0].transcript + ' '; } }; rec.onerror = e => { fbd.innerHTML = '⚠️ Speech error. Try again.'; fbd.className = 'fix-feedback warning'; fbd.style.display = 'block'; stopRec(); }; rec.onend = () => { stopRec(); if (ft.trim()) { fbd.innerHTML = '⏳ Evaluating...'; fbd.className = 'fix-feedback hint-box'; fbd.style.display = 'block'; setTimeout(() => checkEdited(ft, num), 500); } else { fbd.innerHTML = '⚠️ No speech detected.'; fbd.className = 'fix-feedback warning'; fbd.style.display = 'block'; } }; rec.start(); recording = true; rb.style.display = 'none'; sb.style.display = 'inline-flex'; fbd.innerHTML = '🎤 Listening... Speak your edited version.'; fbd.className = 'fix-feedback hint-box'; fbd.style.display = 'block'; });
+            function stopRec() { if (rec && recording) { rec.stop(); recording = false; } if (rb) rb.style.display = 'inline-flex'; if (sb) sb.style.display = 'none'; }
+            if (sb) sb.addEventListener('click', stopRec);
+            function checkEdited(text, n) { const lower = text.toLowerCase().trim(); const ans = editedAnswers[n]; const wc = lower.split(/\s+/).length; if (wc < 3) { fbd.innerHTML = '⚠️ Write a complete sentence.' + createHintSection('Remove weak phrases and use a direct statement.'); fbd.className = 'fix-feedback empty'; fbd.style.display = 'block'; return; } if (lower.includes(ans) || (n===1 && lower.includes('system') && lower.includes('functioning')) || (n===2 && lower.includes('component') && lower.includes('failed') && lower.includes('overheating'))) { fbd.innerHTML = '✅ Good editing!<br><em style="font-size:0.8rem;color:#64748b;">You said: "' + text.trim() + '"</em>'; fbd.className = 'fix-feedback correct'; fbd.style.display = 'block'; if (n===1) sp1Done = true; else sp2Done = true; } else if ((n===1 && (lower.includes('system') || lower.includes('functioning'))) || (n===2 && (lower.includes('component') || lower.includes('failed')))) { fbd.innerHTML = '⚠️ Almost! Correct: "' + ans + '"<br><em style="font-size:0.8rem;color:#64748b;">You said: "' + text.trim() + '"</em>'; fbd.className = 'fix-feedback almost'; fbd.style.display = 'block'; } else { fbd.innerHTML = '❌ Try removing weak phrases and using a direct statement.' + createHintSection(n===1?'Remove "I would like to inform you" and "we have reached the conclusion".':'Replace "Due to the fact that" with a direct cause.') + '<br><em style="font-size:0.8rem;color:#64748b;">You said: "' + text.trim() + '"</em>'; fbd.className = 'fix-feedback warning'; fbd.style.display = 'block'; } updateSpkBtn(); }
+        }
+        function updateSpkBtn() { const btn = document.getElementById('completeSpeakingBtn'); if (btn && btn.textContent !== '✓ Completed') btn.disabled = !(sp1Done && sp2Done); }
+        setupSpk('sp1RecordBtn', 'sp1StopBtn', 'sp1Feedback', 1);
+        setupSpk('sp2RecordBtn', 'sp2StopBtn', 'sp2Feedback', 2);
+        document.getElementById('completeSpeakingBtn')?.addEventListener('click', () => { if (sp1Done && sp2Done) markActivityComplete('speaking', 'chk2'); else alert('⚠️ Complete both speaking tasks first.'); });
+
+// READING - Fixed: strict validation for all 3 tasks
+let rtDone = { t1: false, t2: false, t3: false };
+
+function validateReadingTask(el, fb, checkFn, hintText, correctAnswer, minWords) { 
+    const val = el.value.trim(); 
+    if (!val) { fb.innerHTML = '⚠️ Please write your answer.'; fb.className = 'fix-feedback empty'; fb.style.display = 'block'; return false; } 
+    if (minWords && val.split(/\s+/).length < minWords) { fb.innerHTML = '⚠️ Write a complete answer.' + createHintSection(hintText); fb.className = 'fix-feedback empty'; fb.style.display = 'block'; return false; } 
+    if (minWords && isGibberish(val)) { fb.innerHTML = '⚠️ Please write a meaningful answer.' + createHintSection(hintText); fb.className = 'fix-feedback empty'; fb.style.display = 'block'; return false; } 
+    const result = checkFn(val.toLowerCase(), val); 
+    if (result === true) { fb.innerHTML = '✅ Correct!'; fb.className = 'fix-feedback correct'; fb.style.display = 'block'; return true; } 
+    else if (result === 'partial') { fb.innerHTML = '⚠️ Almost correct!<br> <strong>Correct answer:</strong> ' + correctAnswer; fb.className = 'fix-feedback almost'; fb.style.display = 'block'; return false; } 
+    else { fb.innerHTML = '❌ Incorrect.' + createHintSection(hintText); fb.className = 'fix-feedback warning'; fb.style.display = 'block'; return false; } 
+}
+
+document.getElementById('checkReadingBtn')?.addEventListener('click', () => {
+    
+    // Task 1: Three editing targets — REJECT copying from passage
+    rtDone.t1 = validateReadingTask(
+        document.getElementById('targetsInput'), document.getElementById('targetsFeedback'),
+        (v, originalVal) => {
+            // REJECT if user copied examples from passage (contains brackets or arrows)
+            if (originalVal.includes('(') || originalVal.includes('→') || originalVal.includes("'")) {
+                return false; // Will show "incorrect" with hint
+            }
+            
+            // REJECT if user wrote a long sentence (copied from passage)
+            if (v.split(/\s+/).length > 8) return false;
+            
+            const hasRedundancy = v.includes('redundancy');
+            const hasNominalisation = v.includes('nominalisation');
+            const hasHedging = v.includes('hedging overload') || (v.includes('hedging') && v.includes('overload'));
+            
+            // Full correct: all 3 terms present, short answer
+            if (hasRedundancy && hasNominalisation && hasHedging && v.split(/\s+/).length <= 6) return true;
+            
+            // Partial: 2 of 3 present
+            if ((hasRedundancy && hasNominalisation) || (hasRedundancy && hasHedging) || (hasNominalisation && hasHedging)) return 'partial';
+            
+            // 1 of 3
+            if (hasRedundancy || hasNominalisation || v.includes('hedging')) return 'partial';
+            
+            return false;
+        }, 
+        'Name only the three editing targets — write just the 3 terms, not the examples from the passage.',
+        'Redundancy, Nominalisation, and Hedging overload.',
+        3
+    );
+
+    // Task 2: Paragraph test — REJECT copying question text
+    rtDone.t2 = validateReadingTask(
+        document.getElementById('testInput'), document.getElementById('testFeedback'),
+        (v, originalVal) => { 
+            // REJECT if user copied the exact question from passage
+            const passageQuestion = 'if i removed this paragraph would the reader notice anything was missing';
+            const userClean = v.replace(/[^a-z\s]/g, '').trim();
+            if (userClean === passageQuestion || userClean.includes(passageQuestion)) return false;
+            
+            const hasRemove = v.includes('remove') || v.includes('delete') || v.includes('should go'); 
+            const hasNotice = v.includes('notice') || v.includes('missing') || v.includes('reader');
+            const hasOwnWords = v.split(/\s+/).length >= 8 && !v.includes('if i removed this paragraph');
+            
+            if (hasRemove && hasNotice && hasOwnWords) return true; 
+            if (hasRemove || hasNotice) return 'partial'; 
+            return false; 
+        }, 
+        'Explain the test in your own words. Do not copy the question from the passage.',
+        'Ask: "If I remove this paragraph, will the reader notice anything missing?" If not, delete it.',
+        8
+    );
+
+    // Task 3: Edit sentence — REJECT copying original
+    rtDone.t3 = validateReadingTask(
+        document.getElementById('editInput'), document.getElementById('editFeedback'),
+        (v, originalVal) => { 
+            const wc = v.split(/\s+/).length;
+            
+            // REJECT if user copied the original sentence unchanged
+            const weakPhrases = ['due to the fact', 'unexpected and', 'completely unforeseen', 'make modifications'];
+            const weakCount = weakPhrases.filter(p => v.includes(p)).length;
+            
+            // If 2+ weak phrases still present, user didn't edit properly
+            if (weakCount >= 2) return false;
+            
+            // REJECT if still very long (close to original 35 words)
+            if (wc > 25) return false;
+            
+            const hasDelay = v.includes('delay') || v.includes('delivery');
+            const hasModify = v.includes('modif') || v.includes('change') || v.includes('revis');
+            const hasComponent = v.includes('component');
+            const hasTimeline = v.includes('timeline');
+            const noFact = !v.includes('due to the fact');
+            const noMakeModifications = !v.includes('make modifications');
+            
+            // Full correct: 8-18 words, has key edited terms, no weak phrases
+            if (wc >= 8 && wc <= 18 && hasDelay && hasModify && hasComponent && noFact && noMakeModifications) return true;
+            
+            // Partial: some editing done but not fully correct
+            if ((noFact || (hasDelay && wc >= 6)) && wc >= 6) return 'partial';
+            
+            return false; 
+        }, 
+        'Edit the sentence by removing weak phrases. Remove "due to the fact that", avoid repetition, and replace "make modifications" with a stronger verb.',
+        'An unexpected delay in component delivery required the project team to modify the timeline.',
+        8
+    );
+
+    const btn = document.getElementById('completeReadingBtn'); 
+    if (btn && btn.textContent !== '✓ Completed') btn.disabled = !(rtDone.t1 && rtDone.t2 && rtDone.t3);
+});
+
+document.getElementById('completeReadingBtn')?.addEventListener('click', () => { 
+    if (rtDone.t1 && rtDone.t2 && rtDone.t3) markActivityComplete('reading', 'chk3'); 
+});
+
+// WRITING - Short teaching feedback: 4-5 lines, very meaningful
+const originalText = document.getElementById('originalText'), editedText = document.getElementById('editedText'), wcs = document.getElementById('wordCount');
+let writingPassed = false;
+if (editedText) editedText.addEventListener('input', function() { wcs.textContent = this.value.trim() ? this.value.trim().split(/\s+/).filter(w => w.length > 0).length : 0; });
+
+document.getElementById('checkWritingBtn')?.addEventListener('click', async () => {
+    const oText = originalText.value.trim(), eText = editedText.value.trim(), fb = document.getElementById('writingFeedback');
+    const ow = oText.split(/\s+/).filter(w => w.length > 0).length;
+    const ew = eText.split(/\s+/).filter(w => w.length > 0).length;
+
+    if (!oText) { fb.innerHTML = '⚠️ Please paste your original text.'; fb.className = 'fix-feedback empty'; fb.style.display = 'block'; writingPassed = false; updateWBtn(); return; }
+    if (!eText) { fb.innerHTML = '⚠️ Please write your edited version.'; fb.className = 'fix-feedback empty'; fb.style.display = 'block'; writingPassed = false; updateWBtn(); return; }
+    if (ew < 8) { fb.innerHTML = '⚠️ Too short (' + ew + ' words). Write a complete edited version.'; fb.className = 'fix-feedback empty'; fb.style.display = 'block'; writingPassed = false; updateWBtn(); return; }
+
+    const similarity = oText.toLowerCase().replace(/[^a-z\s]/g,'') === eText.toLowerCase().replace(/[^a-z\s]/g,'');
+    if (similarity) {
+        fb.innerHTML = '❌ You copied the original without changes.<br><br>💡 Replace weak phrases: "make a decision" → "decide", "due to the fact that" → "because"';
+        fb.className = 'fix-feedback warning'; fb.style.display = 'block'; writingPassed = false; updateWBtn(); return;
+    }
+
+    if (ew >= ow) {
+        fb.innerHTML = '⚠️ Your edited version is not shorter (Original: ' + ow + ' words, Yours: ' + ew + ').<br><br>💡 Remove filler words and use stronger verbs to reduce length.';
+        fb.className = 'fix-feedback warning'; fb.style.display = 'block'; writingPassed = false; updateWBtn(); return;
+    }
+
+    const reduction = ow > 0 ? Math.round(((ow - ew) / ow) * 100) : 0;
+    fb.innerHTML = '⏳ Evaluating your editing...'; fb.className = 'fix-feedback hint-box'; fb.style.display = 'block';
+
+    try {
+        const response = await fetch('/learning/ai/evaluate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+            body: JSON.stringify({
+                text: JSON.stringify({ original: oText, edited: eText }),
+                task_type: 'editing_comparison',
+                day_number: 27,
+                level: 'advanced',
+                system_prompt: `You are an expert English writing coach. Compare ORIGINAL (${ow} words) and STUDENT_EDITED (${ew} words, ${reduction}% reduction).
+
+Original: "${oText}"
+Student edited: "${eText}"
+
+CRITICAL RULES — SHORT FEEDBACK ONLY (4-5 lines max):
+1. Address user as "you"
+2. Start with what they did well (1 line)
+3. Then show 1-2 specific mistakes using format: "Instead of '[their words]', try '[better version]'"
+4. End with 1 actionable tip
+5. Keep total feedback under 5 lines
+6. Be encouraging — celebrate good editing
+
+For CORRECT (70%+ reduction): Praise specifically + 1 improvement tip
+For ALMOST (40-69%): Mention what's good + 1-2 fixes  
+For WRONG (<40%): Show 2-3 concrete fixes with examples
+
+Return STRICT JSON:
+{
+  "score": 0-10,
+  "is_correct": true/false,
+  "feedback": "4-5 lines: praise + specific mistakes + tip. Use 'Instead of...try...' format.",
+  "model_answer": "Professional edited version of the original"
+}`
+            })
+        });
+        const res = await response.json();
+
+        if (res.success) {
+            const score = res.score || 0;
+            const ok = reduction >= 70;
+            const icon = ok ? '✅' : (score >= 4 ? '⚠️' : '❌');
+
+            let html = '';
+            
+            // Main feedback (3-5 lines)
+            html += icon + ' <strong>' + res.feedback + '</strong>';
+            // Encouragement for correct
+            if (ok) {
+                html += '<br><br> Great editing! ';
+            }
+
+            fb.innerHTML = html;
+            fb.className = 'fix-feedback ' + (ok ? 'correct' : (score >= 4 ? 'almost' : 'warning'));
+            writingPassed = ok;
+        } else {
+            // Local fallback
+            if (reduction >= 70) {
+                fb.innerHTML = '✅ <strong>Excellent editing!</strong> You reduced the original by ' + reduction + '%. Your edited version is concise and professional.<br><br>📉 Word reduction: ' + reduction + '% (Original: ' + ow + ' → Edited: ' + ew + ' words)<br><br>🌟 Keep applying this skill — strong editing saves readers time.';
+                fb.className = 'fix-feedback correct';
+                writingPassed = true;
+            } else if (reduction >= 40) {
+                fb.innerHTML = '⚠️ <strong>Good progress!</strong> You reduced by ' + reduction + '%. Try removing filler words like "in order to" → "to" and "due to the fact that" → "because".<br><br>📉 Word reduction: ' + reduction + '% (Original: ' + ow + ' → Edited: ' + ew + ' words)<br><br>💡 Aim for 70%+ reduction by cutting every unnecessary word.';
+                fb.className = 'fix-feedback almost';
+                writingPassed = false;
+            } else {
+                fb.innerHTML = '❌ <strong>Keep editing.</strong> Only ' + reduction + '% reduction. Replace weak phrases: "make a decision" → "decide", "in the event that" → "if".<br><br>📉 Word reduction: ' + reduction + '% (Original: ' + ow + ' → Edited: ' + ew + ' words)<br><br>💡 Strong editing means every word earns its place. Cut filler, use action verbs.';
+                fb.className = 'fix-feedback warning';
+                writingPassed = false;
+            }
+        }
+    } catch (e) {
+        if (reduction >= 70) {
+            fb.innerHTML = '✅ <strong>Excellent editing!</strong> You reduced by ' + reduction + '%.<br><br>📉 Word reduction: ' + reduction + '% (Original: ' + ow + ' → Edited: ' + ew + ' words)<br><br>🌟 Great work — your editing skills are strong!';
+            fb.className = 'fix-feedback correct';
+            writingPassed = true;
+        } else {
+            fb.innerHTML = '⚠️ <strong>Good attempt!</strong> ' + reduction + '% reduction. Replace weak phrases with strong verbs.<br><br>📉 Word reduction: ' + reduction + '% (Original: ' + ow + ' → Edited: ' + ew + ' words)<br><br>💡 Example: "is completed by" → "completes", "was reviewed" → "reviewed".';
+            fb.className = 'fix-feedback almost';
+            writingPassed = false;
+        }
+    }
+    fb.style.display = 'block';
+    updateWBtn();
+});
+
+function updateWBtn() { const cwb = document.getElementById('completeWritingBtn'); if (cwb && cwb.textContent !== '✓ Completed') cwb.disabled = !writingPassed; }
+document.getElementById('completeWritingBtn')?.addEventListener('click', () => { if (writingPassed) markActivityComplete('writing', 'chk4'); else alert('⚠️ Complete the writing task successfully first.'); });
+
+// ========== LOCALSTORAGE CACHE PERSISTENCE ==========
+const STORAGE_KEY = 'progress_advanced_day27';
+
+function disableButtonAsCompleted(btnId) {
+    const btn = document.getElementById(btnId);
+    if (btn) { btn.textContent = '✓ Completed'; btn.disabled = true; btn.classList.add('completed'); btn.style.backgroundColor = '#9ca3af'; btn.style.borderColor = '#9ca3af'; btn.style.color = 'white'; }
+}
+
+function saveProgressToCache() {
+    const data = { checklist: {}, inputs: {}, textareas: {}, radios: {} };
+    ['chk1','chk2','chk3','chk4','chk5'].forEach(id => { const cb = document.getElementById(id); if (cb) data.checklist[id] = cb.checked; });
+    document.querySelectorAll('input[type="text"]').forEach(el => { if (el.id) data.inputs[el.id] = el.value; });
+    document.querySelectorAll('textarea').forEach(el => { if (el.id) data.textareas[el.id] = el.value; });
+    document.querySelectorAll('input[type="radio"]:checked').forEach(el => { if (el.name) data.radios[el.name] = el.value; });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadProgressFromCache() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+    try {
+        const data = JSON.parse(saved);
+        if (data.checklist) Object.keys(data.checklist).forEach(id => { if (data.checklist[id]) { const cb = document.getElementById(id); if (cb) cb.checked = true; } });
+        if (data.inputs) Object.keys(data.inputs).forEach(id => { const el = document.getElementById(id); if (el) el.value = data.inputs[id]; });
+        if (data.textareas) Object.keys(data.textareas).forEach(id => { const el = document.getElementById(id); if (el) el.value = data.textareas[id]; });
+        if (data.radios) Object.keys(data.radios).forEach(name => { const radio = document.querySelector('input[name="' + name + '"][value="' + data.radios[name] + '"]'); if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change')); } });
+    } catch(e) {}
+}
+
+function restoreCompletedButtons() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+    try {
+        const data = JSON.parse(saved);
+        if (data.checklist) {
+            if (data.checklist['chk1']) disableButtonAsCompleted('completeListeningBtn');
+            if (data.checklist['chk2']) disableButtonAsCompleted('completeSpeakingBtn');
+            if (data.checklist['chk3']) disableButtonAsCompleted('completeReadingBtn');
+            if (data.checklist['chk4']) disableButtonAsCompleted('completeWritingBtn');
+            if (data.checklist['chk5']) disableButtonAsCompleted('completeVocabularyBtn');
+        }
+    } catch(e) {}
+}
+
+// Override markActivityComplete to auto-save
+const originalMarkComplete = markActivityComplete;
+markActivityComplete = function(activity, checklistId) { originalMarkComplete(activity, checklistId); saveProgressToCache(); };
+
+// Auto-save on input
+document.addEventListener('input', e => { if (['INPUT','TEXTAREA'].includes(e.target.tagName)) saveProgressToCache(); });
+document.addEventListener('change', e => { if (e.target.type === 'radio') saveProgressToCache(); });
+
+// Update completeDay to clear cache
+const originalCompleteDay = completeDay;
+completeDay = function() { localStorage.removeItem(STORAGE_KEY); originalCompleteDay(); };
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadProgressFromCache();
+    const dcb = document.getElementById('dayCompleteBtn');
+    if (dcb) { const nb = dcb.cloneNode(true); dcb.parentNode.replaceChild(nb, dcb); nb.addEventListener('click', function(e) { e.preventDefault(); const cbs = document.querySelectorAll('.checklist input[type="checkbox"]'); if (Array.from(cbs).every(cb => cb.checked)) completeDay(); else alert('⚠️ Complete all activities first!'); }); }
+    updateChecklistProgress();
+    ['completeSpeakingBtn','completeReadingBtn','completeVocabularyBtn','completeListeningBtn','completeWritingBtn'].forEach(id => { const b = document.getElementById(id); if (b) b.disabled = true; });
+    restoreCompletedButtons();
+    setTimeout(restoreCompletedButtons, 300);
+    setTimeout(restoreCompletedButtons, 800);
+    setTimeout(restoreCompletedButtons, 1500);
+});
+</script>
+</body>
+</html>

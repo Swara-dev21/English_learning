@@ -860,9 +860,8 @@
                                 <div class="title"><span>📝</span><span>Listening Text</span></div>
                             </div>
                             <div class="task-content" style="font-style: italic; background: #fef9e3;">
-                                “A confident person listens more than he speaks. He knows that mistakes are
-                                part of learning. Every day, he practices his skills. He talks to new people
-                                and shows respect. This mindset helps him grow every single day.”
+                                “I may speak slowly… but I speak clearly… I am not perfect… but I am improving… Every
+                                word I speak… makes me stronger… 👉 Confidence grows with practice.”
                             </div>
                         </div>
                     </div>
@@ -1040,21 +1039,22 @@
                         <h3>✨ Part A: The "Confidence Switch" (Guided)</h3><br>
                         <p style="font-weight:500; margin-bottom:0.25rem;">1. I speak slowly, but I speak
                             ____________________.</p>
-                        <input type="text" id="conf1" class="habit-input" placeholder="write Complete the sentence...">
+                        <input type="text" id="conf1" class="habit-input" placeholder="Write complete sentence...">
                         <div id="conf1Feedback" class="fix-feedback"></div>
                         <p style="font-weight:500; margin-bottom:0.25rem; margin-top:1rem;">2. I am not perfect, but I
                             am ____________________.</p>
-                        <input type="text" id="conf2" class="habit-input" placeholder="write Complete the sentence...">
+                        <input type="text" id="conf2" class="habit-input" placeholder="Write complete sentence...">
                         <div id="conf2Feedback" class="fix-feedback"></div>
 
                         <h3 style="margin-top: 1rem;">📝 Main Task: Write 3 things you do to stay confident daily using
                             "I + Verb"</h3><br>
                         <p style="font-size:0.85rem; color:#64748b; margin-bottom:0.5rem;">Example: I smile.</p>
-                        <input type="text" id="daily1" class="habit-input" placeholder="1.">
+                        <input type="text" id="daily1" class="habit-input"
+                            placeholder="First sentence (e.g., I smile every morning)">
                         <div id="daily1Feedback" class="fix-feedback"></div>
-                        <input type="text" id="daily2" class="habit-input" placeholder="2.">
+                        <input type="text" id="daily2" class="habit-input" placeholder="Second sentence...">
                         <div id="daily2Feedback" class="fix-feedback"></div>
-                        <input type="text" id="daily3" class="habit-input" placeholder="3.">
+                        <input type="text" id="daily3" class="habit-input" placeholder="Third sentence...">
                         <div id="daily3Feedback" class="fix-feedback"></div>
 
                         <button class="btn-outline" id="checkPartABtn">✓ Check Part A</button>
@@ -1066,18 +1066,16 @@
                     <div class="writing-prompt">
                         <h3>⚙️ Part B: Technical Identity (Review)</h3><br>
                         <p style="font-weight:500; margin-bottom:0.25rem;">1. I study __________ engineering.</p>
-                        <input type="text" id="techBranch" class="habit-input"
-                            placeholder="write Complete the sentence...">
+                        <input type="text" id="techBranch" class="habit-input" placeholder="Write complete sentence...">
                         <div id="techBranchFeedback" class="fix-feedback"></div>
                         <p style="font-weight:500; margin-bottom:0.25rem; margin-top:1rem;">2. I operate __________
                             (name a tool).</p>
-                        <input type="text" id="techTool" class="habit-input"
-                            placeholder="write Complete the sentence...">
+                        <input type="text" id="techTool" class="habit-input" placeholder="Write complete sentence...">
                         <div id="techToolFeedback" class="fix-feedback"></div>
                         <p style="font-weight:500; margin-bottom:0.25rem; margin-top:1rem;">3. I analyze __________
                             (document/drawing).</p>
                         <input type="text" id="techAnalyze" class="habit-input"
-                            placeholder="write Complete the sentence...">
+                            placeholder="Write complete sentence...">
                         <div id="techAnalyzeFeedback" class="fix-feedback"></div>
                         <button class="btn-outline" id="checkPartBBtn">✓ Check Part B</button>
 
@@ -1821,8 +1819,17 @@
                 return;
             }
 
-            let conf1Valid = validConf1Words.includes(conf1.toLowerCase());
-            let conf2Valid = validConf2Words.includes(conf2.toLowerCase());
+            // Conf1 Validation: Full sentence required
+            let conf1Lower = conf1.toLowerCase().replace(/[.!]$/, '').trim();
+            const conf1Prefix = "i speak slowly, but i speak";
+            let conf1Valid = conf1Lower.startsWith(conf1Prefix) &&
+                validConf1Words.includes(conf1Lower.replace(conf1Prefix, '').trim());
+
+            // Conf2 Validation: Full sentence required
+            let conf2Lower = conf2.toLowerCase().replace(/[.!]$/, '').trim();
+            const conf2Prefix = "i am not perfect, but i am";
+            let conf2Valid = conf2Lower.startsWith(conf2Prefix) &&
+                validConf2Words.includes(conf2Lower.replace(conf2Prefix, '').trim());
             let d1Valid = isValidConfidenceSentence(d1);
             let d2Valid = isValidConfidenceSentence(d2);
             let d3Valid = isValidConfidenceSentence(d3);
@@ -1834,10 +1841,24 @@
             let fbD3 = document.getElementById('daily3Feedback');
 
             if (conf1Valid) { fb1.innerHTML = '✅ Correct!'; fb1.className = 'fix-feedback correct'; fb1.style.display = 'block'; }
-            else { fb1.innerHTML = '❌ Invalid. Valid words: clearly, confidently, loudly, boldly, strongly, calmly, fluently, politely'; fb1.className = 'fix-feedback incorrect'; fb1.style.display = 'block'; }
+            else {
+                if (validConf1Words.includes(conf1.toLowerCase())) {
+                    fb1.innerHTML = '❌ Please write the COMPLETE sentence starting with "I speak slowly, but I speak..."';
+                } else {
+                    fb1.innerHTML = '❌ Invalid. Must be a complete sentence ending with a valid word (e.g., clearly, confidently, loudly).';
+                }
+                fb1.className = 'fix-feedback incorrect'; fb1.style.display = 'block';
+            }
 
             if (conf2Valid) { fb2.innerHTML = '✅ Correct!'; fb2.className = 'fix-feedback correct'; fb2.style.display = 'block'; }
-            else { fb2.innerHTML = '❌ Invalid. Valid words: improving, learning, trying, growing, confident, better, stronger, practicing'; fb2.className = 'fix-feedback incorrect'; fb2.style.display = 'block'; }
+            else {
+                if (validConf2Words.includes(conf2.toLowerCase())) {
+                    fb2.innerHTML = '❌ Please write the COMPLETE sentence starting with "I am not perfect, but I am..."';
+                } else {
+                    fb2.innerHTML = '❌ Invalid. Must be a complete sentence ending with a valid word (e.g., improving, growing, learning).';
+                }
+                fb2.className = 'fix-feedback incorrect'; fb2.style.display = 'block';
+            }
 
             if (d1Valid) { fbD1.innerHTML = '✅ Correct! Valid sentence starting with "I + verb"'; fbD1.className = 'fix-feedback correct'; fbD1.style.display = 'block'; }
             else { fbD1.innerHTML = '❌ Must start with "I" followed by an ACTION VERB (e.g., "I smile", "I stand straight")'; fbD1.className = 'fix-feedback incorrect'; fbD1.style.display = 'block'; }
@@ -2079,6 +2100,122 @@
             if (gameCorrect) markActivityComplete('game', 'chk1');
             else alert('Please complete the unscramble words and match all pairs correctly.');
         });
+
+        // ========== LOCALSTORAGE PERSISTENCE ==========
+        const STORAGE_KEY = 'progress_beginner_day3';
+
+        function saveProgress() {
+            const data = {
+                activityCompleted: activityCompleted,
+                inputs: {},
+                radios: {}
+            };
+
+            // Save all text inputs and textareas
+            document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                if (el.id) data.inputs[el.id] = el.value;
+            });
+
+            // Save all radio selections
+            document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
+                if (el.name) data.radios[el.name] = el.value;
+            });
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+
+                // 1. Restore activity completion
+                if (data.activityCompleted) {
+                    activityCompleted = data.activityCompleted;
+                    const checklistMap = {
+                        game: 'chk1', listening: 'chk2', speaking: 'chk3',
+                        reading: 'chk4', writing: 'chk5', vocabulary: 'chk6'
+                    };
+                    Object.keys(activityCompleted).forEach(id => {
+                        if (activityCompleted[id]) {
+                            const cb = document.getElementById(checklistMap[id]);
+                            if (cb) cb.checked = true;
+                            const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
+                            if (btn) {
+                                btn.classList.add('completed');
+                                btn.textContent = '✓ Completed';
+                                btn.disabled = true;
+                            }
+                        }
+                    });
+                }
+
+                // 2. Restore text inputs
+                if (data.inputs) {
+                    Object.keys(data.inputs).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = data.inputs[id];
+                    });
+                }
+
+                // 3. Restore radios
+                if (data.radios) {
+                    Object.keys(data.radios).forEach(name => {
+                        const val = data.radios[name];
+                        const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+                        if (radio) {
+                            radio.checked = true;
+                            radio.dispatchEvent(new Event('change'));
+                        }
+                    });
+                }
+
+                updateChecklistProgress();
+            } catch (e) { console.warn("Load progress failed", e); }
+        }
+
+        function markActivityComplete(activityId, checklistId) {
+            if (activityCompleted[activityId]) return;
+            activityCompleted[activityId] = true;
+            document.getElementById(checklistId).checked = true;
+            const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+            if (btn) {
+                btn.classList.add('completed');
+                btn.textContent = '✓ Completed';
+                btn.disabled = true;
+            }
+            updateChecklistProgress();
+            saveProgress(); // Local persistence
+        }
+
+        function completeDay() {
+            const btn = document.getElementById('dayCompleteBtn');
+            if (btn.disabled) { alert('Please complete all activities first!'); return; }
+            btn.innerHTML = '🎉 Saving...';
+            btn.disabled = true;
+
+            // Clear local storage upon completion
+            localStorage.removeItem(STORAGE_KEY);
+
+            if (typeof confetti !== 'undefined') confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+            setTimeout(() => { window.location.href = '/learning/level/beginner/?celebrate=true&completed=3'; }, 2000);
+        }
+
+        // Auto-save on any input change
+        document.addEventListener('input', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                saveProgress();
+            }
+        });
+        document.addEventListener('change', (e) => {
+            if (e.target.type === 'radio') {
+                saveProgress();
+            }
+        });
+
+        // Initial load
+        loadProgress();
 
         document.getElementById('dayCompleteBtn')?.addEventListener('click', completeDay);
         updateChecklistProgress();

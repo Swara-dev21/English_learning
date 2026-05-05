@@ -1398,19 +1398,158 @@
             document.getElementById('dayCompleteBtn').disabled = (completed !== 7);
         }
 
+        // ========== LOCALSTORAGE PERSISTENCE ==========
+        const STORAGE_KEY = 'progress_beginner_day21';
+
+        function saveProgress() {
+            const data = {
+                activityCompleted: activityCompleted,
+                inputs: {},
+                radios: {},
+                vocabHeard: vocabHeard
+            };
+            
+            // Save all text inputs and textareas
+            document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                if (el.id) data.inputs[el.id] = el.value;
+            });
+            
+            // Save all radio selections
+            document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
+                if (el.name) data.radios[el.name] = el.value;
+            });
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+                
+                // 1. Restore activity completion
+                if (data.activityCompleted) {
+                    activityCompleted = data.activityCompleted;
+                    const checklistMap = { 
+                        listening: 'chk1', speaking: 'chk2', reading: 'chk3', 
+                        writing: 'chk4', vocabulary: 'chk5', grammar: 'chk6', extra: 'chk7'
+                    };
+                    Object.keys(activityCompleted).forEach(id => {
+                        if (activityCompleted[id]) {
+                            const cb = document.getElementById(checklistMap[id]);
+                            if (cb) cb.checked = true;
+                            const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
+                            if (btn) {
+                                btn.classList.add('completed');
+                                btn.textContent = '✓ Completed';
+                                btn.disabled = true;
+                                btn.style.pointerEvents = 'none';
+                                btn.style.animation = 'none';
+                            }
+                        }
+                    });
+                }
+                
+                // 2. Restore text inputs
+                if (data.inputs) {
+                    Object.keys(data.inputs).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = data.inputs[id];
+                    });
+                }
+                
+                // 3. Restore radios
+                if (data.radios) {
+                    Object.keys(data.radios).forEach(name => {
+                        const val = data.radios[name];
+                        const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+                        if (radio) {
+                            radio.checked = true;
+                            radio.dispatchEvent(new Event('change'));
+                        }
+                    });
+                }
+
+                // 4. Restore Vocab progress
+                if (data.vocabHeard) {
+                    vocabHeard = data.vocabHeard;
+                    Object.keys(vocabHeard).forEach(word => {
+                        if (vocabHeard[word]) {
+                            const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
+                            if (checkCell) {
+                                checkCell.innerHTML = '✅';
+                                checkCell.style.color = '#16a34a';
+                            }
+                        }
+                    });
+                    updateVocabularyButtonStatus();
+                }
+                
+                updateChecklistProgress();
+            } catch (e) { console.warn("Load progress failed", e); }
+        }
+
         function markActivityComplete(activityId, checklistId) {
             if (activityCompleted[activityId]) return;
             activityCompleted[activityId] = true;
-            document.getElementById(checklistId).checked = true;
+            const cb = document.getElementById(checklistId);
+            if (cb) cb.checked = true;
             const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-            if (btn) { btn.classList.add('completed'); btn.disabled = true; btn.textContent = '✓ Completed'; btn.style.animation = 'none'; }
+            if (btn) {
+                btn.classList.add('completed');
+                btn.textContent = '✓ Completed';
+                btn.disabled = true;
+                btn.style.pointerEvents = 'none';
+                btn.style.animation = 'none';
+            }
             updateChecklistProgress();
+            saveProgress(); // Local persistence
         }
+
+        function completeDay() {
+            const btn = document.getElementById('dayCompleteBtn');
+            if (btn.disabled) {
+                const msgDiv = document.createElement('div');
+                msgDiv.style.color = '#dc2626';
+                msgDiv.style.textAlign = 'center';
+                msgDiv.innerHTML = '⚠️ Please complete all activities first!';
+                btn.parentNode.insertBefore(msgDiv, btn.nextSibling);
+                setTimeout(() => msgDiv.remove(), 3000);
+                return;
+            }
+            btn.innerHTML = '🎉 Saving...';
+            btn.disabled = true;
+            
+            // Clear local storage upon completion
+            localStorage.removeItem(STORAGE_KEY);
+            
+            if (typeof confetti !== 'undefined') {
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+            }
+            setTimeout(() => {
+                window.location.href = '/learning/level/beginner/?celebrate=true&completed=21';
+            }, 2000);
+        }
+
+        // Auto-save on any input change
+        document.addEventListener('input', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                saveProgress();
+            }
+        });
+        document.addEventListener('change', (e) => {
+            if (e.target.type === 'radio') {
+                saveProgress();
+            }
+        });
+
+        // Initial load
+        loadProgress();
 
         function showValidationMessage(elementId, message, isError = true) {
             const msgDiv = document.getElementById(elementId);
             if (msgDiv) {
-                // Only show error messages, not success messages
                 if (isError) {
                     msgDiv.innerHTML = message;
                     msgDiv.className = `validation-message error`;
@@ -1419,7 +1558,6 @@
                         if (msgDiv.style.display === 'block') msgDiv.style.display = 'none';
                     }, 4000);
                 }
-                // Success messages are hidden - no popup
             }
         }
 

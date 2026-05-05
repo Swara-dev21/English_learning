@@ -1,0 +1,626 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Day 18: Passive Voice Mastery | English for Engineers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'learning/css/base.css' %}">
+    <style>
+        .writing-textarea {
+            width: 100%;
+            padding: 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 250px;
+            background: #ffffff;
+            color: #1e293b;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
+        }
+
+        .writing-textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .writing-tip-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-left: 4px solid #0ea5e9;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .writing-tip-box p {
+            font-size: 0.95rem;
+            color: #0369a1;
+            line-height: 1.5;
+        }
+
+        .listening-task-area {
+            background: #f8fafc;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .listening-task-area p {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #334155;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lesson-container">
+        <!-- HERO SECTION -->
+        <div class="lesson-hero">
+            <div class="hero-content">
+                <div class="day-badge">Day 18 • Advanced Grammar • Advanced</div>
+                <h1 class="hero-title">PASSIVE VOICE MASTERY</h1>
+                <div class="power-line">💬 "The passive voice does not hide action — it redirects focus to what matters
+                    most."</div>
+            </div>
+        </div>
+
+        <!-- TIP OF THE DAY -->
+        <div class="activity-card" style="margin-bottom: 2rem; border-left: 5px solid #7518e8;">
+            <div class="card-body">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <span style="font-size: 1.5rem;">💡</span>
+                    <strong style="color: #7518e8; letter-spacing: 0.05em;">TIP OF THE DAY</strong>
+                </div>
+                <p style="color: #475569; line-height: 1.6;">
+                    The passive voice is not a weakness — it is a focus tool. Use it when the action or result is more
+                    important than the actor: 'The bridge was constructed in 1998' (focus: bridge). Use active when the
+                    actor is more important: 'The chief engineer designed the solution' (focus: engineer). Mix both
+                    intentionally, never accidentally.
+                </p>
+            </div>
+        </div>
+
+        <div class="activities-grid">
+            <!-- 1. LISTENING ACTIVITY -->
+            <div class="activity-card" id="listening-card">
+                <div class="card-header listening">
+                    <h2>🎧 1. Listening Activity · Technical Objectivity</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>Focus</span></div>
+                        </div>
+                        <div class="task-content">
+                            Active vs Passive Voice — how technical writing uses both for different effects.
+                        </div>
+                    </div>
+
+                    <!-- 🔊 AUDIO PLAYER SECTION -->
+                    <div class="audio-player-container" style="margin: 1.5rem 0;">
+                        <audio id="listeningAudio18" controls style="width: 100%;">
+                            <source src="{% static 'learning/audio/Beginner/day18.mp3' %}" type="audio/mpeg">
+                        </audio>
+                    </div>
+
+                    <!-- 📝 LISTENING TEXT (Hidden until audio ends) -->
+                    <div id="listeningTextSection" style="display: none;">
+                        <div class="task-box">
+                            <div class="task-header">
+                                <div class="title"><span>📝</span><span>Technical Report</span></div>
+                            </div>
+                            <div class="task-content" style="font-style: italic; background: #fef9e3;">
+                                "The system was tested under full load conditions. The results were recorded at
+                                two-minute intervals. Analysis revealed three anomalies, which were subsequently
+                                investigated by the quality team. The root cause was identified and the corrective
+                                procedure has been implemented."
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 🎯 TASKS (Hidden until audio ends) -->
+                    <div id="postAudioListeningContent" style="display: none;">
+                        <div class="listening-task-group" style="margin-top: 1.5rem;">
+                            <!-- Consolidated Task -->
+                            <div class="listening-task-area">
+                                <p>🎯 <strong>Task:</strong> Identify every passive construction in the text above and
+                                    explain why it is used (e.g., actor unknown, process more important, or formal
+                                    register).</p>
+                                <textarea id="taskInput" class="grammar-input" rows="5"
+                                    placeholder="List the passive phrases and explain their purpose..."></textarea>
+                                <button class="btn-outline" id="checkTaskBtn" style="margin-top: 0.8rem;">✓ Check My
+                                    Analysis</button>
+                                <div id="taskFeedback" class="fix-feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="quiz-section"
+                            style="margin-top: 2rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+                            <p><strong>🧠 Register Analysis (MCQ)</strong></p>
+
+                            <div class="quiz-question">
+                                <p><strong>1. Is passive voice appropriate in this technical context?</strong></p>
+                                <label class="quiz-option"><input type="radio" name="q1" value="A"> Yes</label>
+                                <label class="quiz-option"><input type="radio" name="q1" value="B"> No</label>
+                            </div>
+
+                            <div class="quiz-question">
+                                <p><strong>2. Which sentence uses passive to maintain formal, impersonal tone?</strong>
+                                </p>
+                                <label class="quiz-option"><input type="radio" name="q2" value="A"> 'Analysis revealed...'</label>
+                                <label class="quiz-option"><input type="radio" name="q2" value="B"> 'The system was tested...'</label>
+                            </div>
+
+                            <button class="btn-outline" id="checkListeningQuizBtn" style="margin-top: 0.5rem;">✓ Check
+                                My Choices</button>
+                            <div id="listeningQuizFeedback" class="quiz-feedback"></div>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                            <button class="complete-activity-btn" id="completeListeningBtn" disabled
+                                data-checklist="chk1">✓ Mark Listening as Complete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SPEAKING ACTIVITY -->
+            <div class="activity-card" id="speaking-card">
+                <div class="card-header speaking">
+                    <h2>🗣️ 2. Speaking Activity · Voice Conversion Practice</h2>
+                </div>
+                <div class="card-body">
+                    <div class="speaking-unified-box">
+                        <div class="speaking-task-header">
+                            <div class="task-title">
+                                <span>🎯</span>
+                                <span>Task</span>
+                            </div>
+                            <p class="task-description">
+                                Practise converting sentences from active to passive and back. Understand the shift in
+                                focus.
+                            </p>
+                        </div>
+
+                        <div class="speaking-sentences-list">
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">1</div>
+                                <div class="sentence-text-content">
+                                    "The technician calibrated the instrument." → "The instrument was calibrated."
+                                </div>
+                            </div>
+                            <div class="speaking-sentence-item">
+                                <div class="sentence-number-badge">2</div>
+                                <div class="sentence-text-content">
+                                    "Errors were made during the testing phase." → "The testing team made errors during
+                                    Phase 2."
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="speaking-recording-section">
+                            <div class="recording-header">
+                                <span>🎙️</span>
+                                <h4>Record a technical sentence using passive voice where the process is paramount.</h4>
+                            </div>
+                            <div class="recording-controls-group">
+                                <button id="speakingRecordBtn" class="speaking-record-btn">Start Recording</button>
+                                <button id="speakingStopBtn" class="speaking-stop-btn" style="display: none;">Stop
+                                    Recording</button>
+                            </div>
+                            <div id="speakingRecordingStatus" class="recording-status-indicator" style="display: none;">
+                                <div class="recording-dot-live"></div>
+                                <span class="recording-timer-display" id="speakingTimer">00:00</span>
+                            </div>
+                            <div id="speakingPlaybackCard" class="speaking-playback-area" style="display: none;">
+                                <audio id="speakingPlayback" controls></audio>
+                                <div class="playback-success-msg"><span>✅</span> Recording saved! Listen for tone and
+                                    clarity.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeSpeakingBtn" disabled data-checklist="chk2">✓
+                            Mark Speaking as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. READING ACTIVITY -->
+            <div class="activity-card" id="reading-card">
+                <div class="card-header reading">
+                    <h2>📖 3. Reading · Surgical Precision</h2>
+                </div>
+                <div class="card-body">
+                    <div class="task-box" style="margin-bottom: 1.5rem;">
+                        <div class="task-content">
+                            <p>Academic and technical writing in English has a long tradition of passive voice — not as
+                                laziness, but as deliberate objectivity. When a scientific paper writes 'the experiment
+                                was conducted', it signals that the method matters, not the individual who conducted it.
+                                However, over-use of the passive voice creates distance and confusion. Readers lose
+                                track of who is responsible for what. The advanced writer uses passive voice with
+                                surgical precision: for processes, results, and procedures where the action is
+                                paramount; and active voice for human agency, accountability, and leadership.</p>
+                        </div>
+                    </div>
+
+                    <div class="listening-task-group">
+                        <div class="listening-task-area">
+                            <p>(a) Why does academic writing favour passive voice?</p>
+                            <textarea id="readingT31" class="grammar-input" rows="2"
+                                placeholder="Explain the rationale..."></textarea>
+                            <button class="btn-outline" id="checkReadingT31Btn">✓ Check Answer</button>
+                            <div id="readingT31Feedback" class="fix-feedback"></div>
+                        </div>
+
+                        <div class="listening-task-area">
+                            <p>(b) When does the author say over-use of passive voice creates problems?</p>
+                            <textarea id="readingT32" class="grammar-input" rows="2"
+                                placeholder="Identify the issues..."></textarea>
+                            <button class="btn-outline" id="checkReadingT32Btn">✓ Check Answer</button>
+                            <div id="readingT32Feedback" class="fix-feedback"></div>
+                        </div>
+
+                        <div class="listening-task-area">
+                            <p>(c) Rewrite with balance: 'The task was assigned. The work was done. The report was
+                                submitted. The findings were presented.'</p>
+                            <textarea id="readingT33" class="grammar-input" rows="3"
+                                placeholder="Rewrite for clarity and rhythm..."></textarea>
+                            <button class="btn-outline" id="checkReadingT33Btn">✓ Check Answer</button>
+                            <div id="readingT33Feedback" class="fix-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeReadingBtn" disabled data-checklist="chk3">✓
+                            Mark Reading as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. VOCABULARY ACTIVITY -->
+            <div class="activity-card" id="vocabulary-card">
+                <div class="card-header vocabulary">
+                    <h2>📘 4. Vocabulary of the Day</h2>
+                </div>
+                <div class="card-body">
+                    <div class="vocab-table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>🔊</th>
+                                    <th>✅</th>
+                                    <th>Word</th>
+                                    <th>Pronunciation</th>
+                                    <th>Meaning</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Passive"
+                                            data-checkid="check-passive">🔊</button></td>
+                                    <td id="check-passive">⬜</td>
+                                    <td><strong>Passive</strong></td>
+                                    <td><code>/ˈpæs.ɪv/</code></td>
+                                    <td>Accepting without action; object as subject</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Agency"
+                                            data-checkid="check-agency">🔊</button></td>
+                                    <td id="check-agency">⬜</td>
+                                    <td><strong>Agency</strong></td>
+                                    <td><code>/ˈeɪ.dʒən.si/</code></td>
+                                    <td>The capacity to act independently</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Objective"
+                                            data-checkid="check-objective">🔊</button></td>
+                                    <td id="check-objective">⬜</td>
+                                    <td><strong>Objective</strong></td>
+                                    <td><code>/əbˈdʒek.tɪv/</code></td>
+                                    <td>Not influenced by personal feelings</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Impersonal"
+                                            data-checkid="check-impersonal">🔊</button></td>
+                                    <td id="check-impersonal">⬜</td>
+                                    <td><strong>Impersonal</strong></td>
+                                    <td><code>/ɪmˈpɜː.sən.əl/</code></td>
+                                    <td>Not involving personal feelings</td>
+                                </tr>
+                                <tr>
+                                    <td class="audio-cell"><button class="vocab-audio-btn" data-word="Judiciously"
+                                            data-checkid="check-judiciously">🔊</button></td>
+                                    <td id="check-judiciously">⬜</td>
+                                    <td><strong>Judiciously</strong></td>
+                                    <td><code>/dʒuːˈdɪʃ.əs.li/</code></td>
+                                    <td>With good judgment and sense</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="power-word-section">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
+                            <span>🔥</span><span>POWER WORD: OBJECTIVE</span>
+                        </div>
+                        <p><strong>Meaning:</strong> Not influenced by personal feelings; impartial</p>
+                        <p><strong>Usage:</strong> "An objective assessment of the data led to a better solution."</p>
+                    </div>
+
+                    <div class="power-word-section" style="border-left-color: #22c55e;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #166534;">
+                            <span>💬</span><span>IDIOM: "Carry the weight"</span>
+                        </div>
+                        <p><strong>Meaning:</strong> Bear significant responsibility</p>
+                        <p><strong>Example:</strong> "As project lead, she carried the weight of the entire system
+                            integration phase."</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="complete-activity-btn" id="completeVocabularyBtn" disabled
+                            data-checklist="chk4">✓ Mark Vocabulary as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. GRAMMAR HACK -->
+            <div class="grammar-section" id="grammar-card">
+                <h3 style="margin: 0 0 1rem 0;">🧠 Grammar Hack: Control Your Emphasis</h3>
+                <div class="grammar-rule">
+                    <p>Passive for: results ('The data was collected'), processes ('The voltage was measured'), and
+                        formal reports. Active for: agency ('The engineer diagnosed the fault'), leadership ('The team
+                        implemented the solution'), and direct responsibility.</p>
+                </div>
+                <div class="grammar-rule">
+                    <p><strong>Test:</strong> If you can add 'by someone' to a passive sentence and the sentence becomes
+                        more informative, consider switching to active to name the actor.</p>
+                </div>
+            </div>
+
+            <!-- 6. WRITING ACTIVITY -->
+            <div class="activity-card" id="writing-card">
+                <div class="card-header writing">
+                    <h2>✍️ 5. Writing Activity · Voice Mixing</h2>
+                </div>
+                <div class="card-body">
+                    <div class="writing-tip-box">
+                        <p><strong>💡 Writing Tip:</strong> Reading your writing aloud instantly reveals over-use of
+                            passive voice — it sounds monotonous and distant. Inject active sentences to restore rhythm
+                            and clarity.</p>
+                    </div>
+
+                    <div class="task-box">
+                        <div class="task-header">
+                            <div class="title"><span>🎯</span><span>The Task</span></div>
+                        </div>
+                        <div class="task-content">
+                            Take a 100-word paragraph you wrote previously. Rewrite it: change three active sentences to
+                            passive and two passive to active. Explain WHY you made each choice.
+                        </div>
+                    </div>
+
+                    <div class="writing-prompt">
+                        <textarea id="progressEmailBody" class="writing-textarea"
+                            placeholder="Start your rewrite here..."></textarea>
+                        <div style="font-size: 0.8rem; color: #64748b; text-align: right; margin-top: 0.5rem;">Word
+                            count: <span id="wordCount">0</span> / ~100</div>
+                    </div>
+
+                    <button class="btn-outline" id="checkWritingBtn" style="margin-top: 1rem;">✓ Check My
+                        Rewrite</button>
+                    <div id="progressEmailBodyFeedback" class="fix-feedback"></div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                        <button class="complete-activity-btn" id="completeWritingBtn" disabled data-checklist="chk5">✓
+                            Mark Writing as Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHECKLIST -->
+            <div class="activity-card">
+                <div class="card-header vocabulary">
+                    <h2>✅ DAY 18 COMPLETION CHECKLIST</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="chk1" disabled><label> Identified passive constructions and their
+                                purpose in the listening script</label></li>
+                        <li><input type="checkbox" id="chk2" disabled><label> Converted sentences from active to passive
+                                and back</label></li>
+                        <li><input type="checkbox" id="chk3" disabled><label> Explained when passive voice serves
+                                academic writing</label></li>
+                        <li><input type="checkbox" id="chk4" disabled><label> Used 'Objective' in speaking and
+                                writing</label></li>
+                        <li><input type="checkbox" id="chk5" disabled><label> Rewrote a paragraph with intentional
+                                active/passive mixing</label></li>
+                    </ul>
+                    <div style="text-align:right;"><span class="badge" id="progressCounter">0/5 completed</span></div>
+                    <div style="display:flex; justify-content:center; margin-top:1rem;">
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 18</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JS SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'learning/js/main.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Day
+            if (typeof initializeDay === 'function') {
+                initializeDay(18, 'advanced', {
+                    vocabularyWords: ['Passive', 'Agency', 'Objective', 'Impersonal', 'Judiciously']
+                });
+            }
+
+            // --- 1. LISTENING ---
+            let taskDone = false, quizDone = false;
+
+            const audio = document.getElementById('listeningAudio18');
+            if (audio) {
+                audio.addEventListener('ended', function () {
+                    document.getElementById('listeningTextSection').style.display = 'block';
+                    document.getElementById('postAudioListeningContent').style.display = 'block';
+                });
+            }
+
+            function updateListeningCompletion() {
+                if (taskDone && quizDone) {
+                    const btn = document.getElementById('completeListeningBtn');
+                    btn.disabled = false;
+                    btn.classList.add('ready');
+                }
+            }
+
+            document.getElementById('checkTaskBtn')?.addEventListener('click', async () => {
+                const text = document.getElementById('taskInput').value.trim();
+                if (!text) {
+                    const fb = document.getElementById('taskFeedback');
+                    fb.innerHTML = '⚠️ Please provide your analysis before submitting.';
+                    fb.className = 'fix-feedback incorrect';
+                    fb.style.display = 'block';
+                    return;
+                }
+                taskDone = await evaluateTaskRaw(text, 'taskFeedback', 'listening_a', 15);
+                updateListeningCompletion();
+            });
+
+            document.getElementById('checkListeningQuizBtn')?.addEventListener('click', function () {
+                const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+                const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+                const fb = document.getElementById('listeningQuizFeedback');
+
+                if (!q1 || !q2) {
+                    fb.innerHTML = '⚠️ Please answer both questions.';
+                    fb.className = 'quiz-feedback incorrect';
+                    fb.style.display = 'block';
+                    return;
+                }
+                const isCorrect = q1 === 'A' && q2 === 'B';
+                if (isCorrect) {
+                    fb.innerHTML = '✅ Correct! Technical reports often use passive to focus on the system/results.';
+                    fb.className = 'quiz-feedback correct';
+                    quizDone = true;
+                } else {
+                    fb.innerHTML = '❌ Incorrect. Consider how impersonal tone is achieved in technical writing.';
+                    fb.className = 'quiz-feedback incorrect';
+                    quizDone = false;
+                }
+                fb.style.display = 'block';
+                updateListeningCompletion();
+            });
+
+            // --- AI EVALUATION HELPER ---
+            async function evaluateTaskRaw(text, feedbackId, type, minWords = 5) {
+                const feedback = document.getElementById(feedbackId);
+                const words = text.split(/\s+/).filter(w => w.length > 0).length;
+                if (words < minWords) {
+                    feedback.innerHTML = `⚠️ Too brief.`;
+                    feedback.className = 'fix-feedback incorrect';
+                    feedback.style.display = 'block';
+                    return false;
+                }
+                feedback.innerHTML = '⏳ <strong>Evaluating...</strong>';
+                feedback.className = 'fix-feedback';
+                feedback.style.display = 'block';
+                const customPrompts = {
+                    listening_a: "Identify passive constructions in the technical report script and explain their purpose. Constructions include: 'was tested', 'were recorded', 'were investigated', 'was identified', 'has been implemented'. Purpose should mention objectivity or focus on process.",
+                    reading_a: "Explain why academic writing favors passive voice according to the text. Correct answer: To signal that the method matters more than the individual; it creates deliberate objectivity.",
+                    reading_b: "Identify the problems created by over-using passive voice. Correct answer: It creates distance and confusion, making it hard for readers to track responsibility/accountability.",
+                    reading_c: "Evaluate a balanced rewrite of the repetitive passive paragraph. The rewrite should mix active and passive voices for clarity and rhythm.",
+                    writing_mixing: "Evaluate a 100-word paragraph rewrite where three active sentences are changed to passive and two passive to active, with an explanation for each choice."
+                };
+                const system_prompt = `Evaluate as English communication trainer. Task: "${customPrompts[type]}". Return JSON: {"correct": true/false, "evaluation": "...", "improvement": "..."}`;
+                try {
+                    const response = await fetch('/learning/ai/evaluate/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                        body: JSON.stringify({ text, task_type: type, day_number: 18, level: 'advanced', system_prompt })
+                    });
+                    const res = await response.json();
+                    if (res.success) {
+                        const statusEmoji = res.correct !== false ? '✅' : '❌';
+                        feedback.innerHTML = `<div><strong>${statusEmoji} Evaluation:</strong><br>${res.evaluation}</div><div style='margin-top:0.5rem'><strong>💡 Improvement:</strong><br>${res.improvement}</div>`;
+                        feedback.className = `fix-feedback ${res.correct !== false ? 'correct' : 'incorrect'}`;
+                        return res.correct !== false;
+                    }
+                } catch (e) { feedback.innerHTML = '⚠️ Error.'; return false; }
+            }
+
+            async function evaluateTask(id, type, taskName, minWords = 5) {
+                const inputEl = document.getElementById(id + 'Input') || document.getElementById(id);
+                return await evaluateTaskRaw(inputEl.value.trim(), id + 'Feedback', type, minWords);
+            }
+
+            // --- READING ---
+            let r1 = false, r2 = false, r3 = false;
+            function updateReading() { if (r1 && r2 && r3) document.getElementById('completeReadingBtn').disabled = false; }
+            document.getElementById('checkReadingT31Btn')?.addEventListener('click', async () => { r1 = await evaluateTask('readingT31', 'reading_a', 'Rationale', 10); updateReading(); });
+            document.getElementById('checkReadingT32Btn')?.addEventListener('click', async () => { r2 = await evaluateTask('readingT32', 'reading_b', 'Problems', 10); updateReading(); });
+            document.getElementById('checkReadingT33Btn')?.addEventListener('click', async () => { r3 = await evaluateTask('readingT33', 'reading_c', 'Rewrite', 15); updateReading(); });
+
+            // --- WRITING ---
+            document.getElementById('checkWritingBtn')?.addEventListener('click', async () => {
+                const done = await evaluateTaskRaw(document.getElementById('progressEmailBody').value.trim(), 'progressEmailBodyFeedback', 'writing_mixing', 80);
+                if (done) document.getElementById('completeWritingBtn').disabled = false;
+            });
+
+            document.getElementById('progressEmailBody')?.addEventListener('input', function () {
+                const words = this.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+                document.getElementById('wordCount').innerText = words;
+            });
+
+            // --- SPEAKING ---
+            let mediaRecorder, chunks = [];
+            document.getElementById('speakingRecordBtn')?.addEventListener('click', async () => {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                chunks = [];
+                mediaRecorder.ondataavailable = e => chunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: 'audio/webm' });
+                    document.getElementById('speakingPlayback').src = URL.createObjectURL(blob);
+                    document.getElementById('speakingPlaybackCard').style.display = 'block';
+                    document.getElementById('completeSpeakingBtn').disabled = false;
+                    stream.getTracks().forEach(t => t.stop());
+                };
+                mediaRecorder.start();
+                document.getElementById('speakingRecordBtn').style.display = 'none';
+                document.getElementById('speakingStopBtn').style.display = 'inline-flex';
+                document.getElementById('speakingRecordingStatus').style.display = 'flex';
+            });
+            document.getElementById('speakingStopBtn')?.addEventListener('click', () => {
+                mediaRecorder.stop();
+                document.getElementById('speakingRecordBtn').style.display = 'inline-flex';
+                document.getElementById('speakingStopBtn').style.display = 'none';
+                document.getElementById('speakingRecordingStatus').style.display = 'none';
+            });
+
+            // --- HANDLERS ---
+            document.getElementById('completeListeningBtn')?.addEventListener('click', () => markActivityComplete('listening', 'chk1'));
+            document.getElementById('completeSpeakingBtn')?.addEventListener('click', () => markActivityComplete('speaking', 'chk2'));
+            document.getElementById('completeReadingBtn')?.addEventListener('click', () => markActivityComplete('reading', 'chk3'));
+            document.getElementById('completeVocabularyBtn')?.addEventListener('click', () => markActivityComplete('vocabulary', 'chk4'));
+            document.getElementById('completeWritingBtn')?.addEventListener('click', () => markActivityComplete('writing', 'chk5'));
+            document.getElementById('dayCompleteBtn')?.addEventListener('click', completeDay);
+        });
+    </script>
+</body>
+
+</html>
