@@ -1393,9 +1393,8 @@
                             active task:</strong></div>
                     <div id="interactivePassage" class="interactive-passage"></div>
                     <div class="analysis-instruction"><strong>🔍 Analysis Task:</strong><br><br>• <span
-                            style="color:#1e293b;">Circle direction prepositions (through, towards, into, across,
-                            to)</span><br>• <span style="color:#1e293b;">Box the Smart Words (poised, demeanor, utilize,
-                            unavoidable)</span><br><br>
+                            style="color:#1e293b;">Circle direction prepositions.</span><br>• <span
+                            style="color:#1e293b;">Box the Smart Words.</span><br><br>
                         <em style="font-size:0.85rem;">Step 1: Click "Circle Mode" → Click words to circle → Click
                             "Check Circles"<br>Step 2: Click "Box Mode" → Click words to box → Click "Check Boxes"</em>
                     </div>
@@ -1458,9 +1457,13 @@
                         </div>
                         <div class="match-progress">Matched: <span id="matchedCount">0</span>/4</div>
                         <div id="matchFeedback" style="margin-top: 0.5rem;"></div>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn-outline" id="checkWritingPartABtn">✓ Check Part A</button>
+                        </div>
+                        <div id="writingPartAResult" style="margin-top: 0.5rem;"></div>
                     </div>
 
-                    <div class="writing-prompt" style="margin-top: 2rem;">
+                    <div class="writing-prompt" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0;">
                         <h3 style="font-size: 1rem; margin-bottom: 0.8rem;">✨ Part B: The "Direction" Log</h3>
                         <p>Write 3 sentences about your movement today using <strong>Into, Through, or Towards</strong>.
                         </p>
@@ -1485,11 +1488,16 @@
                                 placeholder="Write a sentence using 'towards'...">
                             <div id="direction3Feedback" class="fix-feedback"></div>
                         </div>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn-outline" id="checkWritingPartBBtn">✓ Check Part B</button>
+                        </div>
+                        <div id="writingPartBResult" style="margin-top: 0.5rem;"></div>
                     </div>
 
-                    <div id="writingFeedback" class="quiz-feedback"></div>
+                    <div id="writingFinalResult" style="margin-top: 1rem;"></div>
+
                     <div style="display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap;"><button class="btn-outline"
-                            id="checkWritingBtn">✓ Check My Writing</button></div>
+                            id="resetWritingBtn">⟳ Reset Answers</button></div>
                     <div style="display:flex; justify-content:flex-end;"><button class="complete-activity-btn"
                             id="completeWritingBtn" disabled>✓ Mark Writing as Complete</button></div>
                 </div>
@@ -1570,7 +1578,8 @@
                         style="background:linear-gradient(135deg,#fefce8,#fef9e3); border-left:4px solid #eab308; padding:1rem; border-radius:12px; margin:1rem 0;">
                         <div
                             style="display:flex; align-items:center; gap:0.5rem; font-weight:700; color:#854d0e; flex-wrap:wrap;">
-                            <span>🔥</span><span>POWER WORD OF THE DAY: "TENACIOUS"</span></div>
+                            <span>🔥</span><span>POWER WORD OF THE DAY: "TENACIOUS"</span>
+                        </div>
                         <p><strong>Pronunciation:</strong> /təˈneɪ.ʃəs/ (Tuh-NAY-shus)</p>
                         <p><strong>Meaning:</strong> Keeping a firm hold of something; persistent.</p>
                         <p><strong>Usage:</strong> "His tenacious attitude towards learning helped him master English in
@@ -1580,7 +1589,8 @@
                         style="background:linear-gradient(135deg,#e0f2fe,#bae6fd); border-left:4px solid #38bdf8; padding:1rem; border-radius:12px; margin:1rem 0;">
                         <div
                             style="display:flex; align-items:center; gap:0.5rem; font-weight:700; color:#075985; flex-wrap:wrap;">
-                            <span>💡</span><span>Idiom of the Day: "The extra mile"</span></div>
+                            <span>💡</span><span>Idiom of the Day: "The extra mile"</span>
+                        </div>
                         <p><strong>Marathi Meaning:</strong> आवश्यकतेपेक्षा जास्त प्रयत्न करणे.</p>
                         <p><strong>Example:</strong> "He is a great engineer because he always goes the extra mile to
                             check for errors."</p>
@@ -1605,7 +1615,7 @@
                 </div>
 
                 <div class="grammar-rule">
-                    <p><strong>⚠️ Activity:</strong> Write the complete sentence with the correct preposition:</p>
+                    <p><strong> Activity:</strong> Write the complete sentence with the correct preposition:</p>
 
                     <div class="grammar-question-item">
                         <div class="grammar-question-text">1. The ball rolled __________ the street.</div>
@@ -1730,7 +1740,72 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
         // ==================== Activity Completion Tracking ===================
-        let activityCompleted = { listening: false, speaking: false, reading: false, writing: false, vocabulary: false, grammar: false, game: false };
+        let activityCompleted = {
+            listening: false, speaking: false, reading: false,
+            writing: false, vocabulary: false, grammar: false, game: false
+        };
+
+        // ==================== Local Storage Persistence ====================
+        const STORAGE_KEY = 'progress_beginner_day20';
+
+        function saveProgress() {
+            const data = {
+                activityCompleted: { ...activityCompleted },
+                inputs: {}
+            };
+            document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                if (el.id) data.inputs[el.id] = el.value;
+            });
+            document.querySelectorAll('input[type="radio"]').forEach(el => {
+                if (el.name && el.checked) {
+                    data.inputs[el.name] = el.value;
+                }
+            });
+            document.querySelectorAll('select').forEach(el => {
+                if (el.id) data.inputs[el.id] = el.value;
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+                if (data.activityCompleted) {
+                    activityCompleted = data.activityCompleted;
+                    const checklistMap = {
+                        listening: 'chk1', speaking: 'chk2', reading: 'chk3',
+                        writing: 'chk4', vocabulary: 'chk5', grammar: 'chk6', game: 'chk7'
+                    };
+                    Object.keys(activityCompleted).forEach(id => {
+                        if (activityCompleted[id]) {
+                            const cb = document.getElementById(checklistMap[id]);
+                            if (cb) cb.checked = true;
+                            const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
+                            if (btn) {
+                                btn.classList.add('completed');
+                                btn.textContent = '✓ Completed';
+                                btn.disabled = true;
+                            }
+                        }
+                    });
+                }
+                if (data.inputs) {
+                    Object.keys(data.inputs).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.value = data.inputs[id];
+                            el.dispatchEvent(new Event('input'));
+                        } else {
+                            const radio = document.querySelector(`input[name="${id}"][value="${data.inputs[id]}"]`);
+                            if (radio) radio.checked = true;
+                        }
+                    });
+                }
+                updateChecklistProgress();
+            } catch (e) { console.error("Error loading progress:", e); }
+        }
         let csrftoken = null;
 
         // Vocabulary variables
@@ -1743,158 +1818,70 @@
             'Paramount': false
         };
 
-        // ========== LOCALSTORAGE PERSISTENCE ==========
-        const STORAGE_KEY = 'progress_beginner_day20';
-
-        function saveProgress() {
-            const data = {
-                activityCompleted: activityCompleted,
-                inputs: {},
-                radios: {},
-                vocabHeard: vocabHeard
-            };
-            
-            // Save all text inputs and textareas
-            document.querySelectorAll('input[type="text"], textarea').forEach(el => {
-                if (el.id) data.inputs[el.id] = el.value;
-            });
-            
-            // Save all radio selections
-            document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
-                if (el.name) data.radios[el.name] = el.value;
-            });
-            
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         }
+        csrftoken = getCookie('csrftoken');
 
-        function loadProgress() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (!saved) return;
-            try {
-                const data = JSON.parse(saved);
-                
-                // 1. Restore activity completion
-                if (data.activityCompleted) {
-                    activityCompleted = data.activityCompleted;
-                    const checklistMap = { 
-                        listening: 'chk1', speaking: 'chk2', reading: 'chk3', 
-                        writing: 'chk4', vocabulary: 'chk5', grammar: 'chk6', game: 'chk7'
-                    };
-                    Object.keys(activityCompleted).forEach(id => {
-                        if (activityCompleted[id]) {
-                            const cb = document.getElementById(checklistMap[id]);
-                            if (cb) cb.checked = true;
-                            const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
-                            if (btn) {
-                                btn.classList.add('completed');
-                                btn.textContent = '✓ Completed';
-                                btn.disabled = true;
-                                btn.style.pointerEvents = 'none';
-                                btn.style.animation = 'none';
-                            }
-                        }
-                    });
-                }
-                
-                // 2. Restore text inputs
-                if (data.inputs) {
-                    Object.keys(data.inputs).forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) el.value = data.inputs[id];
-                    });
-                }
-                
-                // 3. Restore radios
-                if (data.radios) {
-                    Object.keys(data.radios).forEach(name => {
-                        const val = data.radios[name];
-                        const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
-                        if (radio) {
-                            radio.checked = true;
-                            radio.dispatchEvent(new Event('change'));
-                        }
-                    });
-                }
+        function updateChecklistProgress() {
+            const allCheckboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+            const completedCount = Array.from(allCheckboxes).filter(cb => cb.checked).length;
+            const totalCount = allCheckboxes.length;
+            document.getElementById('progressCounter').innerText = `${completedCount}/${totalCount} completed`;
 
-                // 4. Restore Vocab progress
-                if (data.vocabHeard) {
-                    vocabHeard = data.vocabHeard;
-                    Object.keys(vocabHeard).forEach(word => {
-                        if (vocabHeard[word]) {
-                            const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
-                            if (checkCell) {
-                                checkCell.innerHTML = '✅';
-                                checkCell.style.color = '#16a34a';
-                            }
-                        }
-                    });
-                    updateVocabularyButtonStatus();
-                }
-                
-                updateChecklistProgress();
-            } catch (e) { console.warn("Load progress failed", e); }
+            const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+            if (dayCompleteBtn) {
+                dayCompleteBtn.disabled = completedCount !== totalCount;
+                dayCompleteBtn.style.opacity = completedCount === totalCount ? '1' : '0.5';
+            }
         }
 
         function markActivityComplete(activityId, checklistId) {
             if (activityCompleted[activityId]) return;
             activityCompleted[activityId] = true;
-            const cb = document.getElementById(checklistId);
-            if (cb) cb.checked = true;
+            document.getElementById(checklistId).checked = true;
             const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-            if (btn) {
-                btn.classList.add('completed');
-                btn.textContent = '✓ Completed';
-                btn.disabled = true;
-                btn.style.pointerEvents = 'none';
-                btn.style.animation = 'none';
-            }
+            if (btn) { btn.classList.add('completed'); btn.textContent = '✓ Completed'; btn.disabled = true; }
             updateChecklistProgress();
-            saveProgress(); // Local persistence
+            saveProgress();
+
+            fetch(`/learning/day/20/complete/${activityId}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ completed: true })
+            }).catch(err => console.error('Error saving progress:', err));
         }
 
+        // ==================== COMPLETE DAY BUTTON LOGIC ====================
         function completeDay() {
             const btn = document.getElementById('dayCompleteBtn');
             if (btn.disabled) {
-                const msgDiv = document.createElement('div');
-                msgDiv.style.color = '#dc2626';
-                msgDiv.style.textAlign = 'center';
-                msgDiv.innerHTML = '⚠️ Please complete all activities first!';
-                btn.parentNode.insertBefore(msgDiv, btn.nextSibling);
-                setTimeout(() => msgDiv.remove(), 3000);
+                alert('Please complete all activities first!');
                 return;
             }
             btn.innerHTML = '🎉 Saving...';
             btn.disabled = true;
-            
-            // Clear local storage upon completion
-            localStorage.removeItem(STORAGE_KEY);
-            
             if (typeof confetti !== 'undefined') {
                 confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
             }
+            localStorage.removeItem(STORAGE_KEY);
             setTimeout(() => {
                 window.location.href = '/learning/level/beginner/?celebrate=true&completed=20';
             }, 2000);
         }
 
-        // Auto-save on any input change
-        document.addEventListener('input', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                saveProgress();
-            }
-        });
-        document.addEventListener('change', (e) => {
-            if (e.target.type === 'radio') {
-                saveProgress();
-            }
-        });
-
-        // Initial load
-        loadProgress();
-
-        // Reading init — handled in buildReading() call below
-
-        // Vocabulary Audio
+        // ==================== Vocabulary Audio ====================
         function updateVocabularyButtonStatus() {
             const allHeard = vocabWordsList.every(word => vocabHeard[word] === true);
             const vocabCompleteBtn = document.getElementById('completeVocabularyBtn');
@@ -1903,12 +1890,22 @@
             }
         }
 
-        function playAudioVocab(word) {
+        function playAudio(word) {
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(word);
             utterance.lang = 'en-IN';
             utterance.rate = 0.85;
-            window.speechSynthesis.speak(utterance);
+            utterance.pitch = 1.0;
+            function setVoiceAndSpeak() {
+                const voices = window.speechSynthesis.getVoices();
+                let selectedVoice = voices.find(voice => voice.lang === 'en-IN' || voice.name.includes('Indian'));
+                if (!selectedVoice) selectedVoice = voices.find(voice => voice.lang === 'en-GB');
+                if (!selectedVoice) selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
+                if (selectedVoice) utterance.voice = selectedVoice;
+                window.speechSynthesis.speak(utterance);
+            }
+            if (window.speechSynthesis.getVoices().length === 0) window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
+            else setVoiceAndSpeak();
 
             if (vocabHeard.hasOwnProperty(word)) {
                 vocabHeard[word] = true;
@@ -1918,14 +1915,13 @@
                     checkCell.style.color = '#16a34a';
                 }
                 updateVocabularyButtonStatus();
-                saveProgress();
             }
         }
 
         document.querySelectorAll('.vocab-audio-btn').forEach(btn => {
             btn.addEventListener('click', function () {
                 const word = this.getAttribute('data-word');
-                playAudioVocab(word);
+                playAudio(word);
             });
         });
 
@@ -2261,7 +2257,8 @@
         let matchedPairs = 0;
         const totalPairs = 4;
         let matchAnswers = { pivotal: false, facilitate: false, meticulous: false, rectify: false };
-        let writingValid = false;
+        let writingPartAComplete = false;
+        let writingPartBComplete = false;
 
         function setupMatchingGame() {
             const leftCards = document.querySelectorAll('#leftWords .match-card');
@@ -2388,6 +2385,19 @@
             selectedCard = null;
         }
 
+        function checkWritingPartA() {
+            const allMatchesCorrect = matchAnswers.pivotal && matchAnswers.facilitate && matchAnswers.meticulous && matchAnswers.rectify;
+            
+            writingPartAComplete = allMatchesCorrect;
+            const resultDiv = document.getElementById('writingPartAResult');
+            if (writingPartAComplete) {
+                resultDiv.innerHTML = '<div style="background:#d1fae5; padding:0.5rem; border-radius:8px; color:#065f46; font-size:0.85rem;">✅ Part A Complete!</div>';
+            } else {
+                resultDiv.innerHTML = '<div style="background:#fee2e2; padding:0.5rem; border-radius:8px; color:#991b1b; font-size:0.85rem;">❌ Please match all words correctly (' + matchedPairs + '/4 matched).</div>';
+            }
+            updateWritingFinalStatus();
+        }
+
         // ==================== Direction Sentence Validation ====================
         const movementVerbs = ['go', 'walk', 'run', 'move', 'enter', 'come', 'travel', 'drive', 'step', 'climb', 'pass', 'head', 'ride', 'cycle', 'rush', 'hurry'];
 
@@ -2450,48 +2460,58 @@
             return true;
         }
 
-        function checkWritingAnswers() {
-            const allMatchesCorrect = matchAnswers.pivotal && matchAnswers.facilitate && matchAnswers.meticulous && matchAnswers.rectify;
+        function checkWritingPartB() {
             const d1 = checkDirectionSentence('direction1', 'into');
             const d2 = checkDirectionSentence('direction2', 'through');
             const d3 = checkDirectionSentence('direction3', 'towards');
-            const allDirectionsCorrect = d1 && d2 && d3;
-            const feedback = document.getElementById('writingFeedback');
-            if (allMatchesCorrect && allDirectionsCorrect) {
-                feedback.innerHTML = '✅ All writing answers are correct! You can now submit.';
-                feedback.className = 'quiz-feedback correct';
-                feedback.style.display = 'block';
-                writingValid = true;
-                document.getElementById('completeWritingBtn').disabled = false;
+            
+            writingPartBComplete = d1 && d2 && d3;
+            const resultDiv = document.getElementById('writingPartBResult');
+            if (writingPartBComplete) {
+                resultDiv.innerHTML = '<div style="background:#d1fae5; padding:0.5rem; border-radius:8px; color:#065f46; font-size:0.85rem;">✅ Part B Complete!</div>';
             } else {
-                let message = '⚠️ Please correct all answers. ';
-                if (!allMatchesCorrect) message += 'Match all Smart Words correctly. ';
-                if (!allDirectionsCorrect) message += 'Each sentence must have 5+ words, start with a capital letter, include "today", and use a movement verb.';
-                feedback.innerHTML = message;
-                feedback.className = 'quiz-feedback incorrect';
-                feedback.style.display = 'block';
-                writingValid = false;
-                document.getElementById('completeWritingBtn').disabled = true;
+                resultDiv.innerHTML = '<div style="background:#fee2e2; padding:0.5rem; border-radius:8px; color:#991b1b; font-size:0.85rem;">❌ Some sentences are incorrect.</div>';
+            }
+            updateWritingFinalStatus();
+        }
+
+        function updateWritingFinalStatus() {
+            const resultDiv = document.getElementById('writingFinalResult');
+            if (writingPartAComplete && writingPartBComplete) {
+                resultDiv.innerHTML = '<div style="background:#d1fae5; padding:0.75rem; border-radius:10px;"><p style="color:#065f46; font-weight:600;">🎉 Perfect! Both parts are done! You can now mark the activity as complete.</p></div>';
+            } else {
+                resultDiv.innerHTML = '';
+            }
+            const btn = document.getElementById('completeWritingBtn');
+            if (btn) {
+                btn.disabled = !(writingPartAComplete && writingPartBComplete);
             }
         }
 
-        function rewriteWritingAnswers() {
+        function resetWriting() {
             document.getElementById('direction1').value = '';
             document.getElementById('direction2').value = '';
             document.getElementById('direction3').value = '';
             document.getElementById('direction1Feedback').innerHTML = '';
             document.getElementById('direction2Feedback').innerHTML = '';
             document.getElementById('direction3Feedback').innerHTML = '';
-            document.getElementById('writingFeedback').style.display = 'none';
             document.getElementById('direction1').style.borderColor = '#e2e8f0';
             document.getElementById('direction2').style.borderColor = '#e2e8f0';
             document.getElementById('direction3').style.borderColor = '#e2e8f0';
+            const feedbacks = ['writingPartAResult', 'writingPartBResult', 'writingFinalResult'];
+            feedbacks.forEach(id => { const fb = document.getElementById(id); if (fb) { fb.innerHTML = ''; fb.style.display = 'none'; } });
+            writingPartAComplete = false;
+            writingPartBComplete = false;
+            document.getElementById('completeWritingBtn').disabled = true;
+            setupMatchingGame();
         }
 
-        document.getElementById('checkWritingBtn')?.addEventListener('click', checkWritingAnswers);
+        document.getElementById('checkWritingPartABtn')?.addEventListener('click', checkWritingPartA);
+        document.getElementById('checkWritingPartBBtn')?.addEventListener('click', checkWritingPartB);
+        document.getElementById('resetWritingBtn')?.addEventListener('click', resetWriting);
         document.getElementById('completeWritingBtn')?.addEventListener('click', () => {
-            if (!writingValid) { alert('Please check your answers first using "Check My Writing" button.'); return; }
-            markActivityComplete('writing', 'chk4');
+            if (writingPartAComplete && writingPartBComplete) markActivityComplete('writing', 'chk4');
+            else alert('Please complete both parts first.');
         });
 
         // ==================== Grammar Section ====================
@@ -2638,7 +2658,7 @@
 
             if (anyEmpty) {
                 const resultDiv = document.getElementById('gameResult');
-                resultDiv.innerHTML = '<div style="background: #fef9e3; padding: 0.75rem; border-radius: 10px;"><p style="color: #92400e; font-weight: 600;">⚠️ Please fill in all the blank fields and select an answer for Part B before checking.</p></div>';
+                resultDiv.innerHTML = '<div style="background:#fef9e3; padding:0.5rem; border-radius:8px; color:#92400e; font-size:0.85rem;">⚠️ Please fill in all the blank fields and select an answer.</div>';
                 gameValid = false;
                 document.getElementById('completeGameBtn').disabled = true;
                 return;
@@ -2661,16 +2681,11 @@
             const allCorrect = gameAnswers.q1 && gameAnswers.q2 && gameAnswers.q3 && gameAnswers.q4;
             const resultDiv = document.getElementById('gameResult');
             if (allCorrect) {
-                resultDiv.innerHTML = '<div style="background:#d1fae5; padding:0.75rem; border-radius:10px;"><p style="color:#065f46;">🎉 Perfect! All answers are correct!</p></div>';
+                resultDiv.innerHTML = '<div style="background:#d1fae5; padding:0.5rem; border-radius:8px; color:#065f46; font-size:0.85rem;">🎉 Perfect! All answers are correct!</div>';
                 gameValid = true;
                 document.getElementById('completeGameBtn').disabled = false;
             } else {
-                let msg = '<div style="background:#fef9e3; padding:0.75rem; border-radius:12px;"><p>❌ Some answers need correction:</p>';
-                if (!gameAnswers.q1) msg += '<p>• Question 1: Use "paramount" (most important)</p>';
-                if (!gameAnswers.q2) msg += '<p>• Question 2: Use "flourish" (grow well)</p>';
-                if (!gameAnswers.q3) msg += '<p>• Question 3: Use "arduous" (very difficult)</p>';
-                if (!gameAnswers.q4) msg += '<p>• Question 4: "Into" indicates movement</p>';
-                msg += '</div>';
+                let msg = '<div style="background:#fee2e2; padding:0.5rem; border-radius:8px; color:#991b1b; font-size:0.85rem;">❌ Some answers need correction.</div>';
                 resultDiv.innerHTML = msg;
                 gameValid = false;
                 document.getElementById('completeGameBtn').disabled = true;
@@ -2704,6 +2719,14 @@
         document.getElementById('completeVocabularyBtn').disabled = true;
         document.getElementById('dayCompleteBtn')?.addEventListener('click', completeDay);
         updateChecklistProgress();
+
+        // Auto-save on input/change
+        document.querySelectorAll('input[type="text"], input[type="radio"], textarea, select').forEach(el => {
+            el.addEventListener('input', saveProgress);
+            el.addEventListener('change', saveProgress);
+        });
+
+        loadProgress();
     </script>
 </body>
 

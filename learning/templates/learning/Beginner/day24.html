@@ -1366,7 +1366,6 @@
                 <div class="card-header speaking">
                     <h2>🗣️ 2. Speaking Activity: The "Correction Protocol"</h2>
                 </div><br>
-                <div class="speaking-info">💡 Professionals don't apologize excessively; they provide solutions.</div>
                 <div class="card-body">
                     <div class="task-box">
                         <div class="task-header">
@@ -1657,7 +1656,8 @@
                     <div
                         style="background: linear-gradient(135deg, #fefce8 0%, #fef9e3 100%); border-left: 4px solid #eab308; padding: 1rem; border-radius: 12px; margin: 1rem 0;">
                         <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
-                            <span>🔥</span><span>POWER WORD OF THE DAY: "INDEFATIGABLE"</span></div><br>
+                            <span>🔥</span><span>POWER WORD OF THE DAY: "INDEFATIGABLE"</span>
+                        </div><br>
                         <p style="margin-bottom:0.5rem"><strong>Pronunciation:</strong> In-de-FAT-i-ga-bul</p>
                         <p style="margin-bottom:0.5rem"><strong>Meaning:</strong> Persisting tirelessly; never giving
                             up.</p>
@@ -1667,7 +1667,8 @@
                     <div
                         style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-left: 4px solid #38bdf8; padding: 1rem; border-radius: 12px; margin: 1rem 0;">
                         <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #075985;">
-                            <span>💬</span><span>Idiom of the Day: "Barking up the wrong tree"</span></div><br>
+                            <span>💬</span><span>Idiom of the Day: "Barking up the wrong tree"</span>
+                        </div><br>
                         <p style="margin-bottom:0.5rem"><strong>Marathi Meaning:</strong> चुकीच्या ठिकाणी शोध घेणे किंवा
                             चुकीचा अंदाज लावणे.</p>
                         <p style="margin-bottom:0.5rem"><strong>The Logic:</strong> If you are trying to fix a software
@@ -1826,7 +1827,79 @@
         <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
         <script>
             // ==================== Global Variables ====================
-            let activityCompleted = { listening: false, speaking: false, reading: false, writing: false, grammar: false, extra: false, vocabulary: false };
+            let activityCompleted = {
+                listening: false, speaking: false, reading: false,
+                writing: false, grammar: false, extra: false, vocabulary: false
+            };
+
+            // ==================== Local Storage Persistence ====================
+            const STORAGE_KEY = 'progress_beginner_day24';
+
+            function saveProgress() {
+                const data = {
+                    activityCompleted: { ...activityCompleted },
+                    inputs: {}
+                };
+                document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                    if (el.id) data.inputs[el.id] = el.value;
+                });
+                document.querySelectorAll('input[type="radio"]').forEach(el => {
+                    if (el.name && el.checked) {
+                        data.inputs[el.name] = el.value;
+                    }
+                });
+                document.querySelectorAll('select').forEach(el => {
+                    if (el.id) data.inputs[el.id] = el.value;
+                });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
+
+            function loadProgress() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (!saved) return;
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.activityCompleted) {
+                        activityCompleted = data.activityCompleted;
+                        const checklistMap = {
+                            listening: 'chk1', speaking: 'chk2', reading: 'chk3',
+                            writing: 'chk4', vocabulary: 'chk5', grammar: 'chk6', extra: 'chk7'
+                        };
+                        Object.keys(activityCompleted).forEach(id => {
+                            if (activityCompleted[id]) {
+                                const cb = document.getElementById(checklistMap[id]);
+                                if (cb) cb.checked = true;
+                                const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
+                                if (btn) {
+                                    btn.classList.add('completed');
+                                    btn.textContent = '✓ Completed';
+                                    btn.disabled = true;
+                                } else if (id === 'extra') {
+                                    const extraBtn = document.getElementById('completeExtraBtn');
+                                    if (extraBtn) {
+                                        extraBtn.classList.add('completed');
+                                        extraBtn.textContent = '✓ Completed';
+                                        extraBtn.disabled = true;
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    if (data.inputs) {
+                        Object.keys(data.inputs).forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) {
+                                el.value = data.inputs[id];
+                                el.dispatchEvent(new Event('input'));
+                            } else {
+                                const radio = document.querySelector(`input[name="${id}"][value="${data.inputs[id]}"]`);
+                                if (radio) radio.checked = true;
+                            }
+                        });
+                    }
+                    updateChecklistProgress();
+                } catch (e) { console.error("Error loading progress:", e); }
+            }
 
             // Vocabulary tracking
             let vocabWordsList = ['Prudent', 'Scrutinize', 'Deplorable', 'Oversight', 'Ameliorate'];
@@ -1855,156 +1928,23 @@
             let logicCorrect = false;
 
             // ==================== Helper Functions ====================
-            // ========== LOCALSTORAGE PERSISTENCE ==========
-            const STORAGE_KEY = 'progress_beginner_day24';
-
-            function saveProgress() {
-                const data = {
-                    activityCompleted: activityCompleted,
-                    inputs: {},
-                    radios: {},
-                    vocabHeard: vocabHeard
-                };
-                
-                // Save all text inputs and textareas
-                document.querySelectorAll('input[type="text"], textarea').forEach(el => {
-                    if (el.id) data.inputs[el.id] = el.value;
-                });
-                
-                // Save all radio selections
-                document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
-                    if (el.name) data.radios[el.name] = el.value;
-                });
-                
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            }
-
-            function loadProgress() {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (!saved) return;
-                try {
-                    const data = JSON.parse(saved);
-                    
-                    // 1. Restore activity completion
-                    if (data.activityCompleted) {
-                        activityCompleted = data.activityCompleted;
-                        const checklistMap = { 
-                            listening: 'chk1', speaking: 'chk2', reading: 'chk3', 
-                            writing: 'chk4', vocabulary: 'chk5', grammar: 'chk6', extra: 'chk7'
-                        };
-                        Object.keys(activityCompleted).forEach(id => {
-                            if (activityCompleted[id]) {
-                                const cb = document.getElementById(checklistMap[id]);
-                                if (cb) cb.checked = true;
-                                const btnId = `complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`;
-                                const btn = document.getElementById(btnId);
-                                if (btn) {
-                                    btn.classList.add('completed');
-                                    btn.textContent = '✓ Completed';
-                                    btn.disabled = true;
-                                    btn.style.pointerEvents = 'none';
-                                    btn.style.animation = 'none';
-                                }
-                            }
-                        });
-                    }
-                    
-                    // 2. Restore text inputs
-                    if (data.inputs) {
-                        Object.keys(data.inputs).forEach(id => {
-                            const el = document.getElementById(id);
-                            if (el) el.value = data.inputs[id];
-                        });
-                    }
-                    
-                    // 3. Restore radios
-                    if (data.radios) {
-                        Object.keys(data.radios).forEach(name => {
-                            const val = data.radios[name];
-                            const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
-                            if (radio) {
-                                radio.checked = true;
-                                radio.dispatchEvent(new Event('change'));
-                            }
-                        });
-                    }
-
-                    // 4. Restore Vocab progress
-                    if (data.vocabHeard) {
-                        vocabHeard = data.vocabHeard;
-                        Object.keys(vocabHeard).forEach(word => {
-                            if (vocabHeard[word]) {
-                                const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
-                                if (checkCell) {
-                                    checkCell.innerHTML = '✅';
-                                    checkCell.style.color = '#16a34a';
-                                }
-                            }
-                        });
-                        updateVocabularyButtonStatus();
-                    }
-                    
-                    updateChecklistProgress();
-                } catch (e) { console.warn("Load progress failed", e); }
+            function updateChecklistProgress() {
+                const ids = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6', 'chk7'];
+                let completed = ids.filter(id => document.getElementById(id)?.checked).length;
+                document.getElementById('progressCounter').innerText = `${completed}/7 completed`;
+                document.getElementById('dayCompleteBtn').disabled = (completed !== 7);
+                if (completed === 7) document.getElementById('completionBanner').style.display = 'block';
             }
 
             function markActivityComplete(activityId, checklistId) {
                 if (activityCompleted[activityId]) return;
                 activityCompleted[activityId] = true;
-                const cb = document.getElementById(checklistId);
-                if (cb) cb.checked = true;
-                const btnId = `complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`;
-                const btn = document.getElementById(btnId);
-                if (btn) {
-                    btn.classList.add('completed');
-                    btn.textContent = '✓ Completed';
-                    btn.disabled = true;
-                    btn.style.pointerEvents = 'none';
-                    btn.style.animation = 'none';
-                }
+                document.getElementById(checklistId).checked = true;
+                const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+                if (btn) { btn.classList.add('completed'); btn.disabled = true; btn.textContent = '✓ Completed'; btn.style.animation = 'none'; }
                 updateChecklistProgress();
-                saveProgress(); // Local persistence
+                saveProgress();
             }
-
-            function completeDay() {
-                const btn = document.getElementById('dayCompleteBtn');
-                if (btn.disabled) {
-                    const msgDiv = document.createElement('div');
-                    msgDiv.style.color = '#dc2626';
-                    msgDiv.style.textAlign = 'center';
-                    msgDiv.innerHTML = '⚠️ Please complete all activities first!';
-                    btn.parentNode.insertBefore(msgDiv, btn.nextSibling);
-                    setTimeout(() => msgDiv.remove(), 3000);
-                    return;
-                }
-                btn.innerHTML = '🎉 Saving...';
-                btn.disabled = true;
-                
-                // Clear local storage upon completion
-                localStorage.removeItem(STORAGE_KEY);
-                
-                if (typeof confetti !== 'undefined') {
-                    confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-                }
-                setTimeout(() => {
-                    window.location.href = '/learning/level/beginner/?celebrate=true&completed=24';
-                }, 2000);
-            }
-
-            // Auto-save on any input change
-            document.addEventListener('input', (e) => {
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                    saveProgress();
-                }
-            });
-            document.addEventListener('change', (e) => {
-                if (e.target.type === 'radio') {
-                    saveProgress();
-                }
-            });
-
-            // Initial load
-            loadProgress();
 
             function showValidationMessage(elementId, message, isError = true) {
                 const msgDiv = document.getElementById(elementId);
@@ -2800,10 +2740,19 @@
                 btn.innerHTML = '🎉 Saving...';
                 btn.disabled = true;
                 if (typeof confetti !== 'undefined') confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                localStorage.removeItem(STORAGE_KEY);
                 setTimeout(() => { window.location.href = `/learning/level/beginner/?celebrate=true&completed=24`; }, 2000);
             });
 
             updateChecklistProgress();
+
+            // Auto-save on input/change
+            document.querySelectorAll('input[type="text"], input[type="radio"], textarea, select').forEach(el => {
+                el.addEventListener('input', saveProgress);
+                el.addEventListener('change', saveProgress);
+            });
+
+            loadProgress();
         </script>
 </body>
 

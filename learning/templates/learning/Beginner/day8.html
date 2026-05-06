@@ -1460,6 +1460,65 @@
             // ==================== Activity Completion Tracking ====================
             let activityCompleted = { listening: false, speaking: false, reading: false, writing: false, vocabulary: false, grammar: false, game: false };
 
+            // ==================== Local Storage Persistence ====================
+            const STORAGE_KEY = 'progress_beginner_day8';
+
+            function saveProgress() {
+                const data = {
+                    activityCompleted: { ...activityCompleted },
+                    inputs: {}
+                };
+                document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                    if (el.id) data.inputs[el.id] = el.value;
+                });
+                document.querySelectorAll('input[type="radio"]').forEach(el => {
+                    if (el.name && el.checked) {
+                        data.inputs[el.name] = el.value;
+                    }
+                });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
+
+            function loadProgress() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (!saved) return;
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.activityCompleted) {
+                        activityCompleted = data.activityCompleted;
+                        const checklistMap = {
+                            listening: 'chk1', speaking: 'chk2', reading: 'chk3',
+                            writing: 'chk4', grammar: 'chk5', game: 'chk6', vocabulary: 'chk7'
+                        };
+                        Object.keys(activityCompleted).forEach(id => {
+                            if (activityCompleted[id]) {
+                                const cb = document.getElementById(checklistMap[id]);
+                                if (cb) cb.checked = true;
+                                const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
+                                if (btn) {
+                                    btn.classList.add('completed');
+                                    btn.textContent = '✓ Completed';
+                                    btn.disabled = true;
+                                }
+                            }
+                        });
+                    }
+                    if (data.inputs) {
+                        Object.keys(data.inputs).forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) {
+                                el.value = data.inputs[id];
+                                el.dispatchEvent(new Event('input'));
+                            } else {
+                                const radio = document.querySelector(`input[name="${id}"][value="${data.inputs[id]}"]`);
+                                if (radio) radio.checked = true;
+                            }
+                        });
+                    }
+                    updateChecklistProgress();
+                } catch (e) { console.error("Error loading progress:", e); }
+            }
+
             function updateChecklistProgress() {
                 let c = 0;
                 for (let i = 1; i <= 7; i++) if (document.getElementById(`chk${i}`)?.checked) c++;
@@ -1486,6 +1545,7 @@
                     btn.style.animation = 'none';
                 }
                 updateChecklistProgress();
+                saveProgress();
             }
 
             // ==================== VOCABULARY VALIDATION ====================
@@ -2235,10 +2295,19 @@
                 if (typeof confetti !== 'undefined') {
                     confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
                 }
+                localStorage.removeItem(STORAGE_KEY);
                 setTimeout(() => {
                     window.location.href = '/learning/level/beginner/?celebrate=true&completed=8';
                 }, 2000);
             }
+
+            // Auto-save on input/change
+            document.querySelectorAll('input[type="text"], input[type="radio"], textarea').forEach(el => {
+                el.addEventListener('input', saveProgress);
+                el.addEventListener('change', saveProgress);
+            });
+
+            loadProgress();
         </script>
 </body>
 

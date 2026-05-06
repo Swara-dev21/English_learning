@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -1204,8 +1204,43 @@
             .validation-message,
             .writing-feedback-msg,
             .reflection-feedback-msg {
-                padding: 0.6rem;
-                font-size: 0.75rem;
+                padding: 0.5rem;
+                font-size: 0.85rem;
+                border-radius: 8px;
+                margin-top: 0.5rem;
+            }
+
+            .reflection-feedback-msg.correct {
+                background: #d1fae5;
+                color: #065f46;
+            }
+
+            .reflection-feedback-msg.incorrect {
+                background: #fee2e2;
+                color: #991b1b;
+            }
+
+            .fix-feedback {
+                padding: 0.5rem;
+                font-size: 0.85rem;
+                border-radius: 8px;
+                margin-top: 0.5rem;
+                display: block;
+            }
+
+            .fix-feedback.correct {
+                background: #d1fae5;
+                color: #065f46;
+            }
+
+            .fix-feedback.incorrect {
+                background: #fee2e2;
+                color: #991b1b;
+            }
+
+            .fix-feedback.empty {
+                background: #fef9c3;
+                color: #854d0e;
             }
 
             /* Power word section */
@@ -1750,7 +1785,8 @@
                     <div
                         style="background: linear-gradient(135deg, #fefce8 0%, #fef9e3 100%); border-left: 4px solid #eab308; padding: 1rem; border-radius: 12px; margin: 1rem 0;">
                         <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #854d0e;">
-                            <span>🔥</span><span>POWER WORD OF THE DAY: "UNPRECEDENTED"</span></div><br>
+                            <span>🔥</span><span>POWER WORD OF THE DAY: "UNPRECEDENTED"</span>
+                        </div><br>
                         <p style="margin-bottom:0.5rem"><strong>Pronunciation:</strong> Un-PRES-i-den-tid</p>
                         <p style="margin-bottom:0.5rem"><strong>Meaning:</strong> Never done or known before.</p>
                         <p style="margin-bottom:0.5rem"><strong>Usage:</strong> "The team achieved unprecedented success
@@ -1759,14 +1795,14 @@
                     <div
                         style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-left: 4px solid #38bdf8; padding: 1rem; border-radius: 12px; margin: 1rem 0;">
                         <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #075985;">
-                            <span>💬</span><span>Idiom of the Day: "Back to the drawing board"</span></div><br>
-                        <p style="margin-bottom:0.5rem"><strong>Marathi Meaning:</strong> एखादी योजना यशस्वी न
-                            झाल्यामुळे पुन्हा सुरुवातीपासून नवीन योजना आखणे.</p>
+                            <span>💬</span><span>Idiom of the Day: "Back to square one"</span>
+                        </div><br>
+                        <p style="margin-bottom:0.5rem"><strong>Meaning:</strong> Start again</p>
+                        <p style="margin-bottom:0.5rem"><strong>Marathi Meaning:</strong>पुन्हा सुरुवातीला येणे</p>
                         <p style="margin-bottom:0.5rem"><strong>The Logic:</strong> If a design fails, a visionary
                             leader doesn't give up; they simply go "back to the drawing board" to create a better one.
                         </p>
-                        <p style="margin-bottom:0.5rem"><strong>Example:</strong> "The first prototype didn't work, so
-                            it's back to the drawing board for us."</p>
+                        <p style="margin-bottom:0.5rem"><strong>Example:</strong> "We are back to square one."</p>
                     </div>
 
                     <div id="vocabValidationMsg" class="validation-message" style="display: none;"></div>
@@ -1899,25 +1935,114 @@
                         <li><input type="checkbox" id="chk7" disabled> <label>I solved the Prefix Puzzle game.</label>
                         </li>
                     </ul>
+                    <div style="display: flex; justify-content: center; margin-top: 1rem;"><button
+                            class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 22 </button></div>
+
                     <div style="text-align: right;"><span class="badge" id="progressCounter">0/7 completed</span></div>
                 </div>
             </div>
 
-            <div style="display: flex; justify-content: center; margin-top: 1rem;"><button class="day-complete-btn"
-                    id="dayCompleteBtn" disabled> Complete Day 22 </button></div>
-            <div class="completion-banner" id="completionBanner" style="display: none;">
-                <div style="font-size: 3rem;">🎉✨🏆</div>
-                <h2>Congratulations, Visionary Leader!</h2>
-                <p>You've successfully completed Day 22 of your English journey!</p><a href="#"
-                    class="next-day-btn">Continue to Day 23 →</a>
-            </div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
         <script>
             // ==================== Global Variables ====================
+            const STORAGE_KEY = 'progress_beginner_day22';
             let activityCompleted = { listening: false, speaking: false, reading: false, writing: false, grammar: false, game: false, vocabulary: false };
             let extraMileCorrect = { demeanor: false, poised: false };
+
+            function saveProgress() {
+                const data = {
+                    activityCompleted,
+                    vocabHeard,
+                    listeningQuizAnswers,
+                    speakingRecorded,
+                    permanentCircled: Array.from(permanentCircled),
+                    permanentUnderlined: Array.from(permanentUnderlined),
+                    partACorrect,
+                    partBCorrect,
+                    grammarCorrectState: typeof grammarCorrectState !== 'undefined' ? grammarCorrectState : {},
+                    gameAllCorrectFlag,
+                    logicCorrect,
+                    inputs: {}
+                };
+
+                // Save all text inputs
+                document.querySelectorAll('input[type="text"]').forEach(input => {
+                    if (input.id) data.inputs[input.id] = input.value;
+                });
+
+                // Save radio selections
+                document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+                    if (radio.name) data.inputs[radio.name] = radio.value;
+                });
+
+                // Save checkboxes
+                document.querySelectorAll('input[type="checkbox"]').forEach(chk => {
+                    if (chk.id) data.inputs[chk.id] = chk.checked;
+                });
+
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
+
+            function loadProgress() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (!saved) return;
+                try {
+                    const data = JSON.parse(saved);
+                    Object.assign(activityCompleted, data.activityCompleted);
+                    Object.assign(vocabHeard, data.vocabHeard);
+                    Object.assign(listeningQuizAnswers, data.listeningQuizAnswers);
+                    Object.assign(speakingRecorded, data.speakingRecorded);
+                    permanentCircled = new Set(data.permanentCircled || []);
+                    permanentUnderlined = new Set(data.permanentUnderlined || []);
+                    Object.assign(partACorrect, data.partACorrect);
+                    Object.assign(partBCorrect, data.partBCorrect);
+                    if (typeof grammarCorrectState !== 'undefined') Object.assign(grammarCorrectState, data.grammarCorrectState);
+                    gameAllCorrectFlag = data.gameAllCorrectFlag;
+                    logicCorrect = data.logicCorrect;
+
+                    // Restore inputs
+                    for (const [id, value] of Object.entries(data.inputs)) {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            if (el.type === 'checkbox') el.checked = value;
+                            else el.value = value;
+                        } else {
+                            const radio = document.querySelector(`input[name="${id}"][value="${value}"]`);
+                            if (radio) radio.checked = true;
+                        }
+                    }
+
+                    // Restore visual state
+                    Object.keys(activityCompleted).forEach(act => {
+                        if (activityCompleted[act]) {
+                            const checklistId = { listening: 'chk1', speaking: 'chk2', reading: 'chk3', writing: 'chk4', vocabulary: 'chk5', grammar: 'chk6', game: 'chk7' }[act];
+                            if (checklistId) {
+                                document.getElementById(checklistId).checked = true;
+                                const btnId = `complete${act.charAt(0).toUpperCase() + act.slice(1)}Btn`;
+                                const btn = document.getElementById(btnId);
+                                if (btn) {
+                                    btn.classList.add('completed');
+                                    btn.disabled = true;
+                                    btn.textContent = '✓ Completed';
+                                    btn.style.animation = 'none';
+                                }
+                            }
+                        }
+                    });
+
+                    // Restore vocabulary checkmarks
+                    Object.entries(vocabHeard).forEach(([word, heard]) => {
+                        if (heard) {
+                            const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
+                            if (checkCell) { checkCell.innerHTML = '✅'; checkCell.style.color = '#16a34a'; }
+                        }
+                    });
+
+                    updateChecklistProgress();
+                } catch (e) { console.error("Error loading progress", e); }
+            }
 
             // Vocabulary tracking
             let vocabWordsList = ['Nonchalant', 'Irrelevant', 'Misconception', 'Unilateral', 'Beneficial'];
@@ -1952,154 +2077,23 @@
             let logicCorrect = false;
 
             // ==================== Helper Functions ====================
-            // ========== LOCALSTORAGE PERSISTENCE ==========
-            const STORAGE_KEY = 'progress_beginner_day22';
-
-            function saveProgress() {
-                const data = {
-                    activityCompleted: activityCompleted,
-                    inputs: {},
-                    radios: {},
-                    vocabHeard: vocabHeard
-                };
-                
-                // Save all text inputs and textareas
-                document.querySelectorAll('input[type="text"], textarea').forEach(el => {
-                    if (el.id) data.inputs[el.id] = el.value;
-                });
-                
-                // Save all radio selections
-                document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
-                    if (el.name) data.radios[el.name] = el.value;
-                });
-                
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            }
-
-            function loadProgress() {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (!saved) return;
-                try {
-                    const data = JSON.parse(saved);
-                    
-                    // 1. Restore activity completion
-                    if (data.activityCompleted) {
-                        activityCompleted = data.activityCompleted;
-                        const checklistMap = { 
-                            listening: 'chk1', speaking: 'chk2', reading: 'chk3', 
-                            writing: 'chk4', vocabulary: 'chk5', grammar: 'chk6', game: 'chk7'
-                        };
-                        Object.keys(activityCompleted).forEach(id => {
-                            if (activityCompleted[id]) {
-                                const cb = document.getElementById(checklistMap[id]);
-                                if (cb) cb.checked = true;
-                                const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
-                                if (btn) {
-                                    btn.classList.add('completed');
-                                    btn.textContent = '✓ Completed';
-                                    btn.disabled = true;
-                                    btn.style.pointerEvents = 'none';
-                                    btn.style.animation = 'none';
-                                }
-                            }
-                        });
-                    }
-                    
-                    // 2. Restore text inputs
-                    if (data.inputs) {
-                        Object.keys(data.inputs).forEach(id => {
-                            const el = document.getElementById(id);
-                            if (el) el.value = data.inputs[id];
-                        });
-                    }
-                    
-                    // 3. Restore radios
-                    if (data.radios) {
-                        Object.keys(data.radios).forEach(name => {
-                            const val = data.radios[name];
-                            const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
-                            if (radio) {
-                                radio.checked = true;
-                                radio.dispatchEvent(new Event('change'));
-                            }
-                        });
-                    }
-
-                    // 4. Restore Vocab progress
-                    if (data.vocabHeard) {
-                        vocabHeard = data.vocabHeard;
-                        Object.keys(vocabHeard).forEach(word => {
-                            if (vocabHeard[word]) {
-                                const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
-                                if (checkCell) {
-                                    checkCell.innerHTML = '✅';
-                                    checkCell.style.color = '#16a34a';
-                                }
-                            }
-                        });
-                        updateVocabularyButtonStatus();
-                    }
-                    
-                    updateChecklistProgress();
-                } catch (e) { console.warn("Load progress failed", e); }
+            function updateChecklistProgress() {
+                const ids = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6', 'chk7'];
+                let completed = ids.filter(id => document.getElementById(id)?.checked).length;
+                document.getElementById('progressCounter').innerText = `${completed}/7 completed`;
+                document.getElementById('dayCompleteBtn').disabled = (completed !== 7);
+                if (completed === 7) document.getElementById('completionBanner').style.display = 'block';
             }
 
             function markActivityComplete(activityId, checklistId) {
                 if (activityCompleted[activityId]) return;
                 activityCompleted[activityId] = true;
-                const cb = document.getElementById(checklistId);
-                if (cb) cb.checked = true;
+                document.getElementById(checklistId).checked = true;
                 const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-                if (btn) {
-                    btn.classList.add('completed');
-                    btn.textContent = '✓ Completed';
-                    btn.disabled = true;
-                    btn.style.pointerEvents = 'none';
-                    btn.style.animation = 'none';
-                }
+                if (btn) { btn.classList.add('completed'); btn.disabled = true; btn.textContent = '✓ Completed'; btn.style.animation = 'none'; }
                 updateChecklistProgress();
-                saveProgress(); // Local persistence
+                saveProgress();
             }
-
-            function completeDay() {
-                const btn = document.getElementById('dayCompleteBtn');
-                if (btn.disabled) {
-                    const msgDiv = document.createElement('div');
-                    msgDiv.style.color = '#dc2626';
-                    msgDiv.style.textAlign = 'center';
-                    msgDiv.innerHTML = '⚠️ Please complete all activities first!';
-                    btn.parentNode.insertBefore(msgDiv, btn.nextSibling);
-                    setTimeout(() => msgDiv.remove(), 3000);
-                    return;
-                }
-                btn.innerHTML = '🎉 Saving...';
-                btn.disabled = true;
-                
-                // Clear local storage upon completion
-                localStorage.removeItem(STORAGE_KEY);
-                
-                if (typeof confetti !== 'undefined') {
-                    confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-                }
-                setTimeout(() => {
-                    window.location.href = '/learning/level/beginner/?celebrate=true&completed=22';
-                }, 2000);
-            }
-
-            // Auto-save on any input change
-            document.addEventListener('input', (e) => {
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                    saveProgress();
-                }
-            });
-            document.addEventListener('change', (e) => {
-                if (e.target.type === 'radio') {
-                    saveProgress();
-                }
-            });
-
-            // Initial load
-            loadProgress();
 
             function showValidationMessage(elementId, message, isError = true) {
                 const msgDiv = document.getElementById(elementId);
@@ -2134,6 +2128,7 @@
                     const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
                     if (checkCell) { checkCell.innerHTML = '✅'; checkCell.style.color = '#16a34a'; }
                     updateVocabularyButtonStatus();
+                    saveProgress();
                 }
             }
 
@@ -2583,48 +2578,39 @@
                 let errors = [];
                 let isValid1 = false, isValid2 = false, isValid3 = false;
 
-                if (r1 === "") { errors.push('Sentence 1 is empty'); }
-                else {
-                    const hasTowards = /\btowards\b/i.test(r1);
-                    if (!hasTowards) {
-                        errors.push('Use "towards" in your first sentence. Example: "I am working towards becoming a team leader."');
-                    } else if (r1.length < 10) {
-                        errors.push('Sentence 1 must be meaningful (min 10 characters). Example: "I am working towards mastering technical communication."');
-                    } else {
-                        isValid1 = true;
-                    }
+                function checkRules(sentence, num, pattern = null, patternMsg = "") {
+                    if (!sentence) { errors.push(`Sentence ${num} is empty`); return false; }
+                    if (!/^[A-Z]/.test(sentence)) { errors.push(`Sentence ${num} must start with a capital letter`); return false; }
+                    if (!/[.!?]$/.test(sentence)) { errors.push(`Sentence ${num} must end with a full stop (.), exclamation mark (!), or question mark (?)`); return false; }
+                    if (sentence.length < 10) { errors.push(`Sentence ${num} must be meaningful (min 10 characters)`); return false; }
+                    if (pattern && !pattern.test(sentence)) { errors.push(patternMsg); return false; }
+                    return true;
                 }
 
-                if (r2 === "") { errors.push('Sentence 2 is empty'); }
-                else if (r2.length < 10) {
-                    errors.push('Sentence 2 must be meaningful (min 10 characters). Example: "My goal is to lead innovative projects in my field."');
-                } else {
-                    isValid2 = true;
-                }
+                isValid1 = checkRules(r1, 1, /\btowards\b/i, 'Use "towards" in your first sentence. Example: "I am working towards becoming a team leader."');
+                isValid2 = checkRules(r2, 2);
+                isValid3 = checkRules(r3, 3, /\bwill have\b/i, 'Sentence 3 must use Future Perfect tense: "will have + past participle". Example: "By next year, I will have completed my professional certification."');
 
-                if (r3 === "") { errors.push('Sentence 3 is empty'); }
-                else {
-                    const hasWillHave = /\bwill have\b/i.test(r3);
+                if (isValid3) {
                     const hasPastParticiple = /\b(will have)\s+(\w+ed|\b(been|done|made|taken|given|seen|written|spoken|built|created|developed|completed|finished|started|learned|earned|achieved|attained|become|come|run|gone)\b)/i.test(r3);
-                    if (!hasWillHave || !hasPastParticiple) {
-                        errors.push('Sentence 3 must use Future Perfect tense: "will have + past participle". Example: "By next year, I will have completed my professional certification."');
-                    } else {
-                        isValid3 = true;
+                    if (!hasPastParticiple) {
+                        errors.push('Sentence 3 should follow "will have + past participle" structure');
+                        isValid3 = false;
                     }
                 }
 
                 const feedbackDiv = document.getElementById('reflectionFeedback');
                 if (errors.length === 0) {
-                    feedbackDiv.innerHTML = '✅ Great vision! You used "towards" and Future Perfect correctly!';
+                    feedbackDiv.innerHTML = '✅ Part B Complete!';
                     feedbackDiv.className = 'reflection-feedback-msg correct';
                     feedbackDiv.style.display = 'block';
-                    partBCorrect = { 1: isValid1, 2: isValid2, 3: isValid3 };
+                    partBCorrect = { 1: true, 2: true, 3: true };
                     return true;
                 } else {
-                    feedbackDiv.innerHTML = '⚠️ ' + errors.join('<br>⚠️ ');
+                    feedbackDiv.innerHTML = '❌ ' + errors[0] + '.';
                     feedbackDiv.className = 'reflection-feedback-msg incorrect';
                     feedbackDiv.style.display = 'block';
-                    partBCorrect = { 1: false, 2: false, 3: false };
+                    partBCorrect = { 1: isValid1, 2: isValid2, 3: isValid3 };
                     return false;
                 }
             }
@@ -2862,6 +2848,21 @@
             });
 
             updateChecklistProgress();
+
+            // Auto-save on any input change
+            document.addEventListener('input', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    saveProgress();
+                }
+            });
+            document.addEventListener('change', (e) => {
+                if (e.target.tagName === 'INPUT' && (e.target.type === 'radio' || e.target.type === 'checkbox')) {
+                    saveProgress();
+                }
+            });
+
+            // Load progress on startup
+            window.addEventListener('load', loadProgress);
         </script>
 </body>
 

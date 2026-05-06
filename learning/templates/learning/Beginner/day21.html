@@ -1113,10 +1113,16 @@
                     <h3>🚀 Part B: The "Extra Mile" Reflection</h3>
                     <p>Write 3 sentences about how you feel after 21 days. Use at least one Future Perfect (will
                         have...) sentence</p>
-                    <input type="text" id="reflection1" class="habit-input" placeholder="Sentence 1...">
-                    <input type="text" id="reflection2" class="habit-input" placeholder="Sentence 2...">
-                    <input type="text" id="reflection3" class="habit-input"
-                        placeholder="Sentence 3 (Future Perfect)...">
+                    <div style="margin-bottom: 1rem;">
+                        <input type="text" id="reflection1" class="habit-input" placeholder="Sentence 1...">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <input type="text" id="reflection2" class="habit-input" placeholder="Sentence 2...">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <input type="text" id="reflection3" class="habit-input"
+                            placeholder="Sentence 3 (Future Perfect)...">
+                    </div>
                     <button class="btn-outline" id="checkReflectionBtn">✓ Check Answers</button>
                     <div id="reflectionFeedback" class="reflection-feedback-msg"></div>
 
@@ -1288,26 +1294,18 @@
                 <p><strong>✨ Since you reached Day 21, try these two "Expert" tasks:</strong></p>
                 <div style="background:white;border-radius:12px;padding:1rem;margin-bottom:1rem;">
                     <h4>1. What is the meaning of <strong style="color:#8b5cf6;">Demeanor</strong>?</h4>
-                    <div class="mcq-option"><input type="radio" name="demeanor" value="A"><label>A loud and aggressive
-                            personality</label></div>
-                    <div class="mcq-option"><input type="radio" name="demeanor" value="B"><label>Outward bearing or way
-                            of behaving</label></div>
-                    <div class="mcq-option"><input type="radio" name="demeanor" value="C"><label>A feeling of sadness or
-                            depression</label></div>
-                    <div class="mcq-option"><input type="radio" name="demeanor" value="D"><label>A sudden burst of
-                            energy</label></div>
+                    <div class="mcq-option"><input type="radio" name="demeanor" id="demA" value="A"><label for="demA">A loud and aggressive personality</label></div>
+                    <div class="mcq-option"><input type="radio" name="demeanor" id="demB" value="B"><label for="demB">Outward bearing or way of behaving</label></div>
+                    <div class="mcq-option"><input type="radio" name="demeanor" id="demC" value="C"><label for="demC">A feeling of sadness or depression</label></div>
+                    <div class="mcq-option"><input type="radio" name="demeanor" id="demD" value="D"><label for="demD">A sudden burst of energy</label></div>
                     <div id="demeanorFeedback" class="quiz-feedback-mcq"></div>
                 </div>
                 <div style="background:white;border-radius:12px;padding:1rem;margin-bottom:1rem;">
                     <h4>2. What is the meaning of <strong style="color:#8b5cf6;">Poised</strong>?</h4>
-                    <div class="mcq-option"><input type="radio" name="poised" value="A"><label>Nervous and
-                            uncertain</label></div>
-                    <div class="mcq-option"><input type="radio" name="poised" value="B"><label>Ready to fall or
-                            collapse</label></div>
-                    <div class="mcq-option"><input type="radio" name="poised" value="C"><label>Having a composed and
-                            self-assured manner</label></div>
-                    <div class="mcq-option"><input type="radio" name="poised" value="D"><label>Confused and
-                            disoriented</label></div>
+                    <div class="mcq-option"><input type="radio" name="poised" id="poiA" value="A"><label for="poiA">Nervous and uncertain</label></div>
+                    <div class="mcq-option"><input type="radio" name="poised" id="poiB" value="B"><label for="poiB">Ready to fall or collapse</label></div>
+                    <div class="mcq-option"><input type="radio" name="poised" id="poiC" value="C"><label for="poiC">Having a composed and self-assured manner</label></div>
+                    <div class="mcq-option"><input type="radio" name="poised" id="poiD" value="D"><label for="poiD">Confused and disoriented</label></div>
                     <div id="poisedFeedback" class="quiz-feedback-mcq"></div>
                 </div>
                 <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-top: 0.5rem;">
@@ -1359,6 +1357,80 @@
         let activityCompleted = { listening: false, speaking: false, reading: false, writing: false, grammar: false, extra: false, vocabulary: false };
         let extraMileCorrect = { demeanor: false, poised: false };
 
+        // ==================== Local Storage Persistence ====================
+        const STORAGE_KEY = 'progress_beginner_day21';
+
+        function saveProgress() {
+            const data = {
+                activityCompleted: { ...activityCompleted },
+                vocabHeard: { ...vocabHeard },
+                permanentUnderlined: Array.from(permanentUnderlined),
+                permanentCircled: Array.from(permanentCircled),
+                inputs: {}
+            };
+            document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                if (el.id) data.inputs[el.id] = el.value;
+            });
+            document.querySelectorAll('input[type="radio"]').forEach(el => {
+                if (el.name && el.checked) {
+                    data.inputs[el.name] = el.value;
+                }
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+                if (data.activityCompleted) {
+                    activityCompleted = data.activityCompleted;
+                    const checklistMap = {
+                        listening: 'chk1', speaking: 'chk2', reading: 'chk3',
+                        writing: 'chk4', vocabulary: 'chk5', grammar: 'chk6', extra: 'chk7'
+                    };
+                    Object.keys(activityCompleted).forEach(id => {
+                        if (activityCompleted[id]) {
+                            const cb = document.getElementById(checklistMap[id]);
+                            if (cb) cb.checked = true;
+                            const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
+                            if (btn) {
+                                btn.classList.add('completed');
+                                btn.textContent = '✓ Completed';
+                                btn.disabled = true;
+                            }
+                        }
+                    });
+                }
+                if (data.vocabHeard) {
+                    vocabHeard = data.vocabHeard;
+                    Object.keys(vocabHeard).forEach(word => {
+                        if (vocabHeard[word]) {
+                            const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
+                            if (checkCell) { checkCell.innerHTML = '✅'; checkCell.style.color = '#16a34a'; }
+                        }
+                    });
+                    updateVocabularyButtonStatus();
+                }
+                if (data.permanentUnderlined) permanentUnderlined = new Set(data.permanentUnderlined);
+                if (data.permanentCircled) permanentCircled = new Set(data.permanentCircled);
+                if (data.inputs) {
+                    Object.keys(data.inputs).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.value = data.inputs[id];
+                        } else {
+                            const radio = document.querySelector(`input[name="${id}"][value="${data.inputs[id]}"]`);
+                            if (radio) radio.checked = true;
+                        }
+                    });
+                }
+                updateChecklistProgress();
+                updateAllVisuals();
+            } catch (e) { console.error("Error loading progress:", e); }
+        }
+
         // Vocabulary tracking
         let vocabWordsList = ['Elucidate', 'Mitigate', 'Prudent', 'Multitude', 'Advocate'];
         let vocabHeard = { 'Elucidate': false, 'Mitigate': false, 'Prudent': false, 'Multitude': false, 'Advocate': false };
@@ -1398,166 +1470,25 @@
             document.getElementById('dayCompleteBtn').disabled = (completed !== 7);
         }
 
-        // ========== LOCALSTORAGE PERSISTENCE ==========
-        const STORAGE_KEY = 'progress_beginner_day21';
-
-        function saveProgress() {
-            const data = {
-                activityCompleted: activityCompleted,
-                inputs: {},
-                radios: {},
-                vocabHeard: vocabHeard
-            };
-            
-            // Save all text inputs and textareas
-            document.querySelectorAll('input[type="text"], textarea').forEach(el => {
-                if (el.id) data.inputs[el.id] = el.value;
-            });
-            
-            // Save all radio selections
-            document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
-                if (el.name) data.radios[el.name] = el.value;
-            });
-            
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        }
-
-        function loadProgress() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (!saved) return;
-            try {
-                const data = JSON.parse(saved);
-                
-                // 1. Restore activity completion
-                if (data.activityCompleted) {
-                    activityCompleted = data.activityCompleted;
-                    const checklistMap = { 
-                        listening: 'chk1', speaking: 'chk2', reading: 'chk3', 
-                        writing: 'chk4', vocabulary: 'chk5', grammar: 'chk6', extra: 'chk7'
-                    };
-                    Object.keys(activityCompleted).forEach(id => {
-                        if (activityCompleted[id]) {
-                            const cb = document.getElementById(checklistMap[id]);
-                            if (cb) cb.checked = true;
-                            const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
-                            if (btn) {
-                                btn.classList.add('completed');
-                                btn.textContent = '✓ Completed';
-                                btn.disabled = true;
-                                btn.style.pointerEvents = 'none';
-                                btn.style.animation = 'none';
-                            }
-                        }
-                    });
-                }
-                
-                // 2. Restore text inputs
-                if (data.inputs) {
-                    Object.keys(data.inputs).forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) el.value = data.inputs[id];
-                    });
-                }
-                
-                // 3. Restore radios
-                if (data.radios) {
-                    Object.keys(data.radios).forEach(name => {
-                        const val = data.radios[name];
-                        const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
-                        if (radio) {
-                            radio.checked = true;
-                            radio.dispatchEvent(new Event('change'));
-                        }
-                    });
-                }
-
-                // 4. Restore Vocab progress
-                if (data.vocabHeard) {
-                    vocabHeard = data.vocabHeard;
-                    Object.keys(vocabHeard).forEach(word => {
-                        if (vocabHeard[word]) {
-                            const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
-                            if (checkCell) {
-                                checkCell.innerHTML = '✅';
-                                checkCell.style.color = '#16a34a';
-                            }
-                        }
-                    });
-                    updateVocabularyButtonStatus();
-                }
-                
-                updateChecklistProgress();
-            } catch (e) { console.warn("Load progress failed", e); }
-        }
-
         function markActivityComplete(activityId, checklistId) {
             if (activityCompleted[activityId]) return;
             activityCompleted[activityId] = true;
-            const cb = document.getElementById(checklistId);
-            if (cb) cb.checked = true;
+            document.getElementById(checklistId).checked = true;
             const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-            if (btn) {
-                btn.classList.add('completed');
-                btn.textContent = '✓ Completed';
-                btn.disabled = true;
-                btn.style.pointerEvents = 'none';
-                btn.style.animation = 'none';
-            }
+            if (btn) { btn.classList.add('completed'); btn.disabled = true; btn.textContent = '✓ Completed'; btn.style.animation = 'none'; }
             updateChecklistProgress();
-            saveProgress(); // Local persistence
+            saveProgress();
         }
-
-        function completeDay() {
-            const btn = document.getElementById('dayCompleteBtn');
-            if (btn.disabled) {
-                const msgDiv = document.createElement('div');
-                msgDiv.style.color = '#dc2626';
-                msgDiv.style.textAlign = 'center';
-                msgDiv.innerHTML = '⚠️ Please complete all activities first!';
-                btn.parentNode.insertBefore(msgDiv, btn.nextSibling);
-                setTimeout(() => msgDiv.remove(), 3000);
-                return;
-            }
-            btn.innerHTML = '🎉 Saving...';
-            btn.disabled = true;
-            
-            // Clear local storage upon completion
-            localStorage.removeItem(STORAGE_KEY);
-            
-            if (typeof confetti !== 'undefined') {
-                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-            }
-            setTimeout(() => {
-                window.location.href = '/learning/level/beginner/?celebrate=true&completed=21';
-            }, 2000);
-        }
-
-        // Auto-save on any input change
-        document.addEventListener('input', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                saveProgress();
-            }
-        });
-        document.addEventListener('change', (e) => {
-            if (e.target.type === 'radio') {
-                saveProgress();
-            }
-        });
-
-        // Initial load
-        loadProgress();
 
         function showValidationMessage(elementId, message, isError = true) {
             const msgDiv = document.getElementById(elementId);
             if (msgDiv) {
-                if (isError) {
-                    msgDiv.innerHTML = message;
-                    msgDiv.className = `validation-message error`;
-                    msgDiv.style.display = 'block';
-                    setTimeout(() => {
-                        if (msgDiv.style.display === 'block') msgDiv.style.display = 'none';
-                    }, 4000);
-                }
+                msgDiv.innerHTML = message;
+                msgDiv.className = `validation-message ${isError ? 'error' : 'success'}`;
+                msgDiv.style.display = 'block';
+                setTimeout(() => {
+                    if (msgDiv.style.display === 'block') msgDiv.style.display = 'none';
+                }, 4000);
             }
         }
 
@@ -1587,6 +1518,7 @@
                 const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
                 if (checkCell) { checkCell.innerHTML = '✅'; checkCell.style.color = '#16a34a'; }
                 updateVocabularyButtonStatus();
+                saveProgress();
             }
         }
 
@@ -1749,9 +1681,6 @@
             const speakingCompleteBtn = document.getElementById('completeSpeakingBtn');
             if (speakingCompleteBtn) {
                 speakingCompleteBtn.disabled = !allRecorded;
-                if (!allRecorded && document.getElementById('speakingValidationMsg').style.display !== 'block') {
-                    showValidationMessage('speakingValidationMsg', '⚠️ Please record all 5 sentences before marking as complete.');
-                }
             }
         }
 
@@ -1860,7 +1789,11 @@
             tempUnderlined.forEach(val => { if (expected.includes(val) && !permanentUnderlined.has(val)) permanentUnderlined.add(val); });
             let missing = expected.filter(e => !permanentUnderlined.has(e));
             underlineCheckDone = true;
-            document.getElementById('underlineFeedback').innerHTML = `<div style="background:#fef9e3;padding:0.75rem;">✅ Correct: ${permanentUnderlined.size}/${expected.length}<br>${missing.length ? `❌ Missing: ${missing.join(', ')}` : '🎉 All idioms found!'}</div>`;
+            document.getElementById('underlineFeedback').innerHTML = `<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;margin-top:0.5rem;border-left:4px solid #f59e0b;">✅ Correct: ${permanentUnderlined.size}/${expected.length}<br>${missing.length ? `❌ Missing: ${missing.join(', ')}` : '🎉 All idioms found!'}</div>`;
+            
+            if (missing.length === 0) {
+                showValidationMessage('readingValidationMsg', '✅ Underline part completed! Now switch to Circle Mode.', false);
+            }
             updateAllVisuals();
             checkReadingCompletion();
         }
@@ -1871,7 +1804,11 @@
             tempCircled.forEach(val => { if (expected.includes(val) && !permanentCircled.has(val)) permanentCircled.add(val); });
             let missing = expected.filter(e => !permanentCircled.has(e));
             circleCheckDone = true;
-            document.getElementById('circleFeedback').innerHTML = `<div style="background:#fef9e3;padding:0.75rem;">✅ Correct: ${permanentCircled.size}/${expected.length}<br>${missing.length ? `❌ Missing: ${missing.join(', ')}` : '🎉 All progress words circled!'}</div>`;
+            document.getElementById('circleFeedback').innerHTML = `<div style="background:#fef9e3;padding:0.75rem;border-radius:12px;margin-top:0.5rem;border-left:4px solid #3b82f6;">✅ Correct: ${permanentCircled.size}/${expected.length}<br>${missing.length ? `❌ Missing: ${missing.join(', ')}` : '🎉 All progress words circled!'}</div>`;
+            
+            if (missing.length === 0) {
+                showValidationMessage('readingValidationMsg', '✅ Circle part completed!', false);
+            }
             updateAllVisuals();
             checkReadingCompletion();
         }
@@ -2076,8 +2013,12 @@
                 return false;
             }
 
+            // Strict validation: Start with capital and end with full stop
+            const startsWithCapital = /^[A-Z]/.test(userAnswer.trim());
+            const endsWithFullStop = userAnswer.trim().endsWith('.');
+
             // Check for exact match (full correct sentence)
-            if (trimmed === grammarCorrectAnswers[num]) {
+            if (trimmed === grammarCorrectAnswers[num] && startsWithCapital && endsWithFullStop) {
                 feedbackDiv.innerHTML = '✅ Correct! Well done.';
                 feedbackDiv.className = 'fix-feedback correct';
                 return true;
@@ -2116,7 +2057,13 @@
                     }
                     return false;
                 }
-                feedbackDiv.innerHTML = '⚠️ Please write the complete sentence.';
+                let errorMsg = '⚠️ ';
+                if (!startsWithCapital) errorMsg += 'Start with a capital letter. ';
+                if (!endsWithFullStop) errorMsg += 'End with a full stop (.). ';
+                if (trimmed === grammarCorrectAnswers[num]) errorMsg += 'Almost there! Check caps/punctuation.';
+                else errorMsg += 'Please write the complete sentence.';
+
+                feedbackDiv.innerHTML = errorMsg;
                 feedbackDiv.className = 'fix-feedback incorrect';
                 return false;
             }
@@ -2210,6 +2157,17 @@
                 poisedCorrect = false;
             }
 
+            const resultDiv = document.getElementById('extraOverallFeedback');
+            if (demeanorCorrect && poisedCorrect) {
+                resultDiv.innerHTML = '🎉 Excellent! Both challenge questions are correct!';
+                resultDiv.className = 'validation-message success';
+                resultDiv.style.display = 'block';
+            } else {
+                resultDiv.innerHTML = '⚠️ Some answers need correction.';
+                resultDiv.className = 'validation-message error';
+                resultDiv.style.display = 'block';
+            }
+
             checkExtraMileCompletion();
         });
 
@@ -2242,6 +2200,14 @@
         });
 
         updateChecklistProgress();
+
+        // Auto-save on input
+        document.querySelectorAll('input[type="text"], input[type="radio"], textarea').forEach(el => {
+            el.addEventListener('input', saveProgress);
+            el.addEventListener('change', saveProgress);
+        });
+
+        loadProgress();
     </script>
 </body>
 

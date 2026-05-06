@@ -808,6 +808,33 @@
             display: none;
         }
 
+        .day-complete-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .day-complete-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .day-complete-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #94a3b8, #64748b);
+        }
+
         .next-day-btn {
             background: white;
             color: #16a34a;
@@ -1567,9 +1594,6 @@
                     <h2>🗣️ 2. Speaking Activity: The "Executive Summary"</h2>
                 </div>
                 <br>
-                <div class="speaking-info">
-                    A leader can take 28 days of work and summarize it in 60 seconds.
-                </div>
 
                 <div class="card-body">
                     <div class="task-box">
@@ -2024,27 +2048,85 @@
                         <li><input type="checkbox" id="chk7" disabled> <label> I completed the "Ultimate Vocab Maze"
                                 solo game.</label></li>
                     </ul>
+
+                    <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 28 </button>
+                    </div>
                     <div style="text-align:right;"><span class="badge" id="progressCounter">0/7 completed</span></div>
                 </div>
             </div>
-
-            <div style="display: flex; justify-content: center; margin-top: 1rem;">
-                <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 28 </button>
-            </div>
-            <div class="completion-banner" id="completionBanner">
-                <div style="font-size: 3rem;">🎉✨🏆</div>
-                <h2>Congratulations, Grand Finale Speaker!</h2>
-                <p>You've successfully completed Day 28 of your English journey!</p><a href="#"
-                    class="next-day-btn">Continue to Day 29 →</a>
-            </div>
-
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
         // ==================== Activity Completion Tracking ====================
-        let activityCompleted = { listening: false, speaking: false, reading: false, writing: false, grammar: false, game: false, vocabulary: false };
+        let activityCompleted = {
+            listening: false, speaking: false, reading: false,
+            writing: false, grammar: false, game: false, vocabulary: false
+        };
+
+        // ==================== Local Storage Persistence ====================
+        const STORAGE_KEY = 'progress_beginner_day28';
+
+        function saveProgress() {
+            const data = {
+                activityCompleted: { ...activityCompleted },
+                inputs: {}
+            };
+            document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                if (el.id) data.inputs[el.id] = el.value;
+            });
+            document.querySelectorAll('input[type="radio"]').forEach(el => {
+                if (el.name && el.checked) {
+                    data.inputs[el.name] = el.value;
+                }
+            });
+            document.querySelectorAll('select').forEach(el => {
+                if (el.id) data.inputs[el.id] = el.value;
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+                if (data.activityCompleted) {
+                    activityCompleted = data.activityCompleted;
+                    const checklistMap = {
+                        listening: 'chk1', speaking: 'chk2', reading: 'chk3',
+                        writing: 'chk4', vocabulary: 'chk5', grammar: 'chk6', game: 'chk7'
+                    };
+                    Object.keys(activityCompleted).forEach(id => {
+                        if (activityCompleted[id]) {
+                            const cb = document.getElementById(checklistMap[id]);
+                            if (cb) cb.checked = true;
+                            const btn = document.getElementById(`complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`);
+                            if (btn) {
+                                btn.classList.add('completed');
+                                btn.textContent = '✓ Completed';
+                                btn.disabled = true;
+                            }
+                        }
+                    });
+                }
+                if (data.inputs) {
+                    Object.keys(data.inputs).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.value = data.inputs[id];
+                            el.dispatchEvent(new Event('input'));
+                        } else {
+                            const radio = document.querySelector(`input[name="${id}"][value="${data.inputs[id]}"]`);
+                            if (radio) radio.checked = true;
+                        }
+                    });
+                }
+                updateChecklistProgress();
+            } catch (e) { console.error("Error loading progress:", e); }
+        }
         let csrftoken = null;
 
         function getCookie(name) {
@@ -2070,163 +2152,39 @@
         function updateChecklistProgress() {
             const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6', 'chk7'];
             let completedCount = 0;
-            for (let i = 0; i < checkboxes.length; i++) {
-                if (document.getElementById(checkboxes[i])?.checked) completedCount++;
+            checkboxes.forEach(id => {
+                if (document.getElementById(id)?.checked) completedCount++;
+            });
+
+            const progressSpan = document.getElementById('progressCounter');
+            if (progressSpan) progressSpan.innerText = `${completedCount}/7 completed`;
+
+            const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+            if (dayCompleteBtn) {
+                dayCompleteBtn.disabled = (completedCount !== 7);
+                dayCompleteBtn.style.opacity = (completedCount === 7) ? '1' : '0.5';
             }
-            document.getElementById('progressCounter').innerText = `${completedCount}/7 completed`;
+
             if (completedCount === 7) {
-                document.getElementById('completionBanner').style.display = 'block';
+                const banner = document.getElementById('completionBanner');
+                if (banner) banner.style.display = 'block';
             }
-        }
-
-        // ========== LOCALSTORAGE PERSISTENCE ==========
-        const STORAGE_KEY = 'progress_beginner_day28';
-
-        function saveProgress() {
-            const data = {
-                activityCompleted: activityCompleted,
-                inputs: {},
-                radios: {},
-                vocabHeard: vocabHeard
-            };
-            
-            // Save all text inputs and textareas
-            document.querySelectorAll('input[type="text"], textarea').forEach(el => {
-                if (el.id) data.inputs[el.id] = el.value;
-            });
-            
-            // Save all radio selections
-            document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
-                if (el.name) data.radios[el.name] = el.value;
-            });
-            
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        }
-
-        function loadProgress() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (!saved) return;
-            try {
-                const data = JSON.parse(saved);
-                
-                // 1. Restore activity completion
-                if (data.activityCompleted) {
-                    activityCompleted = data.activityCompleted;
-                    const checklistMap = { 
-                        listening: 'chk1', speaking: 'chk2', reading: 'chk3', 
-                        writing: 'chk4', vocabulary: 'chk5', grammar: 'chk6', game: 'chk7'
-                    };
-                    Object.keys(activityCompleted).forEach(id => {
-                        if (activityCompleted[id]) {
-                            const cb = document.getElementById(checklistMap[id]);
-                            if (cb) cb.checked = true;
-                            const btnId = `complete${id.charAt(0).toUpperCase() + id.slice(1)}Btn`;
-                            const btn = document.getElementById(btnId);
-                            if (btn) {
-                                btn.classList.add('completed');
-                                btn.textContent = '✓ Completed';
-                                btn.disabled = true;
-                                btn.style.pointerEvents = 'none';
-                            }
-                        }
-                    });
-                }
-                
-                // 2. Restore text inputs
-                if (data.inputs) {
-                    Object.keys(data.inputs).forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) el.value = data.inputs[id];
-                    });
-                }
-                
-                // 3. Restore radios
-                if (data.radios) {
-                    Object.keys(data.radios).forEach(name => {
-                        const val = data.radios[name];
-                        const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
-                        if (radio) {
-                            radio.checked = true;
-                            radio.dispatchEvent(new Event('change'));
-                        }
-                    });
-                }
-
-                // 4. Restore Vocab progress
-                if (data.vocabHeard) {
-                    vocabHeard = data.vocabHeard;
-                    Object.keys(vocabHeard).forEach(word => {
-                        if (vocabHeard[word]) {
-                            const checkCell = document.getElementById(`check-${word.toLowerCase()}`);
-                            if (checkCell) {
-                                checkCell.innerHTML = '✅';
-                                checkCell.style.color = '#16a34a';
-                            }
-                        }
-                    });
-                    updateVocabularyButtonStatus();
-                }
-                
-                updateChecklistProgress();
-            } catch (e) { console.warn("Load progress failed", e); }
         }
 
         function markActivityComplete(activityId, checklistId) {
             if (activityCompleted[activityId]) return;
             activityCompleted[activityId] = true;
-            const cb = document.getElementById(checklistId);
-            if (cb) cb.checked = true;
-            const btnId = `complete${activityId.charAt(0).toUpperCase() + id.slice(1)}Btn`;
-            const btn = document.getElementById(btnId);
-            if (btn) {
-                btn.classList.add('completed');
-                btn.textContent = '✓ Completed';
-                btn.disabled = true;
-                btn.style.pointerEvents = 'none';
-            }
+            document.getElementById(checklistId).checked = true;
+            const btn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
+            if (btn) { btn.classList.add('completed'); btn.textContent = '✓ Completed'; btn.disabled = true; }
             updateChecklistProgress();
-            saveProgress(); // Local persistence
+            saveProgress();
+
+            fetch(`/learning/day/28/complete/${activityId}/`, {
+                method: 'POST', headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ completed: true })
+            }).catch(err => console.error('Error saving progress:', err));
         }
-
-        function completeDay() {
-            const btn = document.getElementById('dayCompleteBtn');
-            if (btn.disabled) {
-                const msgDiv = document.createElement('div');
-                msgDiv.style.color = '#dc2626';
-                msgDiv.style.textAlign = 'center';
-                msgDiv.innerHTML = '⚠️ Please complete all activities first!';
-                btn.parentNode.insertBefore(msgDiv, btn.nextSibling);
-                setTimeout(() => msgDiv.remove(), 3000);
-                return;
-            }
-            btn.innerHTML = '🎉 Saving...';
-            btn.disabled = true;
-            
-            // Clear local storage upon completion
-            localStorage.removeItem(STORAGE_KEY);
-            
-            if (typeof confetti !== 'undefined') {
-                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-            }
-            setTimeout(() => {
-                window.location.href = '/learning/level/beginner/?celebrate=true&completed=28';
-            }, 2000);
-        }
-
-        // Auto-save on any input change
-        document.addEventListener('input', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                saveProgress();
-            }
-        });
-        document.addEventListener('change', (e) => {
-            if (e.target.type === 'radio') {
-                saveProgress();
-            }
-        });
-
-        // Initial load
-        loadProgress();
 
         function showValidationMessage(elementId, message, isError = true) {
             const msgDiv = document.getElementById(elementId);
@@ -2494,8 +2452,8 @@
         });
 
         // ==================== Reading Activity ====================
-        const readingPassageText = `In a multilingual workspace, the ability to articulate technical data is a privilege. A tenacious learner never gives up, no matter how difficult the task. We must be meticulous in our documentation and review every detail with care. An indefatigable professional works tirelessly until the project is complete. We must avoid clandestine decision-making and instead advocate for transparency. A resilient leader does not fear volatile markets; they stipulate clear terms and commence work with scrupulous care. To flourish is to master the subtleties of language.`;
-        const startWordsList = ['commence', 'Inaugurate', 'Initially'];
+        const readingPassageText = `Initially, we must inaugurate the project, establish a timeline, and launch our plan. In a multilingual workspace, the ability to articulate technical data is a privilege. A tenacious learner never gives up, no matter how difficult the task. We must be meticulous in our documentation and review every detail with care. An indefatigable professional works tirelessly until the project is complete. We must avoid clandestine decision-making and instead advocate for transparency. A resilient leader does not fear volatile markets; they stipulate clear terms and commence work with scrupulous care. To flourish is to master the subtleties of language.`;
+        const startWordsList = ['commence', 'inaugurate', 'initially', 'establish', 'launch'];
         const hardWorkWordsList = ['tenacious', 'meticulous', 'indefatigable'];
 
         let readingCurrentMode = 'circle';
@@ -3115,27 +3073,6 @@
         });
 
         // ==================== Day Complete ====================
-        function updateProgressCounter() {
-            const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6', 'chk7'];
-            let completedCount = 0;
-            checkboxes.forEach(id => {
-                if (document.getElementById(id)?.checked) completedCount++;
-            });
-
-            const progressSpan = document.getElementById('progressCounter');
-            if (progressSpan) progressSpan.innerText = `${completedCount}/7 completed`;
-
-            const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-            if (dayCompleteBtn) {
-                dayCompleteBtn.disabled = (completedCount !== 7);
-                dayCompleteBtn.style.opacity = (completedCount === 7) ? '1' : '0.5';
-            }
-
-            if (completedCount === 7) {
-                const banner = document.getElementById('completionBanner');
-                if (banner) banner.style.display = 'block';
-            }
-        }
 
         function completeDay() {
             const btn = document.getElementById('dayCompleteBtn');
@@ -3145,6 +3082,7 @@
             }
             btn.innerHTML = '🎉 Saving...';
             btn.disabled = true;
+            localStorage.removeItem(STORAGE_KEY);
             if (typeof confetti !== 'undefined') {
                 confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
             }
@@ -3157,7 +3095,14 @@
 
         // Initialize
         updateChecklistProgress();
-        updateProgressCounter();
+
+        // Auto-save on input/change
+        document.querySelectorAll('input[type="text"], input[type="radio"], textarea, select').forEach(el => {
+            el.addEventListener('input', saveProgress);
+            el.addEventListener('change', saveProgress);
+        });
+
+        loadProgress();
     </script>
 </body>
 
