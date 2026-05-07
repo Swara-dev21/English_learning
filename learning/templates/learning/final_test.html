@@ -622,14 +622,41 @@ function updateProgress() {
 }
 
 function startTimer() {
+  const timerStorageKey = `assessment_${levelName}_start_time`;
+  let startTime = localStorage.getItem(timerStorageKey);
+  
+  if (!startTime) {
+    startTime = Date.now();
+    localStorage.setItem(timerStorageKey, startTime);
+  } else {
+    startTime = parseInt(startTime);
+  }
+
+  // Calculate remaining time based on elapsed duration
+  const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+  timeLeft = (timeLimitMinutes * 60) - elapsedSeconds;
+
+  // Handle case where time already expired before refresh
+  if (timeLeft <= 0) {
+    timeLeft = 0;
+    autoSubmit();
+    return;
+  }
+
   timerInterval = setInterval(() => {
     if (isSubmitted) return;
+    
+    // Update timeLeft based on actual clock time to be more accurate
+    const currentElapsed = Math.floor((Date.now() - startTime) / 1000);
+    timeLeft = (timeLimitMinutes * 60) - currentElapsed;
+
     if (timeLeft <= 0) { 
+      timeLeft = 0;
       clearInterval(timerInterval); 
       autoSubmit(); 
       return; 
     }
-    timeLeft--;
+
     const m = Math.floor(timeLeft / 60);
     const s = timeLeft % 60;
     document.getElementById('timerDisplay').textContent = 
@@ -652,6 +679,10 @@ function submitAssessment() {
   if (isSubmitted) return;
   isSubmitted = true;
   
+  // Cleanup storage on submission
+  localStorage.removeItem(`assessment_${levelName}_start_time`);
+  localStorage.removeItem(`assessment_${levelName}_answers`);
+  
   // Calculate score
   let score = 0;
   questionsData.forEach((q, i) => {
@@ -666,6 +697,7 @@ function submitAssessment() {
   // Submit the form
   document.getElementById('mcqTestForm').submit();
 }
+
 
 function saveAnswersToLocal() {
   localStorage.setItem(`assessment_${levelName}_answers`, JSON.stringify(userAnswers));

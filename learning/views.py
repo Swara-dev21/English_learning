@@ -202,8 +202,10 @@ def level_overview(request, level_name):
         'assessment_total_questions': assessment_total_questions,
         'assessment_passing_score': assessment_passing_score,
         'assessment_time_limit': assessment_time_limit,
+        'has_passed_assessment': UserAssessmentAttempt.objects.filter(user=request.user, assessment=assessment, passed=True).exists() if 'assessment' in locals() else False,
         'collected_rewards': progress.collected_rewards,
     }
+
     return render(request, 'learning/level_overview.html', context)
 
 def get_day_title(level, day):
@@ -621,51 +623,6 @@ def take_final_test(request, level_name):
         messages.error(request, f'No questions found for {level_name} level assessment. Please contact support.')
         return redirect('learning:level_overview', level_name=level_name)
     
-    TESTING_MODE = settings.DEBUG
-    
-    if TESTING_MODE:
-        if not progress.is_completed():
-            messages.info(request, f'⚠️ TESTING MODE: {level_name.capitalize()} assessment taken before completing all days.')
-        
-        if request.method == 'POST':
-            score, total_questions = process_assessment_answers(request.POST, assessment)
-            percentage = (score / total_questions) * 100
-            
-            # Save attempt
-            attempt = UserAssessmentAttempt.objects.create(
-                user=request.user,
-                assessment=assessment,
-                level=level_name,
-                score=score,
-                total_questions=total_questions,
-                percentage=percentage,
-                passed=percentage >= assessment.passing_score,
-                answers=dict(request.POST),
-                completed_at=timezone.now()
-            )
-            
-            if percentage >= assessment.passing_score:
-                messages.success(request, f'🎉 TESTING MODE: {level_name.capitalize()} assessment passed! Score: {score}/{total_questions} ({percentage:.1f}%) 🎉')
-                
-                progress.certificate_issued = True
-                progress.certificate_issued_at = timezone.now()
-                progress.save()
-                
-                certificate, created = UserCertificate.objects.get_or_create(
-                    user=request.user,
-                    level=level_name,
-                    defaults={
-                        'certificate_code': generate_certificate_code(request.user, level_name)
-                    }
-                )
-                
-                return redirect(f'/learning/level/{level_name}/result/?score={score}')
-            else:
-                messages.error(request, f'❌ TESTING MODE: Failed! Score: {score}/{total_questions} ({percentage:.1f}%). Need {assessment.passing_score}/{total_questions} to pass.')
-                return redirect('learning:final_test', level_name=level_name)
-        
-        return render_test_page(request, level_name, assessment)
-    
     # Production mode logic
     if not progress.is_completed():
         messages.warning(request, '⚠️ You must complete all 30 days before taking the final test.')
@@ -680,7 +637,7 @@ def take_final_test(request, level_name):
     
     if existing_attempt:
         messages.info(request, f'✅ You have already passed this assessment with {existing_attempt.score}/{existing_attempt.total_questions}.')
-        return redirect('learning:certificate_view', level_name=level_name)
+        return redirect('learning:test_result', level_name=level_name)
     
     if request.method == 'POST':
         score, total_questions = process_assessment_answers(request.POST, assessment)
@@ -712,6 +669,17 @@ def take_final_test(request, level_name):
             progress.certificate_issued_at = timezone.now()
             progress.save()
             
+            # ========== AUTOMATIC LEVEL PROGRESSION ==========
+            # Update profile level to the next stage
+            profile = request.user.profile
+            if level_name == 'beginner' and profile.level.lower() == 'beginner':
+                profile.level = 'intermediate'
+                profile.save()
+            elif level_name == 'intermediate' and profile.level.lower() == 'intermediate':
+                profile.level = 'advanced'
+                profile.save()
+
+            
             messages.success(request, f'🎉 Congratulations! You passed with {score}/{total_questions} ({percentage:.1f}%)! 🎉')
             return redirect(f'/learning/level/{level_name}/result/?score={score}')
         else:
@@ -719,6 +687,7 @@ def take_final_test(request, level_name):
             return redirect('learning:final_test', level_name=level_name)
     
     return render_test_page(request, level_name, assessment)
+
 
 # Then replace your existing render_test_page function with this:
 def render_test_page(request, level_name, assessment):
@@ -764,7 +733,7 @@ def render_test_page(request, level_name, assessment):
         'assessment': assessment,
         'questions': questions_list,
         'questions_json': json.dumps(questions_data),
-        'testing_mode': settings.DEBUG,
+        'testing_mode': False,
     }
     return render(request, 'learning/final_test.html', context)
 
@@ -806,73 +775,152 @@ def certificate_view(request, level_name):
     }
     return render(request, 'learning/certificate.html', context)
 
-TEMPLATE_PATH = r"D:\English_learning\learning\static\learning\images\certificate_template.png"
-FONT_PATH_NAME = r"D:\English_learning\learning\static\learning\images\Cinzel-VariableFont_wght.ttf"
-FONT_PATH_DATE = r"D:\English_learning\learning\static\learning\images\Montserrat-VariableFont_wght.ttf"
+# Certificate paths and fonts
+IMAGE_DIR = os.path.join(settings.BASE_DIR, 'learning', 'static', 'learning', 'images')
+FONT_NAME_PATH = os.path.join(IMAGE_DIR, 'Cantiqe Italic.ttf')
+FONT_OTHER_PATH = os.path.join(IMAGE_DIR, 'Montserrat-Italic-VariableFont_wght.ttf')
+
 
 @login_required
 def generate_certificate_png(request, level_name):
-    """Generate PNG certificate using template"""
-    try:
-        if not os.path.exists(TEMPLATE_PATH):
-            return JsonResponse({'error': 'Template not found'}, status=500)
+    """Generate PNG certificate with optimized speed and feedback saving"""
+    # 1. Quick check if we already have this certificate saved
+    from .models import UserCertificate
+    certificate = UserCertificate.objects.filter(user=request.user, level=level_name).first()
+    
+    # Return immediately if image exists to save processing time
+    if certificate and certificate.certificate_image:
+        return HttpResponse(certificate.certificate_image, content_type='image/png')
 
-        img = Image.open(TEMPLATE_PATH).convert("RGB")
+    if request.method == 'POST':
+        try:
+            import json
+            data = json.loads(request.body)
+            rating = data.get('rating', 3)
+            comment = data.get('feedback', '')
+            
+            from .models import UserFeedback
+            UserFeedback.objects.create(
+                user=request.user,
+                level=level_name,
+                rating=rating,
+                comment=comment,
+                created_at=timezone.now()
+            )
+        except Exception as e:
+            print(f"Error saving feedback: {e}")
+
+    try:
+
+
+        # 1. Map level to template image
+        template_map = {
+            'beginner': 'Beginner_level.png',
+            'intermediate': 'Intermediate_level.png',
+            'advanced': 'Advance_level.png'
+        }
+        template_file = template_map.get(level_name.lower(), 'Beginner_level.png')
+        template_path = os.path.join(IMAGE_DIR, template_file)
+
+        if not os.path.exists(template_path):
+            return JsonResponse({'error': f'Template not found at {template_path}'}, status=500)
+
+        # 2. Open template
+        img = Image.open(template_path).convert("RGB")
         draw = ImageDraw.Draw(img)
 
-        img_width, img_height = img.size
-
-        user_name = request.user.get_full_name() or request.user.username
+        # 3. Gather dynamic data
+        user_name = (request.user.get_full_name() or request.user.username).upper()
+        
+        # Get profile for department and institute
+        try:
+            profile = request.user.profile
+            dept_name = profile.department or ""
+            inst_name = profile.institute or ""
+        except:
+            dept_name = ""
+            inst_name = ""
+            
         today = datetime.today().strftime("%d %B %Y")
+        
+        # Get or create certificate for ID and code
+        certificate, created = UserCertificate.objects.get_or_create(
+            user=request.user,
+            level=level_name,
+            defaults={'certificate_code': generate_certificate_code(request.user, level_name)}
+        )
+        # Format ID as 4-digit number (e.g., 0001)
+        cert_id_display = f"{certificate.id:04d}"
+        # 4. Define drawing parameters (Coordinates and Limits)
+        # Using your latest requested parameters:
+        name_pos = (1000, 736) # Center point
+        name_max_width = 750
+        name_size = 75
+        
+        dept_pos = (556, 885) 
+        dept_max_width = 490
+        dept_size = 40
+        
+        inst_pos = (554, 1014) 
+        inst_max_width = 620
+        inst_size = 40
+        
+        date_pos = (310, 1234)
+        date_max_width = 400
+        date_size = 34
+        
+        id_pos = (1466, 1224)
+        id_max_width = 300
+        id_size = 34
 
-        certificate = UserCertificate.objects.filter(user=request.user, level=level_name).first()
-        cert_code = certificate.certificate_code if certificate else generate_certificate_code(request.user, level_name)
 
-        name_font_size = 72
 
-        while name_font_size > 40:
-            name_font = ImageFont.truetype(FONT_PATH_NAME, name_font_size)
-            bbox = draw.textbbox((0, 0), user_name, font=name_font)
-            text_width = bbox[2] - bbox[0]
 
-            if text_width < img_width * 0.7:
-                break
-            name_font_size -= 2
 
-        date_font = ImageFont.truetype(FONT_PATH_DATE, 36)
-        id_font = ImageFont.truetype(FONT_PATH_DATE, 30)
+        # 5. Load and Draw Fonts with size adjustment
+        def draw_text_fit(text, pos, max_width, initial_size, font_path, fill_color, anchor="mm", is_bold=False):
+            size = initial_size
+            font = ImageFont.truetype(font_path, size)
+            while size > 10:
+                bbox = draw.textbbox((0, 0), text, font=font)
+                if (bbox[2] - bbox[0]) <= max_width:
+                    break
+                size -= 4
+                font = ImageFont.truetype(font_path, size)
 
-        main_color = (31, 58, 95)
+            
+            if is_bold:
+                # Faux-bold: Draw twice with 1px offset
+                draw.text((pos[0], pos[1]), text, fill=fill_color, font=font, anchor=anchor)
+                draw.text((pos[0] + 1, pos[1]), text, fill=fill_color, font=font, anchor=anchor)
+            else:
+                draw.text(pos, text, fill=fill_color, font=font, anchor=anchor)
 
-        bbox = draw.textbbox((0, 0), user_name, font=name_font)
-        text_width = bbox[2] - bbox[0]
+        main_color = (0, 0, 0) # Black text
 
-        x_name = (img_width - text_width) // 2
-        y_name = int(img_height * 0.445)
+        # Name (Centered)
+        draw_text_fit(user_name, name_pos, name_max_width, name_size, FONT_NAME_PATH, main_color, anchor="mm")
+        
+        # Department (Left-ish but adjusted) - BOLD
+        draw_text_fit(dept_name, dept_pos, dept_max_width, dept_size, FONT_OTHER_PATH, main_color, anchor="la", is_bold=True)
+        
+        # Institute (Left-ish but adjusted) - BOLD
+        draw_text_fit(inst_name, inst_pos, inst_max_width, inst_size, FONT_OTHER_PATH, main_color, anchor="la", is_bold=True)
+        
+        # Date - BOLD
+        draw_text_fit(today, date_pos, date_max_width, date_size, FONT_OTHER_PATH, main_color, anchor="la", is_bold=True)
+        
+        # Certificate ID - BOLD
+        draw_text_fit(cert_id_display, id_pos, id_max_width, id_size, FONT_OTHER_PATH, main_color, anchor="la", is_bold=True)
 
-        draw.text((x_name, y_name), user_name, fill=main_color, font=name_font)
 
-        date_text = f"Date Issued: {today}"
-        x_date = int(img_width * 0.12)
-        y_date = int(img_height * 0.88)
-        draw.text((x_date, y_date), date_text, fill=main_color, font=date_font)
 
-        id_text = f"Certificate ID: {cert_code}"
-        bbox = draw.textbbox((0, 0), id_text, font=id_font)
-        text_width = bbox[2] - bbox[0]
-        x_id = img_width - text_width - int(img_width * 0.08)
-        y_id = int(img_height * 0.88)
-        draw.text((x_id, y_id), id_text, fill=main_color, font=id_font)
 
+        # 7. Save and return
         img_buffer = io.BytesIO()
         img.save(img_buffer, format='PNG', dpi=(300, 300))
         img_buffer.seek(0)
 
-        certificate, created = UserCertificate.objects.get_or_create(
-            user=request.user,
-            level=level_name,
-            defaults={'certificate_code': cert_code}
-        )
 
         certificate.certificate_image = img_buffer.getvalue()
         certificate.save()
@@ -883,6 +931,7 @@ def generate_certificate_png(request, level_name):
         import traceback
         traceback.print_exc()
         return JsonResponse({'error': str(e)}, status=500)
+
 
 @login_required
 def view_certificate_png(request, level_name):
@@ -967,6 +1016,56 @@ def generate_fallback_certificate(request, level_name, progress, certificate):
             'error': f'Error generating fallback certificate: {str(e)}',
             'code': 'FALLBACK_ERROR'
         }, status=500)
+
+@login_required
+def generate_certificate_pdf(request, level_name):
+    """Generate a PDF version of the certificate for download"""
+    # 1. Get user progress to check if they passed
+    progress = get_user_progress(request.user, level_name)
+    if not progress.is_completed():
+         # Check assessment specifically
+         asm = UserAssessmentAttempt.objects.filter(user=request.user, level=level_name, passed=True).first()
+         if not asm:
+            return HttpResponse("Assessment not passed", status=403)
+
+    # 2. Get or generate the certificate image
+    certificate = UserCertificate.objects.filter(user=request.user, level=level_name).first()
+    
+    if not certificate or not certificate.certificate_image:
+        # If no image in DB, we need to generate it
+        # We reuse the PNG generation logic but don't return the HttpResponse
+        # Instead we get the image data
+        response = generate_certificate_png(request, level_name)
+        if isinstance(response, JsonResponse):
+            return response
+        certificate = UserCertificate.objects.filter(user=request.user, level=level_name).first()
+
+    if not certificate or not certificate.certificate_image:
+        return HttpResponse("Failed to generate certificate image", status=500)
+
+    # 3. Convert PNG to PDF using PIL
+    try:
+        img_data = certificate.certificate_image
+        img = Image.open(io.BytesIO(img_data)).convert("RGB")
+        
+        pdf_buffer = io.BytesIO()
+        img.save(pdf_buffer, format='PDF', resolution=300.0)
+        pdf_buffer.seek(0)
+        
+        # 4. Return as PDF download
+        response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="English_Learning_Certificate_{level_name.capitalize()}.pdf"'
+        
+        # Update progress flag if not already set
+        if not progress.certificate_issued:
+            progress.certificate_issued = True
+            progress.certificate_issued_at = timezone.now()
+            progress.save()
+            
+        return response
+    except Exception as e:
+        return JsonResponse({'error': f'PDF conversion failed: {str(e)}'}, status=500)
+
 
 @login_required
 def certificate_status_api(request, level_name):
@@ -1300,4 +1399,4 @@ def ai_evaluate(request):
             'feedback': 'Something went wrong with the evaluation.',
             'suggestion': 'Please refresh the page and try again.',
             'debug_info': str(e)
-        }, status=200)
+        }, status=200)

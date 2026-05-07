@@ -561,6 +561,84 @@
     <script src="{% static 'learning/js/main.js' %}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+    // ==================== Local Storage Persistence ====================
+    const STORAGE_KEY = 'progress_intermediate_day14';
+
+    function saveProgress() {
+        const data = {
+            inputs: {},
+            checkboxes: {},
+            activityCompleted: typeof activityCompleted !== 'undefined' ? { ...activityCompleted } : {}
+        };
+        document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+            if (el.id) data.inputs[el.id] = el.value;
+        });
+        document.querySelectorAll('input[type="radio"]').forEach(el => {
+            if (el.name && el.checked) {
+                data.inputs[el.name] = el.value;
+            }
+        });
+        document.querySelectorAll('select').forEach(el => {
+            if (el.id) data.inputs[el.id] = el.value;
+        });
+        document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+            if (el.id) data.checkboxes[el.id] = el.checked;
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function loadProgress() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return;
+        try {
+            const data = JSON.parse(saved);
+            if (data.inputs) {
+                Object.keys(data.inputs).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.value = data.inputs[id];
+                        el.dispatchEvent(new Event('input'));
+                    } else {
+                        const radio = document.querySelector(`input[name="${id}"][value="${data.inputs[id]}"]`);
+                        if (radio) radio.checked = true;
+                    }
+                });
+            }
+            if (data.checkboxes) {
+                Object.keys(data.checkboxes).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.checked = data.checkboxes[id];
+                });
+            }
+            if (data.activityCompleted && typeof activityCompleted !== 'undefined') {
+                Object.keys(data.activityCompleted).forEach(key => {
+                    activityCompleted[key] = data.activityCompleted[key];
+                });
+            }
+            
+            // Restore button states based on checkboxes
+            ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'].forEach(chkId => {
+                const chk = document.getElementById(chkId);
+                if (chk && chk.checked) {
+                    const buttons = Array.from(document.querySelectorAll('button.complete-activity-btn'));
+                    buttons.forEach(btn => {
+                        if (btn.id.toLowerCase().includes(chkId.replace('chk', ''))) {
+                             btn.disabled = true;
+                             btn.textContent = '✓ Completed';
+                             btn.classList.add('completed');
+                             btn.style.background = '#94a3b8';
+                             btn.style.opacity = '1';
+                        }
+                    });
+                }
+            });
+
+            if (typeof updateProgressCounter === 'function') updateProgressCounter(); saveProgress();
+        } catch (e) { console.error("Error loading progress:", e); }
+    }
+
+        
+    
 
             // ==================== CSRF TOKEN ====================
             function getCookie(name) {
@@ -613,7 +691,7 @@
                     completeBtn.disabled = true;
                     completeBtn.textContent = '✓ Completed';
                 }
-                updateProgressCounter();
+                updateProgressCounter(); saveProgress(); 
             };
 
             // ==================== VOCABULARY AUDIO ====================
@@ -1304,13 +1382,23 @@ OUTPUT ONLY JSON:
                     }
 
                     setTimeout(() => {
-                        window.location.href = '/learning/level/intermediate/?celebrate=true&completed=14';
+                        localStorage.removeItem(STORAGE_KEY); window.location.href = '/learning/level/intermediate/?celebrate=true&completed=14';
                     }, 1500);
                 });
             }
 
             setTimeout(updateProgressCounter, 500);
-        });
+        
+        
+    
+    // Auto-save on input/change
+    document.querySelectorAll('input[type="text"], input[type="radio"], textarea, select').forEach(el => {
+        el.addEventListener('input', saveProgress);
+        el.addEventListener('change', saveProgress);
+    });
+
+    loadProgress();
+});
     </script>
 </body>
 

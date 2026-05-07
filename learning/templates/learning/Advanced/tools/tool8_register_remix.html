@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Tool 8: Register Remix | Advanced Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f9ff;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: #0f172a;
+        }
+
+        .lesson-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem 3rem 2rem;
+        }
+
+        /* Header */
+        .tool-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 0;
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-header .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 0 1.5rem;
+        }
+
+        .tool-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.35rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            color: white;
+        }
+
+        .tool-header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0.5rem 0;
+            color: white;
+        }
+
+        .tool-header .subtitle {
+            font-size: 0.9rem;
+            color: #f3e8ff;
+        }
+
+        /* Task Introduction Card */
+        .task-intro {
+            background: white;
+            border-radius: 24px;
+            padding: 1.2rem 1.8rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2edf7;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .task-intro h3 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #4f46e5;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .task-intro p {
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .task-intro .registers-preview {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .registers-preview span {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        .academic-preview { background: #e0e7ff; color: #3730a3; }
+        .email-preview { background: #fae8ff; color: #a21caf; }
+        .verbal-preview { background: #fed7aa; color: #9a3412; }
+        .guide-preview { background: #d1fae5; color: #065f46; }
+        .team-preview { background: #ffe4e6; color: #9f1239; }
+        .linkedin-preview { background: #dbeafe; color: #1e40af; }
+
+        /* Progress Bar */
+        .progress-section {
+            background: white;
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            border-radius: 30px;
+            height: 10px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            width: 0%;
+            height: 100%;
+            border-radius: 30px;
+            transition: width 0.4s ease;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Game Card */
+        .game-card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+            border: 1px solid #eef2ff;
+        }
+
+        .scenario-header {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .scenario-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .scenario-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .base-message {
+            background: #fef3c7;
+            padding: 0.75rem 1rem;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            color: #92400e;
+            margin-top: 0.75rem;
+            font-family: monospace;
+            display: inline-block;
+        }
+
+        .register-card {
+            padding: 1.8rem;
+        }
+
+        .register-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .register-badge.academic { background: #e0e7ff; color: #3730a3; }
+        .register-badge.email { background: #fae8ff; color: #a21caf; }
+        .register-badge.verbal { background: #fed7aa; color: #9a3412; }
+        .register-badge.guide { background: #d1fae5; color: #065f46; }
+        .register-badge.team { background: #ffe4e6; color: #9f1239; }
+        .register-badge.linkedin { background: #dbeafe; color: #1e40af; }
+
+        .register-question {
+            font-size: 0.9rem;
+            color: #475569;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .register-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            transition: all 0.2s;
+            background: white;
+            line-height: 1.5;
+        }
+
+        .register-textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        .register-textarea.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .register-textarea.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+            animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .feedback-message {
+            margin-top: 0.75rem;
+            font-size: 0.75rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .feedback-success {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .feedback-error {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .feedback-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .hint-btn {
+            background: none;
+            border: none;
+            color: #8b5cf6;
+            font-size: 0.7rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.2s;
+        }
+
+        .hint-btn:hover {
+            color: #6d28d9;
+            text-decoration: underline;
+        }
+
+        .hint-sample {
+            background: #f1f5f9;
+            padding: 0.75rem;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            color: #475569;
+            margin-top: 0.5rem;
+            border-left: 3px solid #8b5cf6;
+            display: none;
+        }
+
+        .hint-sample.show {
+            display: block;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            flex: 1;
+            
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .result-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .result-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-score {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #4f46e5;
+            margin: 1rem 0;
+        }
+
+        .points-earned {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .completion-card {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            border-radius: 32px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        .pulse { animation: pulse 0.3s ease; }
+
+        @media (max-width: 800px) {
+            .lesson-container {
+                padding: 0 1rem 2rem 1rem;
+            }
+            .register-card {
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="lesson-container">
+    <!-- Header -->
+    <div class="tool-header">
+        <div class="hero-content">
+            <div class="tool-badge">🔧 TOOL 8 — REGISTER MASTERY</div>
+            <h1>📚 REGISTER REMIX</h1>
+            <div class="subtitle">Rewrite the same message in different registers — Academic, Professional, and Verbal. The ultimate fluency exercise.</div>
+        </div>
+    </div>
+
+    <div id="app"></div>
+</div>
+
+<script>
+    // CSRF Token for Django
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // Game State (No localStorage - fresh start every time)
+    let currentScenario = 1;
+    let currentStep = 0;
+    let answers = { s1: {}, s2: {} };
+    let validations = { s1: {}, s2: {} };
+    let scenario1Completed = false;
+    let scenario2Completed = false;
+
+    const scenario1 = {
+        title: "  Workshop Electrical Wiring Fault",
+        baseMessage: "There is a wiring fault. It is dangerous. Fix it.",
+        registers: [
+            { id: "academic", name: "Academic / Technical Report", badge: "academic", 
+              instruction: "Formal, objective, use technical terminology, passive voice preferred.",
+              sample: "A critical wiring fault has been identified in the workshop installation. This poses an immediate safety hazard and requires urgent remedial action." },
+            { id: "email", name: "Professional Email to Management", badge: "email",
+              instruction: "Courteous, diplomatic, action-oriented. Include risk awareness.",
+              sample: "Dear Management, a wiring fault has been detected in the workshop. This presents a safety concern. I recommend scheduling an urgent repair." },
+            { id: "verbal", name: "Verbal Explanation to Technician", badge: "verbal",
+              instruction: "Clear, direct, respectful, actionable. Focus on immediate safety.",
+              sample: "There's a wiring fault that's unsafe. Please fix it immediately and secure the area before starting work." }
+        ]
+    };
+
+    const scenario2 = {
+        title: " Final Year Project Delayed",
+        baseMessage: "We could not get the parts. The project got delayed.",
+        registers: [
+            { id: "guide", name: "Formal Written to Project Guide", badge: "guide",
+              instruction: "Respectful, explanatory. Include reason, impact, and revised timeline.",
+              sample: "Due to unavailability of critical components, the project timeline has been delayed by two weeks. I apologize and have revised the schedule accordingly." },
+            { id: "team", name: "Verbal Update to Project Team", badge: "team",
+              instruction: "Clear, transparent, collaborative, solution-oriented. Use 'we'.",
+              sample: "Team, we couldn't get the parts on time, so the project is delayed by two weeks. Let's adjust our plan and meet tomorrow." },
+            { id: "linkedin", name: "LinkedIn Post (Professional)", badge: "linkedin",
+              instruction: "Reflective, growth-oriented, authentic. Share what you learned.",
+              sample: "Delays are part of engineering. Our project faced a 2-week setback due to component unavailability, but it taught me the value of contingency planning." }
+        ]
+    };
+
+    let currentScenarioData = scenario1;
+    let currentRegisterIndex = 0;
+    let isAnswerValidated = false;  // Track if current answer has been validated
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function updateProgress() {
+        let totalSteps = 8;
+        let completedSteps = 0;
+        
+        if (scenario2Completed) completedSteps = 8;
+        else if (scenario1Completed) {
+            let regCount = 0;
+            for (let reg of scenario2.registers) {
+                if (validations.s2[reg.id]?.valid === true) regCount++;
+            }
+            if (currentStep === 3 && regCount === 3) completedSteps = 8;
+            else if (currentStep === 3) completedSteps = 7;
+            else completedSteps = 4 + currentStep;
+        } else {
+            let regCount = 0;
+            for (let reg of scenario1.registers) {
+                if (validations.s1[reg.id]?.valid === true) regCount++;
+            }
+            if (currentStep === 3 && regCount === 3) completedSteps = 4;
+            else if (currentStep === 3) completedSteps = 3;
+            else completedSteps = currentStep;
+        }
+        
+        const percent = (completedSteps / totalSteps) * 100;
+        const progressFill = document.getElementById('progressFill');
+        const stepCount = document.getElementById('stepCount');
+        if (progressFill) progressFill.style.width = `${percent}%`;
+        if (stepCount) stepCount.innerText = `Step ${Math.min(completedSteps, totalSteps)} of ${totalSteps}`;
+    }
+
+    // Check if answer is exactly the example from hint
+    function isCopyingExample(answer, sampleText) {
+        if (!answer || !sampleText) return false;
+        // Remove extra spaces and compare normalized strings
+        const normalizedAnswer = answer.trim().toLowerCase().replace(/\s+/g, ' ');
+        const normalizedSample = sampleText.trim().toLowerCase().replace(/\s+/g, ' ');
+        // Check if answer is substantially similar to the example (>80% match)
+        if (normalizedAnswer === normalizedSample) return true;
+        // Check if answer contains the entire example as a substring
+        if (normalizedSample.length > 30 && normalizedAnswer.includes(normalizedSample)) return true;
+        return false;
+    }
+
+    async function checkCurrentAnswer() {
+        const textarea = document.getElementById('registerAnswer');
+        const answer = textarea.value.trim();
+        const register = currentScenarioData.registers[currentRegisterIndex];
+        
+        if (!answer) {
+            showFeedback('❌ Please write your response.', 'error');
+            return false;
+        }
+        
+        // Check if user is copying the example hint
+        if (isCopyingExample(answer, register.sample)) {
+            showFeedback('⚠️ Please write your own answer, not the example hint! Use the hint as inspiration only.', 'warning');
+            textarea.classList.add('incorrect');
+            return false;
+        }
+        
+        const checkBtn = document.getElementById('actionBtn');
+if (!checkBtn) {
+    console.error('Button not found');
+    return false;
+}
+checkBtn.disabled = true;
+checkBtn.innerHTML = '⏳ Validating...';
+        
+        const result = await validateWithAI(register, answer, currentScenario, currentScenarioData);
+        
+        if (result.valid) {
+            textarea.classList.add('correct');
+            textarea.classList.remove('incorrect');
+            showFeedback(result.feedback || '✅ Correct! Great register use!', 'success');
+            textarea.classList.add('pulse');
+            setTimeout(() => textarea.classList.remove('pulse'), 300);
+            
+            if (currentScenario === 1) {
+                validations.s1[register.id] = { valid: true, feedback: result.feedback };
+                answers.s1[register.id] = answer;
+            } else {
+                validations.s2[register.id] = { valid: true, feedback: result.feedback };
+                answers.s2[register.id] = answer;
+            }
+            
+            isAnswerValidated = true;
+            
+            // Change button from "Check Answer" to "Next"
+            checkBtn.innerHTML = 'Next →';
+checkBtn.classList.remove('btn-primary');
+checkBtn.classList.add('btn-success');
+checkBtn.disabled = false;  // ← ADD THIS LINE
+checkBtn.onclick = goToNext;
+            
+        } else {
+            textarea.classList.add('incorrect');
+            textarea.classList.remove('correct');
+            showFeedback(result.feedback || '❌ Not quite right. Check the instruction and try again.', 'error');
+            if (currentScenario === 1) {
+                validations.s1[register.id] = { valid: false, feedback: result.feedback };
+                answers.s1[register.id] = answer;
+            } else {
+                validations.s2[register.id] = { valid: false, feedback: result.feedback };
+                answers.s2[register.id] = answer;
+            }
+            isAnswerValidated = false;
+            checkBtn.disabled = false;
+            checkBtn.innerHTML = '✓ Check Answer';
+            checkBtn.classList.add('btn-primary');
+            checkBtn.classList.remove('btn-success');
+            checkBtn.onclick = () => checkCurrentAnswer();
+        }
+        
+        return result.valid;
+    }
+    
+    async function goToNext() {
+        if (currentStep === 3) {
+            if (currentScenario === 1) {
+                scenario1Completed = true;
+                currentScenario = 2;
+                currentScenarioData = scenario2;
+                currentStep = 0;
+                currentRegisterIndex = 0;
+                isAnswerValidated = false;
+                renderRegisterScreen();
+                updateProgress();
+                launchConfetti();
+                showFeedback('🎉 Scenario 1 Complete! Now tackle Scenario 2!', 'success');
+            } else {
+                scenario2Completed = true;
+                renderCompletionScreen();
+                launchConfetti();
+            }
+            return;
+        }
+        
+        if (currentRegisterIndex < 2) {
+            currentRegisterIndex++;
+            isAnswerValidated = false;
+            renderRegisterScreen();
+        } else {
+            currentStep = 3;
+            renderResultScreen();
+        }
+        updateProgress();
+    }
+
+    async function validateWithAI(register, answer, scenarioNum, scenarioData) {
+        const prompt = `You are evaluating a REGISTER REMIX exercise.
+
+BASE MESSAGE: "${scenarioData.baseMessage}"
+TARGET REGISTER: ${register.name}
+REQUIREMENT: ${register.instruction}
+STUDENT'S ANSWER: "${answer}"
+
+Evaluate STRICTLY:
+1. Is the tone appropriate for the register?
+2. Does it use professional vocabulary?
+3. Is it grammatically correct?
+4. Does the student write in their own words (not copying the example)?
+
+Return JSON: {"correct": true/false, "feedback": "short specific feedback (max 30 words)"}`;
+
+        try {
+            const response = await fetch('/learning/ai/evaluate/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                body: JSON.stringify({
+                    text: answer,
+                    task_type: 'register_remix',
+                    day_number: 8,
+                    level: 'advanced',
+                    system_prompt: prompt
+                })
+            });
+            const data = await response.json();
+            return { valid: data.correct === true, feedback: data.feedback || (data.correct ? '✅ Perfect register!' : '❌ Needs adjustment.') };
+        } catch (error) {
+            console.error('AI Error:', error);
+            if (!answer || answer.length < 20) return { valid: false, feedback: '❌ Please write a complete sentence (min 20 characters).' };
+            if (answer.length > 30) return { valid: true, feedback: '✅ Acceptable transformation!' };
+            return { valid: false, feedback: '❌ Please elaborate more.' };
+        }
+    }
+
+    function showFeedback(msg, type) {
+        const fbDiv = document.getElementById('feedbackMsg');
+        fbDiv.innerHTML = msg;
+        fbDiv.className = `feedback-message feedback-${type === 'success' ? 'success' : (type === 'error' ? 'error' : 'warning')}`;
+    }
+
+    function prevStep() {
+        if (currentStep === 3) {
+            currentStep = 2;
+            currentRegisterIndex = 2;
+            isAnswerValidated = false;
+            renderRegisterScreen();
+        } else if (currentRegisterIndex > 0) {
+            currentRegisterIndex--;
+            isAnswerValidated = false;
+            renderRegisterScreen();
+        }
+        updateProgress();
+    }
+
+    function toggleHint() {
+        const hintDiv = document.getElementById('hintSample');
+        hintDiv.classList.toggle('show');
+    }
+
+    function renderRegisterScreen() {
+        const register = currentScenarioData.registers[currentRegisterIndex];
+        const savedAnswer = (currentScenario === 1 ? answers.s1[register.id] : answers.s2[register.id]) || '';
+        const savedValid = (currentScenario === 1 ? validations.s1[register.id]?.valid : validations.s2[register.id]?.valid);
+        const isAlreadyValidated = savedValid === true;
+        
+        const badgeClass = `register-badge ${register.badge}`;
+        
+        const html = `
+            <div class="game-card">
+                <div class="scenario-header">
+                    <div class="scenario-icon">💡</div>
+                    <div class="scenario-title">${escapeHtml(currentScenarioData.title)}</div>
+                    <div class="base-message"> "${escapeHtml(currentScenarioData.baseMessage)}"</div>
+                </div>
+                <div class="register-card">
+                    <div class="${badgeClass}">${escapeHtml(register.name)}</div>
+                    <div class="register-question">📝 ${escapeHtml(register.instruction)}</div>
+                    <textarea class="register-textarea ${savedValid === true ? 'correct' : (savedValid === false ? 'incorrect' : '')}" 
+                              id="registerAnswer" rows="4" 
+                              placeholder="Write your ${escapeHtml(register.name)} version here...">${escapeHtml(savedAnswer)}</textarea>
+                    <div class="feedback-message" id="feedbackMsg"></div>
+                    <button class="hint-btn" onclick="window.toggleHint()">💡 Show example hint</button>
+                    <div class="hint-sample" id="hintSample">
+                        <strong>Example (for inspiration only):</strong><br>
+                        "${escapeHtml(register.sample)}"
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" id="prevBtn" ${currentRegisterIndex === 0 && currentStep !== 3 ? 'disabled' : ''}>← Back</button>
+                        <button class="btn ${isAlreadyValidated ? 'btn-success' : 'btn-primary'}" id="actionBtn">${isAlreadyValidated ? 'Next →' : '✓ Check Answer'}</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('app').innerHTML = html;
+        
+       const actionBtn = document.getElementById('actionBtn');
+if (actionBtn) {
+    actionBtn.disabled = false;  // ← ensure it's clickable
+    if (isAlreadyValidated) {
+        actionBtn.onclick = goToNext;
+    } else {
+        actionBtn.onclick = () => checkCurrentAnswer();
+    }
+}
+        const prevBtn = document.getElementById('prevBtn');
+        if (prevBtn && !prevBtn.disabled) prevBtn.addEventListener('click', prevStep);
+        
+        const savedFeedback = (currentScenario === 1 ? validations.s1[register.id]?.feedback : validations.s2[register.id]?.feedback);
+        if (savedFeedback && savedValid !== undefined) {
+            showFeedback(savedFeedback, savedValid ? 'success' : 'error');
+        }
+        
+        // Reset isAnswerValidated flag
+        isAnswerValidated = isAlreadyValidated;
+    }
+
+    function renderResultScreen() {
+        let correctCount = 0;
+        for (let reg of currentScenarioData.registers) {
+            if ((currentScenario === 1 ? validations.s1[reg.id]?.valid : validations.s2[reg.id]?.valid) === true) {
+                correctCount++;
+            }
+        }
+        const accuracy = (correctCount / 3) * 100;
+        const points = correctCount * 10;
+        
+        const html = `
+            <div class="game-card">
+                <div class="result-card">
+                    <div class="result-icon">🎉</div>
+                    <div class="result-title">Level Complete!</div>
+                    <div class="result-score">${correctCount}/3 Correct</div>
+                    <div class="points-earned">+${points} Points • Accuracy: ${accuracy}%</div>
+                    <div class="action-buttons" style="margin-top: 2rem;">
+                        <button class="btn btn-primary" id="continueBtn">${currentScenario === 1 ? '✨ Next Scenario ✨' : '🏆 Complete Challenge 🏆'}</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('app').innerHTML = html;
+        document.getElementById('continueBtn').addEventListener('click', goToNext);
+        launchConfetti();
+    }
+
+    function renderCompletionScreen() {
+        const html = `
+            <div class="completion-card">
+                <div class="result-icon">🏆🎉🏆</div>
+                <div class="result-title" style="color: #166534;">MASTERY ACHIEVED!</div>
+                <div class="result-score" style="color: #15803d;">All 6 Registers Mastered</div>
+                <div class="points-earned" style="margin-bottom: 1.5rem;">+60 Points • 100% Accuracy</div>
+                <button class="btn btn-success" id="finalBtn" style="padding: 1rem 2rem; font-size: 1rem;">✨ Continue to Next Tool ✨</button>
+            </div>
+        `;
+        document.getElementById('app').innerHTML = html;
+        document.getElementById('finalBtn').addEventListener('click', () => {
+            window.location.href = '/learning/level/advanced/toolkit/';
+        });
+    }
+
+    function launchConfetti() {
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '10000';
+        document.body.appendChild(canvas);
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+        const particles = [];
+        for (let i = 0; i < 200; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height,
+                w: Math.random() * 12 + 5,
+                h: Math.random() * 12 + 5,
+                color: `hsl(${Math.random() * 360}, 75%, 55%)`,
+                vx: (Math.random() - 0.5) * 5,
+                vy: Math.random() * -15 - 8,
+                gravity: 0.22,
+                rot: Math.random() * Math.PI * 2
+            });
+        }
+        let animId;
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let active = false;
+            for (let p of particles) {
+                if (p.y < canvas.height + 200) {
+                    active = true;
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += p.gravity;
+                    p.rot += 0.05;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                    ctx.restore();
+                }
+            }
+            if (active) animId = requestAnimationFrame(animate);
+            else canvas.remove();
+        }
+        animate();
+        setTimeout(() => { if(canvas.parentNode) canvas.remove(); }, 2500);
+    }
+
+    function init() {
+        const appHtml = `
+            <div class="task-intro">
+                <h3>🎯 What is Register Remix?</h3>
+                <p>This exercise tests your ability to adapt the SAME message to DIFFERENT communication contexts. You'll rewrite a base message in three distinct registers: <strong>Academic</strong> (technical reports), <strong>Professional</strong> (emails), and <strong>Verbal</strong> (team communication).</p>
+                <div class="registers-preview">
+                    <span class="academic-preview">🎓 Academic</span>
+                    <span class="email-preview">📧 Professional Email</span>
+                    <span class="verbal-preview">🔧 Verbal</span>
+                    <span class="guide-preview">📄 Formal Written</span>
+                    <span class="team-preview">🗣️ Team Update</span>
+                    <span class="linkedin-preview">🔗 LinkedIn Post</span>
+                </div>
+                <p style="margin-top: 0.5rem; font-size: 0.8rem;"><strong>💡 Tip:</strong> Complete Scenario 1 first to unlock Scenario 2. AI will validate your tone, vocabulary, and register appropriateness. Write in your own words!</p>
+            </div>
+            <div class="progress-section">
+                <div class="progress-bar-container">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-stats">
+                    <span>🎯 Game Progress</span>
+                    <span id="stepCount">Step 0 of 8</span>
+                </div>
+            </div>
+            <div id="dynamicContent"></div>
+        `;
+        document.getElementById('app').innerHTML = appHtml;
+        
+        renderRegisterScreen();
+        updateProgress();
+    }
+    
+    window.toggleHint = toggleHint;
+    
+    init();
+</script>
+</body>
+</html>

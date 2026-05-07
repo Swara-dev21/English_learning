@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Tool 4: Idiom Challenge | Advanced Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f9ff;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: #0f172a;
+        }
+
+        .lesson-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 3rem 2rem;
+        }
+
+        /* Header - Full Width */
+        .tool-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 0;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .tool-header .hero-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .tool-badge {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            padding: 0.35rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            color: #e2e8f0;
+        }
+
+        .tool-header h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            margin: 0.75rem 0;
+            color: white;
+            letter-spacing: -0.3px;
+        }
+
+        .tool-header .subtitle {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+        }
+
+        /* Main Content - Reduced Width */
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Part A Card */
+        .part-card {
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2edf7;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .part-header {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 1rem 1.8rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .part-header h2 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .part-header p {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 0.3rem;
+        }
+
+        .completion-status {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 0.25rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 1rem;
+        }
+
+        /* Two Column Layout */
+        .two-columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            padding: 1.5rem;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .col-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #4f46e5;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e0e7ff;
+        }
+
+        /* Idiom Box */
+        .idiom-box {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .idiom-box:hover {
+            border-color: #8b5cf6;
+            background: #faf5ff;
+        }
+
+        .idiom-box.selected {
+            border-color: #8b5cf6;
+            background: #ede9fe;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
+        }
+
+        .idiom-box.correct {
+            background: #dcfce7;
+            border-color: #22c55e;
+        }
+
+        .idiom-box.incorrect {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .idiom-number {
+            width: 32px;
+            height: 32px;
+            background: #e0e7ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #4f46e5;
+            font-size: 0.9rem;
+        }
+
+        .idiom-text {
+            flex: 1;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #1e293b;
+        }
+
+        .paired-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .paired-badge.paired {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        /* Meaning Box */
+        .meaning-box {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .meaning-box:hover {
+            border-color: #8b5cf6;
+            background: #faf5ff;
+        }
+
+        .meaning-box.selected {
+            border-color: #8b5cf6;
+            background: #ede9fe;
+        }
+
+        .meaning-box.correct {
+            background: #dcfce7;
+            border-color: #22c55e;
+        }
+
+        .meaning-box.incorrect {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .meaning-letter {
+            width: 32px;
+            height: 32px;
+            background: #e0e7ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #4f46e5;
+            font-size: 0.9rem;
+        }
+
+        .meaning-text {
+            flex: 1;
+            color: #475569;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        /* Reset Button for Part A */
+        .part-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            flex-wrap: wrap;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 0.5rem;
+        }
+
+        .btn-reset {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-reset:hover {
+            background: #e2e8f0;
+        }
+
+        /* Part B - Sentences Section */
+        .sentences-section {
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2edf7;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .sentence-grid {
+            padding: 1rem;
+        }
+
+        .sentence-card {
+            background: #fefefe;
+            border: 1px solid #eef2ff;
+            border-radius: 20px;
+            margin: 1rem;
+            padding: 1rem 1.2rem;
+        }
+
+        .idiom-badge {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            padding: 0.35rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .sentence-textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            resize: vertical;
+            margin: 0.6rem 0;
+        }
+
+        .sentence-textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .sentence-feedback {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .sentence-feedback.correct {
+            color: #15803d;
+            background: #dcfce7;
+        }
+
+        .sentence-feedback.incorrect {
+            color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        .sentence-feedback.ai-checking {
+            color: #d97706;
+            background: #fef3c7;
+        }
+
+        /* Global Buttons */
+        .global-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .feedback-message {
+            background: #f8fafc;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            border: 1px solid #e2edf2;
+        }
+
+        .feedback-message.success {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 1rem auto 0.5rem;
+            display: block;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(34, 197, 94, 0.3);
+        }
+
+        .part-a-complete {
+            display: inline-block;
+            background: #22c55e;
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 1rem;
+        }
+
+        @media (max-width: 800px) {
+            .lesson-container {
+                padding: 0 1rem 2rem 1rem;
+            }
+            .main-content {
+                max-width: 100%;
+            }
+            .two-columns {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="lesson-container">
+    <!-- Full Width Header -->
+    <div class="tool-header">
+        <div class="hero-content">
+            <div class="tool-badge">🔧 TOOL 4 — IDIOM MASTERY</div>
+            <h1>💡 IDIOM CHALLENGE</h1>
+            <div class="subtitle">Match idioms with their meanings, then write authentic engineering workplace sentences</div>
+        </div>
+    </div>
+
+    <!-- Main Content (Reduced Width) -->
+    <div class="main-content">
+        <!-- PART A: Match the Pairs -->
+        <div class="part-card">
+            <div class="part-header">
+                <h2>📋 PART A: Match the Idioms with Their Meanings<br>
+                    <span id="partAStatus" class="completion-status" style="display:none;">✅ Complete!</span>
+                </h2>
+                <p><br>Click on an idiom, then click on a meaning to pair them. Correct pairs turn <span style="color:#22c55e;">GREEN</span>, incorrect pairs turn <span style="color:#ef4444;">RED</span>.</p>
+            </div>
+            <div class="two-columns">
+                <!-- Idioms Column -->
+                <div class="col">
+                    <div class="col-title">🎯 IDIOMS</div>
+                    <div id="idiomsList"></div>
+                </div>
+                <!-- Meanings Column -->
+                <div class="col">
+                    <div class="col-title">📖 MEANINGS</div>
+                    <div id="meaningsList"></div>
+                </div>
+            </div>
+            <div class="part-actions">
+                <button class="btn-reset" id="resetMatchBtn">⟳ Reset All Pairs</button>
+            </div>
+        </div>
+
+        <!-- PART B: Sentence Writing -->
+        <div class="sentences-section">
+            <div class="part-header">
+                <h2>✍️ PART B: Use Each Idiom in an Engineering Workplace Sentence</h2>
+                <p>Write a professional sentence using each idiom. Click "CHECK ALL SENTENCES" when ready for AI evaluation.</p>
+            </div>
+            <div class="sentence-grid" id="sentenceGrid"></div>
+        </div>
+
+        <!-- Global Action Buttons -->
+        <div class="global-actions">
+            <button class="btn btn-primary" id="checkSentencesBtn">✓ CHECK ALL SENTENCES</button>
+            <button class="btn btn-secondary" id="resetSentencesBtn">⟳ RESET SENTENCES</button>
+        </div>
+
+        <div class="feedback-message" id="feedbackMsg">
+            💡 Step 1: Match idioms with meanings (click idiom → click meaning). Correct pairs turn green. Step 2: Write engineering sentences using each idiom.
+        </div>
+        <div id="completionArea"></div>
+    </div>
+</div>
+
+<script>
+    // CSRF Token for Django
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // Data
+    const idioms = [
+        { id: 1, text: "Cut to the chase", correctMeaning: "C" },
+        { id: 2, text: "The devil is in the details", correctMeaning: "D" },
+        { id: 3, text: "Meet halfway", correctMeaning: "B" },
+        { id: 4, text: "Come full circle", correctMeaning: "E" },
+        { id: 5, text: "Turn over a new leaf", correctMeaning: "A" }
+    ];
+
+    const meanings = [
+        { letter: "A", text: "Make a fresh start with improved habits" },
+        { letter: "B", text: "Reach a compromise where both sides give a little" },
+        { letter: "C", text: "Get to the point directly without wasting time" },
+        { letter: "D", text: "Small details often cause unexpected problems" },
+        { letter: "E", text: "Return to the starting point after development" }
+    ];
+
+    // State
+    let pairs = {};  // idiomId -> meaningLetter
+    let selectedIdiomId = null;
+    let partAComplete = false;
+    let sentenceValidations = {1: null, 2: null, 3: null, 4: null, 5: null};
+
+    // Engineering keywords for fallback
+    const engineeringKeywords = ['design', 'project', 'team', 'client', 'engineer', 'system', 'component', 'circuit', 'software', 'hardware', 'testing', 'analysis', 'calibration', 'prototype', 'manufacturing', 'assembly', 'quality', 'safety', 'compliance', 'specification', 'code', 'debug', 'test', 'build', 'develop', 'implement', 'review', 'deployment', 'mechanical', 'electrical', 'structural', 'production', 'maintenance', 'failure', 'root cause', 'tolerance', 'module', 'deadline', 'deliverable', 'approval'];
+
+    // ============ PART A: Matching Logic with Immediate Feedback ============
+    function checkIfPartAComplete() {
+        let allCorrect = true;
+        for (let idiom of idioms) {
+            const pairedLetter = pairs[idiom.id];
+            if (!pairedLetter || pairedLetter !== idiom.correctMeaning) {
+                allCorrect = false;
+                break;
+            }
+        }
+        
+        if (allCorrect && Object.keys(pairs).length === idioms.length) {
+            partAComplete = true;
+            document.getElementById('partAStatus').style.display = 'inline-block';
+            showFeedback('🎉 Excellent! All idioms matched correctly! Now proceed to Part B.', '#16a34a');
+        } else {
+            partAComplete = false;
+            document.getElementById('partAStatus').style.display = 'none';
+        }
+        return partAComplete;
+    }
+
+    function updateMatchingHighlights() {
+        // Update all idiom boxes and meaning boxes with correct/incorrect highlighting
+        const idiomContainer = document.getElementById('idiomsList');
+        const meaningContainer = document.getElementById('meaningsList');
+        
+        // Update idioms
+        const idiomBoxes = idiomContainer.querySelectorAll('.idiom-box');
+        idioms.forEach((idiom, idx) => {
+            const box = idiomBoxes[idx];
+            const pairedLetter = pairs[idiom.id];
+            if (pairedLetter) {
+                const isCorrect = (pairedLetter === idiom.correctMeaning);
+                if (isCorrect) {
+                    box.classList.add('correct');
+                    box.classList.remove('incorrect');
+                } else {
+                    box.classList.add('incorrect');
+                    box.classList.remove('correct');
+                }
+                // Update paired badge
+                const badge = box.querySelector('.paired-badge');
+                if (badge) {
+                    badge.innerHTML = pairedLetter ? `→ ${pairedLetter}` : 'unpaired';
+                    badge.classList.add('paired');
+                }
+            } else {
+                box.classList.remove('correct', 'incorrect');
+                const badge = box.querySelector('.paired-badge');
+                if (badge) {
+                    badge.innerHTML = 'unpaired';
+                    badge.classList.remove('paired');
+                }
+            }
+        });
+        
+        // Update meanings
+        const meaningBoxes = meaningContainer.querySelectorAll('.meaning-box');
+        meanings.forEach((meaning, idx) => {
+            const box = meaningBoxes[idx];
+            // Find which idiom is paired with this meaning
+            let pairedId = null;
+            let isCorrect = false;
+            for (let [idiomId, letter] of Object.entries(pairs)) {
+                if (letter === meaning.letter) {
+                    pairedId = parseInt(idiomId);
+                    const idiom = idioms.find(i => i.id === pairedId);
+                    isCorrect = (idiom && idiom.correctMeaning === meaning.letter);
+                    break;
+                }
+            }
+            
+            if (pairedId) {
+                if (isCorrect) {
+                    box.classList.add('correct');
+                    box.classList.remove('incorrect');
+                } else {
+                    box.classList.add('incorrect');
+                    box.classList.remove('correct');
+                }
+            } else {
+                box.classList.remove('correct', 'incorrect');
+            }
+        });
+        
+        checkIfPartAComplete();
+    }
+
+    function onIdiomClick(idiomId) {
+        if (partAComplete) {
+            showFeedback('✅ Part A is already complete! You can reset if you want to change matches.', '#16a34a');
+            return;
+        }
+        
+        // Clear previous selections
+        document.querySelectorAll('.idiom-box').forEach(el => el.classList.remove('selected'));
+        document.querySelectorAll('.meaning-box').forEach(el => el.classList.remove('selected'));
+        selectedIdiomId = idiomId;
+        const idiomElement = document.getElementById(`idiom-${idiomId}`);
+        if (idiomElement) idiomElement.classList.add('selected');
+        
+        showFeedback(`Selected: "${idioms.find(i => i.id === idiomId).text}". Now click a meaning to pair.`, '#4f46e5');
+    }
+
+    function onMeaningClick(meaningLetter) {
+        if (partAComplete) {
+            showFeedback('✅ Part A is already complete! Use Reset button if you want to change matches.', '#16a34a');
+            return;
+        }
+        
+        if (selectedIdiomId === null) {
+            showFeedback('⚠️ First click an idiom, then click its meaning.', '#d97706');
+            return;
+        }
+        
+        // Create or update pair
+        pairs[selectedIdiomId] = meaningLetter;
+        
+        // Clear selection
+        document.querySelectorAll('.idiom-box').forEach(el => el.classList.remove('selected'));
+        document.querySelectorAll('.meaning-box').forEach(el => el.classList.remove('selected'));
+        selectedIdiomId = null;
+        
+        // Update UI with highlights
+        updateMatchingHighlights();
+        
+        // Show feedback about correctness
+        const idiom = idioms.find(i => i.id === selectedIdiomId);
+        const isCorrect = (pairs[selectedIdiomId] === idiom?.correctMeaning);
+        if (isCorrect) {
+            showFeedback(`✅ Correct! "${idiom.text}" matches with "${meaningLetter}". Great job!`, '#16a34a');
+        } else {
+            const correctLetter = idiom?.correctMeaning;
+            const correctMeaning = meanings.find(m => m.letter === correctLetter)?.text;
+            showFeedback(`❌ Incorrect. "${idiom.text}" matches with "${correctLetter}" (${correctMeaning?.substring(0, 50)}...). Try again!`, '#dc2626');
+        }
+    }
+
+    function renderMatchingUI() {
+        const idiomContainer = document.getElementById('idiomsList');
+        const meaningContainer = document.getElementById('meaningsList');
+        
+        idiomContainer.innerHTML = '';
+        idioms.forEach(idiom => {
+            const pairedLetter = pairs[idiom.id];
+            const div = document.createElement('div');
+            div.className = `idiom-box`;
+            div.id = `idiom-${idiom.id}`;
+            div.innerHTML = `
+                <div class="idiom-number">${idiom.id}</div>
+                <div class="idiom-text">${idiom.text}</div>
+                <div class="paired-badge ${pairedLetter ? 'paired' : ''}">${pairedLetter ? `→ ${pairedLetter}` : 'unpaired'}</div>
+            `;
+            div.onclick = () => onIdiomClick(idiom.id);
+            idiomContainer.appendChild(div);
+        });
+        
+        meaningContainer.innerHTML = '';
+        meanings.forEach(meaning => {
+            const div = document.createElement('div');
+            div.className = `meaning-box`;
+            div.innerHTML = `
+                <div class="meaning-letter">${meaning.letter}</div>
+                <div class="meaning-text">${meaning.text}</div>
+            `;
+            div.onclick = () => onMeaningClick(meaning.letter);
+            meaningContainer.appendChild(div);
+        });
+        
+        updateMatchingHighlights();
+    }
+
+    function resetMatching() {
+        pairs = {};
+        selectedIdiomId = null;
+        partAComplete = false;
+        document.getElementById('partAStatus').style.display = 'none';
+        renderMatchingUI();
+        showFeedback('🔄 All matches reset. Start matching idioms with their meanings.', '#475569');
+    }
+
+    // ============ PART B: Sentence Validation with AI ============
+    async function validateSentenceWithAI(sentence, idiom, index) {
+        if (!sentence.trim()) {
+            updateSentenceUI(index, false, '❌ Please write a sentence.');
+            return { valid: false };
+        }
+        if (sentence.length < 15) {
+            updateSentenceUI(index, false, '❌ Sentence too short (min 15 characters).');
+            return { valid: false };
+        }
+        
+        updateSentenceUI(index, false, '⏳ AI evaluating...', true);
+        
+        try {
+            const response = await fetch('/learning/ai/evaluate/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                body: JSON.stringify({
+                    text: sentence,
+                    task_type: 'idiom_sentence',
+                    day_number: 4,
+                    level: 'advanced',
+                    system_prompt: `You are evaluating an idiom usage exercise for engineering professionals.
+
+IDIOM: "${idiom}"
+STUDENT'S SENTENCE: "${sentence}"
+
+Evaluate STRICTLY:
+1. Is the idiom used naturally and correctly in context?
+2. Does the sentence have professional engineering workplace context?
+3. Is the sentence grammatically correct?
+
+Return JSON: {"correct": true/false, "feedback": "short specific feedback (max 30 words)"}`
+                })
+            });
+            const data = await response.json();
+            updateSentenceUI(index, data.correct === true, data.feedback || (data.correct ? '✅ Correct!' : '❌ Needs improvement'));
+            return { valid: data.correct === true };
+        } catch (error) {
+            console.error('AI Error:', error);
+            const lowerSentence = sentence.toLowerCase();
+            let hasEngineering = engineeringKeywords.some(kw => lowerSentence.includes(kw));
+            let hasIdiom = lowerSentence.includes(idiom.toLowerCase());
+            const isValid = hasIdiom && hasEngineering && sentence.length > 20;
+            updateSentenceUI(index, isValid, isValid ? '✅ Correct engineering context!' : '❌ Add engineering context and ensure idiom is used.');
+            return { valid: isValid };
+        }
+    }
+
+    function updateSentenceUI(index, isValid, message, isChecking = false) {
+        const feedbackDiv = document.getElementById(`sentenceFeedback${index}`);
+        if (feedbackDiv) {
+            feedbackDiv.innerHTML = message;
+            if (isChecking) {
+                feedbackDiv.className = 'sentence-feedback ai-checking';
+            } else if (isValid) {
+                feedbackDiv.className = 'sentence-feedback correct';
+            } else {
+                feedbackDiv.className = 'sentence-feedback incorrect';
+            }
+        }
+        sentenceValidations[index] = isValid;
+    }
+
+    async function checkAllSentences() {
+        if (!partAComplete) {
+            showFeedback('⚠️ Please complete Part A (match all idioms correctly) before checking sentences.', '#d97706');
+            return;
+        }
+        
+        const checkBtn = document.getElementById('checkSentencesBtn');
+        checkBtn.disabled = true;
+        checkBtn.innerHTML = '⏳ AI EVALUATING SENTENCES...';
+        
+        let allValid = true;
+        for (let i = 1; i <= 5; i++) {
+            const textarea = document.getElementById(`sentence${i}`);
+            const sentence = textarea?.value || '';
+            const result = await validateSentenceWithAI(sentence, idioms[i-1].text, i);
+            if (!result.valid) allValid = false;
+            await new Promise(r => setTimeout(r, 400));
+        }
+        
+        checkBtn.disabled = false;
+        checkBtn.innerHTML = '✓ CHECK ALL SENTENCES';
+        
+        const feedbackDiv = document.getElementById('feedbackMsg');
+        const completionArea = document.getElementById('completionArea');
+        
+        if (allValid) {
+            feedbackDiv.innerHTML = '🎉 PERFECT! All idioms matched correctly and all sentences demonstrate excellent engineering communication! 🎉';
+            feedbackDiv.className = 'feedback-message success';
+            launchAestheticConfetti();
+            
+            if (!document.getElementById('continueToolBtn')) {
+                completionArea.innerHTML = '<button class="next-btn" id="continueToolBtn">✨ CONTINUE TO GRAMMAR DETECTIVE ✨</button>';
+                const continueBtn = document.getElementById('continueToolBtn');
+                if (continueBtn) {
+                    continueBtn.addEventListener('click', () => {
+                        window.location.href = '/learning/level/advanced/toolkit/grammar-detective/';
+                    });
+                }
+            }
+        } else {
+            feedbackDiv.innerHTML = '❌ Some sentences need improvement. Review the feedback above and try again.';
+            feedbackDiv.className = 'feedback-message';
+            const existingBtn = document.getElementById('continueToolBtn');
+            if (existingBtn) existingBtn.remove();
+            completionArea.innerHTML = '';
+        }
+    }
+
+    function resetSentences() {
+        for (let i = 1; i <= 5; i++) {
+            const textarea = document.getElementById(`sentence${i}`);
+            if (textarea) textarea.value = '';
+            updateSentenceUI(i, false, '');
+        }
+        sentenceValidations = {1: null, 2: null, 3: null, 4: null, 5: null};
+        showFeedback('🔄 Sentences reset. Write your engineering workplace sentences.', '#475569');
+        
+        const existingBtn = document.getElementById('continueToolBtn');
+        if (existingBtn) existingBtn.remove();
+        document.getElementById('completionArea').innerHTML = '';
+    }
+
+    function showFeedback(msg, color) {
+        const fbDiv = document.getElementById('feedbackMsg');
+        fbDiv.innerHTML = msg;
+        fbDiv.style.color = color;
+        setTimeout(() => {
+            if (document.getElementById('feedbackMsg')) {
+                document.getElementById('feedbackMsg').style.color = '#475569';
+            }
+        }, 3000);
+    }
+
+    // Render sentences grid
+    function renderSentences() {
+        const container = document.getElementById('sentenceGrid');
+        container.innerHTML = '';
+        idioms.forEach((idiom, idx) => {
+            const card = document.createElement('div');
+            card.className = 'sentence-card';
+            card.innerHTML = `
+                <div class="sentence-header">
+                    <span class="idiom-badge">${idx+1}. ${idiom.text}</span>
+                </div>
+                <textarea class="sentence-textarea" id="sentence${idx+1}" rows="2" 
+                          placeholder="Write an engineering workplace sentence using '${idiom.text}'..."></textarea>
+                <div class="sentence-feedback" id="sentenceFeedback${idx+1}"></div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // Aesthetic small confetti
+    function launchAestheticConfetti() {
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '10000';
+        document.body.appendChild(canvas);
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+        const particles = [];
+        const colors = ['#22c55e', '#16a34a', '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899'];
+        for (let i = 0; i < 180; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height,
+                w: Math.random() * 10 + 4,
+                h: Math.random() * 10 + 4,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                vx: (Math.random() - 0.5) * 3.5,
+                vy: Math.random() * -12 - 7,
+                gravity: 0.22,
+                rot: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.12
+            });
+        }
+        let animId;
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let active = false;
+            for (let p of particles) {
+                if (p.y < canvas.height + 150) {
+                    active = true;
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += p.gravity;
+                    p.rot += p.rotSpeed;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                    ctx.restore();
+                }
+            }
+            if (active) animId = requestAnimationFrame(animate);
+            else canvas.remove();
+        }
+        animate();
+        setTimeout(() => { if(canvas.parentNode) canvas.remove(); }, 2500);
+    }
+
+    // Initialize
+    renderMatchingUI();
+    renderSentences();
+    
+    document.getElementById('resetMatchBtn').addEventListener('click', resetMatching);
+    document.getElementById('checkSentencesBtn').addEventListener('click', checkAllSentences);
+    document.getElementById('resetSentencesBtn').addEventListener('click', resetSentences);
+</script>
+</body>
+</html>

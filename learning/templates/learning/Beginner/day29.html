@@ -1169,7 +1169,7 @@
                         <div class="task-content">Listen to the "Master Audio" and focus on the pauses (...)</div>
                     </div>
                     <div class="audio-player"><audio id="listeningAudio" controls>
-                            <source src="{% static 'learning/audio/Beginner/day29.mp3' %}" type="audio/mpeg">
+                            <source src="{% static 'learning/audio/day29.mp3' %}" type="audio/mpeg">
                         </audio></div>
 
                     <div id="listeningTextSection" style="display: none;">
@@ -1242,6 +1242,9 @@
                     <h2>🗣️ 2. Speaking Activity: The "Graduation Pitch"</h2>
                 </div>
                 <br>
+                <div class="speaking-info">
+                    This is your final test of synthesis. Combine your voice, your words, and your logic.
+                </div>
 
                 <div class="card-body">
                     <div class="task-box">
@@ -1339,11 +1342,12 @@
                 </div>
                 <div class="card-body">
                     <div class="reading-passage"><strong>📖 Read this original passage aloud to practice your resonance
-                            and rhythm.</strong><br><br>True professional authority is manifested not through volume,
+                            and rhythm.</strong><br><br>"True professional authority is manifested not through volume,
                         but through clarity. A consummate leader understands that an unambiguous message eliminates the
                         friction of doubt. By upholding high standards of discourse, you create an enduring legacy of
                         excellence. When your strategy is cohesive, your team's potential begins to flourish in ways
-                        that were previously unimaginable.</div>
+                        that were previously unimaginable."</div>
+                    <div class="analysis-instruction"><strong>🎯 Reading Comprehension Exercise</strong></div>
                     <div class="fill-blank-item">
                         <p><strong>Question 1: Contextual Logic</strong></p>
                         <p>Based on the passage, why is "unambiguous" communication vital for a leader?</p><textarea
@@ -1641,11 +1645,18 @@
                         <li><input type="checkbox" id="chk7" disabled> <label> I completed the "Momentum Challenge" solo
                                 game.</label></li>
                     </ul>
-                    <div style="display:flex; justify-content:center; margin-top:1rem;">
-                        <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 29 </button>
-                    </div>
                     <div style="text-align:right;"><span class="badge" id="progressCounter">0/7 completed</span></div>
                 </div>
+            </div>
+
+            <div style="display:flex; justify-content:center; margin-top:1rem;">
+                <button class="day-complete-btn" id="dayCompleteBtn" disabled> Complete Day 29 </button>
+            </div>
+            <div class="completion-banner" id="completionBanner">
+                <div style="font-size: 3rem;">🎉✨🏆</div>
+                <h2>Congratulations, Confident Communicator!</h2>
+                <p>You've successfully completed Day 29 of your English journey!</p><a href="#"
+                    class="next-day-btn">Continue to Day 30 →</a>
             </div>
 
         </div>
@@ -1745,22 +1756,12 @@
         function updateChecklistProgress() {
             const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6', 'chk7'];
             let completedCount = 0;
-            checkboxes.forEach(id => {
-                if (document.getElementById(id)?.checked) completedCount++;
-            });
-
-            const progressSpan = document.getElementById('progressCounter');
-            if (progressSpan) progressSpan.innerText = `${completedCount}/7 completed`;
-
-            const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-            if (dayCompleteBtn) {
-                dayCompleteBtn.disabled = (completedCount !== 7);
-                dayCompleteBtn.style.opacity = (completedCount === 7) ? '1' : '0.5';
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (document.getElementById(checkboxes[i])?.checked) completedCount++;
             }
-
+            document.getElementById('progressCounter').innerText = `${completedCount}/7 completed`;
             if (completedCount === 7) {
-                const banner = document.getElementById('completionBanner');
-                if (banner) banner.style.display = 'block';
+                document.getElementById('completionBanner').style.display = 'block';
             }
         }
 
@@ -2514,6 +2515,27 @@
         });
 
         // ==================== Day Complete ====================
+        function updateProgressCounter() {
+            const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6', 'chk7'];
+            let completedCount = 0;
+            checkboxes.forEach(id => {
+                if (document.getElementById(id)?.checked) completedCount++;
+            });
+
+            const progressSpan = document.getElementById('progressCounter');
+            if (progressSpan) progressSpan.innerText = `${completedCount}/7 completed`;
+
+            const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+            if (dayCompleteBtn) {
+                dayCompleteBtn.disabled = (completedCount !== 7);
+                dayCompleteBtn.style.opacity = (completedCount === 7) ? '1' : '0.5';
+            }
+
+            if (completedCount === 7) {
+                const banner = document.getElementById('completionBanner');
+                if (banner) banner.style.display = 'block';
+            }
+        }
 
         async function completeDay() {
             const dayBtn = document.getElementById('dayCompleteBtn');
@@ -2531,7 +2553,7 @@
                     setTimeout(() => confetti({ particleCount: 100, spread: 70, origin: { y: 0.4 } }), 200);
                 }
 
-                dayBtn.innerHTML = '✓ Saving... 🎉';
+                dayBtn.innerHTML = '✓ Day Completed! 🎉';
                 localStorage.removeItem(STORAGE_KEY);
 
                 setTimeout(() => {
@@ -2548,6 +2570,7 @@
 
         // Initialize
         updateChecklistProgress();
+        updateProgressCounter();
 
         // Auto-save on input/change
         document.querySelectorAll('input[type="text"], input[type="radio"], textarea, select').forEach(el => {

@@ -1,4 +1,4 @@
-{% extends 'home_page/base.html' %}
+ {% extends 'home_page/base.html' %}
 {% load static %}
 {% load math_filters %} <!-- Add this line -->
 
@@ -705,9 +705,9 @@
     }
 
     .status-badge.completed {
-        background: var(--primary-light);
+        background: var(--success-light);
         color: var(--success);
-        border: 1px solid var(--primary-soft);
+        border: 1px solid var(--success-soft);
     }
 
     .status-badge.available {
@@ -1322,51 +1322,89 @@
         animation: shakeWarning 0.4s ease-in-out;
     }
 
+    /* ========== PREMIUM INTRO MODAL OVERHAUL ========== */
     .intro-modal {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(26, 31, 51, 0.85);
+        background: rgba(10, 15, 30, 0.7);
         z-index: 2000;
         justify-content: center;
         align-items: center;
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(12px);
+        padding: 1.5rem;
     }
 
     .intro-container {
-        background: var(--bg-white);
-        border-radius: var(--radius-lg);
-        padding: 2rem;
-        max-width: 560px;
-        width: 92%;
-        animation: slideUpFeedback 0.35s ease;
+        background: rgba(255, 255, 255, 0.94);
+        border-radius: 32px;
+        padding: 2.5rem;
+        max-width: 600px;
+        width: 100%;
+        box-shadow: 
+            0 20px 50px rgba(0, 0, 0, 0.15),
+            0 0 0 1px rgba(255, 255, 255, 0.4) inset,
+            0 0 0 1px rgba(74, 98, 176, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .intro-container::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle, rgba(74, 98, 176, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
     }
 
     .intro-progress-track {
-        height: 4px;
-        background: var(--border-light);
-        border-radius: 4px;
-        margin-bottom: 1.5rem;
+        height: 6px;
+        background: var(--bg-soft);
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        border: 1px solid var(--border-light);
     }
 
     .intro-progress-fill {
         height: 100%;
-        background: var(--primary);
-        border-radius: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        border-radius: 10px;
         width: 0%;
-        transition: width 0.3s ease;
+        transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 0 10px rgba(74, 98, 176, 0.3);
     }
 
     .intro-char-header {
         display: flex;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     .intro-char-wrap {
-        width: 80px;
-        height: 80px;
+        width: 90px;
+        height: 90px;
         flex-shrink: 0;
+        background: linear-gradient(135deg, var(--bg-soft), #fff);
+        border-radius: 24px;
+        padding: 8px;
+        box-shadow: 
+            0 8px 20px rgba(74, 98, 176, 0.12),
+            0 0 0 1px var(--primary-light) inset;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: charFloat 3s infinite ease-in-out;
+    }
+
+    @keyframes charFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
     }
 
     .intro-char-speech {
@@ -1374,126 +1412,167 @@
     }
 
     .intro-step-label {
-        font-size: 11px;
-        font-weight: 700;
+        font-family: 'Playfair Display', serif;
+        font-size: 13px;
+        font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.15em;
         color: var(--primary);
-        margin-bottom: 0.5rem;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .intro-step-label::after {
+        content: '';
+        height: 2px;
+        flex: 1;
+        background: linear-gradient(90deg, var(--primary-light), transparent);
+        border-radius: 2px;
     }
 
     .intro-char-text {
-        font-size: 1.1rem;
-        font-weight: 600;
+        font-size: 1.3rem;
+        font-weight: 700;
         color: var(--ink);
+        line-height: 1.3;
     }
 
     .intro-body {
-        margin: 1.5rem 0;
-        min-height: 150px;
+        margin: 2rem 0;
+        min-height: 180px;
     }
 
     .intro-typing-line {
-        margin-bottom: 0.5rem;
-        opacity: 0;
-        animation: fadeInLine 0.3s forwards;
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        color: var(--ink-soft);
+        line-height: 1.6;
     }
 
     .intro-typing-line.strong {
         font-weight: 700;
         color: var(--primary-dark);
+        font-size: 1.1rem;
+        margin-top: 1rem;
     }
 
     .intro-typing-line.muted {
         color: var(--ink-muted);
-    }
-
-    @keyframes fadeInLine {
-        from {
-            opacity: 0;
-            transform: translateY(5px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        font-size: 0.95rem;
     }
 
     .intro-skill-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 0.75rem;
-        margin-top: 1rem;
+        gap: 1rem;
+        margin: 1.5rem 0;
     }
 
     .intro-skill-card {
-        background: var(--bg-soft);
-        padding: 0.75rem;
-        border-radius: var(--radius-sm);
+        background: white;
+        padding: 1rem;
+        border-radius: 16px;
         text-align: center;
-        font-weight: 600;
+        font-weight: 700;
+        color: var(--primary-mid);
         border: 1px solid var(--border-light);
+        box-shadow: 0 4px 12px rgba(74, 98, 176, 0.05);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .intro-skill-card:hover {
+        transform: translateY(-3px) scale(1.02);
+        border-color: var(--primary-soft);
+        box-shadow: 0 8px 20px rgba(74, 98, 176, 0.1);
+        background: var(--bg-soft);
     }
 
     .intro-reward-list {
-        margin-top: 1rem;
+        background: var(--bg-soft);
+        border-radius: 20px;
+        padding: 1.25rem;
+        margin: 1.5rem 0;
+        border: 1px solid var(--border-light);
     }
 
     .intro-reward-item {
-        padding: 0.5rem 0;
-        border-bottom: 1px solid var(--border-light);
+        padding: 0.75rem 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .intro-reward-item:last-child {
+        border-bottom: none;
+    }
+
+    .intro-reward-item::before {
+        content: '✨';
+        font-size: 0.9rem;
     }
 
     .intro-cert-preview {
+        background: linear-gradient(135deg, var(--bg-white), var(--primary-light));
+        border: 1.5px solid var(--primary-soft);
+        border-radius: 24px;
+        padding: 1.5rem;
         text-align: center;
-        margin-top: 1rem;
+        margin-top: 1.5rem;
+        box-shadow: var(--shadow-md);
     }
 
     .intro-cert-icon {
-        font-size: 3rem;
+        font-size: 3.5rem;
+        margin-bottom: 8px;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
     }
 
     .intro-cert-title {
-        font-weight: 700;
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        font-size: 1.2rem;
         color: var(--primary-dark);
-    }
-
-    .intro-btn-start {
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        color: #fff;
-        border: none;
-        padding: 12px 32px;
-        border-radius: 50px;
-        font-weight: 700;
-        font-size: 1rem;
-        cursor: pointer;
-        margin-top: 1rem;
-        width: 100%;
+        margin-bottom: 4px;
     }
 
     .intro-nav {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 1.5rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--bg-soft);
     }
 
     .intro-btn-back,
     .intro-btn-next {
-        padding: 8px 20px;
+        padding: 10px 24px;
         border-radius: 50px;
-        font-weight: 600;
+        font-weight: 700;
+        font-size: 0.95rem;
         cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         border: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .intro-btn-back {
-        background: var(--bg-light);
-        color: var(--ink-soft);
+        background: var(--bg-soft);
+        color: var(--ink-muted);
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.2s;
+        border: 1px solid var(--border-light);
     }
 
     .intro-btn-back.visible {
@@ -1501,32 +1580,45 @@
         pointer-events: auto;
     }
 
+    .intro-btn-back:hover {
+        background: var(--border-light);
+        color: var(--ink-soft);
+    }
+
     .intro-btn-next {
-        background: var(--primary);
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         color: #fff;
+        box-shadow: 0 4px 15px rgba(74, 98, 176, 0.3);
+    }
+
+    .intro-btn-next:hover {
+        transform: translateX(4px);
+        box-shadow: 0 6px 20px rgba(74, 98, 176, 0.4);
     }
 
     .intro-dots {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.6rem;
     }
 
     .intro-dot {
-        width: 8px;
-        height: 8px;
+        width: 10px;
+        height: 10px;
         border-radius: 50%;
         background: var(--border-light);
         border: none;
         cursor: pointer;
         padding: 0;
-        transition: all 0.2s;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .intro-dot.active {
         background: var(--primary);
-        width: 24px;
-        border-radius: 4px;
+        width: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(74, 98, 176, 0.2);
     }
+
 
     .stats-wrapper>* {
         opacity: 0;
@@ -1773,7 +1865,7 @@
             placeholder="Tell us about your learning experience..."></textarea>
         <div class="feedback-actions">
             <button class="btn-cancel" onclick="closeFeedbackModal()">Cancel</button>
-            <button class="btn-submit-feedback" onclick="submitFeedback()">Submit & Get Certificate</button>
+            <button class="btn-submit-feedback" id="btnSubmitFeedback" onclick="submitFeedback()" disabled style="opacity:0.5; cursor:not-allowed;">Submit & Get Certificate</button>
         </div>
     </div>
 </div>
@@ -1817,6 +1909,31 @@
     </div>
 </div>
 
+<!-- Assessment Instructions Modal (Same Style as Intro) -->
+<div id="asmModal" class="intro-modal">
+    <div class="intro-container">
+        <div class="intro-progress-track">
+            <div class="intro-progress-fill" id="asmProgressFill"></div>
+        </div>
+        <div class="intro-char-header">
+            <div class="intro-char-wrap"><lottie-player
+                    src="https://assets10.lottiefiles.com/packages/lf20_touohxv0.json" background="transparent"
+                    speed="1" loop autoplay></lottie-player></div>
+            <div class="intro-char-speech">
+                <div class="intro-step-label" id="asmStepLabel">Instructions</div>
+                <div class="intro-char-text" id="asmCharText">Ready for the test? 😊</div>
+            </div>
+        </div>
+        <div class="intro-body" id="asmBody"></div>
+        <div class="intro-nav">
+            <button class="intro-btn-back" id="asmBtnBack">← Back</button>
+            <div class="intro-dots" id="asmDots"></div>
+            <button class="intro-btn-next" id="asmBtnNext">Next →</button>
+        </div>
+    </div>
+</div>
+
+
 <button class="jump-today-btn" id="jumpTodayBtn" onclick="scrollToCurrentDay()">▶ Today's Lesson</button>
 
 <script>
@@ -1827,6 +1944,219 @@
     const assessmentPassingScore = {{ assessment_passing_score|default:15 }};
     const assessmentTimeLimit = {{ assessment_time_limit|default:30 }};
     const passingPercentage = Math.round((assessmentPassingScore / assessmentTotalQuestions) * 100);
+
+    // ─────────────────────────────────────────────────────────────
+    // ASSESSMENT INSTRUCTIONS MODAL LOGIC
+    // ─────────────────────────────────────────────────────────────
+    let asmSteps = [];
+    let currentAsmStep = 0;
+
+    function getAssessmentStepsForLevel(levelName) {
+        const levelDisplay = levelName.charAt(0).toUpperCase() + levelName.slice(1);
+        const steps = {
+            'beginner': [
+                {
+                    stepLabel: "Ready? 🏆",
+                    charText: "You've completed all 30 days! Ready for the test? 😊",
+                    bodyHtml: `
+                        <div class="intro-typing-line">Welcome to your <strong>Beginner Assessment</strong>! 🎉</div>
+                        <div class="intro-typing-line muted">This is the final step to earn your certificate.</div>
+                        <div class="intro-typing-line">Let me show you the rules...</div>
+                    `
+                },
+                {
+                    stepLabel: "📋 Test Rules",
+                    charText: "Here's what you need to know! 📝",
+                    bodyHtml: `
+                        <div class="intro-typing-line strong">Assessment Details:</div>
+                        <div class="intro-skill-grid">
+                            <div class="intro-skill-card">❓ ${assessmentTotalQuestions} Questions</div>
+                            <div class="intro-skill-card">⏱ 30 Minutes</div>
+                            <div class="intro-skill-card">🎯 MCQ Format</div>
+                            <div class="intro-skill-card">🌟 Shuffled Order</div>
+                        </div>
+                        <div class="intro-typing-line muted mt-2">The timer starts as soon as you begin. Do not refresh!</div>
+                    `
+                },
+                {
+                    stepLabel: "🎯 Passing Score",
+                    charText: "Aim for the stars! ⭐",
+                    bodyHtml: `
+                        <div class="intro-typing-line">To pass and earn your certificate, you need:</div>
+                        <div class="intro-typing-line strong" style="font-size: 1.2rem; color: #10b981; text-align: center; margin: 1rem 0;">
+                            ${assessmentPassingScore} / ${assessmentTotalQuestions} Correct (${passingPercentage}%)
+                        </div>
+                        <div class="intro-typing-line muted">Take your time and read every question carefully!</div>
+                    `
+                }
+            ],
+            'intermediate': [
+                {
+                    stepLabel: "Final Step! 🚀",
+                    charText: "You've mastered the Intermediate level! Time to prove it. 🌟",
+                    bodyHtml: `
+                        <div class="intro-typing-line">Welcome to the <strong>Intermediate Certification Exam</strong>! 🎉</div>
+                        <div class="intro-typing-line muted">This test evaluates your professional English skills.</div>
+                        <div class="intro-typing-line">Ready for the final hurdle?</div>
+                    `
+                },
+                {
+                    stepLabel: "📋 Exam Details",
+                    charText: "Stay focused and professional! 💼",
+                    bodyHtml: `
+                        <div class="intro-typing-line strong">What to Expect:</div>
+                        <div class="intro-skill-grid">
+                            <div class="intro-skill-card">❓ ${assessmentTotalQuestions} Questions</div>
+                            <div class="intro-skill-card">⏱ 30 Minutes</div>
+                            <div class="intro-skill-card">📧 Business Tone</div>
+                            <div class="intro-skill-card">⚖️ Grammar Mastery</div>
+                        </div>
+                        <div class="intro-typing-line muted mt-2">Questions cover all the professional topics you've mastered.</div>
+                    `
+                },
+                {
+                    stepLabel: "🎯 Graduation",
+                    charText: "Your certificate is just one test away! 🎓",
+                    bodyHtml: `
+                        <div class="intro-typing-line">Passing Requirement:</div>
+                        <div class="intro-typing-line strong" style="font-size: 1.2rem; color: #4a62b0; text-align: center; margin: 1rem 0;">
+                            ${assessmentPassingScore} / ${assessmentTotalQuestions} Correct (${passingPercentage}%)
+                        </div>
+                        <div class="intro-typing-line muted">Once you pass, you can instantly download your certificate!</div>
+                    `
+                }
+            ],
+            'advanced': [
+                {
+                    stepLabel: "Mastery Test! 🔥",
+                    charText: "You've reached the end of the Advanced journey. Amazing! 🌟",
+                    bodyHtml: `
+                        <div class="intro-typing-line">Welcome to the <strong>Advanced Proficiency Assessment</strong>! 🎉</div>
+                        <div class="intro-typing-line muted">This is a comprehensive test of your English mastery.</div>
+                    `
+                },
+                {
+                    stepLabel: "📋 High-Level Exam",
+                    charText: "Precision and nuance are key! 🎯",
+                    bodyHtml: `
+                        <div class="intro-typing-line strong">Exam Structure:</div>
+                        <div class="intro-skill-grid">
+                            <div class="intro-skill-card">❓ ${assessmentTotalQuestions} Questions</div>
+                            <div class="intro-skill-card">⏱ 45 Minutes</div>
+                            <div class="intro-skill-card">📝 Complex Nuances</div>
+                            <div class="intro-skill-card">👑 Elite Logic</div>
+                        </div>
+                        <div class="intro-typing-line muted mt-2">We've given you extra time for these complex questions.</div>
+                    `
+                },
+                {
+                    stepLabel: "👑 Final Passing",
+                    charText: "The title of 'Master' is within reach! 🏆",
+                    bodyHtml: `
+                        <div class="intro-typing-line">To earn the Master Certificate:</div>
+                        <div class="intro-typing-line strong" style="font-size: 1.2rem; color: #f59e0b; text-align: center; margin: 1rem 0;">
+                            ${assessmentPassingScore} / ${assessmentTotalQuestions} Correct (${passingPercentage}%)
+                        </div>
+                        <div class="intro-typing-line muted">Good luck, scholar. Show us your best!</div>
+                    `
+                }
+            ]
+        };
+        return steps[levelName] || steps['beginner'];
+    }
+
+    function startAssessmentWithIntro() {
+        initIntroModal(true, startAssessmentInstructions);
+    }
+
+    function startAssessmentInstructions() {
+        playSfx('popup');
+        asmSteps = getAssessmentStepsForLevel(levelName);
+        currentAsmStep = 0;
+
+        const modal = document.getElementById('asmModal');
+        if (!modal) return;
+
+        // Initialize dots
+        const dotsContainer = document.getElementById('asmDots');
+        if (dotsContainer) {
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < asmSteps.length; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'intro-dot';
+                dot.onclick = () => { currentAsmStep = i; updateAsmStep(); };
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        updateAsmStep();
+        modal.style.display = 'flex';
+
+        // Setup navigation buttons
+        document.getElementById('asmBtnNext').onclick = nextAsmStep;
+        document.getElementById('asmBtnBack').onclick = prevAsmStep;
+    }
+
+    function updateAsmStep() {
+        const step = asmSteps[currentAsmStep];
+        if (!step) return;
+
+        document.getElementById('asmStepLabel').textContent = step.stepLabel;
+        document.getElementById('asmCharText').textContent = step.charText;
+        document.getElementById('asmBody').innerHTML = step.bodyHtml;
+
+        const progressPercent = ((currentAsmStep + 1) / asmSteps.length) * 100;
+        document.getElementById('asmProgressFill').style.width = `${progressPercent}%`;
+
+        // Update dots
+        const dots = document.querySelectorAll('#asmDots .intro-dot');
+        dots.forEach((dot, idx) => dot.classList.toggle('active', idx === currentAsmStep));
+
+        // Update buttons
+        const btnBack = document.getElementById('asmBtnBack');
+        btnBack.classList.toggle('visible', currentAsmStep > 0);
+
+        const btnNext = document.getElementById('asmBtnNext');
+        btnNext.textContent = currentAsmStep === asmSteps.length - 1 ? 'Start Assessment 🔥' : 'Next →';
+
+        if (typeof gsap !== 'undefined') {
+            gsap.fromTo('#asmBody > *',
+                { opacity: 0, y: 10 },
+                { opacity: 1, y: 0, stagger: 0.1, duration: 0.4 }
+            );
+        }
+    }
+
+    function nextAsmStep() {
+        if (currentAsmStep < asmSteps.length - 1) {
+            playSfx('click');
+            currentAsmStep++;
+            updateAsmStep();
+        } else {
+            completeAsmInstructions();
+        }
+    }
+
+    function prevAsmStep() {
+        if (currentAsmStep > 0) {
+            playSfx('click');
+            currentAsmStep--;
+            updateAsmStep();
+        }
+    }
+
+    function completeAsmInstructions() {
+        playSfx('success');
+        const modal = document.getElementById('asmModal');
+        modal.style.display = 'none';
+
+        showToast('🚀 Taking you to the assessment...', true);
+
+        setTimeout(() => {
+            window.location.href = `/learning/level/${levelName}/take-test/`;
+        }, 1000);
+    }
+
 
     // ─────────────────────────────────────────────────────────────
     // SOUND SYSTEM
@@ -1907,12 +2237,14 @@
     // DATA & STATE
     // ─────────────────────────────────────────────────────────────
     const completedDaysList = {{ completed_days_list|safe }};
-    const collectedRewardsList = {{ collected_rewards|safe }};
     let currentDayNumber = {{ current_day }};
+    const collectedRewardsList = {{ collected_rewards|safe }};
     let completedDaysCount = {{ collected_rewards|length }};
     let streak = {{ streak }};
     let journeyCompleted = {{ is_completed|lower }};
+    let hasPassedAssessment = {{ has_passed_assessment|lower }};
     const levelName = "{{ level }}";
+
     const userName = "{{ user.get_full_name|default:user.username }}";
 
     const dayPowerLines = {
@@ -1922,7 +2254,7 @@
     };
 
     let currentCertificateUrl = null;
-    let selectedRating = 0;
+    let selectedRating = 3;
     let pendingRewardDay = null;
 
     const BADGES = {
@@ -2421,13 +2753,22 @@
             <div class="assessment-card">
                 <div class="card-header">
                     <div class="card-title">🏆 Final Assessment</div>
-                    <span class="status-badge ${isAssessmentAvailable ? 'available' : 'locked'}">${isAssessmentAvailable ? '✓ Ready' : '🔒 Locked'}</span>
+                    <span class="status-badge ${hasPassedAssessment ? 'completed' : isAssessmentAvailable ? 'available' : 'locked'}">
+                        ${hasPassedAssessment ? '✓ Passed' : isAssessmentAvailable ? '✓ Ready' : '🔒 Locked'}
+                    </span>
                 </div>
                 <div class="card-meta">
                     <span>⭐ Test your knowledge — ${assessmentTotalQuestions} questions</span>
                     <span>⏱ ~${assessmentTimeLimit} mins</span>
                 </div>
-                <div>${isAssessmentAvailable ? `<a href="/learning/level/${levelName}/take-test/" class="btn-assessment-action">✏️ Take Assessment</a>` : `<button class="btn-assessment-action" disabled style="opacity:0.5;">🔒 Complete all days first</button>`}</div>
+                <div>
+                    ${hasPassedAssessment
+                ? `<a href="/learning/level/${levelName}/result/" class="btn-assessment-action" style="background: var(--success-light); color: var(--success); border: 1px solid var(--success-soft);">✅ View Results</a>`
+                : isAssessmentAvailable
+                    ? `<button onclick="startAssessmentWithIntro()" class="btn-assessment-action">✏️ Take Assessment</button>`
+                    : `<button class="btn-assessment-action" disabled style="opacity:0.5;">🔒 Complete all days first</button>`
+            }
+                </div>
             </div>`;
         timeline.appendChild(asmItem);
 
@@ -2477,9 +2818,61 @@
     // ─────────────────────────────────────────────────────────────
     // CERTIFICATE FUNCTIONS
     // ─────────────────────────────────────────────────────────────
+
     function openFeedbackModal() {
         document.getElementById('feedbackModal').style.display = 'flex';
         playSfx('popup');
+        setupRatingStars();
+
+        // Reset textarea and button state
+        const textarea = document.getElementById('feedbackText');
+        const submitBtn = document.getElementById('btnSubmitFeedback');
+        textarea.value = '';
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.5';
+        submitBtn.style.cursor = 'not-allowed';
+
+        // Add listener for real-time validation
+        textarea.oninput = function () {
+            if (this.value.trim().length > 3) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.5';
+                submitBtn.style.cursor = 'not-allowed';
+            }
+        };
+    }
+
+    function setupRatingStars() {
+        const stars = document.querySelectorAll('#ratingStars span');
+        const updateStars = (rating) => {
+            stars.forEach(s => {
+                const r = parseInt(s.dataset.rating);
+                s.textContent = r <= rating ? '★' : '☆';
+                s.style.color = r <= rating ? '#f59e0b' : '#c9c2b4';
+            });
+        };
+        updateStars(selectedRating);
+
+        stars.forEach(star => {
+            star.onclick = function () {
+                selectedRating = parseInt(this.dataset.rating);
+                updateStars(selectedRating);
+                playSfx('click');
+            };
+            star.onmouseenter = function () {
+                const hover = parseInt(this.dataset.rating);
+                stars.forEach(s => {
+                    s.style.color = parseInt(s.dataset.rating) <= hover ? '#f59e0b' : '#c9c2b4';
+                });
+            };
+            star.onmouseleave = function () {
+                updateStars(selectedRating);
+            };
+        });
     }
 
     function closeFeedbackModal() {
@@ -2487,22 +2880,41 @@
     }
 
     function submitFeedback() {
-        closeFeedbackModal();
-        showToast('📝 Generating your certificate...');
+        const feedbackText = document.getElementById('feedbackText').value;
+        const rating = selectedRating;
 
+        closeFeedbackModal();
+        showToast('📝 Saving feedback & generating certificate...');
+
+        // Send feedback along with certificate request
         fetch(`/learning/level/${levelName}/certificate/generate/`, {
-            method: 'GET',
-            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'feedback': feedbackText,
+                'rating': rating
+            })
         })
             .then(r => r.blob())
             .then(blob => {
                 const url = URL.createObjectURL(blob);
                 currentCertificateUrl = url;
                 document.getElementById('certificateContent').innerHTML = `<div style="text-align:center;"><img src="${url}" alt="Certificate" style="max-width:100%;border-radius:12px;"></div>`;
-                document.getElementById('downloadCertBtn').style.display = 'inline-flex';
+                
+                // Update download button to point to the PDF version
+                const downloadBtn = document.getElementById('downloadCertBtn');
+                downloadBtn.style.display = 'inline-flex';
+                downloadBtn.onclick = function() {
+                    window.location.href = `/learning/level/${levelName}/certificate/pdf/`;
+                };
+                
                 document.getElementById('shareCertBtn').style.display = 'inline-flex';
                 document.getElementById('certificateModal').style.display = 'flex';
                 showToast('🎉 Certificate ready!', true);
+
                 playSfx('badge');
                 if (typeof confetti === 'function') {
                     confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#d4af37', '#4a62b0', '#10b981'] });
@@ -2752,7 +3164,7 @@
                         <div class="intro-typing-line">✅ Pass advanced assessment (${assessmentTotalQuestions} questions, need ${assessmentPassingScore} correct)</div>
                         <div class="intro-typing-line">✅ Earn Master Certificate</div>
                         <div class="intro-cert-preview mt-2">
-                            <div class="intro-cert-icon">🌟🏆🌟</div>
+                            <div class="intro-cert-icon">🏆</div>
                             <div class="intro-cert-title">Certificate of Mastery!</div>
                         </div>
                     `
@@ -2763,19 +3175,25 @@
         return steps[levelName] || steps['beginner'];
     }
 
-    function initIntroModal() {
-        const showIntro = {{ show_intro|lower }};
+    let introCallback = null;
 
-    // Only show if show_intro is true
-    if (!showIntro) {
-        console.log('Intro already completed, skipping...');
-        return;
-    }
+    function initIntroModal(force = false, callback = null) {
+        introCallback = callback;
+        const urlParams = new URLSearchParams(window.location.search);
+        const forceIntro = urlParams.get('test') === '1' || urlParams.get('force_intro') === 'true' || force;
+        const showIntro = {{ show_intro|lower }} || forceIntro;
 
-    console.log('Showing intro modal for first time user');
+        // Only show if show_intro is true
+        if (!showIntro) {
+            console.log('Intro already completed, skipping...');
+            return;
+        }
 
-    introSteps = getIntroStepsForLevel(levelName);
-    currentStep = 0;
+        console.log('Showing intro modal (Force Mode: ' + forceIntro + ')');
+
+        introSteps = getIntroStepsForLevel(levelName);
+        currentStep = 0;
+
 
     const modal = document.getElementById('introModal');
     if (!modal) {
@@ -2861,7 +3279,7 @@
         const btnNext = document.getElementById('introBtnNext');
         if (btnNext) {
             if (currentStep === introSteps.length - 1) {
-                btnNext.textContent = 'Start Journey →';
+                btnNext.textContent = introCallback ? 'Continue to Assessment →' : 'Start Journey →';
             } else {
                 btnNext.textContent = 'Next →';
             }
@@ -2869,8 +3287,14 @@
 
         if (typeof gsap !== 'undefined') {
             gsap.fromTo('#introBody > *',
-                { opacity: 0, y: 10 },
-                { opacity: 1, y: 0, stagger: 0.08, duration: 0.4 }
+                { opacity: 0, y: 20, filter: 'blur(5px)' },
+                { opacity: 1, y: 0, filter: 'blur(0px)', stagger: 0.12, duration: 0.5, ease: 'power2.out' }
+            );
+            
+            // Add a little pop to the character too
+            gsap.fromTo('.intro-char-wrap', 
+                { scale: 0.8, rotate: -5 },
+                { scale: 1, rotate: 0, duration: 0.6, ease: 'back.out(1.7)' }
             );
         }
     }
@@ -2916,16 +3340,32 @@
                     modal.style.display = 'none';
                     modal.style.opacity = '';
 
-                    // Call the backend to mark intro as seen
-                    markIntroAsSeen();
+                    if (introCallback) {
+                        const cb = introCallback;
+                        introCallback = null;
+                        cb();
+                    } else {
+                        // Call the backend to mark intro as seen
+                        markIntroAsSeen();
+                    }
                 }
             });
         } else {
             modal.style.display = 'none';
-            markIntroAsSeen();
+            if (introCallback) {
+                const cb = introCallback;
+                introCallback = null;
+                cb();
+            } else {
+                markIntroAsSeen();
+            }
         }
 
-        showToast('🎉 Welcome to your learning journey! Let\'s begin!', true);
+        if (introCallback) {
+            showToast('🏁 Journey recap complete! Ready for the final challenge?', true);
+        } else {
+            showToast('🎉 Welcome to your learning journey! Let\'s begin!', true);
+        }
 
         if (typeof confetti === 'function') {
             confetti({
@@ -2997,7 +3437,14 @@
             }, 600);
         }
 
+        if (urlParams.get('start_test') === 'true') {
+            setTimeout(() => {
+                startAssessmentWithIntro();
+            }, 800);
+        }
+
         const jumpBtn = document.getElementById('jumpTodayBtn');
+
         if (jumpBtn) {
             const headerHeight = document.querySelector('.full-header')?.offsetHeight || 100;
             window.addEventListener('scroll', () => jumpBtn.classList.toggle('visible', window.scrollY > headerHeight + 40));

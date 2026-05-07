@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Tool 5: Grammar Detective Game | Advanced Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fc;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: #0f172a;
+        }
+
+        .lesson-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 3rem 2rem;
+        }
+
+        /* Header - Full Width */
+        .tool-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 0;
+            padding: 1.8rem 0;
+            margin-bottom: 2rem;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .tool-header .hero-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .tool-badge {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            padding: 0.35rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            color: #e2e8f0;
+        }
+
+        .tool-header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0.75rem 0;
+            color: white;
+            letter-spacing: -0.3px;
+        }
+
+        .tool-header .subtitle {
+            font-size: 0.9rem;
+            color: #f3e8ff;
+        }
+
+        /* Main Content - Reduced Width */
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Score Card */
+        .score-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1rem 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2edf7;
+        }
+
+        .score-badge {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .progress-text {
+            font-weight: 600;
+            color: #1e293b;
+            background: #f1f5f9;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+        }
+
+        /* Grammar Cards - Clean & Interactive */
+        .detective-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .grammar-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e9f0f5;
+            transition: all 0.2s;
+        }
+
+        .grammar-card:hover {
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+            border-color: #cbdde9;
+        }
+
+        .card-header {
+            background: #fafdff;
+            padding: 1rem 1.5rem;
+            border-bottom: 2px solid #eef3fa;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .sentence-number {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .error-sentence {
+            flex: 1;
+            font-size: 0.9rem;
+            background: #fef2f2;
+            padding: 0.6rem 1rem;
+            border-radius: 14px;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .status-correct {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-incorrect {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .input-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-label {
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detective-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2edf2;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: #ffffff;
+        }
+
+        .detective-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .detective-input.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .detective-input.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .detective-textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2edf2;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            transition: all 0.2s;
+            background: #ffffff;
+            line-height: 1.5;
+        }
+
+        .detective-textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .detective-textarea.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .detective-textarea.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .field-feedback {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-weight: 500;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .feedback-correct {
+            color: #15803d;
+            background: #dcfce7;
+        }
+
+        .feedback-incorrect {
+            color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        .feedback-checking {
+            color: #d97706;
+            background: #fef3c7;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 0.5rem 0 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e6edf4;
+        }
+
+        .feedback-area {
+            background: #f8fafc;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            border: 1px solid #e2edf2;
+        }
+
+        .feedback-area.success {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 1rem auto 0.5rem;
+            display: block;
+            width: 100%;
+            max-width: 320px;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(34, 197, 94, 0.3);
+        }
+
+        @media (max-width: 800px) {
+            .lesson-container {
+                padding: 0 1rem 2rem 1rem;
+            }
+            .main-content {
+                max-width: 100%;
+            }
+            .tool-header h1 {
+                font-size: 1.4rem;
+            }
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="lesson-container">
+    <!-- Header -->
+    <div class="tool-header">
+        <div class="hero-content">
+            <div class="tool-badge">🔧 TOOL 5 — GRAMMAR MASTERY</div>
+            <h1>🕵️ THE GRAMMAR DETECTIVE GAME</h1>
+            <div class="subtitle">Identify the error type and write the corrected sentence for each grammar mistake</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="score-card">
+            <div class="score-badge">📊 Grammar Detective</div>
+            <div class="progress-text" id="scoreDisplay">Progress: 0/10 corrected</div>
+        </div>
+
+        <div class="detective-grid" id="grammarGrid"></div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="checkAllBtn">✓ CHECK ALL SENTENCES</button>
+            <button class="btn btn-secondary" id="resetBtn">⟳ RESET ALL</button>
+        </div>
+
+        <div class="feedback-area" id="feedbackMsg">
+            🔍 Click "Check Next Sentence" on each card to validate your answers individually.
+        </div>
+        <div id="completionArea"></div>
+    </div>
+</div>
+
+<script>
+    // CSRF Token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // Grammar Data
+    const grammarData = [
+        { id: 1, sentence: "The engineer which designed the cooling system has resigned.", correctError: "Relative Clause Error", correctSentence: "The engineer who designed the cooling system has resigned." },
+        { id: 2, sentence: "Kindly do the needful and revert back to me at the earliest.", correctError: "Redundancy + Outdated Phrasing", correctSentence: "Please take the necessary action and revert to me at your earliest convenience." },
+        { id: 3, sentence: "The motor is consuming 5 amperes during normal operation.", correctError: "Present Continuous Overuse", correctSentence: "The motor consumes 5 amperes during normal operation." },
+        { id: 4, sentence: "I have went through the entire schematic and found two faults.", correctError: "Past Participle Error", correctSentence: "I have gone through the entire schematic and found two faults." },
+        { id: 5, sentence: "Obviously, solar energy is better than thermal in every situation.", correctError: "Weak Argument Marker", correctSentence: "Data from comparable installations indicates that solar energy delivers higher efficiency than thermal in this climate." },
+        { id: 6, sentence: "The failure is caused by a very unique combination of factors.", correctError: "Redundant Intensifier", correctSentence: "The failure is caused by a unique combination of factors." },
+        { id: 7, sentence: "As per your instruction, I am doing the needful for the same.", correctError: "Outdated Phrasing + Vague Language", correctSentence: "As you instructed, I am updating the project files as discussed." },
+        { id: 8, sentence: "He have a doubt about the formula used in the third section.", correctError: "Subject-Verb Agreement + Misuse of Doubt", correctSentence: "He has a question about the formula used in the third section." },
+        { id: 9, sentence: "The project is completely finished since yesterday morning.", correctError: "Tense Inconsistency + Redundant Intensifier", correctSentence: "The project has been finished since yesterday morning." },
+        { id: 10, sentence: "Please revert back to me once you have reviewed this email.", correctError: "Redundancy", correctSentence: "Please revert to me once you have reviewed this email." }
+    ];
+
+    // State
+    let userErrorTypes = {};
+    let userCorrected = {};
+    let validationResults = {};
+    let currentValidatingId = null;
+    let totalCorrect = 0;
+
+    // Escape HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Update overall score
+    function updateOverallScore() {
+        let correct = 0;
+        for (let i = 1; i <= 10; i++) {
+            if (validationResults[i] === true) correct++;
+        }
+        totalCorrect = correct;
+        document.getElementById('scoreDisplay').innerHTML = `Progress: ${correct}/10 corrected`;
+        
+        const feedbackMsg = document.getElementById('feedbackMsg');
+        const completionArea = document.getElementById('completionArea');
+        
+        if (correct === 10) {
+            feedbackMsg.innerHTML = '🎉 PERFECT! You caught all 10 grammar errors! 🎉';
+            feedbackMsg.className = 'feedback-area success';
+            launchAestheticConfetti();
+            
+            if (!document.getElementById('continueToolBtn')) {
+                completionArea.innerHTML = '<button class="next-btn" id="continueToolBtn">✨ CONTINUE TO NEXT TOOL (Word Association) ✨</button>';
+                const continueBtn = document.getElementById('continueToolBtn');
+                if (continueBtn) {
+                    continueBtn.addEventListener('click', () => {
+                        window.location.href = '/learning/level/advanced/toolkit/word-association/';
+                    });
+                }
+            }
+        }
+    }
+
+    // Update single card UI
+    function updateCardUI(id, errorValid, correctedValid, errorMsg, correctedMsg) {
+        const errorInput = document.getElementById(`errorType-${id}`);
+        const correctedInput = document.getElementById(`corrected-${id}`);
+        const errorFeedback = document.getElementById(`errorFeedback-${id}`);
+        const correctedFeedback = document.getElementById(`correctedFeedback-${id}`);
+        const statusDiv = document.getElementById(`status-${id}`);
+        
+        if (errorInput) {
+            errorInput.classList.remove('correct', 'incorrect');
+            if (errorValid === true) errorInput.classList.add('correct');
+            else if (errorValid === false) errorInput.classList.add('incorrect');
+        }
+        if (correctedInput) {
+            correctedInput.classList.remove('correct', 'incorrect');
+            if (correctedValid === true) correctedInput.classList.add('correct');
+            else if (correctedValid === false) correctedInput.classList.add('incorrect');
+        }
+        
+        if (errorFeedback && errorMsg) {
+            errorFeedback.innerHTML = errorMsg;
+            errorFeedback.className = `field-feedback ${errorValid ? 'feedback-correct' : 'feedback-incorrect'}`;
+        }
+        if (correctedFeedback && correctedMsg) {
+            correctedFeedback.innerHTML = correctedMsg;
+            correctedFeedback.className = `field-feedback ${correctedValid ? 'feedback-correct' : 'feedback-incorrect'}`;
+        }
+        
+        const isRowCorrect = (errorValid === true && correctedValid === true);
+        validationResults[id] = isRowCorrect;
+        
+        if (statusDiv) {
+            statusDiv.innerHTML = isRowCorrect ? 
+                '<span class="status-badge status-correct">✅ Correct</span>' : 
+                (errorValid !== undefined ? '<span class="status-badge status-incorrect">❌ Incorrect</span>' : '<span class="status-badge status-pending">⏳ Pending</span>');
+        }
+        
+        updateOverallScore();
+    }
+
+    // AI Validation for a single sentence
+    async function validateSentence(id) {
+        const errorType = userErrorTypes[id] || '';
+        const corrected = userCorrected[id] || '';
+        
+        if (!errorType.trim() && !corrected.trim()) {
+            updateCardUI(id, null, null, '⚠️ Enter error type', '⚠️ Enter corrected sentence');
+            return;
+        }
+        
+        // Show checking state
+        updateCardUI(id, null, null, '🤖 AI checking error type...', '🤖 AI checking sentence...');
+        
+        const item = grammarData.find(g => g.id === id);
+        
+        try {
+            const response = await fetch('/learning/ai/evaluate/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                body: JSON.stringify({
+                    text: JSON.stringify({ id, errorType, corrected, correctError: item.correctError, correctSentence: item.correctSentence }),
+                    task_type: 'grammar_detective_single',
+                    day_number: 5,
+                    level: 'advanced',
+                    system_prompt: `You are evaluating a grammar detective exercise for advanced English learners.
+
+Sentence: "${item.sentence}"
+Correct Error Type: "${item.correctError}"
+Correct Corrected Sentence: "${item.correctSentence}"
+
+Student's Error Type: "${errorType}"
+Student's Corrected Sentence: "${corrected}"
+
+Evaluate STRICTLY:
+1. Is the student's error type correct (matches or is equivalent to the correct error type)?
+2. Is the student's corrected sentence grammatically correct and professionally written?
+
+Return JSON: {"errorCorrect": true/false, "sentenceCorrect": true/false, "errorFeedback": "short feedback", "sentenceFeedback": "short feedback"}`
+                })
+            });
+            const data = await response.json();
+            
+            updateCardUI(id, data.errorCorrect, data.sentenceCorrect, 
+                data.errorFeedback || (data.errorCorrect ? '✅ Correct error type!' : `❌ Expected: ${item.correctError}`),
+                data.sentenceFeedback || (data.sentenceCorrect ? '✅ Correct sentence!' : `❌ Expected: "${item.correctSentence.substring(0, 60)}..."`));
+            
+        } catch (error) {
+            console.error('AI Error, using local validation:', error);
+            // Local fallback validation
+            let errorValid = false;
+            let correctedValid = false;
+            
+            const userErrorLower = errorType.toLowerCase().trim();
+            const correctErrorLower = item.correctError.toLowerCase().trim();
+            
+            if (userErrorLower === correctErrorLower) errorValid = true;
+            else if (item.id === 1 && (userErrorLower.includes('relative') || userErrorLower.includes('who/which'))) errorValid = true;
+            else if (item.id === 2 && (userErrorLower.includes('redundancy') || userErrorLower.includes('outdated'))) errorValid = true;
+            else if (item.id === 3 && (userErrorLower.includes('present continuous') || userErrorLower.includes('continuous overuse'))) errorValid = true;
+            else if (item.id === 4 && (userErrorLower.includes('past participle') || userErrorLower.includes('participle'))) errorValid = true;
+            else if (item.id === 5 && (userErrorLower.includes('weak') || userErrorLower.includes('obviously'))) errorValid = true;
+            else if (item.id === 6 && (userErrorLower.includes('redundant') || userErrorLower.includes('intensifier'))) errorValid = true;
+            else if (item.id === 7 && (userErrorLower.includes('outdated') || userErrorLower.includes('vague'))) errorValid = true;
+            else if (item.id === 8 && (userErrorLower.includes('subject-verb') || userErrorLower.includes('agreement'))) errorValid = true;
+            else if (item.id === 9 && (userErrorLower.includes('tense') || userErrorLower.includes('redundant'))) errorValid = true;
+            else if (item.id === 10 && (userErrorLower.includes('redundancy') || userErrorLower.includes('revert back'))) errorValid = true;
+            
+            const correctedLower = corrected.toLowerCase().trim();
+            if (correctedLower.includes(item.correctSentence.toLowerCase().substring(0, 30))) correctedValid = true;
+            else if (corrected.length > 30) correctedValid = true;
+            
+            updateCardUI(id, errorValid, correctedValid,
+                errorValid ? '✅ Correct error type!' : `❌ Expected: ${item.correctError}`,
+                correctedValid ? '✅ Acceptable correction!' : `❌ Expected: "${item.correctSentence.substring(0, 60)}..."`);
+        }
+    }
+
+    // Render the grid
+    function renderGrid() {
+        const container = document.getElementById('grammarGrid');
+        container.innerHTML = '';
+        
+        grammarData.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'grammar-card';
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="sentence-number">${item.id}</div>
+                    <div class="error-sentence">${escapeHtml(item.sentence)}</div>
+                    <div id="status-${item.id}"><span class="status-badge status-pending">⏳ Pending</span></div>
+                </div>
+                <div class="card-body">
+                    <div class="input-row">
+                        <div class="input-label"><span>🔍</span> Error Type</div>
+                        <input type="text" class="detective-input" id="errorType-${item.id}" 
+                               placeholder="e.g., Relative Clause Error, Redundancy..." value="${escapeHtml(userErrorTypes[item.id] || '')}">
+                        <div class="field-feedback" id="errorFeedback-${item.id}"></div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-label"><span>✅</span> Corrected Sentence</div>
+                        <textarea class="detective-textarea" id="corrected-${item.id}" rows="2" 
+                                  placeholder="Write the corrected sentence...">${escapeHtml(userCorrected[item.id] || '')}</textarea>
+                        <div class="field-feedback" id="correctedFeedback-${item.id}"></div>
+                    </div>
+                    <div class="action-buttons" style="margin-top: 0.5rem; justify-content: flex-end;">
+                        <button class="btn btn-primary check-sentence-btn" data-id="${item.id}" style="padding: 0.5rem 1.2rem; font-size: 0.8rem;">🔍 Check This Sentence</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+        
+        // Attach input listeners and button listeners
+        grammarData.forEach(item => {
+            const errorInput = document.getElementById(`errorType-${item.id}`);
+            const correctedInput = document.getElementById(`corrected-${item.id}`);
+            
+            if (errorInput) {
+                errorInput.addEventListener('input', (e) => {
+                    userErrorTypes[item.id] = e.target.value;
+                    if (validationResults[item.id] !== undefined) {
+                        delete validationResults[item.id];
+                        updateCardUI(item.id, null, null, '', '');
+                    }
+                });
+            }
+            if (correctedInput) {
+                correctedInput.addEventListener('input', (e) => {
+                    userCorrected[item.id] = e.target.value;
+                    if (validationResults[item.id] !== undefined) {
+                        delete validationResults[item.id];
+                        updateCardUI(item.id, null, null, '', '');
+                    }
+                });
+            }
+            
+            const checkBtn = document.querySelector(`.check-sentence-btn[data-id="${item.id}"]`);
+            if (checkBtn) {
+                checkBtn.addEventListener('click', () => validateSentence(item.id));
+            }
+        });
+    }
+
+    // Check all sentences one by one
+    async function checkAllSentences() {
+        const checkBtn = document.getElementById('checkAllBtn');
+        checkBtn.disabled = true;
+        checkBtn.innerHTML = '⏳ VALIDATING ALL SENTENCES...';
+        
+        for (let item of grammarData) {
+            await validateSentence(item.id);
+            await new Promise(r => setTimeout(r, 500));
+        }
+        
+        checkBtn.disabled = false;
+        checkBtn.innerHTML = '✓ CHECK ALL SENTENCES';
+    }
+
+    // Reset everything
+    function resetAll() {
+        userErrorTypes = {};
+        userCorrected = {};
+        validationResults = {};
+        
+        grammarData.forEach(item => {
+            const errorInput = document.getElementById(`errorType-${item.id}`);
+            const correctedInput = document.getElementById(`corrected-${item.id}`);
+            if (errorInput) errorInput.value = '';
+            if (correctedInput) correctedInput.value = '';
+            updateCardUI(item.id, null, null, '', '');
+        });
+        
+        updateOverallScore();
+        const feedbackMsg = document.getElementById('feedbackMsg');
+        feedbackMsg.innerHTML = '🔄 Reset complete. Click "Check This Sentence" on each card to validate your answers.';
+        feedbackMsg.className = 'feedback-area';
+    }
+
+    // Aesthetic small confetti
+    function launchAestheticConfetti() {
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '10000';
+        document.body.appendChild(canvas);
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+        const particles = [];
+        const colors = ['#22c55e', '#16a34a', '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899'];
+        for (let i = 0; i < 200; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height,
+                w: Math.random() * 10 + 4,
+                h: Math.random() * 10 + 4,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                vx: (Math.random() - 0.5) * 3.5,
+                vy: Math.random() * -12 - 7,
+                gravity: 0.22,
+                rot: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.12
+            });
+        }
+        let animId;
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let active = false;
+            for (let p of particles) {
+                if (p.y < canvas.height + 150) {
+                    active = true;
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += p.gravity;
+                    p.rot += p.rotSpeed;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                    ctx.restore();
+                }
+            }
+            if (active) animId = requestAnimationFrame(animate);
+            else canvas.remove();
+        }
+        animate();
+        setTimeout(() => { if(canvas.parentNode) canvas.remove(); }, 2500);
+    }
+
+    // Initialize
+    renderGrid();
+    updateOverallScore();
+    
+    document.getElementById('checkAllBtn').addEventListener('click', checkAllSentences);
+    document.getElementById('resetBtn').addEventListener('click', resetAll);
+</script>
+</body>
+</html>

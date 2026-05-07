@@ -896,76 +896,67 @@
         window.location.href = "/profile/";
     });
 
-    // DYNAMIC UNLOCK SEQUENCE - based on backend unlock flags
+    // ========== DYNAMIC UNLOCK SEQUENCE - TARGETED ANIMATIONS ==========
     window.addEventListener('load', async () => {
         attachLockedHandlers();
         
-        // Set initial stepper text based on actual unlock status
+        // Initial setup for stepper statuses
         document.getElementById('stepBeginnerStatus').innerText = beginnerUnlocked ? (beginnerProgress > 0 ? `${Math.round(beginnerProgress)}%` : 'Available') : 'Locked';
         document.getElementById('stepIntermediateStatus').innerText = intermediateUnlocked ? (intermediateProgress > 0 ? `${Math.round(intermediateProgress)}%` : 'Available') : 'Locked';
         document.getElementById('stepAdvancedStatus').innerText = advancedUnlocked ? (advancedProgress > 0 ? `${Math.round(advancedProgress)}%` : 'Available') : 'Locked';
         
-        // ========== CORRECT UNLOCK SEQUENCE BASED ON BACKEND LOGIC ==========
-        // This matches the logic from profile_view:
-        // - Beginner: Always unlocked if pretest completed
-        // - Intermediate: Unlocked if user_level is intermediate/advanced OR beginner completed
-        // - Advanced: Unlocked if user_level is advanced OR intermediate completed
+        // Determine which level should play the "Unlocking" effect
+        // New Rule: Animate the HIGHEST level that is unlocked but not yet started
+        let levelToAnimate = null;
         
-        // 1. Handle Beginner Level (always unlocked if pretest completed)
+        if (advancedUnlocked && advancedProgress === 0) {
+            levelToAnimate = 'advanced';
+        } else if (intermediateUnlocked && intermediateProgress === 0) {
+            levelToAnimate = 'intermediate';
+        } else if (beginnerUnlocked && beginnerProgress === 0) {
+            levelToAnimate = 'beginner';
+        }
+
+
+        // 2. Execute the sequence based on the target level
+        // Beginner Level
         if (beginnerUnlocked) {
-            const hasProgress = beginnerProgress > 0;
-            const levelData = { progress: beginnerProgress };
-            
-            if (!hasProgress && userLevel === 'beginner') {
-                // Show unlock animation for new Beginner users
-                await unlockLevelWithAnimation('beginner', levelData, false);
+            if (levelToAnimate === 'beginner') {
+                await unlockLevelWithAnimation('beginner', { progress: 0 });
             } else {
-                // Just update UI without animation (already unlocked or has progress)
-                updateUIAfterUnlock('beginner', levelData);
+                updateUIAfterUnlock('beginner', { progress: beginnerProgress });
             }
         }
         
-        // 2. Handle Intermediate Level (unlocked based on user level or beginner completion)
+        // Intermediate Level
         if (intermediateUnlocked) {
-            const hasProgress = intermediateProgress > 0;
-            const levelData = { progress: intermediateProgress };
-            
-            // Show unlock animation for Intermediate users who haven't started yet
-            if (!hasProgress && (userLevel === 'intermediate' || userLevel === 'advanced')) {
+            if (levelToAnimate === 'intermediate') {
+                // Wait slightly for the Beginner card to appear first
                 setTimeout(async () => {
-                    await unlockLevelWithAnimation('intermediate', levelData, false);
-                }, 1500);
-            } else if (hasProgress) {
-                setTimeout(() => {
-                    updateUIAfterUnlock('intermediate', levelData);
+                    await unlockLevelWithAnimation('intermediate', { progress: 0 });
                 }, 500);
-            } else if (beginnerUnlocked && beginnerProgress >= 100 && !intermediateUnlocked) {
-                // This case shouldn't happen if backend logic is correct, but handle anyway
-                setTimeout(() => {
-                    updateUIAfterUnlock('intermediate', levelData);
-                }, 500);
+            } else {
+                updateUIAfterUnlock('intermediate', { progress: intermediateProgress });
             }
         }
         
-        // 3. Handle Advanced Level (unlocked only for advanced users)
+        // Advanced Level
         if (advancedUnlocked) {
-            const hasProgress = advancedProgress > 0;
-            const levelData = { progress: advancedProgress };
-            
-            if (!hasProgress && userLevel === 'advanced') {
+            if (levelToAnimate === 'advanced') {
+                // Wait slightly for previous cards to appear first
                 setTimeout(async () => {
-                    await unlockLevelWithAnimation('advanced', levelData, false);
-                }, 2500);
-            } else if (hasProgress) {
-                setTimeout(() => {
-                    updateUIAfterUnlock('advanced', levelData);
+                    await unlockLevelWithAnimation('advanced', { progress: 0 });
                 }, 1000);
+            } else {
+                updateUIAfterUnlock('advanced', { progress: advancedProgress });
             }
         }
+
         
-        // Update info banner after all unlocks
+        // Final UI updates
         updateInfoBanner();
     });
+
 </script>
 </body>
 </html>

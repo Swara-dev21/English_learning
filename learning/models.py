@@ -263,3 +263,20 @@ class UserAssessmentAttempt(models.Model):
         if self.total_questions > 0:
             self.percentage = (self.score / self.total_questions) * 100
         super().save(*args, **kwargs)
+
+class UserFeedback(models.Model):
+    """Stores user feedback upon course completion"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedbacks')
+    level = models.CharField(max_length=20)
+    rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "User Feedback"
+        verbose_name_plural = "User Feedbacks"
+
+    def __str__(self):
+        return f"{self.user.username} - {self.level} - {self.rating}★"
+

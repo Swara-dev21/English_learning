@@ -24,7 +24,7 @@ urlpatterns = [
     path('level/<str:level_name>/final-test/', views.take_final_test, name='final_test'),
     
     # Alternative assessment endpoint (if you want to separate render and submit)
-    path('level/<str:level_name>/take-test/', views.render_test_page, name='take_test'),
+    path('level/<str:level_name>/take-test/', views.take_final_test, name='take_test'),
     
     # Test results
     path('level/<str:level_name>/result/', views.test_result, name='test_result'),
@@ -32,6 +32,7 @@ urlpatterns = [
     # Certificate URLs
     path('level/<str:level_name>/certificate/', views.certificate_view, name='certificate'),
     path('level/<str:level_name>/certificate/generate/', views.generate_certificate_png, name='generate_certificate_png'),
+    path('level/<str:level_name>/certificate/pdf/', views.generate_certificate_pdf, name='generate_certificate_pdf'),
     path('level/<str:level_name>/certificate/view/', views.view_certificate_png, name='view_certificate_png'),
     path('level/<str:level_name>/certificate/status/', views.certificate_status_api, name='certificate_status_api'),
     path('level/<str:level_name>/certificate/track-download/', views.track_certificate_download, name='track_certificate_download'),

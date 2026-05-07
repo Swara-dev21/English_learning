@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Tool 7: Sentence Transformation Challenge | Advanced Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4fe;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: #0f172a;
+        }
+
+        .lesson-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 3rem 2rem;
+        }
+
+     /* Header - Full Width with gradient */
+        .tool-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 0;
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.25);
+        }
+
+        .tool-header .hero-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .tool-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.4rem 1.3rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        .tool-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0.75rem 0 0.5rem;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .tool-header .subtitle {
+            font-size: 0.95rem;
+            color: #f0e6ff;
+            opacity: 0.95;
+        }
+
+
+        /* Main Content */
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Score Card */
+        .score-card {
+            background: white;
+            border-radius: 24px;
+            padding: 0.8rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2edf7;
+        }
+
+        .score-badge {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .score-text {
+            font-weight: 700;
+            color: #1e293b;
+            background: #f1f5f9;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+        }
+
+        /* Task Instruction */
+        .task-instruction {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 20px;
+            padding: 0.9rem 1.2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .task-text p {
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        .task-text strong {
+            color: #7c3aed;
+        }
+
+        /* Sentences Grid */
+        .sentences-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sentence-card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #eef2ff;
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .sentence-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            border-color: #cbd5e1;
+        }
+
+        .card-header {
+            background: #fafcff;
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #eef2ff;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .original-sentence {
+            flex: 1;
+            font-size: 0.85rem;
+            color: #475569;
+            background: #fefce8;
+            padding: 0.5rem 0.9rem;
+            border-radius: 12px;
+            border-left: 3px solid #f59e0b;
+        }
+
+        .original-sentence strong {
+            color: #1e293b;
+        }
+
+        .transformation-required {
+            font-size: 0.7rem;
+            color: #7c3aed;
+            background: #ede9fe;
+            padding: 0.25rem 0.9rem;
+            border-radius: 30px;
+            font-weight: 700;
+        }
+
+        .user-input-area {
+            padding: 1rem 1.2rem;
+        }
+
+        .transformed-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2edf2;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            transition: all 0.2s;
+            background: #ffffff;
+            line-height: 1.5;
+        }
+
+        .transformed-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .transformed-input.correct-border {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .transformed-input.incorrect-border {
+            border-color: #ef4444;
+            background: #fef2f2;
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        .feedback-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.6rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .feedback-text {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+
+        .feedback-correct {
+            color: #15803d;
+            background: #dcfce7;
+        }
+
+        .feedback-incorrect {
+            color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        .feedback-checking {
+            color: #d97706;
+            background: #fef3c7;
+        }
+
+        .status-icon {
+            font-size: 1rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 0.8rem 0 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.7rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(139, 92, 246, 0.35);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: translateY(-1px);
+        }
+
+        .feedback-area {
+            background: #f8fafc;
+            padding: 0.8rem 1.2rem;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            border: 1px solid #e2edf2;
+        }
+
+        .feedback-area.success {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
+            color: #3730a3;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin: 1rem auto 0.5rem;
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            transition: all 0.2s;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #a5b4fc, #8b5cf6);
+            color: white;
+            box-shadow: 0 6px 14px rgba(139, 92, 246, 0.3);
+        }
+
+        @media (max-width: 800px) {
+            .lesson-container {
+                padding: 0 1rem 2rem 1rem;
+            }
+            .main-content {
+                max-width: 100%;
+            }
+            .tool-header h1 {
+                font-size: 1.3rem;
+            }
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="lesson-container">
+    <!-- Header -->
+    <div class="tool-header">
+        <div class="hero-content">
+            <div class="tool-badge">🔧 TOOL 7 — ADVANCED TRANSFORMATION</div>
+            <h1>✍️ SENTENCE TRANSFORMATION CHALLENGE</h1>
+            <div class="subtitle">Transform each sentence as instructed. AI evaluates your answers for grammar, vocabulary, and register.</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="score-card">
+            <div class="score-badge">📊 Progress</div>
+            <div class="score-text" id="scoreDisplay">0 / 6 Correct</div>
+        </div>
+
+        <div class="task-instruction">
+            <div class="task-text">
+                <p><strong>🎯 How to Play:</strong> Transform each sentence exactly as instructed below. AI checks your answer for correct transformation, professional vocabulary, and grammar accuracy. Click <strong>"CHECK ALL ANSWERS"</strong> when ready.</p>
+            </div>
+        </div>
+
+        <div class="sentences-grid" id="sentencesGrid"></div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="checkAllBtn">
+                <span>✨</span> CHECK ALL ANSWERS
+            </button>
+            <button class="btn btn-secondary" id="resetBtn">
+                <span>⟳</span> RESET ALL
+            </button>
+        </div>
+
+        <div class="feedback-area" id="feedbackMsg">
+            💡 Write your transformed sentences above, then click "CHECK ALL ANSWERS" for AI evaluation.
+        </div>
+        <div id="completionArea"></div>
+    </div>
+</div>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    const sentencesData = [
+        { id: 1, original: "The manager told the team to complete the task quickly.", 
+          requirement: "Convert to professional indirect speech using 'urged' (e.g., 'The manager urged...')" },
+        { id: 2, original: "We failed to meet the deadline.", 
+          requirement: "Rewrite using a concession clause starting with 'Although...'" },
+        { id: 3, original: "The result was good.", 
+          requirement: "Expand into a complex sentence with a relative clause (which) and a reason clause (because)" },
+        { id: 4, original: "You must submit the forms by Friday.", 
+          requirement: "Rewrite using invitational/diplomatic language (no 'must', no command tone)" },
+        { id: 5, original: "I don't know the answer.", 
+          requirement: "Rewrite as a professional time-bound follow-up (verify + revert + deadline)" },
+        { id: 6, original: "Solar panels are efficient.", 
+          requirement: "Rewrite using nominalization: start with 'The efficiency of...' and add substantiation" }
+    ];
+
+    let userAnswers = {};
+    let validationStatus = {};
+    let isChecking = false;
+
+    const sentencesGrid = document.getElementById('sentencesGrid');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const feedbackMsgDiv = document.getElementById('feedbackMsg');
+    const completionArea = document.getElementById('completionArea');
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function buildGrid() {
+        sentencesGrid.innerHTML = '';
+        sentencesData.forEach(item => {
+            const savedAnswer = userAnswers[item.id] || '';
+            const isValidated = validationStatus[item.id];
+            const isValid = isValidated?.valid === true;
+            
+            const card = document.createElement('div');
+            card.className = 'sentence-card';
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="question-number">${item.id}</div>
+                    <div class="original-sentence"><strong>Original:</strong> ${escapeHtml(item.original)}</div>
+                    <div class="transformation-required">📌 ${escapeHtml(item.requirement)}</div>
+                </div>
+                <div class="user-input-area">
+                    <textarea class="transformed-input ${isValidated ? (isValid ? 'correct-border' : 'incorrect-border') : ''}" 
+                              id="answer-${item.id}" rows="2" 
+                              placeholder="Write your transformed sentence here...">${escapeHtml(savedAnswer)}</textarea>
+                    <div class="feedback-row">
+                        <div class="feedback-text ${isValidated ? (isValid ? 'feedback-correct' : 'feedback-incorrect') : ''}" 
+                             id="feedback-${item.id}">${isValidated ? (isValidated.feedback || (isValid ? '✅ Correct!' : '❌ Needs improvement')) : ''}</div>
+                        <div class="status-icon" id="status-${item.id}">${isValidated ? (isValid ? '✅' : '❌') : ''}</div>
+                    </div>
+                </div>
+            `;
+            sentencesGrid.appendChild(card);
+        });
+
+        sentencesData.forEach(item => {
+            const textarea = document.getElementById(`answer-${item.id}`);
+            if (textarea) {
+                textarea.addEventListener('input', (e) => {
+                    userAnswers[item.id] = e.target.value;
+                    if (validationStatus[item.id]) {
+                        delete validationStatus[item.id];
+                        updateRowUI(item.id, null);
+                        updateScoreDisplay();
+                    }
+                    const existingBtn = document.getElementById('continueToolBtn');
+                    if (existingBtn) existingBtn.remove();
+                    completionArea.innerHTML = '';
+                    feedbackMsgDiv.innerHTML = '💡 Answers updated. Click "CHECK ALL ANSWERS" to evaluate.';
+                    feedbackMsgDiv.className = 'feedback-area';
+                });
+            }
+        });
+    }
+
+    function updateRowUI(id, result) {
+        const inputField = document.getElementById(`answer-${id}`);
+        const feedbackDiv = document.getElementById(`feedback-${id}`);
+        const statusIcon = document.getElementById(`status-${id}`);
+        
+        if (!inputField) return;
+        
+        if (result === null) {
+            inputField.classList.remove('correct-border', 'incorrect-border');
+            if (feedbackDiv) {
+                feedbackDiv.innerHTML = '';
+                feedbackDiv.className = 'feedback-text';
+            }
+            if (statusIcon) statusIcon.innerHTML = '⏳';
+            return;
+        }
+        
+        if (result.valid) {
+            inputField.classList.add('correct-border');
+            inputField.classList.remove('incorrect-border');
+            if (feedbackDiv) {
+                feedbackDiv.innerHTML = result.feedback || '✅ Correct!';
+                feedbackDiv.className = 'feedback-text feedback-correct';
+            }
+            if (statusIcon) statusIcon.innerHTML = '✅';
+        } else {
+            inputField.classList.add('incorrect-border');
+            setTimeout(() => {
+                inputField.classList.remove('incorrect-border');
+            }, 500);
+            if (feedbackDiv) {
+                feedbackDiv.innerHTML = result.feedback || '❌ Needs improvement';
+                feedbackDiv.className = 'feedback-text feedback-incorrect';
+            }
+            if (statusIcon) statusIcon.innerHTML = '❌';
+        }
+    }
+
+    async function validateWithAI(id, answer, requirement, original) {
+        try {
+            const response = await fetch('/learning/ai/evaluate/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                body: JSON.stringify({
+                    text: answer,
+                    task_type: 'sentence_transformation',
+                    day_number: 7,
+                    level: 'advanced',
+                    system_prompt: `You are evaluating a sentence transformation exercise for advanced English learners.
+
+Original sentence: "${original}"
+Required transformation: ${requirement}
+Student's answer: "${answer}"
+
+Evaluate based on:
+1. Does the answer follow the transformation instruction correctly?
+2. Is the transformation professionally written with proper grammar?
+3. Is the sentence appropriately expanded with relevant detail?
+
+Be FAIR and FLEXIBLE - accept synonyms and variations.
+
+Return JSON only: {"correct": true/false, "feedback": "short specific feedback (max 35 words)"}`
+                })
+            });
+            if (!response.ok) throw new Error('API error');
+            const data = await response.json();
+            return { valid: data.correct === true, feedback: data.feedback || (data.correct ? '✅ Correct!' : '❌ Needs improvement') };
+        } catch (error) {
+            console.error('AI Error:', error);
+            return { valid: true, feedback: '✅ Acceptable transformation!' };
+        }
+    }
+
+    async function validateAllAnswers() {
+        if (isChecking) return;
+        isChecking = true;
+        
+        const checkBtn = document.getElementById('checkAllBtn');
+        const originalText = checkBtn.innerHTML;
+        checkBtn.disabled = true;
+        checkBtn.innerHTML = '⏳ AI EVALUATING...';
+        feedbackMsgDiv.innerHTML = '🤖 AI evaluating your answers one by one...';
+        feedbackMsgDiv.className = 'feedback-area';
+        
+        let correctCount = 0;
+        const newValidation = {};
+        
+        for (let item of sentencesData) {
+            const answer = userAnswers[item.id] || '';
+            if (!answer.trim()) {
+                newValidation[item.id] = { valid: false, feedback: '❌ Please write your transformed sentence.' };
+                updateRowUI(item.id, newValidation[item.id]);
+                continue;
+            }
+            
+            const feedbackDiv = document.getElementById(`feedback-${item.id}`);
+            if (feedbackDiv) {
+                feedbackDiv.innerHTML = '🤖 Checking...';
+                feedbackDiv.className = 'feedback-text feedback-checking';
+            }
+            
+            const result = await validateWithAI(item.id, answer, item.requirement, item.original);
+            newValidation[item.id] = result;
+            updateRowUI(item.id, result);
+            if (result.valid) correctCount++;
+            
+            await new Promise(r => setTimeout(r, 400));
+        }
+        
+        validationStatus = newValidation;
+        updateScoreDisplay(correctCount);
+        
+        checkBtn.disabled = false;
+        checkBtn.innerHTML = originalText;
+        isChecking = false;
+        
+        if (correctCount === sentencesData.length) {
+            feedbackMsgDiv.innerHTML = '';
+            feedbackMsgDiv.className = 'feedback-area success';
+            launchFastConfetti();
+            
+            if (!document.getElementById('continueToolBtn')) {
+                completionArea.innerHTML = '<button class="next-btn" id="continueToolBtn">✨ CONTINUE TO REGISTER REMIX ✨</button>';
+                const continueBtn = document.getElementById('continueToolBtn');
+                if (continueBtn) {
+                    continueBtn.addEventListener('click', () => {
+                        window.location.href = '/learning/level/advanced/toolkit/register-remix/';
+                    });
+                }
+            }
+        } else {
+            feedbackMsgDiv.innerHTML = `📊 Score: ${correctCount}/${sentencesData.length} correct. Review feedback and try again.`;
+            feedbackMsgDiv.className = 'feedback-area';
+            const existingBtn = document.getElementById('continueToolBtn');
+            if (existingBtn) existingBtn.remove();
+            completionArea.innerHTML = '';
+        }
+    }
+
+    function updateScoreDisplay(correctCount = null) {
+        if (correctCount === null) {
+            let count = 0;
+            for (let i = 1; i <= sentencesData.length; i++) {
+                if (validationStatus[i]?.valid === true) count++;
+            }
+            correctCount = count;
+        }
+        scoreDisplay.innerHTML = `${correctCount} / ${sentencesData.length} Correct`;
+    }
+
+    function resetAll() {
+        userAnswers = {};
+        validationStatus = {};
+        
+        sentencesData.forEach(item => {
+            const textarea = document.getElementById(`answer-${item.id}`);
+            if (textarea) textarea.value = '';
+            updateRowUI(item.id, null);
+        });
+        
+        updateScoreDisplay(0);
+        feedbackMsgDiv.innerHTML = '🔄 Reset complete. Write your transformed sentences, then click "CHECK ALL ANSWERS".';
+        feedbackMsgDiv.className = 'feedback-area';
+        
+        const existingBtn = document.getElementById('continueToolBtn');
+        if (existingBtn) existingBtn.remove();
+        completionArea.innerHTML = '';
+    }
+
+    // Fast confetti with smaller particles
+    function launchFastConfetti() {
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '10000';
+        document.body.appendChild(canvas);
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+        const particles = [];
+        const colors = ['#22c55e', '#16a34a', '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899', '#06b6d4'];
+        
+        // Smaller particles (size 4-8px instead of 10-14px)
+        for (let i = 0; i < 180; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height,
+                w: Math.random() * 6 + 3,
+                h: Math.random() * 6 + 3,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                vx: (Math.random() - 0.5) * 5,
+                vy: Math.random() * -16 - 8,
+                gravity: 0.25,
+                rot: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.15
+            });
+        }
+        let animId;
+        let startTime = performance.now();
+        function animate(now) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let active = false;
+            for (let p of particles) {
+                if (p.y < canvas.height + 100) {
+                    active = true;
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += p.gravity;
+                    p.rot += p.rotSpeed;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                    ctx.restore();
+                }
+            }
+            if (active) {
+                animId = requestAnimationFrame(animate);
+            } else {
+                cancelAnimationFrame(animId);
+                canvas.remove();
+            }
+        }
+        animId = requestAnimationFrame(animate);
+        setTimeout(() => { 
+            if(canvas.parentNode) canvas.remove(); 
+        }, 2200);
+    }
+
+    document.getElementById('checkAllBtn').addEventListener('click', validateAllAnswers);
+    document.getElementById('resetBtn').addEventListener('click', resetAll);
+    
+    buildGrid();
+    updateScoreDisplay();
+</script>
+</body>
+</html>

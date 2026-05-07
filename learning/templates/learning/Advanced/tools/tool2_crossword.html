@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Tool 2: Guess the Power Word | Advanced Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f9ff;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .lesson-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem 2.5rem 2rem;
+        }
+
+       /* Header - Full Width with gradient */
+        .tool-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 0;
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.25);
+        }
+
+        .tool-header .hero-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .tool-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.4rem 1.3rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        .tool-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0.75rem 0 0.5rem;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .tool-header .subtitle {
+            font-size: 0.95rem;
+            color: #f0e6ff;
+            opacity: 0.95;
+        }
+
+        /* Task Instruction Card */
+        .task-card {
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            border-radius: 20px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid #4f46e5;
+        }
+
+        .task-card p {
+            font-size: 0.85rem;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        .task-card strong {
+            color: #4f46e5;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: white;
+            border-radius: 28px;
+            padding: 0.8rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2edf7;
+        }
+
+        .progress-bar-container {
+            flex: 2;
+            min-width: 180px;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 30px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            width: 0%;
+            height: 100%;
+            border-radius: 30px;
+            transition: width 0.4s ease;
+        }
+
+        .attempts-box {
+            background: #fef3c7;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #d97706;
+        }
+
+        .score-box {
+            background: #e0e7ff;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #3730a3;
+        }
+
+        /* Game Card */
+        .game-card {
+            background: white;
+            border-radius: 32px;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2edf7;
+            margin-bottom: 1.5rem;
+        }
+
+        .meaning-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+        }
+
+        .meaning-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #8b5cf6;
+            font-weight: 700;
+        }
+
+        .meaning-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-top: 0.6rem;
+            line-height: 1.4;
+            background: #f8fafc;
+            padding: 0.8rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            width: auto;
+            max-width: 90%;
+        }
+
+        /* Letter Boxes */
+        .letter-boxes {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .letter-input {
+            width: 60px;
+            height: 70px;
+            border: 3px solid #e2e8f0;
+            border-radius: 18px;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 800;
+            font-family: 'Inter', monospace;
+            text-transform: uppercase;
+            background: white;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .letter-input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .letter-input.correct {
+            background: #dcfce7;
+            border-color: #22c55e;
+            color: #166534;
+        }
+
+        .letter-input.incorrect {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+            animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(79, 70, 229, 0.35);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: translateY(-1px);
+        }
+
+        .feedback-area {
+            background: #f8fafc;
+            padding: 0.9rem 1rem;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 0.8rem;
+            border: 1px solid #e2edf2;
+        }
+
+        .feedback-area.success {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .feedback-area.error {
+            background: #fee2e2;
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
+            color: #3730a3;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            width: 100%;
+            max-width: 280px;
+            margin: 1rem auto 0;
+            display: block;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #a5b4fc, #8b5cf6);
+            color: white;
+            box-shadow: 0 6px 14px rgba(139, 92, 246, 0.3);
+        }
+
+        .completion-area {
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 650px) {
+            .lesson-container {
+                padding: 0 1rem 2rem 1rem;
+            }
+            .letter-input {
+                width: 45px;
+                height: 55px;
+                font-size: 1.5rem;
+            }
+            .meaning-text {
+                font-size: 1rem;
+            }
+            .tool-header h1 {
+                font-size: 1.3rem;
+            }
+            .action-buttons {
+                gap: 0.6rem;
+            }
+            .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="lesson-container">
+    <!-- Header -->
+    <div class="tool-header">
+        <div class="hero-content">
+            <div class="tool-badge">🔧 TOOL 2 — VOCABULARY MASTERY</div>
+            <h1>🎯 GUESS THE POWER WORD</h1>
+            <div class="subtitle">Read the meaning, type the correct advanced word letter by letter</div>
+        </div>
+    </div>
+
+    <!-- Task Instruction -->
+    <div class="task-card">
+        <p><strong>📝 How to Play:</strong> You'll see a meaning/definition of an advanced power word. Type the word letter by letter in the boxes below.<br> Keep trying until you get it right! After 5 incorrect attempts, you'll get a hint. Complete all 10 words to finish the challenge!</p>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="progress-section">
+        <div class="progress-bar-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        <div class="score-box" id="scoreDisplay">📊 Word 1 / 10</div>
+    </div>
+
+    <!-- Game Card -->
+    <div class="game-card" id="gameCard">
+        <div class="meaning-section">
+            <div class="meaning-label">📖 MEANING</div>
+            <div class="meaning-text" id="meaningText"></div>
+        </div>
+
+        <div class="letter-boxes" id="letterBoxes"></div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="checkBtn">✓ CHECK ANSWER</button>
+            <button class="btn btn-secondary" id="resetWordBtn">⟳ RESET WORD</button>
+        </div>
+
+        <div class="feedback-area" id="feedbackMsg">
+            💡 Type the word letter by letter. Press "CHECK ANSWER" to validate.
+        </div>
+    </div>
+
+    <div class="completion-area" id="completionArea"></div>
+</div>
+
+<script>
+    // ========== WORD LIST (ordered from easy to difficult) ==========
+    const wordsData = [
+        { word: "ADROIT", meaning: "Very skillful or clever in using the hands or mind" },
+        { word: "COGENT", meaning: "Clear, logical, and convincing" },
+        { word: "CONCISE", meaning: "Giving much information in few words" },
+        { word: "ERUDITE", meaning: "Having deep knowledge or learning" },
+        { word: "RIGOROUS", meaning: "Very thorough and accurate" },
+        { word: "VISIONARY", meaning: "Having creative ideas about the future" },
+        { word: "PRAGMATIC", meaning: "Practical and realistic" },
+        { word: "EMPATHETIC", meaning: "Understanding others' feelings" },
+        { word: "ACCOMPLISHED", meaning: "Highly skilled or successful" },
+        { word: "TRANSFORMATIVE", meaning: "Causing major positive change" }
+    ];
+
+    // Game State
+    let currentWordIndex = 0;
+    let currentWord = "";
+    let currentMeaning = "";
+    let currentWordLength = 0;
+    let userLetters = [];
+    let wordCompleted = false;
+    let incorrectAttempts = 0;  // Track attempts without showing "attempts left"
+    let hintGiven = false;
+
+    // DOM Elements
+    const meaningTextEl = document.getElementById('meaningText');
+    const letterBoxesContainer = document.getElementById('letterBoxes');
+    const checkBtn = document.getElementById('checkBtn');
+    const resetWordBtn = document.getElementById('resetWordBtn');
+    const feedbackMsg = document.getElementById('feedbackMsg');
+    const progressFill = document.getElementById('progressFill');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const completionArea = document.getElementById('completionArea');
+    const gameCard = document.getElementById('gameCard');
+
+    let inputElements = [];
+
+    // Load current word
+    function loadWord() {
+        if (currentWordIndex >= wordsData.length) {
+            completeGame();
+            return;
+        }
+
+        const data = wordsData[currentWordIndex];
+        currentWord = data.word;
+        currentMeaning = data.meaning;
+        currentWordLength = currentWord.length;
+        
+        userLetters = new Array(currentWordLength).fill('');
+        wordCompleted = false;
+        incorrectAttempts = 0;
+        hintGiven = false;
+        
+        meaningTextEl.textContent = currentMeaning;
+        scoreDisplay.innerHTML = `📊 Word ${currentWordIndex + 1} / ${wordsData.length}`;
+        updateProgress();
+        
+        buildLetterBoxes();
+        
+        feedbackMsg.innerHTML = "💡 Type the word letter by letter. Click 'CHECK ANSWER' to validate.";
+        feedbackMsg.className = 'feedback-area';
+        
+        setTimeout(() => {
+            if (inputElements[0]) inputElements[0].focus();
+        }, 100);
+    }
+
+    function buildLetterBoxes() {
+        letterBoxesContainer.innerHTML = '';
+        inputElements = [];
+        
+        for (let i = 0; i < currentWordLength; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.maxLength = 1;
+            input.className = 'letter-input';
+            input.setAttribute('data-index', i);
+            input.value = userLetters[i] || '';
+            
+            input.addEventListener('input', (e) => {
+                let val = e.target.value.toUpperCase();
+                if (val.length > 1) val = val.charAt(0);
+                if (!/^[A-Z]$/.test(val) && val !== '') val = '';
+                e.target.value = val;
+                userLetters[i] = val;
+                input.classList.remove('correct', 'incorrect');
+                
+                if (val && i < currentWordLength - 1) {
+                    inputElements[i + 1].focus();
+                }
+            });
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !userLetters[i] && i > 0) {
+                    inputElements[i - 1].focus();
+                    inputElements[i - 1].value = '';
+                    userLetters[i - 1] = '';
+                    inputElements[i - 1].classList.remove('correct', 'incorrect');
+                }
+            });
+            
+            letterBoxesContainer.appendChild(input);
+            inputElements.push(input);
+        }
+    }
+
+    function updateProgress() {
+        const progress = (currentWordIndex / wordsData.length) * 100;
+        progressFill.style.width = `${progress}%`;
+    }
+
+    function showFeedback(message, isError = false, isSuccess = false) {
+        feedbackMsg.innerHTML = message;
+        if (isSuccess) {
+            feedbackMsg.className = 'feedback-area success';
+        } else if (isError) {
+            feedbackMsg.className = 'feedback-area error';
+        } else {
+            feedbackMsg.className = 'feedback-area';
+        }
+    }
+
+    function provideHint() {
+        if (hintGiven) return;
+        
+        hintGiven = true;
+        const firstLetter = currentWord[0];
+        const lastLetter = currentWord[currentWordLength - 1];
+        
+        // Fill first and last letter if empty
+        if (!userLetters[0]) {
+            userLetters[0] = firstLetter;
+            inputElements[0].value = firstLetter;
+            inputElements[0].classList.add('correct');
+        }
+        if (currentWordLength > 1 && !userLetters[currentWordLength - 1]) {
+            userLetters[currentWordLength - 1] = lastLetter;
+            inputElements[currentWordLength - 1].value = lastLetter;
+            inputElements[currentWordLength - 1].classList.add('correct');
+        }
+        
+        showFeedback(`💡 Hint: The word starts with "${firstLetter}" and ends with "${lastLetter}"`, false);
+    }
+
+    function markCorrectLetters(correctWord) {
+        for (let i = 0; i < currentWordLength; i++) {
+            if (userLetters[i] && userLetters[i] === correctWord[i]) {
+                inputElements[i].classList.add('correct');
+            }
+        }
+    }
+
+    function checkAnswer() {
+        if (wordCompleted) {
+            showFeedback("✅ You already completed this word! Moving to next...", false, true);
+            setTimeout(() => {
+                moveToNextWord();
+            }, 1500);
+            return;
+        }
+        
+        let userGuess = userLetters.join('').toUpperCase();
+        
+        if (userGuess.length !== currentWordLength) {
+            showFeedback(`❌ Please fill all ${currentWordLength} letters!`, true);
+            for (let i = 0; i < currentWordLength; i++) {
+                if (!userLetters[i]) {
+                    inputElements[i].focus();
+                    inputElements[i].classList.add('incorrect');
+                    setTimeout(() => inputElements[i].classList.remove('incorrect'), 500);
+                    break;
+                }
+            }
+            return;
+        }
+        
+        if (userGuess === currentWord) {
+            wordCompleted = true;
+            
+            inputElements.forEach(input => {
+                input.classList.add('correct');
+                input.disabled = true;
+            });
+            
+            showFeedback(`🎉 PERFECT! "${currentWord}" is correct! 🎉`, false, true);
+            launchConfetti();
+            
+            if (currentWordIndex + 1 >= wordsData.length) {
+                setTimeout(() => {
+                    completeGame();
+                }, 2000);
+            } else {
+                if (!document.getElementById('nextWordBtn')) {
+                    const nextBtn = document.createElement('button');
+                    nextBtn.id = 'nextWordBtn';
+                    nextBtn.className = 'next-btn';
+                    nextBtn.innerHTML = '✨ NEXT WORD ✨';
+                    nextBtn.onclick = () => {
+                        nextBtn.remove();
+                        moveToNextWord();
+                    };
+                    letterBoxesContainer.parentNode.appendChild(nextBtn);
+                }
+            }
+        } else {
+            incorrectAttempts++;
+            
+            // Show which letters are correct
+            markCorrectLetters(currentWord);
+            
+            // Show incorrect letters with shake
+            for (let i = 0; i < currentWordLength; i++) {
+                if (userLetters[i] && userLetters[i] !== currentWord[i]) {
+                    inputElements[i].classList.add('incorrect');
+                    setTimeout(() => inputElements[i].classList.remove('incorrect'), 400);
+                }
+            }
+            
+            // After 5 incorrect attempts, provide hint
+            if (incorrectAttempts >= 5 && !hintGiven) {
+                provideHint();
+                showFeedback(`❌ Incorrect! You've tried ${incorrectAttempts} times. Here's a hint to help you!`, true);
+            } else {
+                showFeedback(`❌ Incorrect! Try again.`, true);
+            }
+        }
+    }
+
+    function moveToNextWord() {
+        currentWordIndex++;
+        const nextBtn = document.getElementById('nextWordBtn');
+        if (nextBtn) nextBtn.remove();
+        loadWord();
+    }
+
+    function resetCurrentWord() {
+        if (wordCompleted) {
+            showFeedback("This word is already completed! Moving to next word is better.", false);
+            return;
+        }
+        userLetters = new Array(currentWordLength).fill('');
+        for (let i = 0; i < currentWordLength; i++) {
+            inputElements[i].value = '';
+            inputElements[i].classList.remove('correct', 'incorrect');
+            inputElements[i].disabled = false;
+        }
+        incorrectAttempts = 0;
+        hintGiven = false;
+        showFeedback("🔄 Word reset. Try again!", false);
+        if (inputElements[0]) inputElements[0].focus();
+    }
+
+    function completeGame() {
+        gameCard.style.display = 'none';
+        completionArea.innerHTML = `
+            <div style="background: linear-gradient(135deg, #e0e7ff, #c7d2fe); border-radius: 32px; padding: 2rem; text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🏆🎉🏆</div>
+                <h2 style="color: #3730a3; margin-bottom: 0.5rem;">VOCABULARY MASTERY ACHIEVED!</h2>
+                <p style="color: #4f46e5; margin-bottom: 1.5rem;">You completed all 10 power words!</p>
+                <button class="next-btn" id="finalContinueBtn" style="background: linear-gradient(135deg, #c7d2fe, #a5b4fc); color: #3730a3; margin: 0 auto;">✨ CONTINUE TO WORD SEARCH ✨</button>
+            </div>
+        `;
+        const finalBtn = document.getElementById('finalContinueBtn');
+        if (finalBtn) {
+            finalBtn.onclick = () => {
+                window.location.href = '/learning/level/advanced/toolkit/word-search/';
+            };
+        }
+        launchConfetti();
+    }
+
+    function launchConfetti() {
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '10000';
+        document.body.appendChild(canvas);
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+        const particles = [];
+        const colors = ['#22c55e', '#16a34a', '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899'];
+        
+        for (let i = 0; i < 100; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height,
+                w: Math.random() * 10 + 4,
+                h: Math.random() * 10 + 4,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                vx: (Math.random() - 0.5) * 3,
+                vy: Math.random() * -10 - 6,
+                gravity: 0.2,
+                rot: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.1
+            });
+        }
+        let animId;
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let active = false;
+            for (let p of particles) {
+                if (p.y < canvas.height + 120) {
+                    active = true;
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += p.gravity;
+                    p.rot += p.rotSpeed;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                    ctx.restore();
+                }
+            }
+            if (active) animId = requestAnimationFrame(animate);
+            else canvas.remove();
+        }
+        animate();
+        setTimeout(() => { if(canvas.parentNode) canvas.remove(); }, 2000);
+    }
+
+    // Event Listeners
+    checkBtn.addEventListener('click', checkAnswer);
+    resetWordBtn.addEventListener('click', resetCurrentWord);
+
+    // Initialize game
+    loadWord();
+</script>
+</body>
+</html>

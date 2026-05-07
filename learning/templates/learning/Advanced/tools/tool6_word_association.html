@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="user-id" content="{{ request.user.id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Tool 6: Word Association Speed Challenge | Advanced Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f9ff;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: #0f172a;
+        }
+
+        .lesson-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 3rem 2rem;
+        }
+
+        /* Header - Full Width */
+        .tool-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 0;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .tool-header .hero-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .tool-badge {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            padding: 0.35rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            color: #e2e8f0;
+        }
+
+        .tool-header h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            margin: 0.75rem 0;
+            color: white;
+            letter-spacing: -0.3px;
+        }
+
+        .tool-header .subtitle {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+        }
+
+        /* Main Content - Reduced Width */
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Task Instruction Card */
+        .task-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.2rem 1.8rem;
+            margin-bottom: 1.8rem;
+            border-left: 5px solid #4f46e5;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2edf7;
+        }
+
+        .task-card h3 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #4f46e5;
+            margin-bottom: 0.5rem;
+        }
+
+        .task-card p {
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .task-card .steps {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .task-card .step {
+            background: #f1f5f9;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background: white;
+            border-radius: 24px;
+            padding: 1rem 1.8rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2edf7;
+        }
+
+        .timer-box {
+            background: linear-gradient(135deg, #fef9e3, #fef3c7);
+            padding: 0.5rem 1.5rem;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            border: 1px solid #fde68a;
+        }
+
+        .timer-icon {
+            font-size: 1.3rem;
+        }
+
+        .timer-display {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Inter', monospace;
+            color: #d97706;
+            letter-spacing: 2px;
+        }
+
+        .timer-label {
+            font-size: 0.7rem;
+            color: #92400e;
+        }
+
+        .score-box {
+            background: #e0e7ff;
+            padding: 0.5rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            color: #3730a3;
+            font-size: 0.9rem;
+        }
+
+        .target-badge {
+            background: #dcfce7;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #166534;
+        }
+
+        /* Words Grid */
+        .words-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .word-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e9f0f5;
+            transition: all 0.2s;
+        }
+
+        .word-card:hover {
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+            border-color: #cbdde9;
+        }
+
+        .card-header {
+            background: #fafdff;
+            padding: 0.8rem 1.5rem;
+            border-bottom: 2px solid #eef3fa;
+        }
+
+        .prompt-word {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #2c5282;
+            background: #eef2ff;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            display: inline-block;
+        }
+
+        .card-body {
+            padding: 1.2rem 1.5rem;
+        }
+
+        .associations-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .association-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .association-number {
+            width: 30px;
+            height: 30px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #475569;
+            flex-shrink: 0;
+        }
+
+        .association-input {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            border: 2px solid #e2edf2;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: #ffffff;
+            color: #0f172a;
+        }
+
+        .association-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .association-input.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .association-input.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .feedback-icon {
+            font-size: 1rem;
+            width: 28px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 0.5rem 0 0.8rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .feedback-message {
+            background: #f8fafc;
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
+            margin-top: 0.8rem;
+            text-align: center;
+            font-size: 0.85rem;
+            border: 1px solid #e2edf2;
+        }
+
+        .feedback-message.success {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin: 1rem auto 0.5rem;
+            display: block;
+            width: 100%;
+            max-width: 280px;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(34, 197, 94, 0.3);
+        }
+
+        @media (max-width: 800px) {
+            .lesson-container {
+                padding: 0 1rem 2rem 1rem;
+            }
+            .main-content {
+                max-width: 100%;
+            }
+            .tool-header h1 {
+                font-size: 1.4rem;
+            }
+            .control-panel {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            .card-body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lesson-container">
+        <!-- Header -->
+        <div class="tool-header">
+            <div class="hero-content">
+                <div class="tool-badge">🔧 TOOL 6 — VOCABULARY MASTERY</div>
+                <h1>⚡ WORD ASSOCIATION SPEED CHALLENGE</h1>
+                <div class="subtitle">Write associated words or phrases for each prompt from your course memory</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Task Instruction -->
+            <div class="task-card">
+                <h3>🎯 Your Task</h3>
+                <p>For each prompt word below, write <strong>5+ associated words or phrases</strong> you recall from the course. Aim for quality over quantity — relevant, professional associations only.</p>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="timer-box">
+                    <span class="timer-icon">⏱️</span>
+                    <div>
+                        <div class="timer-display" id="timerDisplay">05:00</div>
+                        <div class="timer-label">Time Remaining</div>
+                    </div>
+                </div>
+                <div class="score-box" id="scoreDisplay">Score: 0/0</div>
+                <div class="target-badge">🎯 Target: 20+ valid associations</div>
+            </div>
+
+            <!-- Words Grid -->
+            <div class="words-grid" id="wordsGrid"></div>
+
+            <!-- Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="checkBtn">✓ Check All Answers</button>
+                <button class="btn btn-secondary" id="resetBtn">⟳ Reset & Restart</button>
+            </div>
+
+            <div class="feedback-message" id="feedbackMsg">
+                🔥 Timer started automatically! Write associations in the boxes below. Click "Check All Answers" when done.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CSRF Token for Django
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        // Prompt words data
+        const promptsData = [
+            { id: 0, word: "NEGOTIATION", correctAssociations: ["diplomatic", "reframe", "hedging language", "meet halfway", "reciprocal", "conciliate", "counterpart", "middle ground", "collaborative closing", "compromise"] },
+            { id: 1, word: "CREDIBILITY", correctAssociations: ["precision of language", "trust", "reliability", "incontestable evidence", "data speaks for itself", "impeccable grammar", "substance over claims", "cogent explanation", "rigorous analysis"] },
+            { id: 2, word: "SIGNPOSTING", correctAssociations: ["to begin with", "moving on to", "as I mentioned earlier", "to summarise", "in conclusion", "key takeaway", "verbal markers", "guiding the audience", "first second third"] },
+            { id: 3, word: "REGISTER", correctAssociations: ["level of formality", "formal", "semi-formal", "informal", "academic register", "impersonal tone", "culturally adaptive", "direct style", "indirect style"] },
+            { id: 4, word: "AUTHORITY", correctAssociations: ["lowering pitch", "data speaks for itself", "commanding tone", "thinking pause", "cut to the chase", "incontrovertible evidence", "compelling delivery", "structured arguments"] }
+        ];
+
+        let userAssociations = {};
+        let timerInterval = null;
+        let timeSeconds = 300;
+        let isTimerRunning = false;
+        let checkedStates = {};
+        let evaluationDone = false;
+        let gameCompleted = false;
+
+        const wordsGrid = document.getElementById('wordsGrid');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const checkBtn = document.getElementById('checkBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const feedbackMsg = document.getElementById('feedbackMsg');
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeSeconds / 60);
+            const seconds = timeSeconds % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            isTimerRunning = false;
+        }
+
+        function enableAllInputs(enabled) {
+            for (let p = 0; p < promptsData.length; p++) {
+                for (let i = 1; i <= 5; i++) {
+                    const input = document.getElementById(`assoc_${p}_${i}`);
+                    if (input) input.disabled = !enabled;
+                }
+            }
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timeSeconds = 300;
+            updateTimerDisplay();
+            isTimerRunning = true;
+            enableAllInputs(true);
+            
+            timerInterval = setInterval(() => {
+                if (timeSeconds <= 1) {
+                    stopTimer();
+                    feedbackMsg.innerHTML = '⏰ Time\'s up! Click "Check All Answers" to see your score.';
+                    feedbackMsg.className = 'feedback-message';
+                    enableAllInputs(true);
+                } else {
+                    timeSeconds--;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        function buildGrid() {
+            wordsGrid.innerHTML = '';
+            for (let p = 0; p < promptsData.length; p++) {
+                const prompt = promptsData[p];
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                
+                let associationsHtml = '';
+                for (let i = 1; i <= 5; i++) {
+                    const inputId = `assoc_${p}_${i}`;
+                    const savedValue = userAssociations[inputId] || '';
+                    const isChecked = checkedStates[inputId] || false;
+                    const statusClass = (isChecked && evaluationDone) ? (checkedStates[inputId] ? 'correct' : 'incorrect') : '';
+                    
+                    associationsHtml += `
+                        <div class="association-item">
+                            <div class="association-number">${i}</div>
+                            <input type="text" class="association-input ${statusClass}" 
+                                   id="${inputId}" placeholder="Write an association..." 
+                                   value="${escapeHtml(savedValue)}" autocomplete="off">
+                            <div class="feedback-icon" id="feedback_${inputId}"></div>
+                        </div>
+                    `;
+                }
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="prompt-word">🎯 ${prompt.word}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="associations-list">${associationsHtml}</div>
+                    </div>
+                `;
+                wordsGrid.appendChild(card);
+            }
+            
+            // Attach input listeners
+            for (let p = 0; p < promptsData.length; p++) {
+                for (let i = 1; i <= 5; i++) {
+                    const inputId = `assoc_${p}_${i}`;
+                    const input = document.getElementById(inputId);
+                    if (input) {
+                        input.addEventListener('input', (function(id) {
+                            return function(e) {
+                                userAssociations[id] = e.target.value;
+                                if (checkedStates[id]) {
+                                    delete checkedStates[id];
+                                    evaluationDone = false;
+                                    updateScoreUI();
+                                    const inp = document.getElementById(id);
+                                    if (inp) inp.classList.remove('correct', 'incorrect');
+                                    const fbIcon = document.getElementById(`feedback_${id}`);
+                                    if (fbIcon) fbIcon.innerHTML = '';
+                                    // Remove next button if user edits after completion
+                                    const nextBtn = document.querySelector('.next-btn');
+                                    if (nextBtn) nextBtn.remove();
+                                    gameCompleted = false;
+                                }
+                            };
+                        })(inputId));
+                    }
+                }
+            }
+            
+            // Apply checked styles if any
+            for (let p = 0; p < promptsData.length; p++) {
+                for (let i = 1; i <= 5; i++) {
+                    const inputId = `assoc_${p}_${i}`;
+                    if (checkedStates[inputId] && evaluationDone) {
+                        const input = document.getElementById(inputId);
+                        const fbIcon = document.getElementById(`feedback_${inputId}`);
+                        if (input) input.classList.add(checkedStates[inputId] ? 'correct' : 'incorrect');
+                        if (fbIcon) fbIcon.innerHTML = checkedStates[inputId] ? '✅' : '❌';
+                    }
+                }
+            }
+            
+            if (!isTimerRunning && !evaluationDone) enableAllInputs(false);
+            else if (isTimerRunning) enableAllInputs(true);
+            else if (evaluationDone) enableAllInputs(true);
+            else enableAllInputs(false);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function updateScoreUI() {
+            let correctCount = 0, totalCount = 0;
+            for (let p = 0; p < promptsData.length; p++) {
+                for (let i = 1; i <= 5; i++) {
+                    const inputId = `assoc_${p}_${i}`;
+                    const value = userAssociations[inputId] || '';
+                    if (value && value.trim() !== '') {
+                        totalCount++;
+                        if (checkedStates[inputId] === true) correctCount++;
+                    }
+                }
+            }
+            scoreDisplay.innerHTML = `Score: ${correctCount}/${totalCount} valid`;
+            return { correctCount, totalCount };
+        }
+
+        // Validate single association with AI
+        async function validateSingleAssociation(association, correctList, promptWord) {
+            try {
+                const response = await fetch('/learning/ai/evaluate/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                    body: JSON.stringify({
+                        text: association,
+                        task_type: 'single_word_association',
+                        day_number: 6,
+                        level: 'advanced',
+                        system_prompt: `You are evaluating a word association for "${promptWord}".
+Student's association: "${association}"
+Valid associations include: ${correctList.slice(0, 8).join(', ')}.
+
+Return JSON: {"correct": true/false, "feedback": "short feedback"}`
+                    })
+                });
+                const data = await response.json();
+                return { valid: data.correct === true };
+            } catch (error) {
+                // Fallback local validation
+                const lower = association.toLowerCase();
+                for (let correct of correctList) {
+                    if (lower.includes(correct.toLowerCase()) || correct.toLowerCase().includes(lower)) {
+                        return { valid: true };
+                    }
+                }
+                return { valid: false };
+            }
+        }
+
+        // Check all answers one by one with AI
+        async function checkAllAnswers() {
+    if (gameCompleted) {
+        feedbackMsg.innerHTML = '🎉 You already completed the challenge! Click Reset to play again.';
+        return;
+    }
+    
+    checkBtn.disabled = true;
+    checkBtn.textContent = '⏳ Validating Answers...';
+    evaluationDone = true;
+    
+    let totalCorrect = 0, totalAttempted = 0;
+    const allInputs = [];
+    
+    for (let p = 0; p < promptsData.length; p++) {
+        for (let i = 1; i <= 5; i++) {
+            const inputId = `assoc_${p}_${i}`;
+            const value = userAssociations[inputId] || '';
+            if (value && value.trim() !== '') {
+                allInputs.push({ p, i, inputId, value });
+                totalAttempted++;
+            }
+        }
+    }
+    
+    feedbackMsg.innerHTML = `🤖 AI evaluating ${allInputs.length} associations...`;
+    feedbackMsg.className = 'feedback-message';
+    
+    for (let idx = 0; idx < allInputs.length; idx++) {
+        const item = allInputs[idx];
+        const promptData = promptsData[item.p];
+        const result = await validateSingleAssociation(
+            item.value, promptData.correctAssociations, promptData.word
+        );
+        
+        const isCorrect = result.valid;
+        checkedStates[item.inputId] = isCorrect;
+        if (isCorrect) totalCorrect++;
+        
+        const input = document.getElementById(item.inputId);
+        const fbIcon = document.getElementById(`feedback_${item.inputId}`);
+        
+        if (input) {
+            if (isCorrect) {
+                input.classList.add('correct');
+                input.classList.remove('incorrect');
+            } else {
+                // Flash red border - disappears after 300ms
+                input.classList.add('incorrect');
+                setTimeout(() => {
+                    input.classList.remove('incorrect');
+                }, 300);
+            }
+        }
+        if (fbIcon) {
+            fbIcon.innerHTML = isCorrect ? '✅' : '❌';
+        }
+        
+        updateScoreUI();
+        feedbackMsg.innerHTML = `🤖 Evaluating: ${idx + 1}/${allInputs.length} associations... (${totalCorrect} valid so far)`;
+        
+        await new Promise(r => setTimeout(r, 200));
+    }
+    
+    updateScoreUI();
+    
+    const targetValid = 20;
+    if (totalCorrect >= targetValid && totalAttempted >= 15) {
+        gameCompleted = true;
+        feedbackMsg.innerHTML = `🎉 EXCELLENT! You have ${totalCorrect} valid associations out of ${totalAttempted}! Great recall! 🎉`;
+        feedbackMsg.className = 'feedback-message success';
+        launchCelebrationConfetti();
+        
+        if (!document.querySelector('.next-btn')) {
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'next-btn';
+            nextBtn.innerHTML = '✨ Continue to Sentence Transform ✨';
+            nextBtn.onclick = () => {
+                window.location.href = '/learning/level/advanced/toolkit/sentence-transform/';
+            };
+            feedbackMsg.parentNode.appendChild(nextBtn);
+        }
+    } else {
+        const needed = Math.max(0, targetValid - totalCorrect);
+        feedbackMsg.innerHTML = `📊 Score: ${totalCorrect}/${totalAttempted} valid associations. Need ${needed} more valid to complete. Keep practicing and try again!`;
+        feedbackMsg.className = 'feedback-message';
+        const existingBtn = document.querySelector('.next-btn');
+        if (existingBtn) existingBtn.remove();
+    }
+    
+    checkBtn.disabled = false;
+    checkBtn.textContent = '✓ Check All Answers';
+}
+        // Celebration confetti
+        function launchCelebrationConfetti() {
+            const canvas = document.createElement('canvas');
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.pointerEvents = 'none';
+            canvas.style.zIndex = '10000';
+            document.body.appendChild(canvas);
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const ctx = canvas.getContext('2d');
+            const particles = [];
+            const colors = ['#22c55e', '#16a34a', '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899', '#06b6d4'];
+            for (let i = 0; i < 250; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: canvas.height,
+                    w: Math.random() * 12 + 5,
+                    h: Math.random() * 12 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: Math.random() * -14 - 8,
+                    gravity: 0.22,
+                    rot: Math.random() * Math.PI * 2,
+                    rotSpeed: (Math.random() - 0.5) * 0.15
+                });
+            }
+            let animId;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+                for (let p of particles) {
+                    if (p.y < canvas.height + 200) {
+                        active = true;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += p.gravity;
+                        p.rot += p.rotSpeed;
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate(p.rot);
+                        ctx.fillStyle = p.color;
+                        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                        ctx.restore();
+                    }
+                }
+                if (active) animId = requestAnimationFrame(animate);
+                else canvas.remove();
+            }
+            animate();
+            setTimeout(() => { if(canvas.parentNode) canvas.remove(); }, 3000);
+        }
+
+        // Reset everything
+        function resetAll() {
+            if (timerInterval) clearInterval(timerInterval);
+            isTimerRunning = false;
+            timeSeconds = 300;
+            updateTimerDisplay();
+            evaluationDone = false;
+            userAssociations = {};
+            checkedStates = {};
+            gameCompleted = false;
+            
+            buildGrid();
+            updateScoreUI();
+            feedbackMsg.innerHTML = '🔄 Reset complete! Timer will restart automatically. Write your associations and click "Check All Answers".';
+            feedbackMsg.className = 'feedback-message';
+            enableAllInputs(false);
+            
+            const nextBtn = document.querySelector('.next-btn');
+            if (nextBtn) nextBtn.remove();
+            
+            // Restart timer
+            startTimer();
+        }
+
+        // Initialize - auto start timer and build grid
+        checkBtn.addEventListener('click', checkAllAnswers);
+        resetBtn.addEventListener('click', resetAll);
+        
+        buildGrid();
+        updateScoreUI();
+        enableAllInputs(false);
+        
+        // Auto-start timer when page loads
+        startTimer();
+    </script>
+</body>
+</html>
