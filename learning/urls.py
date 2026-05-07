@@ -56,4 +56,8 @@ urlpatterns = [
     path('api/save-vocabulary/', views.save_vocabulary, name='save_vocabulary'),
     
 
+    # ==================== ADVANCED TOOLS URLs ====================
+    path('level/advanced/toolkit/', views.level_overview, {'level_name': 'advanced'}, name='toolkit_root'),
+    path('level/advanced/toolkit/<str:tool_name>/', views.toolkit_tool, name='toolkit_tool'),
+
 ]

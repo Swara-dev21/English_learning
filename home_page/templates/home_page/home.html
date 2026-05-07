@@ -27,6 +27,7 @@
     filter: blur(10px);
     transform: translateY(20px);
     transition: all 0.4s cubic-bezier(0.44, 0, 0.56, 1);
+    margin-right: 0.2em; /* Added explicit margin to prevent squashing */
 }
 
 .hero-word.revealed {
@@ -42,6 +43,7 @@
     filter: blur(10px);
     transform: translateY(20px);
     transition: all 0.4s cubic-bezier(0.44, 0, 0.56, 1);
+    margin-right: 0.15em; /* Added explicit margin to prevent squashing */
 }
 
 .hero-desc-word.revealed {
@@ -220,7 +222,7 @@ html {
 }
 
 .carousel-item {
-    flex: 0 0 280px;
+    flex: 0 0 clamp(240px, 25vw, 280px);
     background: white;
     padding: 30px 25px;
     border-radius: 20px;
@@ -233,6 +235,8 @@ html {
     align-items: center;
     height: auto;
     min-height: 200px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .carousel-item:hover {
@@ -329,13 +333,13 @@ html {
 }
 
 .lsrw-slide {
-    flex: 0 0 90vw;
+    flex: 0 0 85%; /* Changed to percentage for better stability */
     max-width: 1200px;
     display: flex;
     align-items: center;
-    gap: 50px;
-    padding: 0 5vw;
-    margin-right: 5vw;
+    gap: clamp(20px, 4vw, 50px);
+    padding: 0 4vw;
+    margin-right: 5%; /* Changed to percentage */
     opacity: 0.7;
     transition: opacity 0.3s ease;
     pointer-events: none;
@@ -681,9 +685,11 @@ html {
 
 .hero {
     position: relative;
+    width: 100%;
+    max-width: 100%;
     min-height: clamp(600px, 90vh, 1000px);
     display: flex;
-    align-items: flex-start;
+    align-items: center; /* Changed from flex-start to center */
     justify-content: center;
     overflow: hidden;
     padding-top: 100px;
@@ -696,7 +702,7 @@ html {
     background-image: url("{% static 'home_page/images/cloud.png' %}");
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    /* Removed background-attachment: fixed as it breaks on mobile/desktop mode */
     filter: brightness(0.8);
     transform: scale(1.01);
     z-index: -3;
@@ -729,11 +735,11 @@ html {
 .hero-inner {
     width: 100%;
     max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 10px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px;
     position: relative;
     z-index: 2;
-    margin-top: -80px;
 }
 
 .hero-content {
@@ -741,6 +747,7 @@ html {
     text-align: center;
     max-width: 900px;
     margin: 0 auto;
+    padding: 40px 0;
 }
 
 .hero-content h1 {
@@ -1527,6 +1534,7 @@ html {
 }
 
 /* Responsive */
+/* Responsive Updates */
 @media (max-width: 1100px) {
     .features-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1549,15 +1557,20 @@ html {
         flex-direction: column;
         align-items: center;
         text-align: center;
+        gap: 30px;
+        padding: 40px 20px;
     }
     
     .slide-content {
         order: 2;
+        padding: 0;
     }
     
     .slide-image {
         order: 1;
-        max-width: 500px;
+        width: 100%;
+        max-width: 450px;
+        margin: 0 auto;
     }
     
     .key-focus-area {
@@ -1567,36 +1580,88 @@ html {
     .stats-row:first-child,
     .stats-row:last-child {
         grid-template-columns: 1fr;
-        gap: 10px;
+        gap: 15px;
     }
     
     .stat h3 {
-        font-size: 1.8rem;
+        font-size: 2rem;
+    }
+
+    .lsrw-sticky-container {
+        height: auto;
+        position: relative;
+        display: block;
+        padding: 40px 0;
+    }
+
+    .lsrw-scroll-container {
+        height: auto;
+        overflow: visible;
+    }
+
+    .lsrw-track {
+        flex-direction: column;
+        padding: 0 20px;
+        gap: 60px;
+    }
+
+    .lsrw-slide {
+        flex: 0 0 auto;
+        width: 100%;
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        margin-right: 0;
+        pointer-events: auto;
+    }
+
+    .scroll-progress {
+        display: none;
     }
 }
 
 @media (max-width: 768px) {
+    .hero {
+        min-height: auto;
+        padding: 120px 0 80px;
+    }
+
+    .hero-inner {
+        margin-top: 0;
+    }
+
     .hero-content h1 {
-        font-size: 32px;
+        font-size: clamp(28px, 8vw, 36px);
+        margin-bottom: 20px;
     }
     
     .hero-content p {
         font-size: 16px;
+        margin-bottom: 30px;
+        padding: 0 10px;
     }
     
     .hero-buttons {
         flex-direction: column;
-        gap: 15px;
+        gap: 12px;
+        padding: 0 20px;
     }
     
     .btn-primary, .btn-secondary {
         width: 100%;
+        max-width: 320px;
         justify-content: center;
+        padding: 16px 24px;
     }
 
     .about-title {
-        font-size: 28px;
-        margin-bottom: 40px;
+        font-size: 22px;
+        line-height: 1.4;
+        padding: 0 15px;
+    }
+
+    .about-section, .our-values, .why-us, .how-work, .faq-section {
+        padding: 60px 0;
     }
     
     .features-grid {
@@ -1609,37 +1674,20 @@ html {
     }
     
     .section-heading {
-        font-size: 28px;
+        font-size: 26px;
     }
-    
-    .lsrw-slide {
-        flex: 0 0 100vw;
-        padding: 0 20px;
-        margin-right: 0;
+
+    .section-header {
+        margin-bottom: 40px;
     }
-    
-    .slide-content {
-        padding: 20px 0;
-    }
-    
-    .scroll-progress {
-        bottom: 20px;
-    }
-    
-    .modal .close-btn {
-        right: -10px;
-        top: -40px;
-        font-size: 30px;
+
+    .about-content h2 {
+        font-size: 24px;
     }
     
     .modal-content {
-        width: 95%;
-        margin: 30px auto;
-    }
-    
-    .mission-carousel-container::before,
-    .mission-carousel-container::after {
-        width: 50px;
+        width: 90%;
+        margin: 50px auto;
     }
 }
 
@@ -1649,44 +1697,31 @@ html {
     }
     
     .about-title {
-        font-size: 24px;
+        font-size: 18px;
     }
     
     .feature-icon {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
     }
     
     .feature-icon i {
-        font-size: 24px;
-    }
-    
-    .feature-box-title {
-        font-size: 16px;
+        font-size: 22px;
     }
     
     .carousel-item {
-        flex: 0 0 200px;
-        padding: 20px 15px;
-    }
-    
-    .carousel-item .feature-icon {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .carousel-item .feature-icon i {
-        font-size: 24px;
-    }
-    
-    .carousel-item h3 {
-        font-size: 16px;
+        flex: 0 0 240px;
     }
     
     .stat h3 {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
+    }
+
+    .brand-logo {
+        font-size: 1.2rem;
     }
 }
+
 </style>
 {% endblock %}
 
@@ -2243,10 +2278,13 @@ html {
                 heroHeadline.innerHTML = '';
                 
                 words.forEach((word, index) => {
+                    if (word.trim() === '') return;
                     const span = document.createElement('span');
                     span.className = 'hero-word';
-                    span.textContent = word + ' ';
+                    span.textContent = word;
                     heroHeadline.appendChild(span);
+                    // Add a space character node between spans for better accessibility and layout
+                    heroHeadline.appendChild(document.createTextNode(' '));
                 });
                 
                 const wordSpans = heroHeadline.querySelectorAll('.hero-word');
@@ -2265,10 +2303,12 @@ html {
                 heroDesc.innerHTML = '';
                 
                 words.forEach((word, index) => {
+                    if (word.trim() === '') return;
                     const span = document.createElement('span');
                     span.className = 'hero-desc-word';
-                    span.textContent = word + ' ';
+                    span.textContent = word;
                     heroDesc.appendChild(span);
+                    heroDesc.appendChild(document.createTextNode(' '));
                 });
                 
                 const descSpans = heroDesc.querySelectorAll('.hero-desc-word');
@@ -2415,6 +2455,13 @@ html {
             
             if (!track || !container || slides.length === 0) return;
             
+            // Only initialize horizontal scroll on desktop/large screens
+            if (window.innerWidth < 993) {
+                // Remove any leftover GSAP styles if resized
+                gsap.set([track, container, slides], { clearProps: "all" });
+                return;
+            }
+            
             gsap.registerPlugin(ScrollTrigger);
             
             const trackWidth = track.scrollWidth;
@@ -2474,17 +2521,6 @@ html {
                                 });
                             }
                         });
-                        
-                        slides.forEach((slide, index) => {
-                            const img = slide.querySelector('.slide-image img');
-                            if (img) {
-                                const imgProgress = (progress - (index / (slides.length - 1))) * 100;
-                                gsap.set(img, {
-                                    x: imgProgress * 0.5,
-                                    scale: 1 + (Math.abs(imgProgress) * 0.001)
-                                });
-                            }
-                        });
                     }
                 }
             });
@@ -2499,19 +2535,6 @@ html {
                         st.scroll(st.start + (st.end - st.start) * targetProgress);
                     }
                 });
-            });
-            
-            ScrollTrigger.create({
-                trigger: '.lsrw-header',
-                start: 'top 80%',
-                onEnter: () => {
-                    gsap.to('.lsrw-header', {
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.8,
-                        ease: 'power2.out'
-                    });
-                }
             });
         }
 

@@ -709,82 +709,125 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="{% static 'learning/js/intermediate/main.js' %}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-    // ==================== Local Storage Persistence ====================
-    const STORAGE_KEY = 'progress_intermediate_day20';
+    <script>
+        // ==================== Local Storage Persistence (Beginner Style) ====================
+        const STORAGE_KEY = 'progress_intermediate_day20';
+        let activityCompleted = { reading: false, grammar: false, listening: false, speaking: false, vocabulary: false };
 
-    function saveProgress() {
-        const data = {
-            inputs: {},
-            checkboxes: {},
-            activityCompleted: typeof activityCompleted !== 'undefined' ? { ...activityCompleted } : {}
-        };
-        document.querySelectorAll('input[type="text"], textarea').forEach(el => {
-            if (el.id) data.inputs[el.id] = el.value;
-        });
-        document.querySelectorAll('input[type="radio"]').forEach(el => {
-            if (el.name && el.checked) {
-                data.inputs[el.name] = el.value;
-            }
-        });
-        document.querySelectorAll('select').forEach(el => {
-            if (el.id) data.inputs[el.id] = el.value;
-        });
-        document.querySelectorAll('input[type="checkbox"]').forEach(el => {
-            if (el.id) data.checkboxes[el.id] = el.checked;
-        });
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
+        function saveProgress() {
+            const data = {
+                activityCompleted: activityCompleted,
+                inputs: {},
+                radios: {},
+                checkboxes: {}
+            };
+            document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                if (el.id) data.inputs[el.id] = el.value;
+            });
+            document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
+                if (el.name) data.radios[el.name] = el.value;
+            });
+            document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                if (el.id) data.checkboxes[el.id] = el.checked;
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
 
-    function loadProgress() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (!saved) return;
-        try {
-            const data = JSON.parse(saved);
-            if (data.inputs) {
-                Object.keys(data.inputs).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        el.value = data.inputs[id];
-                        el.dispatchEvent(new Event('input'));
-                    } else {
-                        const radio = document.querySelector(`input[name="${id}"][value="${data.inputs[id]}"]`);
-                        if (radio) radio.checked = true;
-                    }
-                });
-            }
-            if (data.checkboxes) {
-                Object.keys(data.checkboxes).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.checked = data.checkboxes[id];
-                });
-            }
-            if (data.activityCompleted && typeof activityCompleted !== 'undefined') {
-                Object.keys(data.activityCompleted).forEach(key => {
-                    activityCompleted[key] = data.activityCompleted[key];
-                });
-            }
-            
-            // Restore button states based on checkboxes
-            ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'].forEach(chkId => {
-                const chk = document.getElementById(chkId);
-                if (chk && chk.checked) {
-                    const buttons = Array.from(document.querySelectorAll('button.complete-activity-btn'));
-                    buttons.forEach(btn => {
-                        if (btn.id.toLowerCase().includes(chkId.replace('chk', ''))) {
-                             btn.disabled = true;
-                             btn.textContent = '✓ Completed';
-                             btn.classList.add('completed');
-                             btn.style.background = '#94a3b8';
-                             btn.style.opacity = '1';
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+                if (data.activityCompleted) {
+                    activityCompleted = data.activityCompleted;
+                    const checklistMap = { reading: 'chk1', grammar: 'chk2', listening: 'chk3', speaking: 'chk4', vocabulary: 'chk5' };
+                    const btnMap = { reading: 'completeReadingBtn', grammar: 'completeGrammarBtn', listening: 'completeListeningBtn', speaking: 'completeSpeakingBtn', vocabulary: 'completeVocabularyBtn' };
+                    Object.keys(activityCompleted).forEach(id => {
+                        if (activityCompleted[id]) {
+                            const cb = document.getElementById(checklistMap[id]);
+                            if (cb) cb.checked = true;
+                            const btn = document.getElementById(btnMap[id]);
+                            if (btn) {
+                                btn.textContent = '✓ Completed';
+                                btn.disabled = true;
+                                btn.classList.add('completed');
+                                btn.style.background = '#94a3b8';
+                                btn.style.opacity = '1';
+                            }
                         }
                     });
                 }
-            });
+                if (data.inputs) {
+                    Object.keys(data.inputs).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.value = data.inputs[id];
+                            el.dispatchEvent(new Event('input'));
+                        }
+                    });
+                }
+                if (data.radios) {
+                    Object.keys(data.radios).forEach(name => {
+                        const val = data.radios[name];
+                        const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+                        if (radio) {
+                            radio.checked = true;
+                            radio.dispatchEvent(new Event('change'));
+                        }
+                    });
+                }
+                if (data.checkboxes) {
+                    Object.keys(data.checkboxes).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.checked = data.checkboxes[id];
+                    });
+                }
+                updateProgressCounter();
+            } catch (e) { console.warn("Load progress failed", e); }
+        }
 
-            if (typeof updateProgressCounter === 'function') updateProgressCounter(); saveProgress();
-        } catch (e) { console.error("Error loading progress:", e); }
-    }
+        // ==================== HELPER FUNCTIONS ====================
+        function updateProgressCounter() {
+            const checks = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'];
+            let completed = 0;
+            checks.forEach(id => {
+                const chk = document.getElementById(id);
+                if (chk && chk.checked) completed++;
+            });
+            const counter = document.getElementById('progressCounter');
+            if (counter) counter.textContent = `${completed}/5 completed`;
+            const dayBtn = document.getElementById('dayCompleteBtn');
+            if (dayBtn) {
+                dayBtn.disabled = (completed !== 5);
+                dayBtn.style.opacity = (completed === 5) ? '1' : '0.5';
+            }
+        }
+
+        function markActivityComplete(activityId, checklistId) {
+            if (activityCompleted[activityId]) return;
+            activityCompleted[activityId] = true;
+            const chk = document.getElementById(checklistId);
+            if (chk) chk.checked = true;
+            
+            const btnMap = {
+                reading: 'completeReadingBtn',
+                grammar: 'completeGrammarBtn',
+                listening: 'completeListeningBtn',
+                speaking: 'completeSpeakingBtn',
+                vocabulary: 'completeVocabularyBtn'
+            };
+            
+            const btn = document.getElementById(btnMap[activityId]);
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = '✓ Completed';
+                btn.classList.add('completed');
+                btn.style.background = '#94a3b8';
+                btn.style.opacity = '1';
+            }
+            updateProgressCounter();
+            saveProgress();
+        }
 
         
     
@@ -806,51 +849,6 @@
             }
             const csrftoken = getCookie('csrftoken');
 
-            // ==================== ACTIVITY COMPLETION FUNCTIONS ====================
-            function updateProgressCounter() {
-                const checkboxes = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'];
-                let completed = 0;
-                checkboxes.forEach(id => {
-                    const cb = document.getElementById(id);
-                    if (cb && cb.checked) completed++;
-                });
-                const counter = document.getElementById('progressCounter');
-                if (counter) counter.innerText = `${completed}/5 completed`;
-
-                const dayBtn = document.getElementById('dayCompleteBtn');
-                if (dayBtn) {
-                    const isComplete = (completed === 5);
-                    dayBtn.disabled = !isComplete;
-                    if (isComplete) {
-                        dayBtn.style.background = '#16a34a';
-                        dayBtn.style.animation = 'pulse-day 2s ease-in-out infinite';
-                        dayBtn.style.cursor = 'pointer';
-                        dayBtn.style.opacity = '1';
-                    } else {
-                        dayBtn.style.background = '#94a3b8';
-                        dayBtn.style.animation = 'none';
-                        dayBtn.style.cursor = 'not-allowed';
-                        dayBtn.style.opacity = '0.6';
-                    }
-                }
-            }
-
-            window.markActivityComplete = function (activityId, checklistId) {
-                const checkbox = document.getElementById(checklistId);
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-
-                const completeBtn = document.getElementById(`complete${activityId.charAt(0).toUpperCase() + activityId.slice(1)}Btn`);
-                if (completeBtn) {
-                    completeBtn.disabled = true;
-                    completeBtn.textContent = '✓ Completed';
-                    completeBtn.style.animation = 'none';
-                }
-
-                updateProgressCounter(); saveProgress(); 
-                console.log(`✅ Activity "${activityId}" marked as complete!`);
-            };
 
             // ==================== DAY COMPLETE BUTTON ====================
             const dayCompleteBtn = document.getElementById('dayCompleteBtn');
@@ -2158,21 +2156,26 @@ OUTPUT ONLY JSON:
                 });
             }
 
-
-
             // ==================== INITIAL PROGRESS UPDATE ====================
-            setTimeout(updateProgressCounter, 100);
-        
-        
-    
-    // Auto-save on input/change
-    document.querySelectorAll('input[type="text"], input[type="radio"], textarea, select').forEach(el => {
-        el.addEventListener('input', saveProgress);
-        el.addEventListener('change', saveProgress);
-    });
 
-    loadProgress();
-});
+            // ==================== Initialize ====================
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log("Day 20 initialized successfully!");
+                
+                // Global Auto-save Listeners
+                document.addEventListener('input', (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                        saveProgress();
+                    }
+                });
+                document.addEventListener('change', (e) => {
+                    if (e.target.type === 'radio' || e.target.type === 'checkbox') {
+                        saveProgress();
+                    }
+                });
+
+                loadProgress();
+            });
     </script>
 </body>
 

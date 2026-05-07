@@ -1400,3 +1400,25 @@ def ai_evaluate(request):
             'suggestion': 'Please refresh the page and try again.',
             'debug_info': str(e)
         }, status=200)
+
+@login_required
+def toolkit_tool(request, tool_name):
+    """Render a specific advanced tool from the toolkit"""
+    tool_map = {
+        'grammar-hacks': 'tool1.html',
+        'crossword': 'tool2.html',
+        'word-search': 'tool3.html',
+        'idiom-challenge': 'tool4.html',
+        'grammar-detective': 'tool5.html',
+        'word-association': 'tool6.html',
+        'sentence-transform': 'tool7.html',
+        'register-remix': 'tool8.html',
+    }
+    template = tool_map.get(tool_name)
+    if not template:
+        return redirect('learning:level_overview', level_name='advanced')
+    
+    return render(request, f'learning/Advanced/tools/{template}', {
+        'level': 'advanced',
+        'tool_name': tool_name
+    })

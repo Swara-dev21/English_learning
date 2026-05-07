@@ -2028,36 +2028,43 @@
             ],
             'advanced': [
                 {
-                    stepLabel: "Mastery Test! 🔥",
-                    charText: "You've reached the end of the Advanced journey. Amazing! 🌟",
+                    stepLabel: "Welcome Screen",
+                    charText: "Welcome to the Advanced Communicator's Toolkit! 🎉",
                     bodyHtml: `
-                        <div class="intro-typing-line">Welcome to the <strong>Advanced Proficiency Assessment</strong>! 🎉</div>
-                        <div class="intro-typing-line muted">This is a comprehensive test of your English mastery.</div>
+                        <div class="intro-typing-line">This is where knowledge transforms into applied skill.</div>
                     `
                 },
                 {
-                    stepLabel: "📋 High-Level Exam",
-                    charText: "Precision and nuance are key! 🎯",
+                    stepLabel: "🔧 Toolkit Structure",
+                    charText: "Toolkit Structure:",
                     bodyHtml: `
-                        <div class="intro-typing-line strong">Exam Structure:</div>
-                        <div class="intro-skill-grid">
-                            <div class="intro-skill-card">❓ ${assessmentTotalQuestions} Questions</div>
-                            <div class="intro-skill-card">⏱ 45 Minutes</div>
-                            <div class="intro-skill-card">📝 Complex Nuances</div>
-                            <div class="intro-skill-card">👑 Elite Logic</div>
-                        </div>
-                        <div class="intro-typing-line muted mt-2">We've given you extra time for these complex questions.</div>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-light);">
+                            <thead>
+                                <tr style="background: var(--primary); color: white;">
+                                    <th style="padding: 10px; text-align: left;">Tool</th>
+                                    <th style="padding: 10px; text-align: left;">Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: #f8fafc;"><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">🔧 Tool 1</td><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">30 Grammar Hacks</td></tr>
+                                <tr style="background: white;"><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">🔐 Tool 2</td><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">Power Words Crossword</td></tr>
+                                <tr style="background: #f8fafc;"><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">🔍 Tool 3</td><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">Vocabulary Word Search</td></tr>
+                                <tr style="background: white;"><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">💬 Tool 4</td><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">Idiom Challenge</td></tr>
+                                <tr style="background: #f8fafc;"><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">🕵️ Tool 5</td><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">Grammar Detective Game</td></tr>
+                                <tr style="background: white;"><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">⚡ Tool 6</td><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">Word Association Challenge</td></tr>
+                                <tr style="background: #f8fafc;"><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">✍️ Tool 7</td><td style="padding: 8px; border-bottom: 1px solid #edf2f7;">Sentence Transformation</td></tr>
+                                <tr style="background: white;"><td style="padding: 8px;">🎭 Tool 8</td><td style="padding: 8px;">Register Remix</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="intro-typing-line muted mt-2">Each tool targets a specific advanced communication skill.</div>
                     `
                 },
                 {
-                    stepLabel: "👑 Final Passing",
-                    charText: "The title of 'Master' is within reach! 🏆",
+                    stepLabel: "Mastery Path",
+                    charText: "To earn the Advanced Communicator's Certificate: 🏆",
                     bodyHtml: `
-                        <div class="intro-typing-line">To earn the Master Certificate:</div>
-                        <div class="intro-typing-line strong" style="font-size: 1.2rem; color: #f59e0b; text-align: center; margin: 1rem 0;">
-                            ${assessmentPassingScore} / ${assessmentTotalQuestions} Correct (${passingPercentage}%)
-                        </div>
-                        <div class="intro-typing-line muted">Good luck, scholar. Show us your best!</div>
+                        <div class="intro-typing-line">Complete All 8 Tools → Apply Every Grammar Hack → Use 30 Power Words → Master Every Idiom</div>
+                        <div class="intro-typing-line muted mt-3" style="font-style: italic;">"This is not a test — it is a transformation toolkit. Work through each tool deliberately."</div>
                     `
                 }
             ]
@@ -2117,7 +2124,11 @@
         btnBack.classList.toggle('visible', currentAsmStep > 0);
 
         const btnNext = document.getElementById('asmBtnNext');
-        btnNext.textContent = currentAsmStep === asmSteps.length - 1 ? 'Start Assessment 🔥' : 'Next →';
+        if (levelName === 'advanced') {
+            btnNext.textContent = currentAsmStep === asmSteps.length - 1 ? 'Explore Tools 🚀' : 'Next →';
+        } else {
+            btnNext.textContent = currentAsmStep === asmSteps.length - 1 ? 'Start Assessment 🔥' : 'Next →';
+        }
 
         if (typeof gsap !== 'undefined') {
             gsap.fromTo('#asmBody > *',
@@ -2150,11 +2161,17 @@
         const modal = document.getElementById('asmModal');
         modal.style.display = 'none';
 
-        showToast('🚀 Taking you to the assessment...', true);
-
-        setTimeout(() => {
-            window.location.href = `/learning/level/${levelName}/take-test/`;
-        }, 1000);
+        if (levelName === 'advanced') {
+            showToast('🚀 Opening the Advanced Toolkit...', true);
+            setTimeout(() => {
+                window.location.href = `/learning/level/advanced/toolkit/grammar-hacks/`;
+            }, 1000);
+        } else {
+            showToast('🚀 Taking you to the assessment...', true);
+            setTimeout(() => {
+                window.location.href = `/learning/level/${levelName}/take-test/`;
+            }, 1000);
+        }
     }
 
 
@@ -2749,27 +2766,50 @@
         const isAssessmentAvailable = journeyCompleted || (currentDayNumber > 30);
         const asmItem = document.createElement('div');
         asmItem.className = 'day-item';
-        asmItem.innerHTML = `
-            <div class="assessment-card">
-                <div class="card-header">
-                    <div class="card-title">🏆 Final Assessment</div>
-                    <span class="status-badge ${hasPassedAssessment ? 'completed' : isAssessmentAvailable ? 'available' : 'locked'}">
-                        ${hasPassedAssessment ? '✓ Passed' : isAssessmentAvailable ? '✓ Ready' : '🔒 Locked'}
-                    </span>
-                </div>
-                <div class="card-meta">
-                    <span>⭐ Test your knowledge — ${assessmentTotalQuestions} questions</span>
-                    <span>⏱ ~${assessmentTimeLimit} mins</span>
-                </div>
-                <div>
-                    ${hasPassedAssessment
-                ? `<a href="/learning/level/${levelName}/result/" class="btn-assessment-action" style="background: var(--success-light); color: var(--success); border: 1px solid var(--success-soft);">✅ View Results</a>`
-                : isAssessmentAvailable
-                    ? `<button onclick="startAssessmentWithIntro()" class="btn-assessment-action">✏️ Take Assessment</button>`
-                    : `<button class="btn-assessment-action" disabled style="opacity:0.5;">🔒 Complete all days first</button>`
-            }
-                </div>
-            </div>`;
+
+        if (levelName === 'advanced') {
+            asmItem.innerHTML = `
+                <div class="assessment-card">
+                    <div class="card-header">
+                        <div class="card-title">Advanced Communicator's Toolkit</div>
+                        <span class="status-badge ${isAssessmentAvailable ? 'available' : 'locked'}">
+                            ${isAssessmentAvailable ? '✓ Ready' : '🔒 Locked'}
+                        </span>
+                    </div>
+                    <div class="card-meta">
+                        <span>⭐ Master 8 powerful tools to transform your communication</span>
+                        <span>🎓 Final Mastery Path</span>
+                    </div>
+                    <div>
+                        ${isAssessmentAvailable
+                            ? `<button onclick="startAssessmentWithIntro()" class="btn-assessment-action">🔍 Explore Tools</button>`
+                            : `<button class="btn-assessment-action" disabled style="opacity:0.5;">🔒 Complete all days first</button>`
+                        }
+                    </div>
+                </div>`;
+        } else {
+            asmItem.innerHTML = `
+                <div class="assessment-card">
+                    <div class="card-header">
+                        <div class="card-title">🏆 Final Assessment</div>
+                        <span class="status-badge ${hasPassedAssessment ? 'completed' : isAssessmentAvailable ? 'available' : 'locked'}">
+                            ${hasPassedAssessment ? '✓ Passed' : isAssessmentAvailable ? '✓ Ready' : '🔒 Locked'}
+                        </span>
+                    </div>
+                    <div class="card-meta">
+                        <span>⭐ Test your knowledge — ${assessmentTotalQuestions} questions</span>
+                        <span>⏱ ~${assessmentTimeLimit} mins</span>
+                    </div>
+                    <div>
+                        ${hasPassedAssessment
+                    ? `<a href="/learning/level/${levelName}/result/" class="btn-assessment-action" style="background: var(--success-light); color: var(--success); border: 1px solid var(--success-soft);">✅ View Results</a>`
+                    : isAssessmentAvailable
+                        ? `<button onclick="startAssessmentWithIntro()" class="btn-assessment-action">✏️ Take Assessment</button>`
+                        : `<button class="btn-assessment-action" disabled style="opacity:0.5;">🔒 Complete all days first</button>`
+                }
+                    </div>
+                </div>`;
+        }
         timeline.appendChild(asmItem);
 
         // Certificate Card

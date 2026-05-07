@@ -6,9 +6,9 @@
     <div class="nav-container">
         <!-- Logo on LEFT side -->
         <a href="{% url 'home_page:home' %}" class="logo" id="logoBox">
-            <div class="logo-placeholder">
+            <span class="logo-placeholder">
                 <span>TheFluentEngineer</span>
-            </div>
+            </span>
         </a>
 
         <!-- Main Navigation Links -->
@@ -54,6 +54,7 @@
                     Take Free Assessment
                 </a>
             {% endif %}
+        </div> <!-- Closing nav-links here -->
 
         <!-- Profile Section (Right side) - Only shown when logged in -->
         <div class="profile-section">
@@ -68,7 +69,7 @@
         </div>
 
         <!-- Mobile Menu Button - HAMBURGER ICON -->
-        <button class="menu-btn" id="menuBtn" aria-label="Menu">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Menu">
             <span class="hamburger">
                 <span></span>
                 <span></span>
@@ -91,13 +92,14 @@
     }
 
     .nav-container {
-        max-width: 1400px;
+        max-width: 1300px; /* Synchronized with main container */
         margin: 0 auto;
         padding: 0 20px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 15px;
+        width: 100%;
     }
 
     /* Logo Styles */
@@ -122,19 +124,35 @@
     .nav-links {
         display: flex;
         align-items: center;
-        gap: 12px;
-        flex: 1;
-        justify-content: center;
+        gap: clamp(10px, 2vw, 25px);
+        flex: 1; /* Take up available space */
+        justify-content: center; /* Center content within that space */
     }
 
     .nav-link {
         color: #4a5568;
         text-decoration: none;
-        font-weight: 500;
-        font-size: 13px;
-        transition: color 0.3s ease;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
         white-space: nowrap;
-        padding: 4px 0;
+        padding: 8px 0;
+        position: relative;
+    }
+
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+        width: 100%;
     }
 
     .nav-link:hover {
@@ -217,6 +235,8 @@
         order: 3;
         border-radius: 8px;
         transition: background-color 0.2s;
+        position: relative; /* Added to make z-index work */
+        z-index: 1001;
     }
 
     .menu-btn:hover {
@@ -244,6 +264,7 @@
         border-radius: 3px;
         transition: all 0.3s ease;
         transform-origin: left center;
+        pointer-events: none; /* Let the click pass through to the button */
     }
 
     /* Hamburger to X animation */
@@ -284,376 +305,102 @@
     }
 
 /* ===== MOBILE STYLES - IMPROVED LAYOUT ===== */
-@media (max-width: 768px) {
+/* ===== MOBILE STYLES - NEW PREMIUM OVERLAY ===== */
+@media (max-width: 992px) {
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden !important;
+    }
+
     .navbar {
-        padding: 8px 0;
+        padding: 12px 0;
+        width: 100%;
+        max-width: 100%;
     }
 
     .nav-container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: nowrap; /* Prevent wrapping */
-        gap: 8px;
-        padding: 0 12px;
-    }
-
-    /* Logo - fixed width to prevent overflow */
-    .logo {
-        flex-shrink: 0;
-        max-width: 140px;
+        padding: 0 15px;
+        width: 100%;
+        max-width: 100%;
         overflow: hidden;
     }
 
-    .logo-placeholder span {
-        font-size: 16px;
-        font-weight: 700;
-        white-space: nowrap;
-        display: block;
-    }
-
-    /* Profile section - fixed width */
-    .profile-section {
-        flex-shrink: 0;
-        margin: 0;
-    }
-
-    .profile-wrapper {
-        padding: 3px 8px;
-        gap: 4px;
-    }
-
-    .welcome-text {
-        font-size: 12px;
-        max-width: 80px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .profile-icon {
-        font-size: 20px;
-    }
-
-    /* Hamburger menu - always visible and properly positioned */
     .menu-btn {
         display: flex !important;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        padding: 6px;
-        margin: 0;
-        width: 36px;
-        height: 36px;
-        order: 3;
+        position: relative !important;
+        z-index: 9999 !important; /* Extremely high to stay above everything */
+        pointer-events: auto !important;
     }
 
-    .hamburger {
-        width: 22px;
-        height: 18px;
-    }
-
-    .hamburger span {
-        height: 2.5px;
-    }
-
-    /* Navigation links - hidden by default, shown when menu clicked */
     .nav-links {
-        display: none;
-        position: absolute;
-        top: 100%;
+        position: fixed;
+        top: 0;
         left: 0;
-        right: 0;
-        background: white;
-        flex-direction: column;
-        padding: 16px;
-        gap: 12px;
-        margin: 0;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        z-index: 999;
-        border-top: 1px solid #e9ecef;
         width: 100%;
+        max-width: 100%;
+        height: 100dvh;
+        background: rgba(255, 255, 255, 0.98);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+        gap: 25px;
+        transform: translateX(100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+        margin: 0;
+        box-shadow: none;
+        border: none;
+        overflow-x: hidden;
     }
 
-    .nav-links.show {
-        display: flex;
+    .nav-links.active {
+        display: flex !important;
+        transform: translateX(0) !important;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
 
     .nav-link {
+        font-size: 1.2rem;
         width: 100%;
+        max-width: 300px;
         text-align: center;
-        padding: 10px !important;
-        font-size: 14px;
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    .nav-link:last-child {
-        border-bottom: none;
-    }
-
-    .test-btn, .result-btn {
-        width: auto;
-        min-width: 160px;
-        max-width: 200px;
-        margin: 0 auto;
-        padding: 8px 16px !important;
-        font-size: 13px !important;
-    }
-}
-
-/* ===== MOBILE STYLES - DYNAMIC LAYOUT ===== */
-@media (max-width: 768px) {
-    .navbar {
-        padding: 8px 0;
-    }
-
-    .nav-container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: nowrap;
-        gap: 8px;
-        padding: 0 12px;
-    }
-
-    /* Logo - fixed width */
-    .logo {
-        flex-shrink: 0;
-    }
-
-    .logo-placeholder span {
-        font-size: 16px;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    /* Profile section - dynamic based on content */
-    .profile-section {
-        flex-shrink: 1; /* Allow shrinking */
-        min-width: 0; /* Enable flex shrinking */
-        margin: 0;
-    }
-
-    .profile-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 3px 8px;
-        background: #f8f9fa;
-        border-radius: 40px;
-        border: 1px solid #e9ecef;
-        width: fit-content; /* Take only needed width */
-        max-width: 100%; /* But don't overflow */
+        padding: 14px !important;
+        border: none;
+        white-space: normal;
     }
 
     .welcome-text {
-        color: #4a5568;
-        font-weight: 500;
-        font-size: 12px;
-        white-space: nowrap;
-        display: inline-block;
-    }
-
-    /* If username is long, truncate with ellipsis */
-    .welcome-text.long-username {
-        max-width: 100px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .profile-icon {
-        color: #667eea;
-        font-size: 22px;
-        line-height: 1;
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-    }
-
-    /* Hamburger menu - fixed size */
-    .menu-btn {
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        padding: 6px;
-        width: 36px;
-        height: 36px;
-    }
-
-    .hamburger {
-        width: 22px;
-        height: 18px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .hamburger span {
-        width: 100%;
-        height: 2.5px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        border-radius: 3px;
-    }
-
-    /* Navigation links dropdown */
-    .nav-links {
         display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        flex-direction: column;
-        padding: 16px;
-        gap: 12px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        z-index: 999;
-        border-top: 1px solid #e9ecef;
     }
 
-    .nav-links.show {
-        display: flex;
+    .profile-section {
+        margin-left: auto;
+        margin-right: 8px;
     }
 
-    .nav-link {
+    .test-btn,
+    .result-btn {
         width: 100%;
-        text-align: center;
-        padding: 10px !important;
-        font-size: 14px;
-        border-bottom: 1px solid #f0f0f0;
+        max-width: 280px;
+        padding: 15px 30px !important;
+        font-size: 16px !important;
     }
 
-    .nav-link:last-child {
-        border-bottom: none;
-    }
-
-    .test-btn, .result-btn {
-        width: auto;
-        min-width: 160px;
-        max-width: 200px;
-        margin: 5px auto;
-        padding: 8px 16px !important;
-        font-size: 13px !important;
-    }
-}
-
-/* Medium mobile devices */
-@media (max-width: 576px) {
-    .logo-placeholder span {
-        font-size: 15px;
-    }
-
-    .profile-wrapper {
-        padding: 2px 6px;
-        gap: 4px;
-    }
-
-    .welcome-text {
-        font-size: 11px;
-    }
-
-    .welcome-text.long-username {
-        max-width: 80px;
-    }
-
-    .profile-icon {
-        font-size: 20px;
-    }
-
-    .menu-btn {
-        width: 34px;
-        height: 34px;
-    }
-
-    .hamburger {
-        width: 20px;
-        height: 16px;
-    }
-
-    .test-btn, .result-btn {
-        min-width: 140px;
-        font-size: 12px !important;
-    }
-}
-
-/* Small mobile devices */
-@media (max-width: 480px) {
-    .logo-placeholder span {
-        font-size: 14px;
-    }
-
-    .profile-wrapper {
-        padding: 2px 5px;
-    }
-
-    .welcome-text {
-        font-size: 10px;
-    }
-
-    .welcome-text.long-username {
-        max-width: 70px;
-    }
-
-    .profile-icon {
-        font-size: 18px;
-    }
-
-    .menu-btn {
-        width: 32px;
-        height: 32px;
-        padding: 5px;
-    }
-
-    .hamburger {
-        width: 18px;
-        height: 15px;
-    }
-
-    .test-btn, .result-btn {
-        min-width: 130px;
-        font-size: 11px !important;
-    }
-}
-
-/* Extra small devices */
-@media (max-width: 380px) {
-    .logo-placeholder span {
-        font-size: 13px;
-    }
-
-    .welcome-text {
-        font-size: 9px;
-    }
-
-    .welcome-text.long-username {
-        max-width: 60px;
-    }
-
-    .profile-icon {
-        font-size: 16px;
-    }
-
-    .test-btn, .result-btn {
-        min-width: 120px;
-        font-size: 10px !important;
-        padding: 6px 12px !important;
-    }
-}
-
-/* Very small devices - hide welcome text if needed */
-@media (max-width: 360px) {
-    .logo-placeholder span {
-        font-size: 12px;
-    }
-
-    .welcome-text {
-        max-width: 60px;
-        font-size: 9px;
-    }
-
-    .profile-icon {
-        font-size: 16px;
+    /* Mobile-specific adjustments for logo and spacing */
+    @media (max-width: 576px) {
+        .logo-placeholder span {
+            font-size: 14px;
+        }
+        
+        .nav-container {
+            padding: 0 15px;
+        }
     }
 }
 
@@ -676,43 +423,13 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Check if username is long and add class
+
         const welcomeText = document.querySelector('.welcome-text');
         if (welcomeText) {
             const textLength = welcomeText.textContent.length;
-            if (textLength > 15) { // If username is longer than 15 chars
+            if (textLength > 15) {
                 welcomeText.classList.add('long-username');
             }
         }
-
-        // Your existing hamburger menu code
-        const menuBtn = document.getElementById('menuBtn');
-        const navLinks = document.getElementById('navLinks');
-        
-        if (menuBtn) {
-            menuBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                this.classList.toggle('active');
-                navLinks.classList.toggle('show');
-            });
-        }
-
-        // Close menu when clicking outside
-        document.addEventListener('click', function(e) {
-            if (navLinks && navLinks.classList.contains('show')) {
-                if (!menuBtn?.contains(e.target) && !navLinks.contains(e.target)) {
-                    navLinks.classList.remove('show');
-                    menuBtn?.classList.remove('active');
-                }
-            }
-        });
-
-        // Close menu when clicking a link
-        navLinks?.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('show');
-                menuBtn?.classList.remove('active');
-            });
-        });
     });
 </script>

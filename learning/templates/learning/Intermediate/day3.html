@@ -398,90 +398,111 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-    // ==================== Local Storage Persistence ====================
-    const STORAGE_KEY = 'progress_intermediate_day3';
+        // ==================== Local Storage Persistence (Beginner Style) ====================
+        const STORAGE_KEY = 'progress_intermediate_day3';
+        let activityCompleted = { grammar: false, reading: false, speaking: false, vocabulary: false, listening: false };
 
-    function saveProgress() {
-        const data = {
-            inputs: {},
-            checkboxes: {},
-            activityCompleted: typeof activityCompleted !== 'undefined' ? { ...activityCompleted } : {}
-        };
-        document.querySelectorAll('input[type="text"], textarea').forEach(el => {
-            if (el.id) data.inputs[el.id] = el.value;
-        });
-        document.querySelectorAll('input[type="radio"]').forEach(el => {
-            if (el.name && el.checked) {
-                data.inputs[el.name] = el.value;
-            }
-        });
-        document.querySelectorAll('select').forEach(el => {
-            if (el.id) data.inputs[el.id] = el.value;
-        });
-        document.querySelectorAll('input[type="checkbox"]').forEach(el => {
-            if (el.id) data.checkboxes[el.id] = el.checked;
-        });
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
+        function saveProgress() {
+            const data = {
+                activityCompleted: activityCompleted,
+                inputs: {},
+                radios: {},
+                checkboxes: {}
+            };
+            document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+                if (el.id) data.inputs[el.id] = el.value;
+            });
+            document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
+                if (el.name) data.radios[el.name] = el.value;
+            });
+            document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                if (el.id) data.checkboxes[el.id] = el.checked;
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
 
-    function loadProgress() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (!saved) return;
-        try {
-            const data = JSON.parse(saved);
-            if (data.inputs) {
-                Object.keys(data.inputs).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        el.value = data.inputs[id];
-                        el.dispatchEvent(new Event('input'));
-                    } else {
-                        const radio = document.querySelector(`input[name="${id}"][value="${data.inputs[id]}"]`);
-                        if (radio) radio.checked = true;
-                    }
-                });
-            }
-            if (data.checkboxes) {
-                Object.keys(data.checkboxes).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.checked = data.checkboxes[id];
-                });
-            }
-            if (data.activityCompleted && typeof activityCompleted !== 'undefined') {
-                Object.keys(data.activityCompleted).forEach(key => {
-                    activityCompleted[key] = data.activityCompleted[key];
-                });
-            }
-            
-            // Restore button states based on checkboxes
-            ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'].forEach(chkId => {
-                const chk = document.getElementById(chkId);
-                if (chk && chk.checked) {
-                    const buttons = Array.from(document.querySelectorAll('button.complete-activity-btn'));
-                    buttons.forEach(btn => {
-                        if (btn.id.toLowerCase().includes(chkId.replace('chk', ''))) {
-                             btn.disabled = true;
-                             btn.textContent = '✓ Completed';
-                             btn.classList.add('completed');
-                             btn.style.background = '#94a3b8';
-                             btn.style.opacity = '1';
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+                if (data.activityCompleted) {
+                    activityCompleted = data.activityCompleted;
+                    const checklistMap = { grammar: 'chk1', reading: 'chk2', speaking: 'chk3', vocabulary: 'chk4', listening: 'chk5' };
+                    const btnMap = { grammar: 'completeGrammarBtn', reading: 'completeReadingBtn', speaking: 'completeSpeakingBtn', vocabulary: 'completeVocabularyBtn', listening: 'completeListeningBtn' };
+                    Object.keys(activityCompleted).forEach(id => {
+                        if (activityCompleted[id]) {
+                            const cb = document.getElementById(checklistMap[id]);
+                            if (cb) cb.checked = true;
+                            const btn = document.getElementById(btnMap[id]);
+                            if (btn) {
+                                btn.textContent = '✓ Completed';
+                                btn.disabled = true;
+                                btn.classList.add('completed');
+                                btn.style.background = '#94a3b8';
+                                btn.style.opacity = '1';
+                            }
                         }
                     });
                 }
-            });
+                if (data.inputs) {
+                    Object.keys(data.inputs).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.value = data.inputs[id];
+                            el.dispatchEvent(new Event('input'));
+                        }
+                    });
+                }
+                if (data.radios) {
+                    Object.keys(data.radios).forEach(name => {
+                        const val = data.radios[name];
+                        const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+                        if (radio) {
+                            radio.checked = true;
+                            radio.dispatchEvent(new Event('change'));
+                        }
+                    });
+                }
+                if (data.checkboxes) {
+                    Object.keys(data.checkboxes).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.checked = data.checkboxes[id];
+                    });
+                }
+                updateProgressCounter();
+            } catch (e) { console.warn("Load progress failed", e); }
+        }
 
-            if (typeof updateProgressCounter === 'function') updateProgressCounter(); saveProgress();
-        } catch (e) { console.error("Error loading progress:", e); }
-    }
-
-        
-    
-            function getCookie(name) { let v = null; if (document.cookie && document.cookie !== '') { const c = document.cookie.split(';'); for (let i = 0; i < c.length; i++) { const t = c[i].trim(); if (t.substring(0, name.length + 1) === (name + '=')) { v = decodeURIComponent(t.substring(name.length + 1)); break; } } } return v; }
+        // ==================== HELPER FUNCTIONS ====================
             function updateProgressCounter() { const c = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5']; let done = 0; c.forEach(id => { const cb = document.getElementById(id); if (cb && cb.checked) done++; }); const ct = document.getElementById('progressCounter'); if (ct) ct.textContent = `${done}/5 completed`; const db = document.getElementById('dayCompleteBtn'); if (db) db.disabled = (done !== 5); }
-            function markActivityComplete(btnId, checklistId) { const btn = document.getElementById(btnId); if (!btn || btn.disabled) return false; const chk = document.getElementById(checklistId); if (chk) chk.checked = true; btn.disabled = true; btn.textContent = '✓ Completed'; btn.classList.add('completed'); btn.style.background = '#94a3b8'; btn.style.opacity = '1'; btn.style.animation = 'none'; updateProgressCounter(); saveProgress();  return true; }
+            
+            function markActivityComplete(activityId, checklistId) {
+                if (activityCompleted[activityId]) return;
+                activityCompleted[activityId] = true;
+                const chk = document.getElementById(checklistId);
+                if (chk) chk.checked = true;
+                
+                const btnMap = {
+                    grammar: 'completeGrammarBtn',
+                    reading: 'completeReadingBtn',
+                    speaking: 'completeSpeakingBtn',
+                    vocabulary: 'completeVocabularyBtn',
+                    listening: 'completeListeningBtn'
+                };
+                
+                const btn = document.getElementById(btnMap[activityId]);
+                if (btn) {
+                    btn.disabled = true;
+                    btn.textContent = '✓ Completed';
+                    btn.classList.add('completed');
+                    btn.style.background = '#94a3b8';
+                    btn.style.opacity = '1';
+                }
+                updateProgressCounter();
+                saveProgress();
+            }
             function createHintSection(hintText) { return `<div style="background:#e0f2fe;padding:0.6rem 0.8rem;border-radius:8px;margin-top:0.4rem;border-left:3px solid #0284c7;font-size:0.8rem;color:#0369a1;"><strong>💡 Hint:</strong> ${hintText}</div>`; }
             // ==================== LISTENING ====================
             const listeningAudio = document.getElementById('listeningAudio');
@@ -550,7 +571,7 @@
             }
             if (completeListeningBtn) {
                 completeListeningBtn.addEventListener('click', function () {
-                    if (!completeListeningBtn.disabled) markActivityComplete('completeListeningBtn', 'chk5');
+                    if (!completeListeningBtn.disabled) markActivityComplete('listening', 'chk5');
                 });
             }
             updateListeningCompleteButton();
@@ -560,7 +581,7 @@
             function updateSTimer() { if (speakTimer) { const m = Math.floor(sSeconds / 60), s = sSeconds % 60; speakTimer.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`; } }
             if (speakRecordBtn) { speakRecordBtn.addEventListener('click', async function () { if (speakPlaybackArea) speakPlaybackArea.style.display = 'none'; if (speakPlaybackAudio) speakPlaybackAudio.src = ''; try { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); speakMediaRecorder = new MediaRecorder(stream); speakChunks = []; sSeconds = 0; updateSTimer(); if (speakRecordingStatus) speakRecordingStatus.style.display = 'flex'; if (stInterval) clearInterval(stInterval); stInterval = setInterval(() => { sSeconds++; updateSTimer(); }, 1000); speakMediaRecorder.ondataavailable = e => speakChunks.push(e.data); speakMediaRecorder.onstop = () => { clearInterval(stInterval); if (speakPlaybackAudio) speakPlaybackAudio.src = URL.createObjectURL(new Blob(speakChunks, { type: 'audio/webm' })); if (speakPlaybackArea) { speakPlaybackArea.style.display = 'block'; const msgDiv = speakPlaybackArea.querySelector('.playback-success-msg'); if (sSeconds >= 20) { speakingRecorded = true; if (msgDiv) { msgDiv.innerHTML = '<span>✅</span> Recording saved!'; msgDiv.style.background = '#d1fae5'; msgDiv.style.color = '#065f46'; } if (completeSpeakingBtn && completeSpeakingBtn.textContent !== '✓ Completed') completeSpeakingBtn.disabled = false; } else { speakingRecorded = false; if (msgDiv) { msgDiv.innerHTML = '<span>⚠️</span> Too short! Please record all sentences.'; msgDiv.style.background = '#fef9e3'; msgDiv.style.color = '#92400e'; } if (completeSpeakingBtn && completeSpeakingBtn.textContent !== '✓ Completed') completeSpeakingBtn.disabled = true; } } stream.getTracks().forEach(t => t.stop()); }; speakMediaRecorder.start(); speakIsRecording = true; speakRecordBtn.style.display = 'none'; if (speakStopBtn) speakStopBtn.style.display = 'inline-flex'; } catch (e) { console.error('Mic error'); } }); }
             if (speakStopBtn) speakStopBtn.addEventListener('click', () => { if (speakMediaRecorder && speakIsRecording) { speakMediaRecorder.stop(); speakIsRecording = false; speakRecordBtn.style.display = 'inline-flex'; speakStopBtn.style.display = 'none'; if (speakRecordingStatus) speakRecordingStatus.style.display = 'none'; } });
-            if (completeSpeakingBtn) { completeSpeakingBtn.addEventListener('click', () => { if (!completeSpeakingBtn.disabled && speakingRecorded) markActivityComplete('completeSpeakingBtn', 'chk3'); else if (!speakingRecorded) alert('⚠️ Recording too short! Please record for at least 20 seconds covering all sentences.'); }); }
+            if (completeSpeakingBtn) { completeSpeakingBtn.addEventListener('click', () => { if (!completeSpeakingBtn.disabled && speakingRecorded) markActivityComplete('speaking', 'chk3'); else if (!speakingRecorded) alert('⚠️ Recording too short! Please record for at least 20 seconds covering all sentences.'); }); }
 
             // ==================== READING ====================
             const readingPassageText = "After the presentation, the HOD remarked that the content was well-organised but that the delivery needed more confidence. She suggested that the students should practice speaking in front of groups. One student asked whether there would be another opportunity to present. The HOD confirmed that a second presentation slot had been allocated for the following week. She also mentioned that she had been impressed by the research methodology.";
@@ -590,13 +611,13 @@
             document.getElementById('checkUnderlinesBtn')?.addEventListener('click', checkUnderlines); document.getElementById('checkCirclesBtn')?.addEventListener('click', checkCircles);
             document.getElementById('resetUnderlinesBtn')?.addEventListener('click', resetUnderlines); document.getElementById('resetCirclesBtn')?.addEventListener('click', resetCircles);
             document.getElementById('checkTask2Btn')?.addEventListener('click', checkTask2);
-            document.getElementById('completeReadingBtn')?.addEventListener('click', () => { if (!document.getElementById('completeReadingBtn').disabled) markActivityComplete('completeReadingBtn', 'chk2'); });
+            document.getElementById('completeReadingBtn')?.addEventListener('click', () => { if (!document.getElementById('completeReadingBtn').disabled) markActivityComplete('reading', 'chk2'); });
 
             // ==================== VOCABULARY ====================
             const vocabCompleteBtn = document.getElementById('completeVocabularyBtn'); const vocabStatus = { 'check-relay': false, 'check-allocate': false, 'check-methodology': false, 'check-schematic': false, 'check-reiterate': false };
             function checkVocab() { const all = Object.values(vocabStatus).every(s => s); if (vocabCompleteBtn && vocabCompleteBtn.textContent !== '✓ Completed') vocabCompleteBtn.disabled = !all; }
             document.querySelectorAll('.vocab-audio-btn').forEach(btn => { btn.addEventListener('click', function () { const checkId = this.getAttribute('data-checkid'); if (checkId && !vocabStatus[checkId]) { vocabStatus[checkId] = true; const cell = document.getElementById(checkId); if (cell) cell.innerHTML = '✅'; checkVocab(); } if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(this.getAttribute('data-word')); u.lang = 'en-US'; u.rate = 0.85; window.speechSynthesis.speak(u); } }); });
-            if (vocabCompleteBtn) vocabCompleteBtn.addEventListener('click', () => { if (!vocabCompleteBtn.disabled) markActivityComplete('completeVocabularyBtn', 'chk4'); });
+            if (vocabCompleteBtn) vocabCompleteBtn.addEventListener('click', () => { if (!vocabCompleteBtn.disabled) markActivityComplete('vocabulary', 'chk4'); });
 
             // ==================== GRAMMAR ====================
             const grammarCheckBtn = document.getElementById('checkGrammarBtn');
@@ -712,22 +733,29 @@
             }
 
             if (grammarCompleteBtn) {
-                grammarCompleteBtn.addEventListener('click', () => { if (grammarCompleted) markActivityComplete('completeGrammarBtn', 'chk1'); });
+                grammarCompleteBtn.addEventListener('click', () => { if (grammarCompleted) markActivityComplete('grammar', 'chk1'); });
             }
             // ==================== DAY COMPLETE ====================
             const dayCompleteBtn = document.getElementById('dayCompleteBtn'); if (dayCompleteBtn) { const newBtn = dayCompleteBtn.cloneNode(true); dayCompleteBtn.parentNode.replaceChild(newBtn, dayCompleteBtn); newBtn.addEventListener('click', function (e) { e.preventDefault(); const allChecked = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'].every(id => document.getElementById(id)?.checked); if (!allChecked) { alert('Complete all activities first!'); return; } if (typeof confetti !== 'undefined') { confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } }); } setTimeout(() => { localStorage.removeItem(STORAGE_KEY); window.location.href = '/learning/level/intermediate/?celebrate=true&completed=3'; }, 1500); }); }
-            updateProgressCounter(); saveProgress(); 
-        
-        
-    
-    // Auto-save on input/change
-    document.querySelectorAll('input[type="text"], input[type="radio"], textarea, select').forEach(el => {
-        el.addEventListener('input', saveProgress);
-        el.addEventListener('change', saveProgress);
-    });
+            // ==================== Initialize ====================
+            document.addEventListener('DOMContentLoaded', function () {
+                buildReadingPassage();
+                switchToUnderlineMode();
+                
+                // Global Auto-save Listeners
+                document.addEventListener('input', (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                        saveProgress();
+                    }
+                });
+                document.addEventListener('change', (e) => {
+                    if (e.target.type === 'radio' || e.target.type === 'checkbox') {
+                        saveProgress();
+                    }
+                });
 
-    loadProgress();
-});
+                loadProgress();
+            });
     </script>
 </body>
 
