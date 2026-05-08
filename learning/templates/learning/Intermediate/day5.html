@@ -463,7 +463,7 @@
                     </ul>
                     <div style="text-align:right;"><span class="badge" id="progressCounter">0/5 completed</span></div>
                     <div style="display:flex; justify-content:center; margin-top:1rem;">
-                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>🏆 Complete Day 5</button>
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>Complete Day 5</button>
                     </div>
                 </div>
             </div>
@@ -669,7 +669,7 @@ RETURN ONLY VALID JSON in this EXACT format:
                     if (currentRecognition) {
                         currentRecognition.stop();
                         currentRecognition = null;
-                        modalSpeakBtn.textContent = '🎤 Click to Speak Your Sentence';
+                        modalSpeakBtn.textContent = 'Click to Speak Your Sentence';
                         modalSpeakBtn.classList.remove('recording');
                         return;
                     }
@@ -704,7 +704,7 @@ RETURN ONLY VALID JSON in this EXACT format:
                     recognition.onend = async () => {
                         console.log('Recognition ended');
                         currentRecognition = null;
-                        modalSpeakBtn.textContent = '🎤 Click to Speak Your Sentence';
+                        modalSpeakBtn.textContent = 'Click to Speak Your Sentence';
                         modalSpeakBtn.classList.remove('recording');
                         attemptCount++;
                         updateAttemptDisplay();
@@ -742,7 +742,7 @@ RETURN ONLY VALID JSON in this EXACT format:
                     recognition.onerror = (event) => {
                         console.error('Recognition error:', event.error);
                         currentRecognition = null;
-                        modalSpeakBtn.textContent = '🎤 Click to Speak Your Sentence';
+                        modalSpeakBtn.textContent = 'Click to Speak Your Sentence';
                         modalSpeakBtn.classList.remove('recording');
                         let errorMsg = event.error === 'no-speech' ? 'No speech detected.' : 'Microphone error.';
                         if (modalAIFeedback) modalAIFeedback.innerHTML = `<div class="listening-feedback-ai incorrect">⚠️ ${errorMsg}</div>`;
@@ -1638,44 +1638,7 @@ RETURN ONLY VALID JSON in this EXACT format:
                     }
                 });
             }
-            // ==================== DAY COMPLETE BUTTON (Like Day 4) ====================
-            const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-            if (dayCompleteBtn) {
-                const newDayBtn = dayCompleteBtn.cloneNode(true);
-                dayCompleteBtn.parentNode.replaceChild(newDayBtn, dayCompleteBtn);
 
-                newDayBtn.addEventListener('click', function (e) {
-                    e.preventDefault();
-
-                    const chk1 = document.getElementById('chk1');
-                    const chk2 = document.getElementById('chk2');
-                    const chk3 = document.getElementById('chk3');
-                    const chk4 = document.getElementById('chk4');
-                    const chk5 = document.getElementById('chk5');
-
-                    const allChecked = chk1 && chk2 && chk3 && chk4 && chk5 &&
-                        chk1.checked && chk2.checked && chk3.checked &&
-                        chk4.checked && chk5.checked;
-
-                    if (!allChecked) {
-                        alert('Complete all activities first!');
-                        return;
-                    }
-
-                    if (typeof canvasConfetti !== 'undefined') {
-                        canvasConfetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, startVelocity: 25, colors: ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#a855f7'] });
-                        setTimeout(() => {
-                            canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.9, x: 0.1 }, startVelocity: 20, colors: ['#22c55e', '#3b82f6', '#f59e0b'] });
-                            canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.9, x: 0.9 }, startVelocity: 20, colors: ['#ef4444', '#a855f7', '#ec4899'] });
-                        }, 150);
-                        setTimeout(() => { canvasConfetti({ particleCount: 300, spread: 120, origin: { y: 0.3 }, startVelocity: 30 }); }, 400);
-                    }
-
-                    setTimeout(function () {
-                        localStorage.removeItem(STORAGE_KEY); window.location.href = '/learning/level/intermediate/?celebrate=true&completed=11';
-                    }, 1500);
-                });
-            }
 
             // ==================== Initialize ====================
             document.addEventListener('DOMContentLoaded', function () {
@@ -1694,6 +1657,33 @@ RETURN ONLY VALID JSON in this EXACT format:
                 });
 
                 loadProgress();
+
+                // ==================== DAY COMPLETE ====================
+                const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+                if (dayCompleteBtn) {
+                    const newBtn = dayCompleteBtn.cloneNode(true);
+                    dayCompleteBtn.parentNode.replaceChild(newBtn, dayCompleteBtn);
+                    newBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const allChecked = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'].every(id => document.getElementById(id)?.checked);
+                        if (!allChecked) {
+                            alert('Complete all activities first!');
+                            return;
+                        }
+                        const fireConfetti = (typeof confetti === 'function') ? confetti : (typeof canvasConfetti === 'function' ? canvasConfetti : null);
+                        if (fireConfetti) {
+                            fireConfetti({
+                                particleCount: 200,
+                                spread: 100,
+                                origin: { y: 0.6 }
+                            });
+                        }
+                        setTimeout(() => {
+                            localStorage.removeItem(STORAGE_KEY);
+                            window.location.href = '/learning/level/intermediate/?celebrate=true&completed=5';
+                        }, 1500);
+                    });
+                }
             });
     </script>
 </body>

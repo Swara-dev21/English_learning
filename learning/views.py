@@ -625,7 +625,6 @@ def take_final_test(request, level_name):
     
     # Production mode logic
     if not progress.is_completed():
-        messages.warning(request, '⚠️ You must complete all 30 days before taking the final test.')
         return redirect('learning:level_overview', level_name=level_name)
     
     # Check if user has already passed
@@ -756,11 +755,9 @@ def certificate_view(request, level_name):
     progress = get_user_progress(request.user, level_name)
     
     if not progress.is_completed():
-        messages.error(request, '❌ You must complete all 30 days before accessing your certificate.')
         return redirect('learning:level_overview', level_name=level_name)
     
     if not progress.certificate_issued:
-        messages.error(request, '❌ You must pass the final test before accessing your certificate.')
         return redirect('learning:final_test', level_name=level_name)
     
     certificate = get_object_or_404(UserCertificate, user=request.user, level=level_name)

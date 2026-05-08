@@ -33,7 +33,7 @@
         <div class="lesson-hero">
             <div class="hero-content">
                 <div class="day-badge">Day 2 • Week 1 • Intermediate</div>
-                <h1 class="hero-title">⚙️ CONDITIONALS: THE LOGIC ENGINE OF ENGLISH</h1>
+                <h1 class="hero-title">CONDITIONALS: THE LOGIC ENGINE OF ENGLISH</h1>
                 <div class="power-line">💡 "If you master conditionals, you master the art of possibility."</div>
             </div>
         </div>
@@ -89,9 +89,9 @@
                                     Recording 1: Rhythm Shadowing
                                 </div>
                                 <div class="recording-controls">
-                                    <button id="rhythmRecordBtn" class="record-btn">🎙️ Record Rhythm</button>
+                                    <button id="rhythmRecordBtn" class="record-btn">Record Rhythm</button>
                                     <button id="rhythmStopBtn" class="record-btn"
-                                        style="background: #64748b; display: none;">⏹️ Stop</button>
+                                        style="background: #64748b; display: none;">Stop</button>
                                 </div>
                                 <div id="rhythmPlaybackCard" style="display: none; margin-top: 0.5rem;">
                                     <audio id="rhythmPlayback" controls style="width: 100%;"></audio>
@@ -104,9 +104,9 @@
                                     Recording 2: If-Then Intonation Pattern
                                 </div>
                                 <div class="recording-controls">
-                                    <button id="intonationRecordBtn" class="record-btn">🎙️ Record Intonation</button>
+                                    <button id="intonationRecordBtn" class="record-btn">Record Intonation</button>
                                     <button id="intonationStopBtn" class="record-btn"
-                                        style="background: #64748b; display: none;">⏹️ Stop</button>
+                                        style="background: #64748b; display: none;">Stop</button>
                                 </div>
                                 <div id="intonationPlaybackCard" style="display: none; margin-top: 0.5rem;">
                                     <audio id="intonationPlayback" controls style="width: 100%;"></audio>
@@ -532,7 +532,7 @@
                     <div style="text-align:right; margin:1rem 0;"><span class="badge" id="progressCounter">0/5
                             completed</span></div>
                     <div style="display:flex; justify-content:center;">
-                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>🏆 Complete Day 2</button>
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>Complete Day 2</button>
                     </div>
                 </div>
             </div>
@@ -542,6 +542,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
         // ==================== Local Storage Persistence (Beginner Style) ====================
+        document.addEventListener('DOMContentLoaded', function () {
         const STORAGE_KEY = 'progress_intermediate_day2';
         let activityCompleted = { speaking: false, reading: false, listening: false, grammar: false, vocabulary: false };
 
@@ -666,9 +667,6 @@
             }, 1500);
         }
         // Single event listener attachment for day button
-        document.addEventListener('DOMContentLoaded', function () {
-        } catch (e) { console.error("Error loading progress:", e); }
-    }
 
         
     
@@ -706,7 +704,7 @@
             } else {
                 console.error("Day Complete Button not found!");
             }
-        });
+
 
         // ==================== Vocabulary Activity ====================
         const vocabCompleteBtn = document.getElementById('completeVocabularyBtn');
@@ -956,7 +954,7 @@
         
 
         
-     initDay2Speaking(); });
+     initDay2Speaking();
 
         // ==================== READING ACTIVITY ====================
         const readingPassageText = "If the team had reviewed the structural calculations more carefully, the design flaw would have been identified early. Now, if they work overtime this week, they will meet the deadline. However, if the weather worsens, the site visit will have to be rescheduled. A good engineer always plans for contingencies: what would happen if the primary plan fails? Conditional thinking is not pessimism — it is professionalism.";
@@ -1055,7 +1053,34 @@
                 }
             });
 
-            loadProgress();
+
+                // ==================== DAY COMPLETE ====================
+                const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+                if (dayCompleteBtn) {
+                    const newBtn = dayCompleteBtn.cloneNode(true);
+                    dayCompleteBtn.parentNode.replaceChild(newBtn, dayCompleteBtn);
+                    newBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const allChecked = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'].every(id => document.getElementById(id)?.checked);
+                        if (!allChecked) {
+                            alert('Complete all activities first!');
+                            return;
+                        }
+                        if (typeof confetti !== 'undefined') {
+                            confetti({
+                                particleCount: 200,
+                                spread: 100,
+                                origin: { y: 0.6 }
+                            });
+                        }
+                        setTimeout(() => {
+                            localStorage.removeItem(STORAGE_KEY);
+                            window.location.href = '/learning/level/intermediate/?celebrate=true&completed=2';
+                        }, 1500);
+                    });
+                }
+
+                loadProgress();
         });
     </script>
 </body>

@@ -1667,7 +1667,7 @@
         background: var(--primary);
     }
 
-    .mt-2 {
+.mt-2 {
         margin-top: 0.5rem;
     }
 
@@ -1691,21 +1691,201 @@
             width: 100%;
         }
 
-        .day-item {
-            width: 90%;
-            margin-left: auto !important;
-            margin-right: auto !important;
-            transform: translateX(0) !important;
+        .results-container {
+            padding: 1.5rem 1rem 4rem;
         }
 
-        .curve-line {
-            display: none;
+        .timeline {
+            position: relative;
+            padding: 1.5rem 0 3rem;
+            min-height: auto;
         }
 
+        .curve-line,
         .mobile-curve {
-            display: block;
+            display: none !important;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 5px;
+            transform: translateX(-50%);
+            background: linear-gradient(
+                to bottom,
+                rgba(107, 127, 203, 0.35),
+                rgba(74, 98, 176, 0.55),
+                rgba(46, 64, 133, 0.35)
+            );
+            border-radius: 999px;
+            z-index: 0;
+        }
+
+        .day-item {
+            width: 100% !important;
+            margin: 0 0 1.4rem 0 !important;
+            min-height: 92px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            filter: blur(0) !important;
+            opacity: 1 !important;
+            transform: none !important;
+            z-index: 2;
+        }
+
+        .day-item:nth-child(odd) {
+            justify-content: flex-start;
+            padding-right: calc(50% + 34px);
+            padding-left: 0;
+        }
+
+        .day-item:nth-child(even) {
+            justify-content: flex-end;
+            padding-left: calc(50% + 34px);
+            padding-right: 0;
+        }
+
+        .day-item .day-card,
+        .day-item .assessment-card,
+        .day-item .certificate-card-item {
+            display: none !important;
+        }
+
+        .day-item::before {
+            content: "";
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            width: 28px;
+            height: 28px;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            background: #6b7fcb;
+            border: 5px solid #ffffff;
+            box-shadow: 0 0 0 5px rgba(107, 127, 203, 0.15),
+                        0 8px 18px rgba(74, 98, 176, 0.18);
+            z-index: 4;
+        }
+
+        .day-item.completed::before {
+            background: #10b981;
+            box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.18),
+                        0 8px 18px rgba(16, 185, 129, 0.2);
+        }
+
+        .day-item.current::before {
+            background: #f59e0b;
+            box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.22),
+                        0 8px 22px rgba(245, 158, 11, 0.35);
+            animation: mobileCurrentNodePulse 1.5s infinite ease-in-out;
+        }
+
+        .day-item.locked::before {
+            background: #cbd5e1;
+            box-shadow: 0 0 0 5px rgba(148, 163, 184, 0.16);
+        }
+
+        @keyframes mobileCurrentNodePulse {
+            0%, 100% {
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                transform: translateX(-50%) scale(1.16);
+            }
+        }
+
+        .day-item::after {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 105px;
+            max-width: 130px;
+            min-height: 54px;
+            padding: 0.65rem 0.75rem;
+            border-radius: 18px;
+            background: #ffffff;
+            color: var(--primary-dark);
+            font-size: 0.82rem;
+            font-weight: 800;
             text-align: center;
-            margin: 0.5rem 0 2rem;
+            box-shadow: 0 8px 24px rgba(74, 98, 176, 0.12);
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        .day-item::after {
+            content: attr(data-day);
+        }
+
+        .day-item.completed::after {
+            content: attr(data-day) " ✅";
+            border-color: rgba(16, 185, 129, 0.35);
+            color: #047857;
+            background: linear-gradient(135deg, #ffffff, #ecfdf5);
+        }
+
+        .day-item.current::after {
+            content: attr(data-day) " 🔥";
+            border-color: rgba(245, 158, 11, 0.45);
+            color: #92400e;
+            background: linear-gradient(135deg, #ffffff, #fffbeb);
+        }
+
+        .day-item.locked::after {
+            content: attr(data-day) " 🔒";
+            color: #64748b;
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+        }
+
+        .day-item[data-day="Assessment"]::after {
+            content: "🏆 Assessment";
+        }
+
+        .day-item[data-day="Assessment"].locked::after,
+        .day-item[data-day="Assessment"].completed::after {
+            content: "🏆 Assessment";
+        }
+
+        .day-item[data-day="Certificate"]::after {
+            content: "🎓 Certificate";
+        }
+
+        .day-item[data-day="Certificate"].locked::after,
+        .day-item[data-day="Certificate"].completed::after {
+            content: "🎓 Certificate";
+        }
+
+        .day-item.special-node::after {
+            min-width: 130px;
+            max-width: 150px;
+            min-height: 58px;
+            font-size: 0.78rem;
+            line-height: 1.25;
+        }
+
+        .day-item.special-node.current::after {
+            background: linear-gradient(135deg, #ffffff, #eef2ff);
+            border-color: rgba(74, 98, 176, 0.45);
+            color: var(--primary-dark);
+        }
+
+        .day-item.special-node.locked::after {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .day-item:not(.locked) {
+            cursor: pointer;
+        }
+
+        .day-item.locked {
+            cursor: not-allowed;
         }
 
         .reward-card {
@@ -1728,25 +1908,167 @@
             padding: 12px 20px;
         }
 
-        .weekly-badge {
-            bottom: 10px;
-            right: 52px;
-            font-size: 8px;
-            padding: 3px 8px;
-            white-space: nowrap;
-        }
-
-        .stars-badge {
-            bottom: 10px;
-            right: 12px;
-            font-size: 1.2rem;
-        }
-
         .sound-toggle {
             bottom: 16px;
             left: 16px;
             padding: 8px 12px;
             font-size: 14px;
+        }
+
+        /* Bottom Sheet */
+        .mobile-day-sheet {
+            position: fixed;
+            inset: 0;
+            z-index: 12000;
+            display: none;
+        }
+
+        .mobile-day-sheet.show {
+            display: block;
+        }
+
+        .mobile-day-sheet-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 15, 30, 0.55);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .mobile-day-sheet.show .mobile-day-sheet-backdrop {
+            opacity: 1;
+        }
+
+        .mobile-day-sheet-panel {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            max-height: 82vh;
+            overflow-y: auto;
+            background: #ffffff;
+            border-radius: 28px 28px 0 0;
+            padding: 1rem 1rem 1.5rem;
+            box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.22);
+            transform: translateY(100%);
+            transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mobile-day-sheet.show .mobile-day-sheet-panel {
+            transform: translateY(0);
+        }
+
+        .mobile-sheet-handle {
+            width: 48px;
+            height: 5px;
+            border-radius: 999px;
+            background: #cbd5e1;
+            margin: 0.25rem auto 1rem;
+        }
+
+        .mobile-sheet-close {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            width: 34px;
+            height: 34px;
+            border: none;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        #mobileSheetContent {
+            padding-top: 0.5rem;
+        }
+
+        #mobileSheetContent .day-card,
+        #mobileSheetContent .assessment-card,
+        #mobileSheetContent .certificate-card-item {
+            display: flex !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-shadow: none !important;
+            border-radius: 20px !important;
+            border: 1.5px solid var(--border-light) !important;
+            padding: 1rem !important;
+            flex-direction: column !important;
+            gap: 0.85rem !important;
+            margin: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+
+        #mobileSheetContent .day-card:hover,
+        #mobileSheetContent .assessment-card:hover,
+        #mobileSheetContent .certificate-card-item:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        #mobileSheetContent .card-header {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            min-height: auto;
+        }
+
+        #mobileSheetContent .card-title,
+        #mobileSheetContent .day-title {
+            font-size: 1rem;
+            line-height: 1.35;
+            width: 100%;
+        }
+
+        #mobileSheetContent .status-badge {
+            align-self: flex-start;
+            font-size: 10px;
+            padding: 4px 10px;
+        }
+
+        #mobileSheetContent .card-meta,
+        #mobileSheetContent .day-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.35rem;
+            font-size: 12px;
+            line-height: 1.45;
+            width: 100%;
+        }
+
+        #mobileSheetContent .btn-assessment-action,
+        #mobileSheetContent .btn-certificate-action,
+        #mobileSheetContent .start-btn,
+        #mobileSheetContent .claim-reward-btn {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+            padding: 11px 16px;
+            font-size: 13px;
+            border-radius: 14px;
+            white-space: normal;
+            line-height: 1.35;
+            margin-top: 0.4rem;
+        }
+
+        #mobileSheetContent .btn-assessment-action[disabled],
+        #mobileSheetContent .btn-certificate-action[disabled] {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        #mobileSheetContent .weekly-badge,
+        #mobileSheetContent .stars-badge {
+            position: static;
+            opacity: 1;
+            transform: none;
+            margin-top: 0.35rem;
+            align-self: flex-start;
         }
     }
 </style>
@@ -1838,6 +2160,21 @@
                     stroke="url(#gradientMobile)" stroke-width="3" fill="none" />
             </svg>
         </div>
+    </div>
+</div>
+
+<!-- Mobile Day Detail Bottom Sheet -->
+<div class="mobile-day-sheet" id="mobileDaySheet">
+    <div class="mobile-day-sheet-backdrop" id="mobileDaySheetBackdrop"></div>
+
+    <div class="mobile-day-sheet-panel">
+        <div class="mobile-sheet-handle"></div>
+
+        <button type="button" class="mobile-sheet-close" id="mobileSheetClose">
+            ✕
+        </button>
+
+        <div id="mobileSheetContent"></div>
     </div>
 </div>
 
@@ -2718,7 +3055,7 @@
 
             const dayItem = document.createElement('div');
             dayItem.className = `day-item ${isCompleted ? 'completed' : isCurrent ? 'current' : 'locked'} ${hasWeekBadge ? 'has-week-badge' : ''}`;
-            dayItem.dataset.day = i;
+            dayItem.dataset.day = 'Day ' + i;
 
             if (isLocked) {
                 dayItem.addEventListener('click', () => {
@@ -2765,7 +3102,8 @@
         // Assessment Card - DYNAMIC with values from Django
         const isAssessmentAvailable = journeyCompleted || (currentDayNumber > 30);
         const asmItem = document.createElement('div');
-        asmItem.className = 'day-item';
+        asmItem.className = hasPassedAssessment ? 'day-item completed special-node' : isAssessmentAvailable ? 'day-item current special-node' : 'day-item locked special-node';
+        asmItem.setAttribute('data-day', 'Assessment');
 
         if (levelName === 'advanced') {
             asmItem.innerHTML = `
@@ -2814,7 +3152,9 @@
 
         // Certificate Card
         const certItem = document.createElement('div');
-        certItem.className = 'day-item';
+        const certStatusClass = journeyCompleted ? 'completed' : 'locked';
+        certItem.className = `day-item ${certStatusClass} special-node`;
+        certItem.setAttribute('data-day', 'Certificate');
         certItem.innerHTML = `
             <div class="certificate-card-item">
                 <div class="card-header">
@@ -3521,5 +3861,86 @@
     window.showRewardCard = showRewardCard;
     window.openRewardBox = openRewardBox;
     window.toggleSound = toggleSound;
+
+    // Mobile Bottom Sheet
+    (function() {
+        const sheet = document.getElementById('mobileDaySheet');
+        const sheetContent = document.getElementById('mobileSheetContent');
+        const closeBtn = document.getElementById('mobileSheetClose');
+        const backdrop = document.getElementById('mobileDaySheetBackdrop');
+
+        if (!sheet || !sheetContent) return;
+
+        function isMobileView() {
+            return window.innerWidth <= 768;
+        }
+
+        function getCardInsideItem(dayItem) {
+            return dayItem.querySelector('.day-card, .assessment-card, .certificate-card-item');
+        }
+
+        function openMobileDaySheet(dayItem) {
+            if (!isMobileView()) return;
+
+            const originalCard = getCardInsideItem(dayItem);
+            if (!originalCard) return;
+
+            sheetContent.innerHTML = '';
+
+            const clonedCard = originalCard.cloneNode(true);
+            clonedCard.classList.add('mobile-sheet-card');
+            sheetContent.appendChild(clonedCard);
+
+            sheet.classList.add('show');
+            document.body.style.overflow = 'hidden';
+
+            clonedCard.querySelectorAll('button, a').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
+        }
+
+        function closeMobileDaySheet() {
+            sheet.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Event delegation for dynamically created items
+        const timeline = document.getElementById('timelineContainer');
+        if (timeline) {
+            timeline.addEventListener('click', function(e) {
+                if (!isMobileView()) return;
+
+                const dayItem = e.target.closest('.day-item');
+                if (!dayItem) return;
+
+                if (dayItem.classList.contains('locked')) {
+                    if (typeof playSfx === 'function') playSfx('denied');
+                    return;
+                }
+
+                if (e.target.closest('button') || e.target.closest('a')) {
+                    return;
+                }
+
+                openMobileDaySheet(dayItem);
+            });
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeMobileDaySheet);
+        }
+
+        if (backdrop) {
+            backdrop.addEventListener('click', closeMobileDaySheet);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMobileDaySheet();
+            }
+        });
+    })();
 </script>
 {% endblock %}

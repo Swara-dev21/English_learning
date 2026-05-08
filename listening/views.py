@@ -191,10 +191,8 @@ def submit_test(request, test_id):
     try:
         profile = StudentProfile.objects.get(user=request.user)
         if profile.pretest_completed:
-            messages.info(request, "You have already completed the pretest.")
             return redirect('home_page:pretest_results')
         if profile.listening_completed:
-            messages.warning(request, "You have already completed the listening test.")
             return redirect('listening:latest_result')
     except StudentProfile.DoesNotExist:
         profile = StudentProfile.objects.create(user=request.user)
@@ -268,15 +266,6 @@ def submit_test(request, test_id):
     
     # Store the result ID in session if needed for reference
     request.session['last_listening_result_id'] = test_result.id
-    
-    # Show completion message
-    if needs_manual_grading:
-        messages.info(request, "Your typing answers will be graded by an instructor.")
-    else:
-        messages.success(request, "Listening test completed successfully!")
-    
-    # Add a message about moving to speaking test
-    messages.info(request, "Now let's begin the speaking test.")
     
     # Redirect to speaking test page
     # Adjust this URL based on your speaking app's URL configuration

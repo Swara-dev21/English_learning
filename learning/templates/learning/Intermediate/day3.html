@@ -392,12 +392,13 @@
                     </ul>
                     <div style="text-align:right"><span class="badge" id="progressCounter">0/5 completed</span></div>
                     <div style="display:flex;justify-content:center;margin-top:1rem"><button class="day-complete-btn"
-                            id="dayCompleteBtn" disabled>🏆 Complete Day 3</button></div>
+                            id="dayCompleteBtn" disabled>Complete Day 3</button></div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
         // ==================== Local Storage Persistence (Beginner Style) ====================
         const STORAGE_KEY = 'progress_intermediate_day3';
@@ -603,7 +604,7 @@
             function switchToUnderlineMode() { currentMode = 'underline'; document.getElementById('underlineModeBtn').style.opacity = '1'; document.getElementById('circleModeBtn').style.opacity = '0.5'; document.getElementById('underlineSection').style.display = 'block'; document.getElementById('circleSection').style.display = 'none'; updateReadingVisuals(); }
             function switchToCircleMode() { currentMode = 'circle'; document.getElementById('circleModeBtn').style.opacity = '1'; document.getElementById('underlineModeBtn').style.opacity = '0.5'; document.getElementById('circleSection').style.display = 'block'; document.getElementById('underlineSection').style.display = 'none'; updateReadingVisuals(); }
 
-            function checkTask2() { const answer = document.getElementById('tenseShiftAnswer').value.trim().toLowerCase(); const fb = document.getElementById('task2Feedback'); if (!answer) { fb.innerHTML = '⚠️ Please enter your answer.'; fb.className = 'fix-feedback empty'; fb.style.display = 'block'; task2Completed = false; } else if (answer === 'there would be' || answer === 'would be') { fb.innerHTML = '✅ Correct! "there will be" → "there would be"'; fb.className = 'fix-feedback correct'; fb.style.display = 'block'; task2Completed = true; } else if (answer.includes('would')) { fb.innerHTML = '⚠️ Almost! Complete: "there would be"'; fb.className = 'fix-feedback warning'; fb.style.display = 'block'; task2Completed = false; } else { fb.innerHTML = '❌ Not correct.' + createHintSection('Tense shift: will → would. What does "there will be" become?'); fb.className = 'fix-feedback incorrect'; fb.style.display = 'block'; task2Completed = false; } updateReadingCompletion(); }
+            function checkTask2() { const rawAnswer = document.getElementById('tenseShiftAnswer').value.trim().toLowerCase(); const answer = rawAnswer.replace(/\.$/, ''); const fb = document.getElementById('task2Feedback'); if (!answer) { fb.innerHTML = '⚠️ Please enter your answer.'; fb.className = 'fix-feedback empty'; fb.style.display = 'block'; task2Completed = false; } else if (answer === 'there would be' || answer === 'would be') { fb.innerHTML = '✅ Correct! "there will be" → "there would be"'; fb.className = 'fix-feedback correct'; fb.style.display = 'block'; task2Completed = true; } else if (answer.includes('would')) { fb.innerHTML = '⚠️ Almost! Complete: "there would be"'; fb.className = 'fix-feedback warning'; fb.style.display = 'block'; task2Completed = false; } else { fb.innerHTML = '❌ Not correct.' + createHintSection('Tense shift: will → would. What does "there will be" become?'); fb.className = 'fix-feedback incorrect'; fb.style.display = 'block'; task2Completed = false; } updateReadingCompletion(); }
             function updateReadingCompletion() { let v1 = getUnderlinedValues(); let allU = underlineTargetWords.every(w => v1.includes(w)) && v1.every(w => underlineTargetWords.includes(w)); let v2 = getCircledValues(); let allC = v2.includes('allocated') && v2.length === 1; const btn = document.getElementById('completeReadingBtn'); if (btn && btn.textContent !== '✓ Completed') { btn.disabled = !(underlineCheckDone && allU && circleCheckDone && allC && task2Completed); } }
 
             buildReadingPassage();
@@ -735,8 +736,7 @@
             if (grammarCompleteBtn) {
                 grammarCompleteBtn.addEventListener('click', () => { if (grammarCompleted) markActivityComplete('grammar', 'chk1'); });
             }
-            // ==================== DAY COMPLETE ====================
-            const dayCompleteBtn = document.getElementById('dayCompleteBtn'); if (dayCompleteBtn) { const newBtn = dayCompleteBtn.cloneNode(true); dayCompleteBtn.parentNode.replaceChild(newBtn, dayCompleteBtn); newBtn.addEventListener('click', function (e) { e.preventDefault(); const allChecked = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'].every(id => document.getElementById(id)?.checked); if (!allChecked) { alert('Complete all activities first!'); return; } if (typeof confetti !== 'undefined') { confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } }); } setTimeout(() => { localStorage.removeItem(STORAGE_KEY); window.location.href = '/learning/level/intermediate/?celebrate=true&completed=3'; }, 1500); }); }
+
             // ==================== Initialize ====================
             document.addEventListener('DOMContentLoaded', function () {
                 buildReadingPassage();
@@ -755,6 +755,33 @@
                 });
 
                 loadProgress();
+
+                // ==================== DAY COMPLETE ====================
+                const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+                if (dayCompleteBtn) {
+                    const newBtn = dayCompleteBtn.cloneNode(true);
+                    dayCompleteBtn.parentNode.replaceChild(newBtn, dayCompleteBtn);
+                    newBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const allChecked = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5'].every(id => document.getElementById(id)?.checked);
+                        if (!allChecked) {
+                            alert('Complete all activities first!');
+                            return;
+                        }
+                        const fireConfetti = (typeof confetti === 'function') ? confetti : (typeof canvasConfetti === 'function' ? canvasConfetti : null);
+                        if (fireConfetti) {
+                            fireConfetti({
+                                particleCount: 200,
+                                spread: 100,
+                                origin: { y: 0.6 }
+                            });
+                        }
+                        setTimeout(() => {
+                            localStorage.removeItem(STORAGE_KEY);
+                            window.location.href = '/learning/level/intermediate/?celebrate=true&completed=3';
+                        }, 1500);
+                    });
+                }
             });
     </script>
 </body>

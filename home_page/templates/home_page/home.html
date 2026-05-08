@@ -2775,7 +2775,10 @@ html {
             valueCards.forEach(card => valueCardsObserver.observe(card));
         }
 
-        // ===== AI CHAT FUNCTIONALITY =====
+// ===== AI CHAT FUNCTIONALITY =====
+
+        // Groq API Key - Replace with your own key from https://console.groq.com
+        const GROQ_API_KEY = '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';
 
         const aiChatBtn = document.getElementById('aiChatBtn');
         const chatPopup = document.getElementById('chatPopup');
@@ -2786,10 +2789,11 @@ html {
         const loading = document.getElementById('loading');
         const welcomeMessage = document.getElementById('welcomeMessage');
 
-        if (typeof websiteContent === 'undefined') {
-            console.warn('website-content.js not loaded properly. Using fallback content.');
-            var websiteContent = `The Fluent Engineer is an English learning platform for engineering students. We use LSRW methodology: Listening, Speaking, Reading, Writing. Students take a pretest covering all four skills. Listening test has 5 MCQs with 3 replays. Speaking test uses Vosk and Praat for analysis. Reading test has a passage with 5 MCQs. Writing test includes picture description, tense change, article completion, grammar correction, and dictation. Scoring is based on accuracy and grammar checks.`;
-        }
+        // Load chatbot knowledge from external file
+        const chatbotKnowledge = window.websiteContent || `
+The Fluent Engineer is an English learning platform for engineering students.
+Please ask about registration, login, pre-test, levels, daily lessons, tests, progress, or certificates.
+`;
 
         if (aiChatBtn) {
             aiChatBtn.addEventListener('click', () => {
@@ -2822,7 +2826,7 @@ html {
                 const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
+                        'Authorization': `Bearer ${GROQ_API_KEY}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
@@ -2830,22 +2834,22 @@ html {
                         messages: [
                             {
                                 role: 'system',
-                                content: `You are an AI assistant for The Fluent Engineer website. Answer questions using ONLY the website content provided below. 
+                                content: `You are Fluent Assistant, the official chatbot for TheFluentEngineer website.
+
+Use ONLY the website content given below to answer user questions.
 
 WEBSITE CONTENT:
-${websiteContent}
+${chatbotKnowledge}
 
 RULES:
-1. Answer questions based ONLY on the information provided above
-2. If the user asks something NOT covered in this content, politely say: "I don't have information about that in our website content. Please ask me about The Fluent Engineer's courses, methodology, LSRW skills, pretest process, scoring system, or English learning tips!"
-3. Be helpful, friendly, and concise (under 200 words)
-4. When relevant, suggest related features from our platform
-5. Keep answers focused on helping engineering students improve their English
-6. For pretest-related questions, provide detailed information about test structure, duration, scoring, and technology used
-7. For speaking test questions, explain Vosk and Praat technology used for analysis
-8. For writing test questions, explain grammar checking with TextBlob and LanguageTool
-
-Remember: You are an expert on The Fluent Engineer platform and English learning for engineering students!`
+1. Answer in simple and clear language.
+2. Keep answers short and helpful.
+3. Do not use technical developer words.
+4. If the user asks how to start, guide them step by step.
+5. If the user asks about locked days, explain that days unlock in order.
+6. If the user asks about certificate, explain the 30 days + final assessment + 80% rule.
+7. If the question is not related to TheFluentEngineer, politely say you can only help with TheFluentEngineer topics.
+8. Always guide the student to the next action.`
                             },
                             { role: 'user', content: question }
                         ],

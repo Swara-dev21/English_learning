@@ -30,7 +30,7 @@
         <div class="lesson-hero">
             <div class="hero-content">
                 <div class="day-badge">Day 7 • Week 1 Review • Intermediate</div>
-                <h1 class="hero-title">📋 WEEK 1 REVIEW: THE PRECISION AUDIT</h1>
+                <h1 class="hero-title">WEEK 1 REVIEW: THE PRECISION AUDIT</h1>
                 <div class="power-line">💡 "Week 1 is complete. You have laid the grammar architecture. Now inspect it
                     for cracks."</div>
             </div>
@@ -82,9 +82,9 @@
 
                             <div style="font-weight: 600; margin-bottom: 0.5rem;">🎙️ Your Recording</div>
                             <div class="recording-controls">
-                                <button id="listeningRecordBtn" class="record-btn">🎙️ Start Recording</button>
+                                <button id="listeningRecordBtn" class="record-btn">Start Recording</button>
                                 <button id="listeningStopBtn" class="record-btn"
-                                    style="background: #64748b; display: none;">⏹️ Stop Recording</button>
+                                    style="background: #64748b; display: none;">Stop Recording</button>
                             </div>
                             <div id="listeningPlaybackCard" style="display: none;">
                                 <audio id="listeningPlayback" controls style="width: 100%;"></audio>
@@ -576,7 +576,7 @@
                     </ul>
                     <div style="text-align:right;"><span class="badge" id="progressCounter">0/5 completed</span></div>
                     <div style="display:flex; justify-content:center; margin-top:1rem;">
-                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>🏆 Complete Day 7</button>
+                        <button class="day-complete-btn" id="dayCompleteBtn" disabled>Complete Day 7</button>
                     </div>
                 </div>
             </div>
@@ -704,31 +704,63 @@
 
         
     
-            // ==================== DAY COMPLETE BUTTON ====================
-            const dayCompleteBtn = document.getElementById('dayCompleteBtn');
-            if (dayCompleteBtn) {
-                dayCompleteBtn.addEventListener('click', function () {
-                    const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
-                    let allChecked = true;
-                    checkboxes.forEach(cb => { if (!cb.checked) allChecked = false; });
+            // ==================== Initialize ====================
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log("Day 7 initialized successfully!");
 
-                    if (!allChecked) {
-                        alert('⚠️ Please complete all 5 activities before completing the day!');
-                        return;
+                // ==================== DAY COMPLETE BUTTON ====================
+                const dayCompleteBtn = document.getElementById('dayCompleteBtn');
+                if (dayCompleteBtn) {
+                    const newDayBtn = dayCompleteBtn.cloneNode(true);
+                    dayCompleteBtn.parentNode.replaceChild(newDayBtn, dayCompleteBtn);
+
+                    newDayBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+                        let allChecked = true;
+                        checkboxes.forEach(cb => { if (!cb.checked) allChecked = false; });
+
+                        if (!allChecked) {
+                            alert('Complete all activities first!');
+                            return;
+                        }
+
+                        // Determine which confetti function is available
+                        const fireConfetti = (typeof confetti === 'function') ? confetti : (typeof canvasConfetti === 'function' ? canvasConfetti : null);
+                        
+                        if (fireConfetti) {
+                            fireConfetti({
+                                particleCount: 200,
+                                spread: 100,
+                                origin: { y: 0.6 }
+                            });
+                        }
+
+                        setTimeout(function () {
+                            localStorage.removeItem(STORAGE_KEY); 
+                            window.location.href = '/learning/level/intermediate/?celebrate=true&completed=7';
+                        }, 1500);
+                    });
+                }
+                
+                // Global Auto-save Listeners
+                document.addEventListener('input', (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                        saveProgress();
                     }
-
-                    this.innerHTML = '✨ Completing Day 7...';
-                    this.disabled = true;
-
-                    if (typeof confetti !== 'undefined') {
-                        confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-                    }
-
-                    setTimeout(() => {
-                        localStorage.removeItem(STORAGE_KEY); window.location.href = '/learning/level/intermediate/?celebrate=true&completed=7';
-                    }, 1500);
                 });
-            }
+                document.addEventListener('change', (e) => {
+                    if (e.target.type === 'radio' || e.target.type === 'checkbox') {
+                        saveProgress();
+                    }
+                });
+
+                loadProgress();
+                
+                // Initialize Reading Activity
+                if (typeof buildInteractivePassage === 'function') buildInteractivePassage();
+                if (typeof switchToUnderlineMode === 'function') switchToUnderlineMode();
+            });
 
             // Initialize progress on page load
             setTimeout(updateProgressCounter, 100);
@@ -846,19 +878,30 @@
                 rc: [
                     "whose assessment criteria had been clearly defined",
                     "those who had practised conditional and cause-effect language",
-                    "those who had practised conditional and cause-and-effect language"
+                    "those who had practised conditional and cause-and-effect language",
+                    "the manager, whose assessment criteria had been clearly defined",
+                    "the manager whose assessment criteria had been clearly defined"
                 ],
                 rs: [
                     "confirmed that",
                     "she stated that",
                     "the team was advised that",
-                    "acknowledged that"
+                    "acknowledged that",
+                    "the team acknowledged that",
+                    "confirmed that precision was the most common area",
+                    "stated that those who had practised",
+                    "advised that if they continued"
                 ],
                 c: [
-                    "if they continued at this pace, they would achieve professional fluency"
+                    "if they continued at this pace, they would achieve professional fluency",
+                    "if they continued at this pace, they would achieve professional fluency within the programme's timeframe",
+                    "if they continued at this pace they would achieve professional fluency"
                 ],
                 ce: [
-                    "those who had practised appeared more confident"
+                    "those who had practised appeared more confident",
+                    "those who had practised conditional and cause-and-effect language appeared more confident",
+                    "practised conditional and cause-and-effect language appeared more confident",
+                    "those who had practised conditional and cause-and-effect language appeared more confident in technical discussions"
                 ]
             };
 
@@ -870,8 +913,9 @@
             };
 
             function calculateSimilarity(userInput, correctAnswer) {
-                const userWords = userInput.toLowerCase().split(/\s+/);
-                const correctWords = correctAnswer.toLowerCase().split(/\s+/);
+                const normalize = (str) => str.trim().toLowerCase().replace(/[.,!?;:]/g, "");
+                const userWords = normalize(userInput).split(/\s+/);
+                const correctWords = normalize(correctAnswer).split(/\s+/);
 
                 let matchCount = 0;
                 let matchedWords = [];
@@ -889,12 +933,13 @@
             }
 
             function validateRCSentence(sentence) {
-                const trimmed = sentence.trim();
+                const normalize = (str) => str.trim().toLowerCase().replace(/[.,!?;:]/g, "");
+                const trimmed = normalize(sentence);
                 if (trimmed === "") {
                     return { valid: false, type: "empty", message: "⚠️ Please write your sentence before checking.", hint: null };
                 }
                 for (let answer of correctAnswers.rc) {
-                    if (trimmed.toLowerCase() === answer.toLowerCase()) {
+                    if (trimmed === normalize(answer)) {
                         return { valid: true, type: "perfect", message: "🎉 Perfect! Correct answer.", hint: null };
                     }
                 }
@@ -914,12 +959,13 @@
             }
 
             function validateRSSentence(sentence) {
-                const trimmed = sentence.trim();
+                const normalize = (str) => str.trim().toLowerCase().replace(/[.,!?;:]/g, "");
+                const trimmed = normalize(sentence);
                 if (trimmed === "") {
                     return { valid: false, type: "empty", message: "⚠️ Please write your sentence before checking.", hint: null };
                 }
                 for (let answer of correctAnswers.rs) {
-                    if (trimmed.toLowerCase() === answer.toLowerCase()) {
+                    if (trimmed === normalize(answer)) {
                         return { valid: true, type: "perfect", message: "🎉 Perfect! Correct answer.", hint: null };
                     }
                 }
@@ -939,23 +985,24 @@
             }
 
             function validateCSentence(sentence) {
-                const trimmed = sentence.trim();
+                const normalize = (str) => str.trim().toLowerCase().replace(/[.,!?;:]/g, "");
+                const trimmed = normalize(sentence);
                 if (trimmed === "") {
                     return { valid: false, type: "empty", message: "⚠️ Please write your sentence before checking.", hint: null };
                 }
                 const correctAnswer = correctAnswers.c[0];
-                if (trimmed.toLowerCase() === correctAnswer.toLowerCase()) {
+                if (trimmed === normalize(correctAnswer)) {
                     return { valid: true, type: "perfect", message: "🎉 Perfect! Correct answer.", hint: null };
                 }
-                const similarity = calculateSimilarity(trimmed, correctAnswer);
-                if (similarity >= 85) {
-                    return { valid: true, type: "almost", message: `✅ Correct answer: "${correctAnswer}"`, hint: null };
-                }
+                const similarity = calculateSimilarity(sentence, correctAnswer);
                 const wordCount = trimmed.split(/\s+/).length;
                 const hasIf = trimmed.toLowerCase().includes('if');
                 const hasWould = trimmed.toLowerCase().includes('would');
                 const hasContinued = trimmed.toLowerCase().includes('continued');
 
+                if (similarity >= 85) {
+                    return { valid: true, type: "almost", message: `✅ Correct answer: "${correctAnswer}"`, hint: null };
+                }
                 if (hasIf && hasWould && wordCount <= 6 && !hasContinued) {
                     return { valid: false, type: "wrong", message: "❌ Please write the complete sentence.", hint: hintPatterns.c };
                 }
@@ -966,15 +1013,16 @@
             }
 
             function validateCESentence(sentence) {
-                const trimmed = sentence.trim();
+                const normalize = (str) => str.trim().toLowerCase().replace(/[.,!?;:]/g, "");
+                const trimmed = normalize(sentence);
                 if (trimmed === "") {
                     return { valid: false, type: "empty", message: "⚠️ Please write your sentence before checking.", hint: null };
                 }
                 const correctAnswer = correctAnswers.ce[0];
-                if (trimmed.toLowerCase() === correctAnswer.toLowerCase()) {
+                if (trimmed === normalize(correctAnswer)) {
                     return { valid: true, type: "perfect", message: "🎉 Perfect! Correct answer.", hint: null };
                 }
-                const similarity = calculateSimilarity(trimmed, correctAnswer);
+                const similarity = calculateSimilarity(sentence, correctAnswer);
                 if (similarity >= 85) {
                     return { valid: true, type: "almost", message: `✅ Correct answer: "${correctAnswer}"`, hint: null };
                 }
@@ -1315,8 +1363,19 @@
                 const grammarComplete = grammarCheckDone && grammarValid.rc && grammarValid.rs && grammarValid.c && grammarValid.ce;
 
                 const completeBtn = document.getElementById('completeReadingBtn');
-                if (completeBtn) {
-                    completeBtn.disabled = !(underlineComplete && circleComplete && grammarComplete);
+                if (completeBtn && !activityCompleted.reading) {
+                    const isFullyComplete = underlineComplete && circleComplete && grammarComplete;
+                    completeBtn.disabled = !isFullyComplete;
+                    
+                    if (isFullyComplete) {
+                        completeBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
+                        completeBtn.style.opacity = '1';
+                        completeBtn.style.background = '#22c55e'; // Green when ready
+                    } else {
+                        completeBtn.style.animation = 'none';
+                        completeBtn.style.opacity = '0.5';
+                        completeBtn.style.background = ''; // Default color
+                    }
                 }
             }
 
@@ -1330,36 +1389,8 @@
             document.getElementById('checkGrammarAnswersBtn')?.addEventListener('click', checkGrammarAnswers);
             document.getElementById('resetGrammarAnswersBtn')?.addEventListener('click', resetGrammarAnswers);
 
-            document.getElementById('completeReadingBtn')?.addEventListener('click', () => {
-                const allUnderlined = underlineTargetWords.every(word => userUnderlinedWords.has(word));
-                const hasMarkedly = userCircledWords.has('markedly');
-                const noWrongCircles = userCircledWords.size === 1 && hasMarkedly;
-
-                if (!underlineCheckDone) {
-                    showEmptyValidation('readingValidationMsg', 'Please complete the Underline task first and click "Check Underlines"');
-                    return;
-                }
-                if (!circleCheckDone) {
-                    showEmptyValidation('readingValidationMsg', 'Please complete the Circle task first and click "Check Circles"');
-                    return;
-                }
-                if (!grammarCheckDone) {
-                    showEmptyValidation('readingValidationMsg', 'Please complete the Grammar sentences task first and click "Check My Sentences"');
-                    return;
-                }
-                if (!allUnderlined) {
-                    showEmptyValidation('readingValidationMsg', 'Please underline the modal verb "would"');
-                    return;
-                }
-                if (!hasMarkedly || !noWrongCircles) {
-                    showEmptyValidation('readingValidationMsg', 'Please circle ONLY the word "markedly"');
-                    return;
-                }
-                if (!grammarValid.rc || !grammarValid.rs || !grammarValid.c || !grammarValid.ce) {
-                    showEmptyValidation('readingValidationMsg', 'Please write correct sentences for all 4 grammar tools');
-                    return;
-                }
-
+            document.getElementById('completeReadingBtn')?.addEventListener('click', function() {
+                if (this.disabled || activityCompleted.reading) return;
                 markActivityComplete('reading', 'chk1');
             });
 
@@ -1369,14 +1400,14 @@
 
             const grammarCorrectAnswers = {
                 1: "i know the answer",
-                2: "can you make a suggestion",
+                2: "could you make a suggestion",
                 3: "we conducted a site visit last week"
             };
 
             const grammarAlternativeAnswers = {
                 1: ["i know the answer", "i know the answer."],
-                2: ["can you make a suggestion", "could you make a suggestion", "can you put forward a suggestion", "can you offer a suggestion"],
-                3: ["we held a site visit last week", "we attended a site visit last week", "we conducted a site visit"]
+                2: ["can you make a suggestion", "could you make a suggestion", "can you put forward a suggestion", "can you offer a suggestion", "can you give me some suggestions"],
+                3: ["we held a site visit last week", "we attended a site visit last week", "we conducted a site visit", "we conducted a site visit last week."]
             };
 
             const grammarHints = {
@@ -1388,11 +1419,12 @@
             let grammarCorrectState = { 1: false, 2: false, 3: false };
 
             function validateGrammarFix(questionNum, userAnswer) {
-                const trimmed = userAnswer.trim().toLowerCase();
+                const normalize = (str) => str.trim().toLowerCase().replace(/[.,!?;:]/g, "");
+                const trimmed = normalize(userAnswer);
                 const feedbackDiv = document.getElementById(`grammar${questionNum}Feedback`);
                 const hintDiv = document.getElementById(`grammar${questionNum}Hint`);
-                const correctAnswer = grammarCorrectAnswers[questionNum];
-                const alternatives = grammarAlternativeAnswers[questionNum] || [];
+                const correctAnswer = normalize(grammarCorrectAnswers[questionNum]);
+                const alternatives = (grammarAlternativeAnswers[questionNum] || []).map(a => normalize(a));
                 const hint = grammarHints[questionNum];
 
                 // Clear previous feedback and hide hint
@@ -1416,7 +1448,7 @@
                     return false;
                 }
 
-                // CASE 2: EXACT PERFECT MATCH
+                // CASE 2: EXACT PERFECT MATCH (Normalized)
                 if (trimmed === correctAnswer) {
                     if (feedbackDiv) {
                         feedbackDiv.innerHTML = '✅ Correct! Well done.';
@@ -1425,10 +1457,10 @@
                     return true;
                 }
 
-                // CASE 3: ALTERNATIVE MATCH
+                // CASE 3: ALTERNATIVE MATCH (Normalized)
                 let matchedAlternative = false;
                 for (let alt of alternatives) {
-                    if (trimmed === alt.toLowerCase()) {
+                    if (trimmed === alt) {
                         matchedAlternative = true;
                         break;
                     }
@@ -1953,26 +1985,6 @@
                 updateListeningCompleteButton();
             }, 100);
         
-        
-    
-            // ==================== Initialize ====================
-            document.addEventListener('DOMContentLoaded', function () {
-                console.log("Day 7 initialized successfully!");
-                
-                // Global Auto-save Listeners
-                document.addEventListener('input', (e) => {
-                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
-                        saveProgress();
-                    }
-                });
-                document.addEventListener('change', (e) => {
-                    if (e.target.type === 'radio' || e.target.type === 'checkbox') {
-                        saveProgress();
-                    }
-                });
-
-                loadProgress();
-            });
     </script>
 </body>
 

@@ -441,8 +441,6 @@ def submit_test(request, test_id):
         # Update student profile
         profile.reading_completed = True
         profile.update_pretest_status()
-
-        messages.success(request, "Reading test completed successfully!")
         
         # Store result ID in session for reference
         request.session['last_reading_result_id'] = reading_result.id

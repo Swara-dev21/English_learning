@@ -209,7 +209,6 @@ def register(request):
                     profile.year = year
                     profile.save()
 
-                messages.success(request, f"Hello {username}, registration successful! You can now take the pretest.")
                 return redirect('home_page:login')
         else:
             messages.error(request, "Please correct the errors below.")
