@@ -6,6 +6,7 @@ from listening.models import TestResult as ListeningResult
 from reading.models import ReadingResult
 from speaking.models import TestSession
 from writing.models import WritingTestResult as WritingResult
+from django.core.cache import cache
 
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -50,109 +51,97 @@ from speaking.models import TestSession
 from writing.models import WritingTestResult as WritingResult
 from speaking.models import Student  # For speaking results
 
-def home(request):
-    """Home page view with dynamic stats - FIXED VERSION"""
+def _compute_home_stats():
+    """Home page view with dynamic stats - UPDATED for accurate counts"""
+    from learning.models import UserLearningProgress
     
-    # 1. Total Students Registered (only users with profiles)
-    total_students = User.objects.filter(profile__isnull=False).count()
+    # 1. Total Students Registered (all non-staff users)
+    total_students = User.objects.exclude(is_staff=True).count()
     
-    # 2. Students who have completed at least one test (only those with profiles)
-    # Get users with profiles who have test results
-    users_with_results = set()
+    # 2. Students who have completed at least one test OR have learning progress
+    # Get users with pre-test results
+    users_with_pretest = set()
     
-    # Listening - only users with profiles
-    listening_users = set(ListeningResult.objects.filter(
-        user__profile__isnull=False,
+    # Listening
+    users_with_pretest.update(ListeningResult.objects.filter(
         score__isnull=False
     ).values_list('user_id', flat=True).distinct())
-    users_with_results.update(listening_users)
     
-    # Reading - only users with profiles
-    reading_users = set(ReadingResult.objects.filter(
-        user__profile__isnull=False,
+    # Reading
+    users_with_pretest.update(ReadingResult.objects.filter(
         score__isnull=False
     ).values_list('user_id', flat=True).distinct())
-    users_with_results.update(reading_users)
     
-    # Writing - only users with profiles
-    writing_users = set(WritingResult.objects.filter(
-        user__profile__isnull=False,
+    # Writing
+    users_with_pretest.update(WritingResult.objects.filter(
         total_score__isnull=False
     ).values_list('user_id', flat=True).distinct())
-    users_with_results.update(writing_users)
     
-    # Speaking - map emails to users with profiles
+    # Speaking
     speaking_emails = set(TestSession.objects.filter(
         completed_at__isnull=False
     ).values_list('student__email', flat=True).distinct())
     
-    speaking_users = set(User.objects.filter(
-        email__in=speaking_emails,
-        profile__isnull=False
+    users_with_pretest.update(User.objects.filter(
+        email__in=speaking_emails
     ).values_list('id', flat=True))
-    users_with_results.update(speaking_users)
     
-    students_completed = len(users_with_results)
+    # Get users with learning progress (means they are assigned a level)
+    users_with_progress = set(UserLearningProgress.objects.values_list('user_id', flat=True).distinct())
     
-    # 3. Calculate levels only for users with profiles
-    beginner_count = 0
-    intermediate_count = 0
-    advanced_count = 0
+    # Combine both sets
+    active_users = users_with_pretest.union(users_with_progress)
+    students_completed = len(active_users)
     
-    for user_id in users_with_results:
-        try:
-            user = User.objects.get(id=user_id)
-            user_scores = []
-            
-            # Listening
-            listening = ListeningResult.objects.filter(user=user).order_by('-created_at').first()
-            if listening and listening.score and listening.total_questions:
-                user_scores.append((listening.score / listening.total_questions) * 100)
-            
-            # Reading
-            reading = ReadingResult.objects.filter(user=user).order_by('-created_at').first()
-            if reading and reading.score and reading.total:
-                user_scores.append(reading.percentage or ((reading.score / reading.total) * 100))
-            
-            # Writing
-            writing = WritingResult.objects.filter(user=user).order_by('-created_at').first()
-            if writing and writing.total_score:
-                user_scores.append((writing.total_score / 500) * 100)
-            
-            # Speaking
+    # 3. Calculate levels from UserLearningProgress (most accurate source for current levels)
+    beginner_count = UserLearningProgress.objects.filter(level='beginner').count()
+    intermediate_count = UserLearningProgress.objects.filter(level='intermediate').count()
+    advanced_count = UserLearningProgress.objects.filter(level='advanced').count()
+    
+    # If level counts are 0 but we have pre-test results, fallback to pre-test logic
+    if (beginner_count + intermediate_count + advanced_count) == 0 and active_users:
+        for user_id in active_users:
             try:
-                student = Student.objects.get(email=user.email)
-                speaking = TestSession.objects.filter(
-                    student=student, 
-                    completed_at__isnull=False
-                ).order_by('-completed_at').first()
-                if speaking:
-                    user_scores.append(speaking.get_average_score())
-            except Student.DoesNotExist:
-                pass
-            
-            # Determine level
-            if user_scores:
-                avg_score = sum(user_scores) / len(user_scores)
-                if avg_score < 60:
-                    beginner_count += 1
-                elif avg_score < 80:
-                    intermediate_count += 1
-                else:
-                    advanced_count += 1
-            else:
-                # Has test records but no scores? Count as beginner
-                beginner_count += 1
+                user = User.objects.get(id=user_id)
+                user_scores = []
                 
-        except User.DoesNotExist:
-            continue
-    
-    # Ensure counts don't exceed total
-    total_levels = beginner_count + intermediate_count + advanced_count
-    if total_levels > students_completed:
-        # Adjust if there's a discrepancy
-        print(f"Warning: Level count ({total_levels}) > students completed ({students_completed})")
-    
+                # Listening
+                listening = ListeningResult.objects.filter(user=user).order_by('-created_at').first()
+                if listening and listening.score and listening.total_questions:
+                    user_scores.append((listening.score / listening.total_questions) * 100)
+                
+                # Reading
+                reading = ReadingResult.objects.filter(user=user).order_by('-created_at').first()
+                if reading and reading.score and reading.total:
+                    user_scores.append(reading.percentage or ((reading.score / reading.total) * 100))
+                
+                # Writing
+                writing = WritingResult.objects.filter(user=user).order_by('-created_at').first()
+                if writing and writing.total_score:
+                    user_scores.append((writing.total_score / 500) * 100)
+                
+                # Speaking
+                try:
+                    student = Student.objects.get(email=user.email)
+                    speaking = TestSession.objects.filter(
+                        student=student, 
+                        completed_at__isnull=False
+                    ).order_by('-completed_at').first()
+                    if speaking:
+                        user_scores.append(speaking.get_average_score())
+                except Student.DoesNotExist:
+                    pass
+                
+                if user_scores:
+                    avg_score = sum(user_scores) / len(user_scores)
+                    if avg_score < 60: beginner_count += 1
+                    elif avg_score < 80: intermediate_count += 1
+                    else: advanced_count += 1
+                else:
+                    beginner_count += 1
+            except User.DoesNotExist:
+                continue
+
     context = {
         'total_students': total_students,
         'students_completed': students_completed,
@@ -161,8 +150,14 @@ def home(request):
         'advanced_count': advanced_count,
     }
     
-    return render(request, 'home_page/home.html', context)
+    return context
 
+def home(request):
+    context = cache.get('home_stats')
+    if context is None:
+        context = _compute_home_stats()
+        cache.set('home_stats', context, 300)
+    return render(request, 'home_page/home.html', context)
 
 def register(request):
     """User registration view"""
@@ -278,8 +273,8 @@ def profile_view(request):
     user_level = profile.level.strip().lower() if profile.level else 'beginner'
     pretest_completed = profile.pretest_completed
     
-    print(f"🔍 DEBUG: User Level = {user_level}")
-    print(f"🔍 DEBUG: Pretest Completed = {pretest_completed}")
+    print(f"ðŸ” DEBUG: User Level = {user_level}")
+    print(f"ðŸ” DEBUG: Pretest Completed = {pretest_completed}")
     
     # Fetch progress objects for all levels
     beginner_progress = UserLearningProgress.objects.filter(user=request.user, level='beginner').first()
@@ -337,11 +332,11 @@ def profile_view(request):
         else:
             advanced_unlocked = intermediate['is_completed']
     
-    print(f"🔍 DEBUG: Beginner Unlocked = {beginner_unlocked}")
-    print(f"🔍 DEBUG: Intermediate Unlocked = {intermediate_unlocked}")
-    print(f"🔍 DEBUG: Advanced Unlocked = {advanced_unlocked}")
-    print(f"🔍 DEBUG: Beginner Completed = {beginner['is_completed']}")
-    print(f"🔍 DEBUG: Intermediate Completed = {intermediate['is_completed']}")
+    print(f"ðŸ” DEBUG: Beginner Unlocked = {beginner_unlocked}")
+    print(f"ðŸ” DEBUG: Intermediate Unlocked = {intermediate_unlocked}")
+    print(f"ðŸ” DEBUG: Advanced Unlocked = {advanced_unlocked}")
+    print(f"ðŸ” DEBUG: Beginner Completed = {beginner['is_completed']}")
+    print(f"ðŸ” DEBUG: Intermediate Completed = {intermediate['is_completed']}")
     
     # Determine which level to highlight as primary (for quick resume)
     if not pretest_completed:
@@ -415,9 +410,9 @@ def start_pretest(request):
     # ===== ADDED: Start the 20-minute timer =====
     if 'test_start_time' not in request.session:
         request.session['test_start_time'] = timezone.now().isoformat()
-        print(f"⏰ Timer started at: {request.session['test_start_time']}")
+        print(f"â° Timer started at: {request.session['test_start_time']}")
     
-    # CORRECT ORDER: Listening → Speaking → Reading → Writing
+    # CORRECT ORDER: Listening â†’ Speaking â†’ Reading â†’ Writing
     if not profile.listening_completed:
         return redirect('listening:index')
     elif not profile.speaking_completed:      # Speaking SECOND
@@ -441,7 +436,7 @@ def start_pretest(request):
         # Clear timer session when all tests are done
         if 'test_start_time' in request.session:
             del request.session['test_start_time']
-            print("⏰ Timer cleared - all tests completed")
+            print("â° Timer cleared - all tests completed")
         return redirect('home_page:pretest_results')
 
 
@@ -453,33 +448,34 @@ def continue_pretest(request):
 
 @login_required
 def pretest_results(request):
-    """Show combined pretest results - with timeout handling"""
+    """Show combined pretest results - with timeout handling + speaking recording cleanup"""
+    import os
     from listening.models import TestResult as ListeningResult
     from reading.models import ReadingResult
     from speaking.models import TestSession
     from writing.models import WritingTestResult as WritingResult
-    
+
     profile = get_object_or_404(StudentProfile, user=request.user)
-    
+
     # ===== ADDED: Check if this is a timeout redirect =====
     is_timeout = request.GET.get('timeout') == 'true'
     if is_timeout and 'test_start_time' in request.session:
         del request.session['test_start_time']
         messages.info(request, "Your time has expired. Results show completed sections only.")
-        print("⏰ Timeout occurred - timer cleared")
-    
+        print("â° Timeout occurred - timer cleared")
+
     # Debug: Print profile status
     print(f"\n{'='*50}")
     print(f"USER: {request.user.username}")
     print(f"Profile reading_completed: {profile.reading_completed}")
     print(f"Profile pretest_completed: {profile.pretest_completed}")
-    
+
     # Get latest results with debugging
     print("\n--- FETCHING RESULTS ---")
-    
+
     listening_result = ListeningResult.objects.filter(user=request.user).first()
-    print(f"Listening result: {'✅ Found' if listening_result else '❌ Not found'}")
-    
+    print(f"Listening result: {'âœ… Found' if listening_result else 'âŒ Not found'}")
+
     reading_result = ReadingResult.objects.filter(user=request.user).first()
     if not reading_result:
         session_key = request.session.session_key
@@ -487,107 +483,169 @@ def pretest_results(request):
             reading_result = ReadingResult.objects.filter(
                 session_key=session_key
             ).order_by('-created_at').first()
-            print(f"Reading result (by session): {'✅ Found' if reading_result else '❌ Not found'}")
-    print(f"Reading result: {'✅ Found' if reading_result else '❌ Not found'}")
-    
+            print(f"Reading result (by session): {'âœ… Found' if reading_result else 'âŒ Not found'}")
+    print(f"Reading result: {'âœ… Found' if reading_result else 'âŒ Not found'}")
+
     speaking_result = TestSession.objects.filter(
         user=request.user,
         completed_at__isnull=False
     ).order_by('-completed_at').first()
-    print(f"Speaking result: {'✅ Found' if speaking_result else '❌ Not found'}")
-    
+    print(f"Speaking result: {'âœ… Found' if speaking_result else 'âŒ Not found'}")
+
     writing_result = WritingResult.objects.filter(user=request.user).first()
-    print(f"Writing result: {'✅ Found' if writing_result else '❌ Not found'}")
-    
+    print(f"Writing result: {'âœ… Found' if writing_result else 'âŒ Not found'}")
+
     if reading_result:
         print(f"Reading Result ID: {reading_result.id}")
         print(f"Reading Score: {reading_result.score}/{reading_result.total}")
         print(f"Reading Percentage: {reading_result.percentage}")
-    
+
     completion_date = None
     if writing_result:
         completion_date = writing_result.created_at
     elif profile.pretest_completed_at:
         completion_date = profile.pretest_completed_at
-    
+
     # Calculate percentages
     listening_percentage = 0
     if listening_result:
         listening_percentage = (listening_result.score / listening_result.total_questions) * 100
-    
+
     reading_percentage = 0
     if reading_result:
         reading_percentage = reading_result.percentage or ((reading_result.score / reading_result.total) * 100)
-    
+
     speaking_percentage = 0
     if speaking_result:
         speaking_percentage = speaking_result.get_average_score()
-    
+
     writing_percentage = 0
     if writing_result:
         writing_percentage = (writing_result.total_score / 500) * 100
-    
+
     # Calculate overall score
     total_weighted_score = 0
     total_weight = 0
-    
+
     if listening_result:
         total_weighted_score += listening_percentage
         total_weight += 1
-    
+
     if reading_result:
         total_weighted_score += reading_percentage
         total_weight += 1
-    
+
     if speaking_result:
         total_weighted_score += speaking_percentage
         total_weight += 1
-    
+
     if writing_result:
         total_weighted_score += writing_percentage
         total_weight += 1
-    
+
     if total_weight > 0:
         overall_percentage = total_weighted_score / total_weight
     else:
         overall_percentage = 0
-    
+
     # ========== FIX: Calculate and SAVE the user's level ==========
-    # Determine level based on overall percentage
     if overall_percentage < 60:
         calculated_level = 'Beginner'
     elif overall_percentage < 80:
         calculated_level = 'Intermediate'
     else:
         calculated_level = 'Advanced'
-    
-    # Save the calculated level to profile if pretest is completed
+
+    # Save pretest completion + level
+    all_sections_completed = all([
+        profile.listening_completed,
+        profile.reading_completed,
+        profile.speaking_completed,
+        profile.writing_completed
+    ])
+
     if not profile.pretest_completed:
-        # Check if all tests are completed
-        if all([profile.listening_completed, profile.reading_completed, 
-                profile.speaking_completed, profile.writing_completed]):
+        if all_sections_completed:
             profile.pretest_completed = True
             profile.pretest_completed_at = timezone.now()
-            profile.level = calculated_level  # ✅ SAVE THE LEVEL HERE
-            profile.save()
-            print(f"✅ Profile marked as pretest_completed with level: {calculated_level}")
-        else:
-            print("⚠️ Not all tests completed yet")
-            messages.warning(request, "Complete all sections to see full results.")
-    else:
-        # If pretest already completed but level might be wrong, update it
-        if profile.level != calculated_level:
             profile.level = calculated_level
             profile.save()
-            print(f"✅ Updated profile level from {profile.level} to {calculated_level}")
-    
+            print(f"âœ… Profile marked as pretest_completed with level: {calculated_level}")
+        else:
+            print("âš ï¸ Not all tests completed yet")
+            messages.warning(request, "Complete all sections to see full results.")
+    else:
+        if profile.level != calculated_level:
+            old_level = profile.level
+            profile.level = calculated_level
+            profile.save()
+            print(f"âœ… Updated profile level from {old_level} to {calculated_level}")
+
+    # ========== ADDED: Cleanup speaking recordings only on final completed pretest ==========
+    def _cleanup_speaking_recordings(test_session_obj):
+        if not test_session_obj:
+            return
+
+        recording_fields = [
+            'q1_word1_recording', 'q1_word2_recording', 'q1_word3_recording',
+            'q1_word4_recording', 'q1_word5_recording',
+            'q2_recording', 'q3_recording', 'q4_recording', 'q5_recording'
+        ]
+
+        media_root = os.path.normpath(str(settings.MEDIA_ROOT))
+        changed_fields = []
+        deleted_count = 0
+
+        for field_name in recording_fields:
+            rel_path = getattr(test_session_obj, field_name, '')
+
+            if not rel_path:
+                continue
+
+            # Skip remote URLs (if any future value is cloud URL)
+            if str(rel_path).startswith(('http://', 'https://')):
+                continue
+
+            normalized_rel = os.path.normpath(str(rel_path))
+            full_path = os.path.normpath(os.path.join(media_root, normalized_rel))
+
+            # Safety check: prevent deletion outside MEDIA_ROOT
+            if not full_path.startswith(media_root):
+                print(f"âš ï¸ Skipped unsafe path: {full_path}")
+                continue
+
+            if os.path.isfile(full_path):
+                try:
+                    os.remove(full_path)
+                    deleted_count += 1
+                except Exception as e:
+                    print(f"âŒ Could not delete file {full_path}: {e}")
+
+            # Clear DB path regardless if file existed or not
+            setattr(test_session_obj, field_name, '')
+            changed_fields.append(field_name)
+
+        if changed_fields:
+            test_session_obj.save(update_fields=changed_fields)
+            print(f"ðŸ§¹ Speaking cleanup complete. Deleted files: {deleted_count}, cleared fields: {len(changed_fields)}")
+
+    # Cleanup condition: final completed pretest, not timeout, and writing result exists
+    should_cleanup = (
+        all_sections_completed and
+        writing_result is not None and
+        speaking_result is not None
+    )
+
+    if should_cleanup:
+        _cleanup_speaking_recordings(speaking_result)
+
     print(f"\n{'='*50}")
-    print(f"FINAL CONTEXT:")
+    print("FINAL CONTEXT:")
     print(f"Overall Percentage: {overall_percentage}%")
     print(f"Calculated Level: {calculated_level}")
     print(f"Profile Level: {profile.level}")
     print(f"{'='*50}\n")
-    
+
     context = {
         'profile': profile,
         'listening_result': listening_result,
@@ -602,11 +660,11 @@ def pretest_results(request):
         'writing_percentage': round(writing_percentage, 1),
         'completion_date': completion_date,
         'is_timeout': is_timeout,
-        'calculated_level': calculated_level,  # Pass to template for display
+        'calculated_level': calculated_level,
     }
-    
-    return render(request, 'home_page/pretest_results.html', context)
 
+    return render(request, 'home_page/pretest_results.html', context)
+    
 def password_reset_request(request):
     """View for requesting password reset"""
     
