@@ -10,11 +10,10 @@ class UserLearningProgress(models.Model):
         ('intermediate', 'Intermediate'),
         ('advanced', 'Advanced'),
     ]
-    
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='learning_progress')
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES)
     completed_days = models.JSONField(default=list)  # List of completed day numbers
-    collected_rewards = models.JSONField(default=list)  # 👈 ADD THIS NEW FIELD
+    collected_rewards = models.JSONField(default=list)  # ðŸ‘ˆ ADD THIS NEW FIELD
     current_day = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(30)])
     streak_days = models.IntegerField(default=0)
     last_completed_date = models.DateField(null=True, blank=True)
@@ -26,8 +25,16 @@ class UserLearningProgress(models.Model):
     certificate_issued = models.BooleanField(default=False)
     certificate_issued_at = models.DateTimeField(null=True, blank=True)
     
-    # 👇 ADD THIS NEW FIELD
+    # ðŸ‘‡ ADD THIS NEW FIELD
     has_seen_intro = models.BooleanField(default=False)
+
+    # Advanced Toolkit Analytics
+    advanced_toolkit_data = models.JSONField(default=dict, blank=True)
+    toolkit_started_at = models.DateTimeField(null=True, blank=True)
+    toolkit_completed_at = models.DateTimeField(null=True, blank=True)
+    toolkit_completed = models.BooleanField(default=False)
+    toolkit_score = models.FloatField(default=0.0)
+    toolkit_total_tools_completed = models.IntegerField(default=0)
     
     class Meta:
         unique_together = ['user', 'level']
@@ -97,7 +104,6 @@ class UserLearningProgress(models.Model):
             self.save()
             return True
         return False
-
 
 class DailyActivity(models.Model):
     """Track detailed activity completion per day"""
@@ -278,5 +284,120 @@ class UserFeedback(models.Model):
         verbose_name_plural = "User Feedbacks"
 
     def __str__(self):
-        return f"{self.user.username} - {self.level} - {self.rating}★"
-
+        return f"{self.user.username} - {self.level} - {self.rating}â˜…"
+
+class LearningDayAnalytics(models.Model):
+    """Stores detailed day-wise behavior data"""
+    STAGE_CHOICES = [
+        ('daily_learning', 'Daily Learning'),
+        ('beginner_assessment', 'Beginner Assessment'),
+        ('intermediate_assessment', 'Intermediate Assessment'),
+        ('advanced_toolkit', 'Advanced Toolkit'),
+        ('post_test', 'Post Test'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='day_analytics')
+    level = models.CharField(max_length=20)  # beginner / intermediate / advanced
+    day_number = models.IntegerField()
+    stage = models.CharField(max_length=50, choices=STAGE_CHOICES)
+    
+    started_at = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    total_time_spent_seconds = models.IntegerField(default=0)
+    
+    total_sections = models.IntegerField(default=0)
+    sections_completed = models.IntegerField(default=0)
+    
+    total_attempts = models.IntegerField(default=0)
+    total_correct_attempts = models.IntegerField(default=0)
+    total_wrong_attempts = models.IntegerField(default=0)
+    overall_accuracy = models.FloatField(default=0.0)
+    
+    activity_data = models.JSONField(default=dict, blank=True) # Detailed section-wise analytics
+
+    class Meta:
+        unique_together = ['user', 'level', 'day_number', 'stage']
+        verbose_name = "Learning Day Analytic"
+        verbose_name_plural = "Learning Day Analytics"
+
+    def __str__(self):
+        return f"{self.user.username} - {self.level} Day {self.day_number} ({self.stage})"
+
+class LearnerAnalyticsSummary(models.Model):
+    """Main table for final reports, charts and dashboards"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='analytics_summary')
+    
+    total_learning_time_seconds = models.IntegerField(default=0)
+    completed_days = models.IntegerField(default=0)
+    completion_rate = models.FloatField(default=0.0)
+    overall_accuracy = models.FloatField(default=0.0)
+    
+    # Skills Scores
+    listening_score = models.FloatField(default=0.0)
+    speaking_confidence_score = models.FloatField(default=0.0)
+    reading_accuracy_score = models.FloatField(default=0.0)
+    writing_improvement_score = models.FloatField(default=0.0)
+    grammar_score = models.FloatField(default=0.0)
+    vocabulary_engagement_score = models.FloatField(default=0.0)
+    game_performance_score = models.FloatField(default=0.0)
+    
+    # Assessment Scores
+    beginner_assessment_score = models.FloatField(default=0.0)
+    intermediate_assessment_score = models.FloatField(default=0.0)
+    advanced_toolkit_score = models.FloatField(default=0.0)
+    pretest_score = models.FloatField(default=0.0)
+    posttest_score = models.FloatField(default=0.0)
+    overall_improvement_percentage = models.FloatField(default=0.0)
+    
+    # Engagement and Behavior
+    engagement_score = models.FloatField(default=0.0)
+    consistency_score = models.FloatField(default=0.0)
+    retention_score = models.FloatField(default=0.0)
+    dropout_risk_score = models.FloatField(default=0.0)
+    total_retry_count = models.IntegerField(default=0)
+    
+    # Summary Info
+    strongest_section = models.CharField(max_length=50, blank=True)
+    weakest_section = models.CharField(max_length=50, blank=True)
+    improvement_category = models.CharField(max_length=50, blank=True) # dropout / no significant / minor / moderate / major
+    behavior_type = models.CharField(max_length=50, blank=True) # low engagement / self-correcting / high performer
+    
+    certificate_issued = models.BooleanField(default=False)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Learner Analytics Summary"
+        verbose_name_plural = "Learner Analytics Summaries"
+
+    def __str__(self):
+        return f"Analytics Summary: {self.user.username}"
+
+class LevelTransitionAnalytics(models.Model):
+    """Tracks level movement and outcome analysis for visual reports"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='transition_analytics')
+    
+    initial_level = models.CharField(max_length=50) # From pretest
+    final_level = models.CharField(max_length=50)   # Final/simulated level
+    improvement_type = models.CharField(max_length=50) # dropout / none / minor / moderate / major
+    
+    strongest_section = models.CharField(max_length=50, blank=True)
+    weakest_section = models.CharField(max_length=50, blank=True)
+    
+    pretest_score = models.FloatField(default=0.0)
+    beginner_assessment_score = models.FloatField(default=0.0)
+    intermediate_assessment_score = models.FloatField(default=0.0)
+    advanced_toolkit_score = models.FloatField(default=0.0)
+    posttest_score = models.FloatField(default=0.0)
+    
+    improvement_percentage = models.FloatField(default=0.0)
+    transition_speed = models.CharField(max_length=20, default='normal') # slow / normal / fast
+    
+    certificate_issued = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Level Transition Analytic"
+        verbose_name_plural = "Level Transition Analytics"
+    def __str__(self):
+        return f"Transition: {self.user.username} ({self.initial_level} -> {self.final_level})"
