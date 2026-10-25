@@ -19,6 +19,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
+from django.http import HttpResponse
+
 
 def admin_redirect(request):
     if request.user.is_authenticated and not request.user.is_staff:
@@ -35,6 +37,7 @@ urlpatterns = [
     path('writing/', include('writing.urls')),
     path('captcha/', include('captcha.urls')), 
     path('learning/', include('learning.urls')),
+    path('health/', lambda request: HttpResponse('ok')),
       # If you're using captcha
 ]
 
