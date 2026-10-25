@@ -139,6 +139,8 @@ def get_asr_pipeline():
     print("Swift model pipeline ready.")
 
     return asr_pipeline
+
+
 # ---------------------------------------------------------
 # Question data
 # ---------------------------------------------------------
